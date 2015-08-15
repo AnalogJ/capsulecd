@@ -7,16 +7,22 @@ capsume.yml file should have the following sections:
 
     # docker image which will be used to build and package this release. 
     # Image should have all required tools installed to validate, build, package and release 
-    image: nodejs 
+    image: chef 
     
     # source should be where the package source is from. ie. github/bitbucket/gitlab (only github supported to start)
     source: 
       github:
         # additional github specific configuration which can be used to configure enterprise github connections
+        access_token: 
+
     
     # type specifies which capsule script is run against the code
-    # can only be: npm, chef, ruby, python, crate, general, (more to come)
-    type: npm
+    # can only be: node, chef, ruby, python, crate, puppet, docker?,  general, (more to come)
+    type: 
+    
+    build:
+      config:
+      
     
     # validate contains the configuration for the validation step. 
     validate:
@@ -32,7 +38,7 @@ capsume.yml file should have the following sections:
       post:
       
     # the build hook generates the acutal package??
-    build: 
+    package: 
       config:
         flags: []
       pre:

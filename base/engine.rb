@@ -1,0 +1,69 @@
+require_relative 'source/github'
+
+class Engine
+
+  define_hooks
+
+  define_hooks :before_source_configure, :after_source_configure,
+               :before_source_process_payload, :after_source_process_payload,
+               :before_build_step, :after_build_step,
+               :before_validate_step, :after_validate_step,
+               :before_package_step, :after_package_step
+
+
+  def initialize(source)
+    if source == 'github'
+      self.class.send(:include, GithubSource)
+    else
+      raise 'No source defined.'
+    end
+  end
+
+  def start(source_payload)
+
+    #start the source, and whatever work needs to be done there.
+    run_hook :before_source_configure
+    source_configure()
+    run_hook :after_source_configure
+
+    #start processing the payload, which should result in a local merged git repository that we
+    # can begin to test.
+    run_hook :before_source_process_payload
+    source_process_payload(source_payload)
+    run_hook :after_source_process_payload
+
+    # now that the payload has been processed we can begin by building the code.
+    # this may be compilation, dependency downloading, etc.
+    run_hook :before_build_step
+    build_step()
+    run_hook :after_build_step
+
+    # this step should run the package test runner (eg. npm test, rake test)
+    run_hook :before_validate_step
+    test_step()
+    run_hook :after_validate_step
+
+    #
+    run_hook :before_package_step
+    package_step()
+    run_hook :after_package_step
+
+    run_hook :before_release_step
+    release_step()
+    run_hook :after_release_step
+
+  end
+
+
+  def build_step()
+  end
+
+  def test_step()
+  end
+
+  def package_step()
+  end
+
+  def release_step()
+  end
+end
