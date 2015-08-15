@@ -7,7 +7,7 @@ class Engine
   define_hooks :before_source_configure, :after_source_configure,
                :before_source_process_payload, :after_source_process_payload,
                :before_build_step, :after_build_step,
-               :before_validate_step, :after_validate_step,
+               :before_test_step, :after_test_step,
                :before_package_step, :after_package_step
 
 
@@ -27,7 +27,8 @@ class Engine
     run_hook :after_source_configure
 
     #start processing the payload, which should result in a local merged git repository that we
-    # can begin to test.
+    # can begin to test. Processing the payload should also verify if the payload creator has correct access/permissions
+    # to kick off a new release.
     run_hook :before_source_process_payload
     source_process_payload(source_payload)
     run_hook :after_source_process_payload
@@ -38,10 +39,16 @@ class Engine
     build_step()
     run_hook :after_build_step
 
-    # this step should run the package test runner (eg. npm test, rake test)
-    run_hook :before_validate_step
+    # now that the payload has been processed we can begin by building the code.
+    # this may be compilation, dependency downloading, etc.
+    run_hook :before_build_step
+    build_step()
+    run_hook :after_build_step
+
+    # this step should run the package test runner(s) (eg. npm test, rake test, kitchen test)
+    run_hook :before_test_step
     test_step()
-    run_hook :after_validate_step
+    run_hook :after_test_step
 
     #
     run_hook :before_package_step

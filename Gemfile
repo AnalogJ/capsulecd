@@ -1,6 +1,6 @@
+source 'https://rubygems.org'
 # These gems are in the :default group
 gem 'json'
-gem 'yaml'
 gem 'git'
 gem 'semverly'
 gem 'hooks'
