@@ -10,7 +10,7 @@ run locale-gen en_US.UTF-8
 # Make Chef DK the primary Ruby/Chef development environment.
 run echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
 run echo 'eval "$(chef shell-init bash)"' >> ~/.bashrc
-
+run chef shell-init bash
 run gem install bundler
 
 # copy the application files to the image
