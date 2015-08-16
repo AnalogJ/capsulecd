@@ -1,7 +1,7 @@
 require_relative 'source/github'
-
+require 'hooks'
 class Engine
-
+  include Hooks
   define_hooks :before_source_configure, :after_source_configure,
                :before_source_process_payload, :after_source_process_payload,
                :before_build_step, :after_build_step,
