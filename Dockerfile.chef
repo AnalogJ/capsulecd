@@ -1,9 +1,13 @@
-from ruby:2.1
+from spheromak/docker-chefdk
 maintainer Jason Kulatunga <jk17@ualberta.ca>
+
+# Make Chef DK the primary Ruby/Chef development environment.
+run echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+run echo 'eval "$(chef shell-init bash)"' >> ~/.bashrc
 
 run gem install bundler
 
 # copy the application files to the image
 workdir /srv/capsulecd
 copy . /srv/capsulecd/
-run bundle install --path vendor/bundle --without node ruby
+run bundle install --without node ruby
