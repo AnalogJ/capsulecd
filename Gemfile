@@ -18,4 +18,5 @@ group :chef do
   gem 'berkshelf'
   gem 'solve'
   gem 'chef'
+  gem 'stove'
 end

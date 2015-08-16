@@ -1,6 +1,7 @@
 require 'hooks'
 require 'octokit'
 require 'uri'
+require 'git'
 require_relative '../../base/common/git_utils'
 
 module GithubSource
@@ -14,6 +15,9 @@ module GithubSource
   @source_git_local_path
   @source_git_local_branch
   @source_git_remote
+
+  @source_release_commit = nil
+  @source_release_artifacts = []
 
   #define the Source API methods
 
@@ -58,11 +62,52 @@ module GithubSource
     # clone the merged branch
     # https://sethvargo.com/checkout-a-github-pull-request/
     # https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
-    @source_git_local_path = GitUtils.clone_repository(@source_git_parent_path,@source_git_head_info['repo']['name'],@source_git_remote)
+    @source_git_local_path = GitUtils.clone(@source_git_parent_path,@source_git_head_info['repo']['name'],@source_git_remote)
     @source_git_local_branch = "pr_#{payload['number']}"
     GitUtils.fetch(@source_git_local_path, "refs/pull/#{payload['number']}/head", @source_git_local_branch)
     GitUtils.checkout(@source_git_local_path, @source_git_local_branch)
 
+    #show a processing message on the github PR.
+    @source_client.create_status(payload['repository']['full_name'], @source_git_head_info['repo']['sha'], 'pending',
+     {
+      :target_url => 'http://www.github.com/AnalogJ/capsulecd',
+      :description => 'Capsule-CD has started processing cookbook. Pull request will be merged automatically when complete.'
+     })
   end
 
+  def source_release
+    #push the version bumped metadata file + newly created files to
+    GitUtils.push(@source_git_local_path, @source_git_local_branch, @source_git_base_info['ref'])
+    #sleept because github needs time to process the new tag.
+    sleep 5
+
+    #calculate the release sha
+    release_sha = ('0'*(40 - @source_release_commit.sha.strip.length)) + @source_release_commit.sha.strip
+
+    #get the release changelog
+    release_body = self.generate_changelog(@source_git_local_path, @source_git_base_info['sha'], @source_git_head_info['sha'], @source_git_base_info['full_name'])
+
+    release = @source_client.create_release(@source_git_base_info[:full_name], @source_release_commit.name, {
+      :target_commitish => release_sha,
+      :name => @source_release_commit.name,
+      :body => release_body
+    })
+
+    @source_release_artifacts.each { |release_artifact|
+      @source_client.upload_asset(release[:url], release_artifact[:path], {:name => release_artifact[:name]})
+    }
+
+  end
+
+
+
+  def self.generate_changelog(repo_path, base_sha, head_sha, full_name)
+    repo = Git.open(repo_path)
+    markdown = "Timestamp |  SHA | Message | Author \n"
+    markdown += "------------- | ------------- | ------------- | ------------- \n"
+    repo.log.between(base_sha, head_sha).each { |commit|
+      markdown += "#{commit.date.strftime('%Y-%m-%d %H:%M:%S%z')} | [`#{commit.sha.slice 0..8}`](https://github.com/#{full_name}/commit/#{commit.sha} | #{commit.message.gsub!('|','!')} | #{commit.author.name}) \n"
+    }
+    return markdown
+  end
 end

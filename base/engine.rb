@@ -2,8 +2,6 @@ require_relative 'source/github'
 
 class Engine
 
-  define_hooks
-
   define_hooks :before_source_configure, :after_source_configure,
                :before_source_process_payload, :after_source_process_payload,
                :before_build_step, :after_build_step,
@@ -55,9 +53,9 @@ class Engine
     package_step()
     run_hook :after_package_step
 
-    run_hook :before_release_step
-    release_step()
-    run_hook :after_release_step
+    run_hook :before_source_release
+    source_release()
+    run_hook :after_source_release
 
   end
 
@@ -68,9 +66,14 @@ class Engine
   def test_step()
   end
 
+  #the package_step should always set the @source_release_commit and optionally set add-to/set the @source_release_artifacts array
   def package_step()
+    #commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
+    # as they will be included in the commmit and any release artifacts)
+    GitUtils.commit(@source_git_local_path, "(v#{next_version.to_s}) Automated packaging of release by Capsule-CD")
+    @source_release_commit = GitUtils.tag(@source_git_local_path, "v#{next_version.to_s}")
+
   end
 
-  def release_step()
-  end
+
 end
