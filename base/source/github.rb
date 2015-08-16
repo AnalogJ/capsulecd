@@ -11,7 +11,7 @@ module GithubSource
   @source_client
   @source_git_base_info
   @source_git_head_info
-  @source_git_parent_path = '/var/capsule-cd/' # should be the parent folder of the cloned repository. /var/capsule-cd/
+  @source_git_parent_path = '/var/capsulecd/' # should be the parent folder of the cloned repository. /var/capsule-cd/
   @source_git_local_path
   @source_git_local_branch
   @source_git_remote
@@ -71,7 +71,7 @@ module GithubSource
     @source_client.create_status(payload['repository']['full_name'], @source_git_head_info['sha'], 'pending',
      {
       :target_url => 'http://www.github.com/AnalogJ/capsulecd',
-      :description => 'Capsule-CD has started processing cookbook. Pull request will be merged automatically when complete.'
+      :description => 'CapsuleCD has started processing cookbook. Pull request will be merged automatically when complete.'
      })
   end
 

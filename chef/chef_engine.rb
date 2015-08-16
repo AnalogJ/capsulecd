@@ -95,6 +95,9 @@ class ChefEngine < Engine
     metadata_str = ChefUtils.read_repo_metadata(@source_git_local_path)
     chef_metadata = ChefUtils.parse_metadata(metadata_str)
     next_version = SemVer.parse(chef_metadata.version)
+    #commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
+    # as they will be included in the commmit and any release artifacts)
+    GitUtils.commit(@source_git_local_path, "(v#{next_version.to_s}) Automated packaging of release by CapsuleCD")
     @source_release_commit = GitUtils.tag(@source_git_local_path, "v#{next_version.to_s}")
 
   end
