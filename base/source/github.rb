@@ -41,7 +41,7 @@ module GithubSource
       raise 'pull request is not being created against the default branch of this repository (usually master)'
     end
 
-    if(payload['repository']['full_name'] != payload['pull_request']['base']['full_name'])
+    if(payload['repository']['full_name'] != payload['pull_request']['base']['repo']['full_name'])
       raise 'pull request is not being created against the primary repository (probably a pull request against a fork)'
     end
 
@@ -68,7 +68,7 @@ module GithubSource
     GitUtils.checkout(@source_git_local_path, @source_git_local_branch)
 
     #show a processing message on the github PR.
-    @source_client.create_status(payload['repository']['full_name'], @source_git_head_info['repo']['sha'], 'pending',
+    @source_client.create_status(payload['repository']['full_name'], @source_git_head_info['sha'], 'pending',
      {
       :target_url => 'http://www.github.com/AnalogJ/capsulecd',
       :description => 'Capsule-CD has started processing cookbook. Pull request will be merged automatically when complete.'
@@ -85,7 +85,7 @@ module GithubSource
     release_sha = ('0'*(40 - @source_release_commit.sha.strip.length)) + @source_release_commit.sha.strip
 
     #get the release changelog
-    release_body = self.generate_changelog(@source_git_local_path, @source_git_base_info['sha'], @source_git_head_info['sha'], @source_git_base_info['full_name'])
+    release_body = generate_changelog(@source_git_local_path, @source_git_base_info['sha'], @source_git_head_info['sha'], @source_git_base_info['repo']['full_name'])
 
     release = @source_client.create_release(@source_git_base_info[:full_name], @source_release_commit.name, {
       :target_commitish => release_sha,
@@ -101,7 +101,7 @@ module GithubSource
 
 
 
-  def self.generate_changelog(repo_path, base_sha, head_sha, full_name)
+  def generate_changelog(repo_path, base_sha, head_sha, full_name)
     repo = Git.open(repo_path)
     markdown = "Timestamp |  SHA | Message | Author \n"
     markdown += "------------- | ------------- | ------------- | ------------- \n"

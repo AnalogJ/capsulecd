@@ -7,6 +7,7 @@ class Engine
                :before_build_step, :after_build_step,
                :before_test_step, :after_test_step,
                :before_package_step, :after_package_step,
+               :before_source_release, :after_source_release,
                :before_release_step, :after_release_step
 
 
@@ -74,9 +75,7 @@ class Engine
   def package_step()
     #commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
     # as they will be included in the commmit and any release artifacts)
-    GitUtils.commit(@source_git_local_path, "(v#{next_version.to_s}) Automated packaging of release by Capsule-CD")
-    @source_release_commit = GitUtils.tag(@source_git_local_path, "v#{next_version.to_s}")
-
+    GitUtils.commit(@source_git_local_path, "Automated packaging of release by Capsule-CD")
   end
 
   def release_step()

@@ -22,16 +22,16 @@ class ChefEngine < Engine
 
     #check for/create any required missing folders/files
     #Berksfile.lock and Gemfile.lock are not required to be commited, but they should be.
-    if !File.exists(@source_git_local_path + '/Rakefile')
+    if !File.exists?(@source_git_local_path + '/Rakefile')
       File.open(@source_git_local_path + '/Rakefile', 'w'){ |file| file.write('task :test') }
     end
-    if !File.exists(@source_git_local_path + '/Berksfile')
+    if !File.exists?(@source_git_local_path + '/Berksfile')
       File.open(@source_git_local_path + '/Berksfile', 'w'){ |file| file.write('site :opscode') }
     end
-    if !File.exists(@source_git_local_path + '/Gemfile')
+    if !File.exists?(@source_git_local_path + '/Gemfile')
       File.open(@source_git_local_path + '/Gemfile', 'w'){ |file| file.write('source "https://rubygems.org"') }
     end
-    if !File.exists(@source_git_local_path + '/spec')
+    if !File.exists?(@source_git_local_path + '/spec')
       FileUtils.mkdir(@source_git_local_path + '/spec')
     end
   end
@@ -92,6 +92,11 @@ class ChefEngine < Engine
 
   def package_step()
     super
+    metadata_str = ChefUtils.read_repo_metadata(@source_git_local_path)
+    chef_metadata = ChefUtils.parse_metadata(metadata_str)
+    next_version = SemVer.parse(chef_metadata.version)
+    @source_release_commit = GitUtils.tag(@source_git_local_path, "v#{next_version.to_s}")
+
   end
 
   #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)

@@ -10,11 +10,13 @@ class GitUtils
     end
 
     repo = Git.clone(git_remote, '', :path => repo_path)
+    repo.config('user.name', 'CapsuleCD')
+    repo.config('user.email', 'CapsuleCD@users.noreply.github.com')
     repo.dir.to_s
   end
 
   def self.fetch(repo_path,remote_ref, local_branch)
-    repo = Git.open(repo_path, remote_ref, local_branch)
+    repo = Git.open(repo_path)
     repo.fetch(['origin', "#{remote_ref}:#{local_branch}"])
 
   end

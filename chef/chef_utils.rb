@@ -8,7 +8,7 @@ class ChefUtils
   end
 
   def self.write_repo_metadata(repo_path, metadata_str, metadata_filename = 'metadata.rb')
-    File.open("#{repo_path}/#{metadata_filename}",'w'){ |file| f.write(metadata_str)}
+    File.open("#{repo_path}/#{metadata_filename}",'w'){ |file| file.write(metadata_str)}
   end
   def self.parse_metadata(metadata_str)
     chef_metadata = Ridley::Chef::Cookbook::Metadata.new
