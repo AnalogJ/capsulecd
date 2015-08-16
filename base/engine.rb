@@ -6,7 +6,8 @@ class Engine
                :before_source_process_payload, :after_source_process_payload,
                :before_build_step, :after_build_step,
                :before_test_step, :after_test_step,
-               :before_package_step, :after_package_step
+               :before_package_step, :after_package_step,
+               :before_release_step, :after_release_step
 
 
   def initialize(source)
@@ -57,6 +58,9 @@ class Engine
     source_release()
     run_hook :after_source_release
 
+    run_hook :before_release_step
+    release_step()
+    run_hook :after_release_step
   end
 
 
@@ -75,5 +79,6 @@ class Engine
 
   end
 
-
+  def release_step()
+  end
 end

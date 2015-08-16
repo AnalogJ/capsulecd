@@ -94,4 +94,8 @@ class ChefEngine < Engine
     super
   end
 
+  #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
+  def release_step()
+    super
+  end
 end

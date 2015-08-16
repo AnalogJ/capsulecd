@@ -75,9 +75,30 @@ class ChefEngine < Engine
     end
   end
 
-
+  # run npm publish
   def package_step()
     super
+
+    #TODO: create ~/.npmrc file with credential token, email and username
+    #_auth = EDIT: HIDDEN
+    #email = npm
+    #username = npm
+
+    # run npm publish
+    Open3.popen3('npm publish .', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
+      {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
+        Thread.new do
+          until (line = stream_buffer.gets).nil? do
+            puts "#{name} -> #{line}"
+          end
+        end
+      end
+      #wait for process
+      external.join
+      if !external.value.success?
+        raise 'npm test failed. Check log for exact error'
+      end
+    end
   end
 
 end
