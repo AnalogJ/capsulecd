@@ -20,3 +20,11 @@ group :chef do
   gem 'chef'
   gem 'stove'
 end
+
+group :node do
+
+end
+
+group :ruby do
+
+end

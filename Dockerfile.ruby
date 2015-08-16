@@ -7,4 +7,5 @@ run gem install bundler
 # copy the application files to the image
 workdir /srv/capsulecd
 copy . /srv/capsulecd/
-run bundle install --path vendor/bundle
+
+run bundle install --path vendor/bundle --without chef node
