@@ -97,9 +97,24 @@ module GithubSource
       @source_client.upload_asset(release[:url], release_artifact[:path], {:name => release_artifact[:name]})
     }
 
+    #set the pull request status
+    @source_client.create_status(payload['repository']['full_name'], @source_git_head_info['sha'], 'success',{
+      :target_url => 'http://www.github.com/AnalogJ/capsulecd',
+      :description => 'pull-request was successfully merged, new release created.'
+    })
+  end
+
+  def source_process_failure(ex)
+    @source_client.create_status(payload['repository']['full_name'], @source_git_head_info['sha'], 'failure',{
+       :target_url => 'http://www.github.com/AnalogJ/capsulecd',
+       :description => ex.message.slice!(0..135)
+    })
   end
 
 
+  ######################################################################################################################
+  # Utilities
+  ######################################################################################################################
 
   def generate_changelog(repo_path, base_sha, head_sha, full_name)
     repo = Git.open(repo_path)

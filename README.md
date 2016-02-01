@@ -9,12 +9,12 @@ capsume.yml file should have the following sections:
     # Image should have all required tools installed to validate, build, package and release 
     image: chef 
     
-    # source should be where the package source is from. ie. github/bitbucket/gitlab (only github supported to start)
+    # source should be where the platform where the package source is stored. ie. github/bitbucket/gitlab (only github supported to start)
     source: 
       github:
-        # additional github specific configuration which can be used to configure enterprise github connections
+        # a github access_token is required to identify the user who has "push" rights to the repo.
         access_token: 
-
+        # additional github specific configuration which can be used to configure enterprise github connections
     
     # type specifies which capsule script is run against the code
     # can only be: node, chef, ruby, python, crate, puppet, docker?,  general, (more to come)

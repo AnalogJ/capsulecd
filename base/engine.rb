@@ -55,13 +55,19 @@ class Engine
     package_step()
     run_hook :after_package_step
 
-    run_hook :before_source_release
-    source_release()
-    run_hook :after_source_release
-
     run_hook :before_release_step
     release_step()
     run_hook :after_release_step
+
+    run_hook :before_source_release
+    source_release()
+    run_hook :after_source_release
+  rescue => ex
+
+    run_hook :before_source_process_failure, ex
+    source_process_failure(ex)
+    run_hook :after_source_process_failure, ex
+
   end
 
 

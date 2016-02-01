@@ -1,4 +1,4 @@
-from ruby:2.1
+from phusion/passenger-full #for testing only
 maintainer Jason Kulatunga <jk17@ualberta.ca>
 
 run apt-get install -y git
@@ -8,4 +8,4 @@ run gem install bundler
 workdir /srv/capsulecd
 run git clone https://github.com/AnalogJ/capsulecd.git .
 
-run bundle install --path vendor/bundle --without chef ruby
+run bundle install --without chef ruby
