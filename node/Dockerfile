@@ -1,4 +1,4 @@
-from phusion/passenger-full #for testing only
+from phusion/passenger-full
 maintainer Jason Kulatunga <jk17@ualberta.ca>
 
 run apt-get install -y git
