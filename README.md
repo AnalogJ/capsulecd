@@ -50,3 +50,14 @@ capsume.yml file should have the following sections:
         flags: []
       pre:
       post:
+
+
+# Hosted CI Providers
+
+
+Hosted Service | Pricing | Docker | Pull Requests | Comments
+------------ | ------------- | ------------- | ------------- | ------------- 
+Drone.io | Free Tier | No | Yes | Opensource Drone lets you specify a .drone.yml file and Docker image, but hosted Drone does not. 
+Travis.ci | Free Tier | Yes | Yes | Pull requests have a [security restriction](https://docs.travis-ci.com/user/pull-requests#Security-Restrictions-when-testing-Pull-Requests). Secrets arn't available
+Wercker | Free Tier | Yes | No | Pull requests do not specify the PR #, or even that they are a [Pull Request](https://github.com/wercker/support/issues/19)
+
