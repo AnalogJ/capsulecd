@@ -17,14 +17,14 @@ COPY node/ /srv/capsulecd/node/
 COPY ruby/ /srv/capsulecd/ruby/
 COPY cli.rb /srv/capsulecd/
 COPY Gemfile /srv/capsulecd/
-COPY Gemfile.lock /srv/capsulecd/
+#COPY Gemfile.lock /srv/capsulecd/
 
 RUN ls -alt /srv/capsulecd
 
 workdir /srv/capsulecd
 
-run bundle install --path vendor/bundle --without chef node --with github
+run bundle install --path vendor/bundle --without ruby node --with github
 
 
 CMD ["bash"]
-# bundle exec ruby cli.rb --runner circleci --source github --type node
+# bundle exec ruby cli.rb --runner circleci --source github --type chef

@@ -34,9 +34,8 @@ module GithubSource
   def source_process_payload(payload)
     puts 'github source_process_payload'
 
-    #TODO: ensure that this is a pullrequest
 
-    print payload
+    puts payload
 
     # check the payload action
     unless(payload['state'] == 'open')
@@ -80,6 +79,9 @@ module GithubSource
 
   def source_release
     puts 'github source_release'
+    unless @source_release_commit
+      raise 'the @source_release_commit was not set by the packager'
+    end
 
     #push the version bumped metadata file + newly created files to
     GitUtils.push(@source_git_local_path, @source_git_local_branch, @source_git_base_info['ref'])
@@ -92,7 +94,7 @@ module GithubSource
     #get the release changelog
     release_body = generate_changelog(@source_git_local_path, @source_git_base_info['sha'], @source_git_head_info['sha'], @source_git_base_info['repo']['full_name'])
 
-    release = @source_client.create_release(@source_git_base_info[:full_name], @source_release_commit.name, {
+    release = @source_client.create_release(@source_git_base_info['repo']['full_name'], @source_release_commit.name, {
       :target_commitish => release_sha,
       :name => @source_release_commit.name,
       :body => release_body
@@ -100,7 +102,7 @@ module GithubSource
 
     @source_release_artifacts.each { |release_artifact|
       @source_client.upload_asset(release[:url], release_artifact[:path], {:name => release_artifact[:name]})
-    }
+    } if @source_release_artifacts
 
     #set the pull request status
     @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',{
@@ -128,7 +130,7 @@ module GithubSource
     markdown = "Timestamp |  SHA | Message | Author \n"
     markdown += "------------- | ------------- | ------------- | ------------- \n"
     repo.log.between(base_sha, head_sha).each { |commit|
-      markdown += "#{commit.date.strftime('%Y-%m-%d %H:%M:%S%z')} | [`#{commit.sha.slice 0..8}`](https://github.com/#{full_name}/commit/#{commit.sha} | #{commit.message.gsub!('|','!')} | #{commit.author.name}) \n"
+      markdown += "#{commit.date.strftime('%Y-%m-%d %H:%M:%S%z')} | [`#{commit.sha.slice 0..8}`](https://github.com/#{full_name}/commit/#{commit.sha}) | #{commit.message.gsub!('|','!') || '--'} | #{commit.author.name}) \n"
     }
     return markdown
   end

@@ -2,7 +2,6 @@ require 'semverly'
 require 'open3'
 require 'bundler'
 require_relative '../base/engine'
-require_relative 'chef_utils'
 
 
 class NodeEngine < Engine
