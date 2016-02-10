@@ -55,9 +55,11 @@ capsume.yml file should have the following sections:
 # Hosted CI Providers
 
 
-Hosted Service | Pricing | Docker | Pull Requests | Comments
+Hosted Service | Pricing | Docker | Pull Requests | Secrets |  Comments
 ------------ | ------------- | ------------- | ------------- | ------------- 
-Drone.io | Free Tier | No | Yes | Opensource Drone lets you specify a .drone.yml file and Docker image, but hosted Drone does not. 
-Travis.ci | Free Tier | Yes | Yes | Pull requests have a [security restriction](https://docs.travis-ci.com/user/pull-requests#Security-Restrictions-when-testing-Pull-Requests). Secrets arn't available
-Wercker | Free Tier | Yes | No | Pull requests do not specify the PR #, or even that they are a [Pull Request](https://github.com/wercker/support/issues/19)
+Appveyor | Free Tier | No | [Yes](https://www.appveyor.com/docs/environment-variables) | Yes | Windows only
+Drone.io | Free Tier | No | [Yes](http://docs.drone.io/env.html) | Yes | Opensource Drone lets you specify a .drone.yml file and Docker image, but hosted Drone does not. 
+Shippable | Free Tier | Yes | [Yes](http://docs.shippable.com/yml_reference/) | Yes | Terrible UI. 
+Travis.ci | Free Tier | [Yes](https://docs.travis-ci.com/user/docker/) | [Yes](https://docs.travis-ci.com/user/pull-requests) | Yes | Pull requests have a [security restriction](https://docs.travis-ci.com/user/pull-requests#Security-Restrictions-when-testing-Pull-Requests). Secrets arn't available
+Wercker | Free Tier | [Yes](http://devcenter.wercker.com/docs/containers/private-containers.html) | [No](https://github.com/wercker/support/issues/19) | Yes | Pull requests do not specify the PR #, or even that they are a [Pull Request](https://github.com/wercker/support/issues/19)
 
