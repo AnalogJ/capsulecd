@@ -51,7 +51,7 @@ class Engine
 
     #start processing the payload, which should result in a local merged git repository that we
     # can begin to test. Processing the payload should also verify if the payload creator has correct access/permissions
-    # to kick off a new release.
+    # to kick off a new release. This step should bump up the package version
     self.run_hook :before_source_process_payload
     source_process_payload(@payload)
     self.run_hook :after_source_process_payload
@@ -67,15 +67,18 @@ class Engine
     test_step()
     self.run_hook :after_test_step
 
-    #
+    # this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
     self.run_hook :before_package_step
     package_step()
     self.run_hook :after_package_step
 
+    #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
     self.run_hook :before_release_step
     release_step()
     self.run_hook :after_release_step
 
+    # this step should push the merged, tested and version updated code up to the source code repository
+    # this step should also do any source specific releases (github release, asset uploading, etc)
     self.run_hook :before_source_release
     source_release()
     self.run_hook :after_source_release

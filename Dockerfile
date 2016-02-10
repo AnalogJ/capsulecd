@@ -26,5 +26,6 @@ workdir /srv/capsulecd
 run bundle install --path vendor/bundle --without ruby node --with github
 
 
-CMD ["bash"]
+#CMD ["bash"]
+CMD ["bundle", "exec", "ruby", "cli.rb", "--runner", "circleci", "--source", "github", "--type", "chef"]
 # bundle exec ruby cli.rb --runner circleci --source github --type chef

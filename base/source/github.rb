@@ -10,18 +10,22 @@ module GithubSource
   @source_client
   @source_git_base_info
   @source_git_head_info
-  @source_git_parent_path = '/var/capsulecd/' # should be the parent folder of the cloned repository. /var/capsule-cd/
+  @source_git_parent_path
   @source_git_local_path
   @source_git_local_branch
   @source_git_remote
-
-  @source_release_commit = nil
-  @source_release_artifacts = []
+  @source_release_commit
+  @source_release_artifacts
 
   #define the Source API methods
 
   # configure method will generate an authenticated client that can be used to comunicate with Github
     def source_configure
+      @source_git_parent_path = '/var/capsulecd/' # should be the parent folder of the cloned repository. /var/capsulecd/
+      @source_release_commit = nil
+      @source_release_artifacts = []
+
+
       puts 'github source_configure'
       Octokit.auto_paginate = true
       @source_client = Octokit::Client.new(:access_token => ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'])
@@ -102,7 +106,7 @@ module GithubSource
 
     @source_release_artifacts.each { |release_artifact|
       @source_client.upload_asset(release[:url], release_artifact[:path], {:name => release_artifact[:name]})
-    } if @source_release_artifacts
+    }
 
     #set the pull request status
     @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',{

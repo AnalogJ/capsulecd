@@ -3,7 +3,8 @@ require 'open3'
 require 'bundler'
 require_relative '../base/engine'
 require_relative 'chef_utils'
-
+require 'base64'
+require 'fileutils'
 
 class ChefEngine < Engine
   def build_step()
@@ -105,5 +106,49 @@ class ChefEngine < Engine
   #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
   def release_step()
     super
+    puts @source_git_parent_path
+    pem_path = File.join(@source_git_parent_path, 'client.pem')
+    knife_path = File.join(@source_git_parent_path, 'knife.rb')
+
+    if !(ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME'] || ENV['CAPSULE_CHEF_SUPERMARKET_KEY'])
+      #TODO: make this a warning
+      puts 'cannot deploy cookbook to supermarket, credentials missing'
+      return
+    end
+
+    #write the knife.rb config file.
+    File.open(knife_path, 'w+') { |file|
+      file.write(<<EOT.gsub(/^\s+/, '')
+  node_name "#{ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME']}" # Replace with the login name you use to login to the Supermarket.
+  client_key "#{pem_path}" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
+  cookbook_path [ '#{@source_git_parent_path}' ] # Directory where the cookbook you're uploading resides.
+EOT
+      )
+    }
+
+    File.open(pem_path, 'w+') { |file|
+      key = Base64.strict_decode64(ENV['CAPSULE_CHEF_SUPERMARKET_KEY'])
+      file.write(key)
+    }
+
+    metadata_str = ChefUtils.read_repo_metadata(@source_git_local_path)
+    chef_metadata = ChefUtils.parse_metadata(metadata_str)
+
+    command = "knife cookbook site share #{chef_metadata.name} #{ENV['CAPSULE_CHEF_SUPERMARKET_TYPE'] || 'Other'}  -c #{knife_path}"
+    Open3.popen3(command) do |stdin, stdout, stderr, external|
+      {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
+        Thread.new do
+          until (line = stream_buffer.gets).nil? do
+            puts "#{name} -> #{line}"
+          end
+        end
+      end
+      #wait for process
+      external.join
+      if !external.value.success?
+        raise 'knife cookbook upload to supermarket failed'
+      end
+    end
+
   end
 end

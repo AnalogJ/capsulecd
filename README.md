@@ -65,3 +65,22 @@ Shippable | Free Tier | Yes | [Yes](http://docs.shippable.com/yml_reference/) | 
 Travis.ci | Free Tier | [Yes](https://docs.travis-ci.com/user/docker/) | [Yes](https://docs.travis-ci.com/user/pull-requests) | Yes | Pull requests have a [security restriction](https://docs.travis-ci.com/user/pull-requests#Security-Restrictions-when-testing-Pull-Requests). Secrets arn't available
 Wercker | Free Tier | [Yes](http://devcenter.wercker.com/docs/containers/private-containers.html) | [No](https://github.com/wercker/support/issues/19) | Yes | Pull requests do not specify the PR #, or even that they are a [Pull Request](https://github.com/wercker/support/issues/19)
 
+# Environmental Variables
+
+## Runner
+
+Runner Name | Required Variables
+------------ | -------------
+CircleCI | `CI_PULL_REQUEST`, `CIRCLE_PROJECT_USERNAME`, `CIRCLE_PROJECT_REPONAME`
+
+## Source
+
+Source Name | Required Variables
+------------ | -------------
+Github | `CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN`
+
+## Type
+
+Package Type | Required Variables
+------------ | -------------
+Chef | `CAPSULE_CHEF_SUPERMARKET_USERNAME`, `CAPSULE_CHEF_SUPERMARKET_KEY`, `CAPSULE_CHEF_SUPERMARKET_TYPE`
