@@ -3,6 +3,7 @@
 require 'yaml'
 require 'optparse'
 require 'erb'
+require 'pp'
 require_relative 'base/engine'
 
 # This script will kick off the pull request CD process.
@@ -19,8 +20,8 @@ class OptsParse
 
     opts = OptionParser.new do |opts|
       opts.banner = ' Usage: start.rb [options]'
-      opts.seperator ''
-      opts.seperator 'Specific options'
+      opts.separator ''
+      opts.separator 'Specific options'
 
 
 
@@ -51,4 +52,5 @@ puts '##########################################################################
 pp options
 
 
-Engine.new(options)
+engine = Engine.new(options)
+engine.start

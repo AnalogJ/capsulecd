@@ -22,6 +22,7 @@ module GithubSource
 
   # configure method will generate an authenticated client that can be used to comunicate with Github
     def source_configure
+      puts 'github source_configure'
       Octokit.auto_paginate = true
       @source_client = Octokit::Client.new(:access_token => ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'])
     end
@@ -31,6 +32,8 @@ module GithubSource
   # all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
   # MUST set source_git_local_path
   def source_process_payload(payload)
+    puts 'github source_process_payload'
+
     #TODO: ensure that this is a pullrequest
 
     print payload
@@ -76,6 +79,8 @@ module GithubSource
   end
 
   def source_release
+    puts 'github source_release'
+
     #push the version bumped metadata file + newly created files to
     GitUtils.push(@source_git_local_path, @source_git_local_branch, @source_git_base_info['ref'])
     #sleept because github needs time to process the new tag.
@@ -105,6 +110,8 @@ module GithubSource
   end
 
   def source_process_failure(ex)
+    puts 'github source_process_failure'
+
     @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',{
        :target_url => 'http://www.github.com/AnalogJ/capsulecd',
        :description => ex.message.slice!(0..135)
