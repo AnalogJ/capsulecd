@@ -2,6 +2,7 @@ require 'octokit'
 require 'uri'
 require 'git'
 require_relative '../../base/common/git_utils'
+require_relative '../../base/common/bot_utils'
 
 module GithubSource
 
@@ -53,6 +54,8 @@ module GithubSource
 
     # check the payload push user.
     if !@source_client.collaborator?(payload['base']['repo']['full_name'], payload['user']['login'])
+
+      @source_client.add_comment(payload['base']['repo']['full_name'], payload['number'], BotUtils.pull_request_comment)
       raise 'pull request was opened by a unauthorized user'
     end
 

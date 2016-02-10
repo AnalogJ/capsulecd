@@ -19,6 +19,11 @@ class OptsParse
         :type => :general, #can be node, chef, ruby, python, crate, puppet,  general, (more to come)
     }
 
+    # parse runner from env
+    options[:runner] = :circleci if ENV['CIRCLECI']
+
+    # parse type from env
+
     opts = OptionParser.new do |opts|
       opts.banner = ' Usage: start.rb [options]'
       opts.separator ''
