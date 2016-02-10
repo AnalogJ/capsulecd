@@ -1,4 +1,3 @@
-require 'hooks'
 require 'octokit'
 require 'uri'
 require 'git'
