@@ -14,7 +14,6 @@ class Engine
                :before_release_step, :after_release_step
 
   #empty hooks
-
   before_source_configure {
     puts 'before_source_configure'
   }
@@ -22,8 +21,6 @@ class Engine
   after_source_configure {
     puts 'after_source_configure'
   }
-
-
 
 
   def initialize(options)
@@ -37,7 +34,6 @@ class Engine
     if options[:runner] == :circleci
       self.class.send(:include, CircleciRunner)
     end
-
 
   end
 

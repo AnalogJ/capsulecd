@@ -5,7 +5,7 @@ require_relative '../base/engine'
 require_relative 'chef_utils'
 
 
-class ChefEngine < Engine
+class NodeEngine < Engine
   def build_step()
     super
 

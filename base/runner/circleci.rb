@@ -11,7 +11,7 @@ module CircleciRunner
       raise 'This is not a pull request. No automatic continuous deployment processing required. exiting..'
     end
 
-    @source_client.pull_request(ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'])
+    @source_client.pull_request(ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'], ENV['CI_PULL_REQUEST'].to_i)
   end
 
 end
