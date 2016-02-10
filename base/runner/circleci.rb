@@ -1,3 +1,4 @@
+require 'uri'
 module CircleciRunner
 
   def runner_retrieve_payload(options)
@@ -11,7 +12,10 @@ module CircleciRunner
       raise 'This is not a pull request. No automatic continuous deployment processing required. exiting..'
     end
 
-    @source_client.pull_request(ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'], ENV['CI_PULL_REQUEST'].to_i)
+    # parse the PR# from the environment variable, eg. https://github.com/AnalogJ/cookbook_analogj_test/pull/9
+    pull_request_number =  File.basename(URI.parse(ENV['CI_PULL_REQUEST']).path).to_i # => baz
+
+    @source_client.pull_request(ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'], pull_request_number)
   end
 
 end
