@@ -8,7 +8,7 @@ module CircleciRunner
     # here are the environmental variables we need to handle:
     # https://circleci.com/docs/environment-variables
 
-    unless ENV['CI_PULL_REQUEST']
+    if ENV['CI_PULL_REQUEST'].to_s.empty?
       raise 'This is not a pull request. No automatic continuous deployment processing required. exiting..'
     end
 
