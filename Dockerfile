@@ -1,4 +1,4 @@
-from ruby:2.1
+from phusion/passenger-full
 maintainer Jason Kulatunga <jk17@ualberta.ca>
 
 run apt-get install -y git
@@ -23,9 +23,9 @@ RUN ls -alt /srv/capsulecd
 
 workdir /srv/capsulecd
 
-run bundle install --path vendor/bundle --without ruby node --with github
+run bundle install --path vendor/bundle --without ruby chef --with github
 
 
 #CMD ["bash"]
-CMD ["bundle", "exec", "ruby", "cli.rb", "--runner", "circleci", "--source", "github", "--type", "chef"]
-# bundle exec ruby cli.rb --runner circleci --source github --type chef
+CMD ["bundle", "exec", "ruby", "cli.rb", "--source", "github", "--type", "node"]
+# bundle exec ruby cli.rb --runner circleci --source github --type node

@@ -41,4 +41,10 @@ class GitUtils
     repo = Git.open(repo_path)
     repo.push('origin', "#{local_branch}:#{remote_branch}", {:tags => true})
   end
+
+  #gets the HEAD commit on current branch
+  def self.head_commit(repo_path)
+    repo = Git.open(repo_path)
+    pp repo.object('HEAD')
+  end
 end

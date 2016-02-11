@@ -4,8 +4,7 @@ require 'yaml'
 require 'optparse'
 require 'erb'
 require 'pp'
-require_relative 'node/node_engine'
-require_relative 'chef/chef_engine'
+
 
 # This script will kick off the pull request CD process.
 
@@ -58,8 +57,10 @@ puts '##########################################################################
 pp options
 
 if options[:type] == :node
+  require_relative 'node/node_engine'
   engine = NodeEngine.new(options)
 elsif options[:type] == :chef
+  require_relative 'chef/chef_engine'
   engine = ChefEngine.new(options)
 end
 

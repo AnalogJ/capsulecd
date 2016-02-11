@@ -14,7 +14,7 @@ class NodeEngine < Engine
     #TODO: check if this module name and version already exist.
 
     #check for/create any required missing folders/files
-    if !File.exists(@source_git_local_path + '/test')
+    if !File.exists?(@source_git_local_path + '/test')
       FileUtils.mkdir(@source_git_local_path + '/test')
     end
   end
@@ -39,7 +39,7 @@ class NodeEngine < Engine
     end
 
     # create a shrinkwrap file.
-    if !File.exists(@source_git_local_path + '/npm-shrinkwrap.json')
+    if !File.exists?(@source_git_local_path + '/npm-shrinkwrap.json')
       Open3.popen3('npm shrinkwrap', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
         {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
           Thread.new do
@@ -78,10 +78,45 @@ class NodeEngine < Engine
   def package_step()
     super
 
-    #TODO: create ~/.npmrc file with credential token, email and username
-    #_auth = EDIT: HIDDEN
-    #email = npm
-    #username = npm
+    #commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
+    # as they will be included in the commmit and any release artifacts)
+    GitUtils.commit(@source_git_local_path, 'Committing automated changes before packaging.')
+
+    # run npm publish
+    Open3.popen3('npm version patch -m "(v%s) Automated packaging of release by CapsuleCD"', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
+      {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
+        Thread.new do
+          until (line = stream_buffer.gets).nil? do
+            puts "#{name} -> #{line}"
+          end
+        end
+      end
+      #wait for process
+      external.join
+      if !external.value.success?
+        raise 'npm version bump failed'
+      end
+    end
+
+    @source_release_commit = GitUtils.head_commit(@source_git_local_path)
+
+  end
+
+  #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
+  def release_step()
+    super
+    npmrc_path = File.join(@source_git_local_path, '.npmrc')
+
+    if !ENV['CAPSULE_NODE_AUTH_TOKEN']
+      #TODO: make this a warning
+      puts 'cannot deploy page to npm, credentials missing'
+      return
+    end
+
+    #write the knife.rb config file.
+    File.open(npmrc_path, 'w+') { |file|
+      file.write("//registry.npmjs.org/:_authToken=#{ENV['CAPSULE_NODE_AUTH_TOKEN']}")
+    }
 
     # run npm publish
     Open3.popen3('npm publish .', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
@@ -95,9 +130,10 @@ class NodeEngine < Engine
       #wait for process
       external.join
       if !external.value.success?
-        raise 'npm test failed. Check log for exact error'
+        raise 'npm publish failed. Check log for exact error'
       end
     end
+
   end
 
 end
