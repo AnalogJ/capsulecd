@@ -36,10 +36,28 @@ module GithubSource
   # should check if the pull request opener even has permissions to create a release.
   # all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
   # MUST set source_git_local_path
-  def source_process_payload(payload)
+  def source_process_push_payload(payload)
+
+    @source_git_head_info = payload['head']
+
+    #set the remote url, with embedded token
+    uri = URI.parse(payload['head']['repo']['clone_url'])
+    uri.user = ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
+    @source_git_remote = uri.to_s
+    @source_git_local_branch = @source_git_head_info['repo']['branch']
+    # clone the merged branch
+    # https://sethvargo.com/checkout-a-github-pull-request/
+    # https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
+    @source_git_local_path = GitUtils.clone(@source_git_parent_path,@source_git_head_info['repo']['name'],@source_git_remote)
+    GitUtils.checkout(@source_git_local_path, @source_git_head_info['repo']['sha1'])
+  end
+
+  # all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the pull request data.
+  # should check if the pull request opener even has permissions to create a release.
+  # all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
+  # MUST set source_git_local_path
+  def source_process_pull_request_payload(payload)
     puts 'github source_process_payload'
-
-
     puts payload
 
     # check the payload action
@@ -59,14 +77,14 @@ module GithubSource
       raise 'pull request was opened by a unauthorized user'
     end
 
+    #set the base/head info,
+    @source_git_base_info = payload['base']
+    @source_git_head_info = payload['head']
+
     #set the remote url, with embedded token
     uri = URI.parse(payload['base']['repo']['clone_url'])
     uri.user = ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
     @source_git_remote = uri.to_s
-
-    #set the base/head info,
-    @source_git_base_info = payload['base']
-    @source_git_head_info = payload['head']
 
     # clone the merged branch
     # https://sethvargo.com/checkout-a-github-pull-request/

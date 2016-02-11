@@ -5,7 +5,8 @@ require 'hooks'
 class Engine
   include Hooks
   define_hooks :before_source_configure, :after_source_configure,
-               :before_source_process_payload, :after_source_process_payload,
+               :before_source_process_pull_request_payload, :after_source_process_pull_request_payload,
+               :before_source_process_push_payload, :after_source_process_push_payload,
                :before_runner_retrieve_payload, :after_runner_retrieve_payload,
                :before_build_step, :after_build_step,
                :before_test_step, :after_test_step,
@@ -44,17 +45,31 @@ class Engine
     source_configure()
     self.run_hook :after_source_configure
 
+    #runner must determine if this is a pull request or a push.
+    #if it's a pull request the runner must retrieve the pull request payload and return it
+    #if its a push, the runner must retrieve the push payload and return it
+    #the variable @runner_is_pullrequest MUST be set if a pull request was created.
     self.run_hook :before_runner_retrieve_payload
-    @payload = runner_retrieve_payload(@options)
+    payload = runner_retrieve_payload(@options)
     self.run_hook :after_runner_retrieve_payload
 
+    if @runner_is_pullrequest
+      # all capsule CD processing will be kicked off via a payload. In this case the payload is the pull request data.
+      # should check if the pull request opener even has permissions to create a release.
+      # all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
+      # MUST set source_git_local_path
+      self.run_hook :before_source_process_pull_request_payload
+      source_process_pull_request_payload(payload)
+      self.run_hook :after_source_process_pull_request_payload
+    else
+      #start processing the payload, which should result in a local git repository that we
+      # can begin to test. This step should bump up the package version. Since this is a push, no packaging is required
+      # MUST set source_git_local_path
+      self.run_hook :before_source_process_push_payload
+      source_process_push_payload(payload)
+      self.run_hook :after_source_process_push_payload
+    end
 
-    #start processing the payload, which should result in a local merged git repository that we
-    # can begin to test. Processing the payload should also verify if the payload creator has correct access/permissions
-    # to kick off a new release. This step should bump up the package version
-    self.run_hook :before_source_process_payload
-    source_process_payload(@payload)
-    self.run_hook :after_source_process_payload
 
     # now that the payload has been processed we can begin by building the code.
     # this may be compilation, dependency downloading, etc.
@@ -72,16 +87,19 @@ class Engine
     package_step()
     self.run_hook :after_package_step
 
-    #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
-    self.run_hook :before_release_step
-    release_step()
-    self.run_hook :after_release_step
+    if(@runner_is_pullrequest)
+      #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
+      self.run_hook :before_release_step
+      release_step()
+      self.run_hook :after_release_step
 
-    # this step should push the merged, tested and version updated code up to the source code repository
-    # this step should also do any source specific releases (github release, asset uploading, etc)
-    self.run_hook :before_source_release
-    source_release()
-    self.run_hook :after_source_release
+      # this step should push the merged, tested and version updated code up to the source code repository
+      # this step should also do any source specific releases (github release, asset uploading, etc)
+      self.run_hook :before_source_release
+      source_release()
+      self.run_hook :after_source_release
+    end
+
 
 
   # rescue => ex #TODO if you enable this rescue block, hooks stop working.
