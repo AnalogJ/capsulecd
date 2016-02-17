@@ -63,7 +63,7 @@ class Engine
       self.run_hook :after_source_process_pull_request_payload
     else
       #start processing the payload, which should result in a local git repository that we
-      # can begin to test. This step should bump up the package version. Since this is a push, no packaging is required
+      # can begin to test. Since this is a push, no packaging is required
       # MUST set source_git_local_path
       self.run_hook :before_source_process_push_payload
       source_process_push_payload(payload)
@@ -72,7 +72,7 @@ class Engine
 
 
     # now that the payload has been processed we can begin by building the code.
-    # this may be compilation, dependency downloading, etc.
+    # this may be compilation, dependency downloading, version bumping, etc.
     self.run_hook :before_build_step
     build_step()
     self.run_hook :after_build_step

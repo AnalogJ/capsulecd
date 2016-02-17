@@ -62,6 +62,9 @@ if options[:type] == :node
 elsif options[:type] == :chef
   require_relative 'chef/chef_engine'
   engine = ChefEngine.new(options)
+elsif options[:type] == :python
+  require_relative 'python/python_engine'
+  engine = PythonEngine.new(options)
 end
 
 engine.start

@@ -8,6 +8,6 @@ run gem install bundler
 workdir /srv/capsulecd
 run git clone https://github.com/AnalogJ/capsulecd.git .
 
-run bundle install --path vendor/bundle --without chef node
+run bundle install --path vendor/bundle --without chef node python
 
 cmd ["bundle", "exec", "ruby", "cli.rb", "--type", "ruby"]
