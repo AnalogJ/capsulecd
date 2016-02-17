@@ -45,6 +45,5 @@ class GitUtils
   #gets the HEAD commit on current branch
   def self.head_commit(repo_path)
     repo = Git.open(repo_path)
-    pp repo.object('HEAD')
   end
 end
