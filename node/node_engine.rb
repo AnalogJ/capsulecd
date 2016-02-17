@@ -58,7 +58,7 @@ class NodeEngine < Engine
 
 
     # run npm test
-    Open3.popen3('npm test', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
+    Open3.popen3(ENV, 'npm test', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
       {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
         Thread.new do
           until (line = stream_buffer.gets).nil? do
