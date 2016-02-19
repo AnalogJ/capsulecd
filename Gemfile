@@ -6,6 +6,7 @@ group :test do
   gem 'rake'
   gem 'rspec'
   gem 'vcr'
+  gem 'simplecov'
 end
 
 
