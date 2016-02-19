@@ -1,9 +1,10 @@
 require 'spec_helper'
+require 'rspec/support/spec/in_sub_process'
 require 'capsulecd/cli'
 require 'capsulecd/base/engine'
-require 'capsulecd/node/node_engine'
 
 describe CapsuleCD::Cli do
+  include RSpec::Support::InSubProcess
 
   # before(:each) do
   #   @pwd = Dir.pwd
