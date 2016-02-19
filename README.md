@@ -55,7 +55,7 @@ capsume.yml file should have the following sections:
 # Hosted CI Providers
 
 
-Hosted Service | Pricing | Docker | Pull Request # | Secrets |  Comments
+Hosted Service | Pricing | Docker | Pull Request | Secrets |  Comments
 ------------ | ------------- | ------------- | ------------- | ------------- 
 Appveyor | Free Tier | No | [Yes](https://www.appveyor.com/docs/environment-variables) | Yes | Windows only
 Codeship | Free Tier | [No](http://pages.codeship.com/docker?utm_source=CodeshipNavBar) | [Yes](https://codeship.com/documentation/continuous-integration/set-environment-variables/) | Yes | Docker support not publically available. 
@@ -85,3 +85,4 @@ Package Type | Required Variables
 ------------ | -------------
 Chef | `CAPSULE_CHEF_SUPERMARKET_USERNAME`, `CAPSULE_CHEF_SUPERMARKET_KEY` (base64 encoded), `CAPSULE_CHEF_SUPERMARKET_TYPE`
 Node | `CAPSULE_NODE_AUTH_TOKEN`
+Python | `CAPSULE_PYTHON_USERNAME`, `CAPSULE_PYTHON_PASSWORD`

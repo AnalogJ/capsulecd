@@ -118,11 +118,11 @@ class ChefEngine < Engine
 
     #write the knife.rb config file.
     File.open(knife_path, 'w+') { |file|
-      file.write(<<EOT.gsub(/^\s+/, '')
-  node_name "#{ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME']}" # Replace with the login name you use to login to the Supermarket.
-  client_key "#{pem_path}" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
-  cookbook_path [ '#{@source_git_parent_path}' ] # Directory where the cookbook you're uploading resides.
-EOT
+      file.write(<<-EOT.gsub(/^\s+/, '')
+        node_name "#{ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME']}" # Replace with the login name you use to login to the Supermarket.
+        client_key "#{pem_path}" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
+        cookbook_path [ '#{@source_git_parent_path}' ] # Directory where the cookbook you're uploading resides.
+      EOT
       )
     }
 

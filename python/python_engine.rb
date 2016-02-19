@@ -71,47 +71,41 @@ class PythonEngine < Engine
   def package_step()
     super
 
-    # #commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
-    # # as they will be included in the commmit and any release artifacts)
-    # GitUtils.commit(@source_git_local_path, 'Committing automated changes before packaging.') rescue puts 'Could not commit changes locally..'
-    #
-    # # run npm publish
-    # Open3.popen3('npm version patch -m "(v%s) Automated packaging of release by CapsuleCD"', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
-    #   {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
-    #     Thread.new do
-    #       until (line = stream_buffer.gets).nil? do
-    #         puts "#{name} -> #{line}"
-    #       end
-    #     end
-    #   end
-    #   #wait for process
-    #   external.join
-    #   if !external.value.success?
-    #     raise 'npm version bump failed'
-    #   end
-    # end
-    #
-    # @source_release_commit = GitUtils.head_commit(@source_git_local_path)
+    #commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
+    # as they will be included in the commmit and any release artifacts)
+    version = File.read(@source_git_local_path + '/VERSION').strip
+    next_version = SemVer.parse(version)
+    GitUtils.commit(@source_git_local_path, "(v#{next_version.to_s}) Automated packaging of release by CapsuleCD")
+    @source_release_commit = GitUtils.tag(@source_git_local_path, "v#{next_version.to_s}")
 
   end
 
   #this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
   def release_step()
     super
-    # npmrc_path = File.join(@source_git_local_path, '.npmrc')
-    #
-    # if !ENV['CAPSULE_NODE_AUTH_TOKEN']
-    #   #TODO: make this a warning
-    #   puts 'cannot deploy page to npm, credentials missing'
-    #   return
-    # end
-    #
-    # #write the knife.rb config file.
-    # File.open(npmrc_path, 'w+') { |file|
-    #   file.write("//registry.npmjs.org/:_authToken=#{ENV['CAPSULE_NODE_AUTH_TOKEN']}")
-    # }
+    pypirc_path = File.expand_path('~/.pypirc')
+
+    if !(ENV['CAPSULE_PYTHON_USERNAME'] || ENV['CAPSULE_PYTHON_PASSWORD'])
+      puts 'cannot deploy package to pip, credentials missing'
+      return
+    end
+
+    #write the knife.rb config file.
+    File.open(pypirc_path, 'w+') { |file|
+      file.write(<<-EOT.gsub(/^\s+/, '')
+        [distutils]
+        index-servers=pypi
+
+        [pypi]
+        repository = https://pypi.python.org/pypi
+        username = #{ENV['CAPSULE_PYTHON_USERNAME']}
+        password = #{ENV['CAPSULE_PYTHON_PASSWORD']}
+      EOT
+      )
+    }
 
     # run python setup.py sdist upload
+    # TODO: use twine instead (it supports HTTPS.)https://python-packaging-user-guide.readthedocs.org/en/latest/distributing/#uploading-your-project-to-pypi
     Open3.popen3('python setup.py sdist upload', :chdir => @source_git_local_path) do |stdin, stdout, stderr, external|
       {:stdout => stdout, :stderr => stderr}. each do |name, stream_buffer|
         Thread.new do
