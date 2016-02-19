@@ -1,5 +1,3 @@
-require_relative 'source/github'
-require_relative 'runner/circleci'
 require_relative 'runner/default'
 require 'hooks'
 class Engine
@@ -27,13 +25,17 @@ class Engine
   def initialize(options)
     @options = options
     if options[:source] == :github
+      require_relative 'source/github'
       self.class.send(:include, GithubSource)
     else
       raise 'No source defined.'
     end
 
     if options[:runner] == :circleci
+      require_relative 'runner/circleci'
       self.class.send(:include, CircleciRunner)
+    else
+      self.class.send(:include, DefaultRunner)
     end
 
   end

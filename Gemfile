@@ -1,9 +1,13 @@
 source 'https://rubygems.org'
-# These gems are in the :default group
-gem 'json'
-gem 'git'
-gem 'semverly'
-gem 'hooks'
+gemspec
+
+# These gems are required for testing
+group :test do
+  gem 'rake'
+  gem 'rspec'
+  gem 'vcr'
+end
+
 
 # These gems are required for the various sources
 group :github do
@@ -32,3 +36,4 @@ end
 group :python do
 
 end
+
