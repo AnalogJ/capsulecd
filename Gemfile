@@ -7,14 +7,13 @@ group :test do
   gem 'rspec'
   gem 'vcr'
   gem 'simplecov'
+  gem 'webmock'
 end
-
 
 # These gems are required for the various sources
 group :github do
   gem 'octokit'
 end
-
 
 # These gems are required for the various language packages
 
@@ -27,14 +26,10 @@ group :chef do
 end
 
 group :node do
-
 end
 
 group :ruby do
-
 end
 
 group :python do
-
 end
-

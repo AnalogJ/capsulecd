@@ -6,8 +6,8 @@ require 'capsulecd/version'
 Gem::Specification.new do |spec|
   spec.name          = 'capsulecd'
   spec.version       = CapsuleCD::VERSION
-  spec.summary       = %q{CapsuleCD is a library for automating package releases (npm, cookbooks, gems, pip, jars, etc)}
-  spec.description   = %q{CapsuleCD is a library for automating package releases (npm, cookbooks, gems, pip, jars, etc)}
+  spec.summary       = 'CapsuleCD is a library for automating package releases (npm, cookbooks, gems, pip, jars, etc)'
+  spec.description   = 'CapsuleCD is a library for automating package releases (npm, cookbooks, gems, pip, jars, etc)'
   spec.authors       = ['Jason Kulatunga (AnalogJ)']
   spec.homepage      = 'http://www.github.com/AnalogJ/capsulecd'
   spec.license       = 'MIT'
@@ -24,5 +24,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'git'
   spec.add_dependency 'semverly'
   spec.add_dependency 'hooks'
-
 end

@@ -5,7 +5,6 @@ require 'pp'
 module CapsuleCD
   # The command line interface for CapsuleCD.
   class Cli < Thor
-
     DEFAULT_INVENTORY_CONFIG    = './inventory.yml'
     DEFAULT_INVENTORY_DIRECTORY = './inventory'
     DEFAULT_WEB_DIRECTORY       = './web'
@@ -15,31 +14,35 @@ module CapsuleCD
     ##
     desc 'start', 'Start a new CapsuleCD package pipeline '
     option :runner,
-      :type => :string,
-      :default => 'none', #can be :none, :circleci or :shippable (check the readme for why other hosted providers arn't supported.)
-      :desc => 'The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)'
+           type: :string,
+           default: 'default', # can be :none, :circleci or :shippable (check the readme for why other hosted providers arn't supported.)
+           desc: 'The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)'
 
     option :source,
-           :type => :string,
-           :default => 'github',
-           :desc => 'The source for the code, used to determine which git endpoint to clone from, and create releases on'
+           type: :string,
+           default: 'default',
+           desc: 'The source for the code, used to determine which git endpoint to clone from, and create releases on'
 
     option :package_type,
-           :type => :string,
-           :default => 'general',
-           :desc => 'The type of package being built.'
+           type: :string,
+           default: 'default',
+           desc: 'The type of package being built.'
+
+    option :dry_run,
+           type: :boolean,
+           default: false,
+           desc: 'Specifies that no changes should be pushed to source and no package will be released'
 
     # Begin processing
-    def start()
+    def start
       # parse runner from env
       engine_opts = {}
       engine_opts[:runner] = :circleci if ENV['CIRCLECI']
 
-      engine_opts[:runner] = options[:runner].to_sym
+      engine_opts[:runner] = options[:runner].to_sym #TODO: we cant modify the hash sent by Thor, so we'll duplicate it
       engine_opts[:source] = options[:source].to_sym
       engine_opts[:package_type] = options[:package_type].to_sym
-
-
+      engine_opts[:dry_run] = options[:dry_run]
       puts '###########################################################################################'
       puts '# Configuration '
       puts '###########################################################################################'
@@ -60,6 +63,5 @@ module CapsuleCD
 
       engine.start
     end
-
   end
 end

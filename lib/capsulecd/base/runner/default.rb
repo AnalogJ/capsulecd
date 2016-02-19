@@ -1,7 +1,6 @@
 module DefaultRunner
-
-  #TODO: this needs to be fleshed out/working. ie. Jenkins, Bamboo, GoCD, Drone, other self hosted services
-  def runner_retrieve_payload(opts)
+  # TODO: this needs to be fleshed out/working. ie. Jenkins, Bamboo, GoCD, Drone, other self hosted services
+  def runner_retrieve_payload(_opts)
     print 'default runner_retrieve_payload'
 
     # #circleci only works with github, no need to parse @options[:source]
