@@ -56,7 +56,7 @@ capsume.yml file should have the following sections:
 
 
 Hosted Service | Pricing | Docker | Pull Request | Secrets |  Comments
------------- | ------------- | ------------- | ------------- | ------------- 
+------------ | ------------- | ------------- | ------------- | -------------  | -------------
 Appveyor | Free Tier | No | [Yes](https://www.appveyor.com/docs/environment-variables) | Yes | Windows only
 Codeship | Free Tier | [No](http://pages.codeship.com/docker?utm_source=CodeshipNavBar) | [Yes](https://codeship.com/documentation/continuous-integration/set-environment-variables/) | Yes | Docker support not publically available. 
 Circleci | Free Tier | [Yes](https://circleci.com/integrations/docker/) | [Yes](https://circleci.com/docs/environment-variables) | Yes | n/a
