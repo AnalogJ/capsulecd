@@ -4,6 +4,10 @@ maintainer Jason Kulatunga <jk17@ualberta.ca>
 run apt-get install -y git
 run gem install bundler
 
+#install pip
+run curl -o /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py
+run python /tmp/get-pip.py
+
 # copy the application files to the image
 workdir /srv/capsulecd
 run git clone https://github.com/AnalogJ/capsulecd.git .
