@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'capsulecd/python/python_engine'
 
-describe PythonEngine, :python_engine do
+describe PythonEngine, :python do
   describe '#build_step' do
     let(:engine) {
       PythonEngine.new({

@@ -15,7 +15,7 @@ describe CapsuleCD::Cli do
       end
     end
 
-    describe 'with node_engine', :node_engine do
+    describe 'with node_engine', :node do
       require 'capsulecd/node/node_engine'
       let(:engine_double) { instance_double(NodeEngine, start: true) }
       it 'should call the node start command with the proper options' do
@@ -26,7 +26,7 @@ describe CapsuleCD::Cli do
       end
     end
 
-    describe 'with chef_engine', :chef_engine do
+    describe 'with chef_engine', :chef do
       let(:engine_double) do
         require 'capsulecd/chef/chef_engine'
         instance_double(ChefEngine, start: true)
@@ -37,6 +37,20 @@ describe CapsuleCD::Cli do
           runner: :none, source: :github, package_type: :chef,:dry_run=>false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start --package_type chef)
+      end
+    end
+
+    describe 'with python_engine', :python do
+      let(:engine_double) do
+        require 'capsulecd/python/python_engine'
+        instance_double(PythonEngine, start: true)
+      end
+      it 'should call the python start command with the proper options' do
+        require 'capsulecd/python/python_engine'
+        expect(PythonEngine).to receive(:new).with(
+                                  runner: :none, source: :github, package_type: :python,:dry_run=>false).and_return engine_double
+
+        CapsuleCD::Cli.start %w(start --package_type python)
       end
     end
   end

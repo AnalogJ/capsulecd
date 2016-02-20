@@ -1,20 +1,20 @@
 begin
   require 'rspec/core/rake_task'
-  RSpec::Core::RakeTask.new(:node_engine) do |t|
-    t.rspec_opts = '--tag node_engine'
+  RSpec::Core::RakeTask.new(:node) do |t|
+    t.rspec_opts = '--tag node'
   end
 
-  RSpec::Core::RakeTask.new(:chef_engine) do |t|
-    t.rspec_opts = '--tag chef_engine'
+  RSpec::Core::RakeTask.new(:chef) do |t|
+    t.rspec_opts = '--tag chef'
   end
 
-  RSpec::Core::RakeTask.new(:python_engine) do |t|
-    t.rspec_opts = '--tag python_engine'
+  RSpec::Core::RakeTask.new(:python) do |t|
+    t.rspec_opts = '--tag python'
   end
 
 
   RSpec::Core::RakeTask.new(:test) do |t|
-    t.rspec_opts = '--tag ~chef_engine --tag ~node_engine --tag ~python_engine'
+    t.rspec_opts = '--tag ~chef --tag ~node --tag ~python'
   end
 
   task default: :test
