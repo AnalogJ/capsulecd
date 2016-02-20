@@ -96,7 +96,7 @@ class PythonEngine < Engine
     super
     pypirc_path = File.expand_path('~/.pypirc')
 
-    unless ENV['CAPSULE_PYTHON_USERNAME'] || ENV['CAPSULE_PYTHON_PASSWORD']
+    unless ENV['CAPSULE_PYPI_USERNAME'] || ENV['CAPSULE_PYPI_PASSWORD']
       raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy package to pip, credentials missing'
       return
     end
@@ -109,8 +109,8 @@ class PythonEngine < Engine
 
         [pypi]
         repository = https://pypi.python.org/pypi
-        username = #{ENV['CAPSULE_PYTHON_USERNAME']}
-        password = #{ENV['CAPSULE_PYTHON_PASSWORD']}
+        username = #{ENV['CAPSULE_PYPI_USERNAME']}
+        password = #{ENV['CAPSULE_PYPI_PASSWORD']}
       EOT
                 )
     end
