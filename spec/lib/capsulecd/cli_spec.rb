@@ -34,7 +34,7 @@ describe CapsuleCD::Cli do
       it 'should call the chef start command with the proper options' do
         require 'capsulecd/chef/chef_engine'
         expect(ChefEngine).to receive(:new).with(
-          runner: :none, source: :github, package_type: :chef,:dry_run=>false).and_return engine_double
+          runner: :default, source: :default, package_type: :chef,:dry_run=>false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start --package_type chef)
       end
@@ -48,7 +48,7 @@ describe CapsuleCD::Cli do
       it 'should call the python start command with the proper options' do
         require 'capsulecd/python/python_engine'
         expect(PythonEngine).to receive(:new).with(
-                                  runner: :none, source: :github, package_type: :python,:dry_run=>false).and_return engine_double
+                                  runner: :default, source: :default, package_type: :python,:dry_run=>false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start --package_type python)
       end
