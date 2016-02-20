@@ -102,14 +102,14 @@ class NodeEngine < Engine
     super
     npmrc_path = File.join(@source_git_local_path, '.npmrc')
 
-    unless ENV['CAPSULE_NODE_AUTH_TOKEN']
+    unless ENV['CAPSULE_NPM_AUTH_TOKEN']
       raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'
       return
     end
 
     # write the knife.rb config file.
     File.open(npmrc_path, 'w+') do |file|
-      file.write("//registry.npmjs.org/:_authToken=#{ENV['CAPSULE_NODE_AUTH_TOKEN']}")
+      file.write("//registry.npmjs.org/:_authToken=#{ENV['CAPSULE_NPM_AUTH_TOKEN']}")
     end
 
     # run npm publish
