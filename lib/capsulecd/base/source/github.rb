@@ -28,7 +28,7 @@ module GithubSource
     @source_release_commit = nil
     @source_release_artifacts = []
 
-    @source_git_parent_path = '/var/capsulecd/' # should be the parent folder of the cloned repository. /var/capsulecd/
+    @source_git_parent_path = Dir.mktmpdir
     Octokit.auto_paginate = true
     @source_client = Octokit::Client.new(access_token: ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'])
   end
@@ -39,7 +39,7 @@ module GithubSource
   # MUST set source_git_local_path
   # MUST set source_git_local_branch
   # MUST set source_git_head_info
-  # REQUIRES source_client
+  # REQUIRES source_git_parent_path
   def source_process_push_payload(payload)
     # set the processed head info
     @source_git_head_info = payload['head']
@@ -65,6 +65,7 @@ module GithubSource
   # MUST set source_git_base_info
   # MUST set source_git_head_info
   # REQUIRES source_client
+  # REQUIRES source_git_parent_path
   def source_process_pull_request_payload(payload)
     puts 'github source_process_payload'
 
@@ -117,6 +118,7 @@ module GithubSource
   # REQUIRES source_git_base_info
   # REQUIRES source_git_head_info
   # REQUIRES source_release_artifacts
+  # REQUIRES source_git_parent_path
   def source_release
     puts 'github source_release'
 
@@ -139,6 +141,7 @@ module GithubSource
       @source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
     end
 
+    FileUtils.remove_entry_secure @source_git_parent_path
     # set the pull request status
     @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',      target_url: 'http://www.github.com/AnalogJ/capsulecd',
                                                                                                                            description: 'pull-request was successfully merged, new release created.')
@@ -146,7 +149,7 @@ module GithubSource
 
   def source_process_failure(ex)
     puts 'github source_process_failure'
-
+    FileUtils.remove_entry_secure @source_git_parent_path
     @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',       target_url: 'http://www.github.com/AnalogJ/capsulecd',
                                                                                                                             description: ex.message.slice!(0..135))
   end

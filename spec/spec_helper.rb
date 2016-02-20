@@ -18,7 +18,7 @@ VCR.configure do |c|
   c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
   c.hook_into :webmock
   c.default_cassette_options = {
-    record: ENV['TRAVIS'] ? :none : :once
+    record: ENV['TRAVIS'] ? :none : :new_episodes
   }
   c.preserve_exact_body_bytes { true }
 end

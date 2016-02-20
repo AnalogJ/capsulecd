@@ -14,6 +14,7 @@ describe GithubSource do
     describe 'when authentication token is present' do
       it 'should successfully create an source_client' do
         ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'] = 'test_token'
+        allow(Dir).to receive(:mktmpdir).and_return('/tmp')
         engine = test_engine.new
         engine.source_configure
         expect(engine.source_client).to be_a_kind_of Octokit::Client
@@ -38,12 +39,13 @@ describe GithubSource do
     it 'should clone git repo' do
       ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'] = 'test_token'
       engine = test_engine.new
-      allow(GitUtils).to receive(:clone).and_return('/var/capsulecd/' + payload['head']['repo']['name'])
+      engine.instance_variable_set(:@source_git_parent_path, '/tmp')
+      allow(GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
       allow(GitUtils).to receive(:checkout).and_return(true)
 
       engine.source_process_push_payload(payload)
 
-      expect(engine.source_git_local_path).to eql('/var/capsulecd/' + payload['head']['repo']['name'])
+      expect(engine.source_git_local_path).to eql(engine.source_git_parent_path + payload['head']['repo']['name'])
       expect(engine.source_git_local_branch).to eql(payload['head']['repo']['branch'])
       expect(engine.source_git_head_info).to be_a(Hash)
 
@@ -52,6 +54,7 @@ describe GithubSource do
     describe 'with an invalid payload' do
       it 'should raise an error' do
         engine = test_engine.new
+        engine.instance_variable_set(:@source_git_parent_path, '/tmp')
         expect { engine.source_process_push_payload({'head' => {}}) }.to raise_error(CapsuleCD::Error::SourcePayloadFormatError)
       end
     end
@@ -113,6 +116,8 @@ describe GithubSource do
       it 'should raise an error' do
         engine = test_engine.new
         engine.instance_variable_set(:@source_client, source_client_double)
+        engine.instance_variable_set(:@source_git_parent_path, '/tmp')
+
 
         allow(source_client_double).to receive(:collaborator?).and_return(false)
         allow(source_client_double).to receive(:add_comment).and_return(false)
@@ -154,18 +159,19 @@ describe GithubSource do
       it 'should clone merged repo' do
         engine = test_engine.new
         engine.instance_variable_set(:@source_client, source_client_double)
+        engine.instance_variable_set(:@source_git_parent_path, '/tmp')
 
         allow(source_client_double).to receive(:collaborator?).and_return(true)
         allow(source_client_double).to receive(:add_comment).and_return(false)
         allow(source_client_double).to receive(:create_status).and_return(false)
-        allow(GitUtils).to receive(:clone).and_return('/var/capsulecd/' + payload['head']['repo']['name'])
+        allow(GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
         allow(GitUtils).to receive(:fetch).and_return(true)
         allow(GitUtils).to receive(:checkout).and_return(true)
 
         engine.source_process_pull_request_payload(payload)
 
         expect(engine.source_git_local_branch).to eql('pr_8')
-        expect(engine.source_git_local_path).to eql('/var/capsulecd/' + payload['head']['repo']['name'])
+        expect(engine.source_git_local_path).to eql(engine.source_git_parent_path + payload['head']['repo']['name'])
         expect(engine.source_git_head_info).to be_a(Hash)
         expect(engine.source_git_base_info).to be_a(Hash)
       end
@@ -224,6 +230,7 @@ describe GithubSource do
         allow(git_commit_double).to receive(:name).and_return('test')
         allow(GitUtils).to receive(:push).and_return(true)
         allow(GitUtils).to receive(:generate_changelog).and_return('')
+        allow(FileUtils).to receive(:remove_entry_secure).and_return(true)
 
         engine.source_release
 

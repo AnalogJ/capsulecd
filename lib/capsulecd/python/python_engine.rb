@@ -71,7 +71,7 @@ class PythonEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        raise CapsuleCD::Error::TestDependenciesError, 'pip install package failed.'
+        raise CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
       end
     end
 

@@ -90,3 +90,4 @@ payload.json
 test.rb
 vendor
 Gemfile.lock
+spec/vcr.log
