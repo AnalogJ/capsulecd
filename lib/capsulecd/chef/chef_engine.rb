@@ -52,7 +52,7 @@ class ChefEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'berks install failed. Check cookbook dependencies'
+        raise CapsuleCD::Error::TestDependenciesError, 'berks install failed. Check cookbook dependencies'
       end
     end
 
@@ -69,7 +69,7 @@ class ChefEngine < Engine
         # wait for process
         external.join
         unless external.value.success?
-          fail 'bundle install failed. Check gem dependencies'
+          raise CapsuleCD::Error::TestDependenciesError, 'bundle install failed. Check gem dependencies'
         end
       end
 
@@ -85,7 +85,7 @@ class ChefEngine < Engine
         # wait for process
         external.join
         unless external.value.success?
-          fail 'rake test failed. Check log for exact error'
+          raise CapsuleCD::Error::TestRunnerError, 'rake test failed. Check log for exact error'
         end
       end
     end
@@ -110,8 +110,7 @@ class ChefEngine < Engine
     knife_path = File.join(@source_git_parent_path, 'knife.rb')
 
     unless ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME'] || ENV['CAPSULE_CHEF_SUPERMARKET_KEY']
-      # TODO: make this a warning
-      puts 'cannot deploy cookbook to supermarket, credentials missing'
+      raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy cookbook to supermarket, credentials missing'
       return
     end
 
@@ -145,7 +144,7 @@ class ChefEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'knife cookbook upload to supermarket failed'
+        raise CapsuleCD::Error::ReleasePackageError, 'knife cookbook upload to supermarket failed'
       end
     end
   end

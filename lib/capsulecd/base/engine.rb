@@ -27,7 +27,7 @@ class Engine
       require_relative 'source/github'
       self.class.send(:include, GithubSource)
     else
-      fail 'No source defined.'
+      raise 'No source defined.'
     end
 
     if options[:runner] == :circleci
@@ -81,12 +81,12 @@ class Engine
     end
 
     # now that the payload has been processed we can begin by building the code.
-    # this may be compilation, dependency downloading, version bumping, etc.
+    # this may be creating missing files/default structure, compilation, version bumping, etc.
     run_hook :before_build_step
     build_step
     run_hook :after_build_step
 
-    # this step should run the package test runner(s) (eg. npm test, rake test, kitchen test)
+    # this step should download dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test)
     run_hook :before_test_step
     test_step
     run_hook :after_test_step

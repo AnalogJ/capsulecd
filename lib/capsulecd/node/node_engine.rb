@@ -33,7 +33,7 @@ class NodeEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'npm install failed. Check module dependencies'
+        raise CapsuleCD::Error::TestDependenciesError, 'npm install failed. Check module dependencies'
       end
     end
 
@@ -50,7 +50,7 @@ class NodeEngine < Engine
         # wait for process
         external.join
         unless external.value.success?
-          fail 'npm shrinkwrap failed. Check log for exact error'
+          raise CapsuleCD::Error::TestDependenciesError, 'npm shrinkwrap failed. Check log for exact error'
         end
       end
     end
@@ -67,7 +67,7 @@ class NodeEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'npm test failed. Check log for exact error'
+        raise CapsuleCD::Error::TestRunnerError, 'npm test failed. Check log for exact error'
       end
     end
   end
@@ -91,7 +91,7 @@ class NodeEngine < Engine
       end
       # wait for process
       external.join
-      fail 'npm version bump failed' unless external.value.success?
+      raise 'npm version bump failed' unless external.value.success?
     end
 
     @source_release_commit = GitUtils.head_commit(@source_git_local_path)
@@ -103,8 +103,7 @@ class NodeEngine < Engine
     npmrc_path = File.join(@source_git_local_path, '.npmrc')
 
     unless ENV['CAPSULE_NODE_AUTH_TOKEN']
-      # TODO: make this a warning
-      puts 'cannot deploy page to npm, credentials missing'
+      raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'
       return
     end
 
@@ -125,7 +124,7 @@ class NodeEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'npm publish failed. Check log for exact error'
+        raise CapsuleCD::Error::ReleasePackageError, 'npm publish failed. Check log for exact error'
       end
     end
   end

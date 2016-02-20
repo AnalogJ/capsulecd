@@ -43,6 +43,21 @@ class PythonEngine < Engine
   def test_step
     super
 
+    Open3.popen3('pip install -r requirements.txt', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+      { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+        Thread.new do
+          until (line = stream_buffer.gets).nil?
+            puts "#{name} -> #{line}"
+          end
+        end
+      end
+      # wait for process
+      external.join
+      unless external.value.success?
+        raise CapsuleCD::Error::TestDependenciesError, 'pip install package requirements failed. Check module dependencies'
+      end
+    end
+
     # the module has already been downloaded. lets make sure all its dependencies are available.
     # https://packaging.python.org/en/latest/distributing/
     Open3.popen3('pip install -e .', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
@@ -56,7 +71,7 @@ class PythonEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'pip install failed. Check module dependencies'
+        raise CapsuleCD::Error::TestDependenciesError, 'pip install package failed.'
       end
     end
 
@@ -82,7 +97,7 @@ class PythonEngine < Engine
     pypirc_path = File.expand_path('~/.pypirc')
 
     unless ENV['CAPSULE_PYTHON_USERNAME'] || ENV['CAPSULE_PYTHON_PASSWORD']
-      puts 'cannot deploy package to pip, credentials missing'
+      raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy package to pip, credentials missing'
       return
     end
 
@@ -113,7 +128,7 @@ class PythonEngine < Engine
       # wait for process
       external.join
       unless external.value.success?
-        fail 'python setup.py upload failed. Check log for exact error'
+        raise CapsuleCD::Error::ReleasePackageError, 'python setup.py upload failed. Check log for exact error'
       end
     end
   end

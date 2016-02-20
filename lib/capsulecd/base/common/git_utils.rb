@@ -6,7 +6,7 @@ class GitUtils
     if !File.directory?(repo_path)
       FileUtils.mkdir_p(repo_path)
     else
-      fail 'the repository path already exists, this should never happen'
+      raise 'the repository path already exists, this should never happen'
     end
 
     repo = Git.clone(git_remote, '', path: repo_path)

@@ -9,15 +9,23 @@ module CapsuleCD
     # Raised when there is an error parsing the repo payload format.
     class SourcePayloadFormatError < BaseError; end
 
-    # Raised when a source payload is unsupported.
+    # Raised when a source payload is unsupported/action is invalid
     class SourcePayloadUnsupported < BaseError; end
 
     # Raised when the user who started the packaging is unauthorized (non-collaborator)
     class SourceUnauthorizedUser < BaseError; end
 
+    # Raised when package dependencies fail to install correctly.
+    class TestDependenciesError < BaseError; end
 
-    # Raised when Minimart encounters a cookbook with a location type that it can't handle
-    class UnknownLocationType < BaseError; end
+    # Raised when the package test runner fails
+    class TestRunnerError < BaseError; end
+
+    # Raised when credentials required to upload/deploy new package are missing.
+    class ReleaseCredentialsMissing < BaseError; end
+
+    # Raised when an error occurs while uploading package.
+    class ReleasePackageError < BaseError; end
 
     # Gracefully handle any errors raised by CapsuleCD, and exit with a failure
     # status code.

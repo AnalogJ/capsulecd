@@ -23,7 +23,7 @@ module GithubSource
   # MUST set @source_client
   def source_configure
     puts 'github source_configure'
-    fail CapsuleCD::Error::SourceAuthenticationFailed, 'Missing "CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN" env variable' unless ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
+    raise CapsuleCD::Error::SourceAuthenticationFailed, 'Missing "CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN" env variable' unless ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
 
     @source_release_commit = nil
     @source_release_artifacts = []

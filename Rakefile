@@ -8,8 +8,13 @@ begin
     t.rspec_opts = '--tag chef_engine'
   end
 
+  RSpec::Core::RakeTask.new(:python_engine) do |t|
+    t.rspec_opts = '--tag python_engine'
+  end
+
+
   RSpec::Core::RakeTask.new(:test) do |t|
-    t.rspec_opts = '--tag ~chef_engine --tag ~node_engine'
+    t.rspec_opts = '--tag ~chef_engine --tag ~node_engine --tag ~python_engine'
   end
 
   task default: :test

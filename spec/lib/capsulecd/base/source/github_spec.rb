@@ -170,21 +170,6 @@ describe GithubSource do
         expect(engine.source_git_base_info).to be_a(Hash)
       end
     end
-
-    # it 'should clone git repo' do
-    #   ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'] = 'test_token'
-    #   engine = test_engine.new
-    #   allow(GitUtils).to receive(:clone).and_return('/var/capsulecd/' + payload['head']['repo']['name'])
-    #   allow(GitUtils).to receive(:checkout).and_return(true)
-    #
-    #   engine.source_process_push_payload(payload)
-    #
-    #   expect(engine.source_git_local_path).to eql('/var/capsulecd/' + payload['head']['repo']['name'])
-    #
-    # end
-
-
-
   end
 
   describe '#source_release' do
