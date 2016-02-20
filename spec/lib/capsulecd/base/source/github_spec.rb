@@ -26,11 +26,11 @@ describe GithubSource do
     let(:payload) {
       {
         'head' => {
+          'sha' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
+          'ref' => 'master',
           'repo' => {
               'clone_url' => 'https://github.com/AnalogJ/npm_analogj_test.git',
-              'branch' => 'master',
               'name' => 'npm_analog_test',
-              'sha1' => '0a5948802a2bba02e019fd13bf3db3c5329faae6'
           }
         }
       }
@@ -127,25 +127,23 @@ describe GithubSource do
             'state' => 'open',
             'number' => 8,
             'base' => {
+                'sha' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
+                'ref' => 'master',
                 'repo' => {
                     'full_name' => 'AnalogJ/npm_analogj_test',
                     'clone_url' => 'https://github.com/AnalogJ/npm_analogj_test.git',
-                    'branch' => 'master',
                     'name' => 'npm_analog_test',
-                    'sha1' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
                     'default_branch' => 'master'
-                },
-                'ref' => 'master'
+                }
             },
             'head' => {
+                'sha' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
+                'ref' => 'feature',
                 'repo' => {
                     'full_name' => 'AnalogJ/npm_analogj_test',
                     'clone_url' => 'https://github.com/AnalogJ/npm_analogj_test.git',
-                    'branch' => 'feature',
                     'name' => 'npm_analog_test',
-                    'sha1' => '0a5948802a2bba02e019fd13bf3db3c5329faae6'
-                },
-                'ref' => 'feature'
+                }
             },
             'user' => {
                 'login' => 'AnalogJ'
@@ -200,23 +198,21 @@ describe GithubSource do
             'state' => 'open',
             'number' => 8,
             'base' => {
+                'sha' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
                 'repo' => {
                     'full_name' => 'AnalogJ/npm_analogj_test',
                     'clone_url' => 'https://github.com/AnalogJ/npm_analogj_test.git',
-                    'branch' => 'master',
                     'name' => 'npm_analog_test',
-                    'sha1' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
                     'default_branch' => 'master'
                 },
                 'ref' => 'master'
             },
             'head' => {
+                'sha' => '0a5948802a2bba02e019fd13bf3db3c5329faae6',
                 'repo' => {
                     'full_name' => 'AnalogJ/npm_analogj_test',
                     'clone_url' => 'https://github.com/AnalogJ/npm_analogj_test.git',
-                    'branch' => 'feature',
                     'name' => 'npm_analog_test',
-                    'sha1' => '0a5948802a2bba02e019fd13bf3db3c5329faae6'
                 },
                 'ref' => 'feature'
             },

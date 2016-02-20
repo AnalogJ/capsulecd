@@ -13,12 +13,12 @@ module CircleciRunner
       # make this as similar to the pull request payload as possible.
       payload = {
         'head' => {
+          'sha' => ENV['CIRCLE_SHA1'],
+          'ref' => ENV['CIRCLE_BRANCH'],
           'repo' => {
             'clone_url' => 'https://github.com/' + ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'] + '.git',
             'name' => ENV['CIRCLE_PROJECT_REPONAME'],
             'full_name' => ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'],
-            'branch' => ENV['CIRCLE_BRANCH'],
-            'sha' => ENV['CIRCLE_SHA1']
           }
         }
       }

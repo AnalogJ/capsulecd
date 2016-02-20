@@ -2,7 +2,7 @@ require 'octokit'
 require 'uri'
 require 'git'
 require 'capsulecd'
-
+require 'pp'
 module GithubSource
 
   #all of these instance variables are available for use within hooks
@@ -49,7 +49,7 @@ module GithubSource
     uri = URI.parse(@source_git_head_info['repo']['clone_url'])
     uri.user = ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
     @source_git_remote = uri.to_s
-    @source_git_local_branch = @source_git_head_info['repo']['branch']
+    @source_git_local_branch = @source_git_head_info['repo']['ref']
     # clone the merged branch
     # https://sethvargo.com/checkout-a-github-pull-request/
     # https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
