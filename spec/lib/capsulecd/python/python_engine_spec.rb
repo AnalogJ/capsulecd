@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'capsulecd/python/python_engine'
 
-describe PythonEngine, :python do
+describe CapsuleCD::Python::PythonEngine, :python do
   describe '#build_step' do
     let(:engine) {
-      PythonEngine.new({
+      CapsuleCD::Python::PythonEngine.new({
         source: :github,
         runner: :circleci,
         package_type: :python
@@ -27,7 +27,7 @@ describe PythonEngine, :python do
 
   describe '#test_step' do
     let(:engine) {
-      PythonEngine.new({
+      CapsuleCD::Python::PythonEngine.new({
                            source: :github,
                            runner: :circleci,
                            package_type: :python

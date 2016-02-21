@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'capsulecd/base/source/github'
 
-describe GithubSource do
+describe CapsuleCD::Source::Github do
   describe '#source_configure' do
-    let(:test_engine) { Class.new { include GithubSource } }
+    let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
     describe 'when no authentication token is present' do
       it 'should raise an error' do
         engine = test_engine.new
@@ -13,7 +13,7 @@ describe GithubSource do
 
     describe 'when authentication token is present' do
       it 'should successfully create an source_client' do
-        ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'] = 'test_token'
+        allow(ENV).to receive(:[]).with('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN').and_return('test_token')
         allow(Dir).to receive(:mktmpdir).and_return('/tmp')
         engine = test_engine.new
         engine.source_configure
@@ -23,7 +23,7 @@ describe GithubSource do
   end
 
   describe '#source_process_push_payload' do
-    let(:test_engine) { Class.new { include GithubSource } }
+    let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
     let(:payload) {
       {
         'head' => {
@@ -37,11 +37,11 @@ describe GithubSource do
       }
     }
     it 'should clone git repo' do
-      ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'] = 'test_token'
+      allow(ENV).to receive(:[]).with('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN').and_return('test_token')
       engine = test_engine.new
       engine.instance_variable_set(:@source_git_parent_path, '/tmp')
-      allow(GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
-      allow(GitUtils).to receive(:checkout).and_return(true)
+      allow(CapsuleCD::GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
+      allow(CapsuleCD::GitUtils).to receive(:checkout).and_return(true)
 
       engine.source_process_push_payload(payload)
 
@@ -62,7 +62,7 @@ describe GithubSource do
   end
 
   describe '#source_process_pull_request_payload' do
-    let(:test_engine) { Class.new { include GithubSource } }
+    let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
     let(:source_client_double) { instance_double(Octokit::Client) }
 
     describe 'with a closed pull request payload' do
@@ -164,9 +164,9 @@ describe GithubSource do
         allow(source_client_double).to receive(:collaborator?).and_return(true)
         allow(source_client_double).to receive(:add_comment).and_return(false)
         allow(source_client_double).to receive(:create_status).and_return(false)
-        allow(GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
-        allow(GitUtils).to receive(:fetch).and_return(true)
-        allow(GitUtils).to receive(:checkout).and_return(true)
+        allow(CapsuleCD::GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
+        allow(CapsuleCD::GitUtils).to receive(:fetch).and_return(true)
+        allow(CapsuleCD::GitUtils).to receive(:checkout).and_return(true)
 
         engine.source_process_pull_request_payload(payload)
 
@@ -179,7 +179,7 @@ describe GithubSource do
   end
 
   describe '#source_release' do
-    let(:test_engine) { Class.new { include GithubSource } }
+    let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
     let(:source_client_double) { instance_double(Octokit::Client) }
     let(:git_commit_double) { instance_double(Git::Object::Commit) }
 
@@ -228,18 +228,13 @@ describe GithubSource do
         allow(source_client_double).to receive(:create_status).and_return(false)
         allow(git_commit_double).to receive(:sha).and_return('0a5948802a2bba02e019fd13bf3db3c5329faae6')
         allow(git_commit_double).to receive(:name).and_return('test')
-        allow(GitUtils).to receive(:push).and_return(true)
-        allow(GitUtils).to receive(:generate_changelog).and_return('')
+        allow(CapsuleCD::GitUtils).to receive(:push).and_return(true)
+        allow(CapsuleCD::GitUtils).to receive(:generate_changelog).and_return('')
         allow(FileUtils).to receive(:remove_entry_secure).and_return(true)
 
         engine.source_release
 
       end
     end
-
-
-
-
   end
-
 end

@@ -94,7 +94,7 @@ module CapsuleCD
     def populate_overrides
       #override config file with env variables.
       ENV.each{|key,value|
-        config_key = key.clone
+        config_key = key.dup
         if config_key.start_with?('CAPSULE_') && !value.to_s.empty?
           config_key.slice!('CAPSULE_')
           config_key.downcase!

@@ -50,15 +50,15 @@ module CapsuleCD
 
       if engine_opts[:package_type] == :node
         require_relative 'node/node_engine'
-        engine = NodeEngine.new(engine_opts)
+        engine = CapsuleCD::Node::NodeEngine.new(engine_opts)
       elsif engine_opts[:package_type] == :chef
         require_relative 'chef/chef_engine'
-        engine = ChefEngine.new(engine_opts)
+        engine = CapsuleCD::Chef::ChefEngine.new(engine_opts)
       elsif engine_opts[:package_type] == :python
         require_relative 'python/python_engine'
-        engine = PythonEngine.new(engine_opts)
+        engine = CapsuleCD::Python::PythonEngine.new(engine_opts)
       else
-        engine = Engine.new(engine_opts)
+        engine = CapsuleCD::Engine.new(engine_opts)
       end
 
       engine.start
