@@ -38,6 +38,9 @@ class PythonEngine < Engine
     unless File.exist?(@source_git_local_path + '/tests')
       FileUtils.mkdir(@source_git_local_path + '/tests')
     end
+    unless File.exist?(@source_git_local_path + '/tests/__init__.py')
+      File.open(@source_git_local_path + '/tests/__init__.py', 'w') { |file| file.write('') }
+    end
   end
 
   def test_step
@@ -75,8 +78,21 @@ class PythonEngine < Engine
       end
     end
 
-    # there's no standardized method to start tests in python.
-    # TODO: check for Makefile?
+    # run tests
+    Open3.popen3('python setup.py test', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+      { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+        Thread.new do
+          until (line = stream_buffer.gets).nil?
+            puts "#{name} -> #{line}"
+          end
+        end
+      end
+      # wait for process
+      external.join
+      unless external.value.success?
+        raise CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
+      end
+    end
   end
 
   # run npm publish
