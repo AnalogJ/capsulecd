@@ -9,7 +9,7 @@ describe CapsuleCD::Cli do
       let(:engine_double) { instance_double(CapsuleCD::Engine, start: true) }
       it 'should call the default start command with the proper options' do
         expect(CapsuleCD::Engine).to receive(:new).with(
-          runner: :default, source: :default, package_type: :default,:dry_run=>false).and_return engine_double
+          runner: :default, source: :default, package_type: :default, dry_run: false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start)
       end
@@ -20,7 +20,7 @@ describe CapsuleCD::Cli do
       let(:engine_double) { instance_double(CapsuleCD::Node::NodeEngine, start: true) }
       it 'should call the node start command with the proper options' do
         expect(CapsuleCD::Node::NodeEngine).to receive(:new).with(
-          runner: :default, source: :default, package_type: :node,:dry_run=>false).and_return engine_double
+          runner: :default, source: :default, package_type: :node, dry_run: false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start--package_type node)
       end
@@ -34,7 +34,7 @@ describe CapsuleCD::Cli do
       it 'should call the chef start command with the proper options' do
         require 'capsulecd/chef/chef_engine'
         expect(CapsuleCD::Chef::ChefEngine).to receive(:new).with(
-          runner: :default, source: :default, package_type: :chef,:dry_run=>false).and_return engine_double
+          runner: :default, source: :default, package_type: :chef, dry_run: false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start --package_type chef)
       end
@@ -48,7 +48,7 @@ describe CapsuleCD::Cli do
       it 'should call the python start command with the proper options' do
         require 'capsulecd/python/python_engine'
         expect(CapsuleCD::Python::PythonEngine).to receive(:new).with(
-                                  runner: :default, source: :default, package_type: :python,:dry_run=>false).and_return engine_double
+          runner: :default, source: :default, package_type: :python, dry_run: false).and_return engine_double
 
         CapsuleCD::Cli.start %w(start --package_type python)
       end

@@ -3,7 +3,6 @@ require 'erb'
 require 'base64'
 module CapsuleCD
   class Configuration
-
     # Order of inheritance: file <- environment <- cli options
     # <- means 'overridden by', eg. file overridden by environment vars
     # @param [String] config_path The path to the configuration file
@@ -45,11 +44,9 @@ module CapsuleCD
     attr_reader :pypi_username
     attr_reader :pypi_password
 
-
     def engine_version_bump_type
-      @engine_version_bump_type ||= :patch #can be :major, :minor, :patch
+      @engine_version_bump_type ||= :patch # can be :major, :minor, :patch
     end
-
 
     def chef_supermarket_key
       @chef_supermarket_key.to_s.empty? ? nil : Base64.strict_decode64(@chef_supermarket_key)
@@ -59,14 +56,13 @@ module CapsuleCD
       @chef_supermarket_type ||= 'Other'
     end
 
-
     private
 
     # The raw parsed configuration file
 
     def parse_config_file
-      unless File.exists?(@config_path)
-        raise 'The configuration file could not be found. Using defaults'
+      unless File.exist?(@config_path)
+        fail 'The configuration file could not be found. Using defaults'
       end
 
       file = File.open(@config_path).read
@@ -74,14 +70,12 @@ module CapsuleCD
     end
 
     def detect_runner_and_populate
-      if !ENV['CIRCLECI'].to_s.empty?
-        @runner = :circleci
-      end
+      @runner = :circleci unless ENV['CIRCLECI'].to_s.empty?
       populate_runner
     end
 
-    def populate_runner()
-      if(@runner == :circleci)
+    def populate_runner
+      if (@runner == :circleci)
         @runner_pull_request ||= ENV['CI_PULL_REQUEST']
         @runner_sha ||= ENV['CIRCLE_SHA1']
         @runner_branch ||= ENV['CIRCLE_BRANCH']
@@ -92,36 +86,33 @@ module CapsuleCD
     end
 
     def populate_overrides
-      #override config file with env variables.
-      ENV.each{|key,value|
+      # override config file with env variables.
+      ENV.each do|key, value|
         config_key = key.dup
         if config_key.start_with?('CAPSULE_') && !value.to_s.empty?
           config_key.slice!('CAPSULE_')
           config_key.downcase!
 
-          #override instance variable
-          instance_variable_set('@'+config_key, value)
+          # override instance variable
+          instance_variable_set('@' + config_key, value)
         end
-      }
+      end
 
-      #then override with cli options
-      @options.each{|key,value|
-        instance_variable_set('@'+key.to_s, value)
-      }
+      # then override with cli options
+      @options.each do|key, value|
+        instance_variable_set('@' + key.to_s, value)
+      end
 
-      #set types if missing
+      # set types if missing
       @engine_version_bump_type = @engine_version_bump_type.to_sym if @engine_version_bump_type.is_a? String
-
     end
-
 
     def unserialize(string)
       obj = YAML.load(string)
       obj.keys.each do |key|
-        instance_variable_set('@'+key, obj[key])
+        instance_variable_set('@' + key, obj[key])
       end
       obj
     end
-
   end
 end

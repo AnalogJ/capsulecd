@@ -39,7 +39,7 @@ module CapsuleCD
       engine_opts = {}
       engine_opts[:runner] = :circleci if ENV['CIRCLECI']
 
-      engine_opts[:runner] = options[:runner].to_sym #TODO: we cant modify the hash sent by Thor, so we'll duplicate it
+      engine_opts[:runner] = options[:runner].to_sym # TODO: we cant modify the hash sent by Thor, so we'll duplicate it
       engine_opts[:source] = options[:source].to_sym
       engine_opts[:package_type] = options[:package_type].to_sym
       engine_opts[:dry_run] = options[:dry_run]

@@ -35,7 +35,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::TestDependenciesError, 'npm install failed. Check module dependencies'
+            fail CapsuleCD::Error::TestDependenciesError, 'npm install failed. Check module dependencies'
           end
         end
 
@@ -52,7 +52,7 @@ module CapsuleCD
             # wait for process
             external.join
             unless external.value.success?
-              raise CapsuleCD::Error::TestDependenciesError, 'npm shrinkwrap failed. Check log for exact error'
+              fail CapsuleCD::Error::TestDependenciesError, 'npm shrinkwrap failed. Check log for exact error'
             end
           end
         end
@@ -69,7 +69,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::TestRunnerError, 'npm test failed. Check log for exact error'
+            fail CapsuleCD::Error::TestRunnerError, 'npm test failed. Check log for exact error'
           end
         end
       end
@@ -93,7 +93,7 @@ module CapsuleCD
           end
           # wait for process
           external.join
-          raise 'npm version bump failed' unless external.value.success?
+          fail 'npm version bump failed' unless external.value.success?
         end
 
         @source_release_commit = CapsuleCD::GitUtils.head_commit(@source_git_local_path)
@@ -105,7 +105,7 @@ module CapsuleCD
         npmrc_path = File.join(@source_git_local_path, '.npmrc')
 
         unless ENV['CAPSULE_NPM_AUTH_TOKEN']
-          raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'
+          fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'
           return
         end
 
@@ -126,7 +126,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::ReleasePackageError, 'npm publish failed. Check log for exact error'
+            fail CapsuleCD::Error::ReleasePackageError, 'npm publish failed. Check log for exact error'
           end
         end
       end

@@ -1,13 +1,12 @@
 require 'git'
 module CapsuleCD
   class GitUtils
-
     def self.clone(parent_path, repository_name, git_remote)
       repo_path = File.expand_path("#{parent_path}/#{repository_name}/")
       if !File.directory?(repo_path)
         FileUtils.mkdir_p(repo_path)
       else
-        raise 'the repository path already exists, this should never happen'
+        fail 'the repository path already exists, this should never happen'
       end
 
       repo = Git.clone(git_remote, '', path: repo_path)

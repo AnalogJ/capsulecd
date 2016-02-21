@@ -54,7 +54,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::TestDependenciesError, 'berks install failed. Check cookbook dependencies'
+            fail CapsuleCD::Error::TestDependenciesError, 'berks install failed. Check cookbook dependencies'
           end
         end
 
@@ -71,7 +71,7 @@ module CapsuleCD
             # wait for process
             external.join
             unless external.value.success?
-              raise CapsuleCD::Error::TestDependenciesError, 'bundle install failed. Check gem dependencies'
+              fail CapsuleCD::Error::TestDependenciesError, 'bundle install failed. Check gem dependencies'
             end
           end
 
@@ -87,7 +87,7 @@ module CapsuleCD
             # wait for process
             external.join
             unless external.value.success?
-              raise CapsuleCD::Error::TestRunnerError, 'rake test failed. Check log for exact error'
+              fail CapsuleCD::Error::TestRunnerError, 'rake test failed. Check log for exact error'
             end
           end
         end
@@ -112,7 +112,7 @@ module CapsuleCD
         knife_path = File.join(@source_git_parent_path, 'knife.rb')
 
         unless ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME'] || ENV['CAPSULE_CHEF_SUPERMARKET_KEY']
-          raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy cookbook to supermarket, credentials missing'
+          fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy cookbook to supermarket, credentials missing'
           return
         end
 
@@ -146,7 +146,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::ReleasePackageError, 'knife cookbook upload to supermarket failed'
+            fail CapsuleCD::Error::ReleasePackageError, 'knife cookbook upload to supermarket failed'
           end
         end
       end

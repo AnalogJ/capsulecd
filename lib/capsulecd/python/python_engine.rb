@@ -59,7 +59,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::TestDependenciesError, 'pip install package requirements failed. Check module dependencies'
+            fail CapsuleCD::Error::TestDependenciesError, 'pip install package requirements failed. Check module dependencies'
           end
         end
 
@@ -76,7 +76,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
+            fail CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
           end
         end
 
@@ -92,7 +92,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
+            fail CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
           end
         end
       end
@@ -115,7 +115,7 @@ module CapsuleCD
         pypirc_path = File.expand_path('~/.pypirc')
 
         unless ENV['CAPSULE_PYPI_USERNAME'] || ENV['CAPSULE_PYPI_PASSWORD']
-          raise CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy package to pip, credentials missing'
+          fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy package to pip, credentials missing'
           return
         end
 
@@ -146,7 +146,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            raise CapsuleCD::Error::ReleasePackageError, 'python setup.py upload failed. Check log for exact error'
+            fail CapsuleCD::Error::ReleasePackageError, 'python setup.py upload failed. Check log for exact error'
           end
         end
       end

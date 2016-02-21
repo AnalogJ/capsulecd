@@ -20,7 +20,7 @@ module CapsuleCD
               'repo' => {
                 'clone_url' => 'https://github.com/' + ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'] + '.git',
                 'name' => ENV['CIRCLE_PROJECT_REPONAME'],
-                'full_name' => ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'],
+                'full_name' => ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME']
               }
             }
           }

@@ -12,7 +12,6 @@ begin
     t.rspec_opts = '--tag python'
   end
 
-
   RSpec::Core::RakeTask.new(:test) do |t|
     t.rspec_opts = '--tag ~chef --tag ~node --tag ~python'
   end

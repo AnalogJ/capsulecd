@@ -7,8 +7,7 @@ require 'pp'
 module CapsuleCD
   module Source
     module Github
-
-      #all of these instance variables are available for use within hooks
+      # all of these instance variables are available for use within hooks
       attr_accessor :source_client
       attr_accessor :source_git_base_info
       attr_accessor :source_git_head_info
@@ -26,7 +25,7 @@ module CapsuleCD
       # MUST set @source_client
       def source_configure
         puts 'github source_configure'
-        raise CapsuleCD::Error::SourceAuthenticationFailed, 'Missing "CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN" env variable' unless ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
+        fail CapsuleCD::Error::SourceAuthenticationFailed, 'Missing "CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN" env variable' unless ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
 
         @source_release_commit = nil
         @source_release_artifacts = []
@@ -74,17 +73,17 @@ module CapsuleCD
 
         # validate the github specific payload options
         unless (payload['state'] == 'open')
-          raise CapsuleCD::Error::SourcePayloadUnsupported, 'Pull request has an invalid action'
+          fail CapsuleCD::Error::SourcePayloadUnsupported, 'Pull request has an invalid action'
         end
         unless (payload['base']['repo']['default_branch'] == payload['base']['ref'])
-          raise CapsuleCD::Error::SourcePayloadUnsupported, 'Pull request is not being created against the default branch of this repository (usually master)'
+          fail CapsuleCD::Error::SourcePayloadUnsupported, 'Pull request is not being created against the default branch of this repository (usually master)'
         end
         # check the payload push user.
 
         unless @source_client.collaborator?(payload['base']['repo']['full_name'], payload['user']['login'])
 
           @source_client.add_comment(payload['base']['repo']['full_name'], payload['number'], CapsuleCD::BotUtils.pull_request_comment)
-          raise CapsuleCD::Error::SourceUnauthorizedUser, 'Pull request was opened by an unauthorized user'
+          fail CapsuleCD::Error::SourceUnauthorizedUser, 'Pull request was opened by an unauthorized user'
         end
 
         # set the processed base/head info,
@@ -92,7 +91,6 @@ module CapsuleCD
         @source_git_head_info = payload['head']
         CapsuleCD::ValidationUtils.validate_repo_payload(@source_git_base_info)
         CapsuleCD::ValidationUtils.validate_repo_payload(@source_git_head_info)
-
 
         # set the remote url, with embedded token
         uri = URI.parse(payload['base']['repo']['clone_url'])
@@ -112,7 +110,6 @@ module CapsuleCD
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
                                      description: 'CapsuleCD has started processing cookbook. Pull request will be merged automatically when complete.')
       end
-
 
       # REQUIRES source_client
       # REQUIRES source_release_commit
