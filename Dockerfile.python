@@ -1,7 +1,7 @@
 from phusion/passenger-full
 maintainer Jason Kulatunga <jk17@ualberta.ca>
 
-run apt-get install -y git
+run apt-get install -y git libffi-dev libssl-dev 
 run gem install bundler
 
 #install pip
