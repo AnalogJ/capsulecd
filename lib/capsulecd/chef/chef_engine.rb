@@ -111,7 +111,7 @@ module CapsuleCD
         pem_path = File.join(@source_git_parent_path, 'client.pem')
         knife_path = File.join(@source_git_parent_path, 'knife.rb')
 
-        unless ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME'] || ENV['CAPSULE_CHEF_SUPERMARKET_KEY']
+        unless @config.chef_supermarket_username || @config.chef_supermarket_key
           fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy cookbook to supermarket, credentials missing'
           return
         end
@@ -119,7 +119,7 @@ module CapsuleCD
         # write the knife.rb config file.
         File.open(knife_path, 'w+') do |file|
           file.write(<<-EOT.gsub(/^\s+/, '')
-            node_name "#{ENV['CAPSULE_CHEF_SUPERMARKET_USERNAME']}" # Replace with the login name you use to login to the Supermarket.
+            node_name "#{@config.chef_supermarket_username }" # Replace with the login name you use to login to the Supermarket.
             client_key "#{pem_path}" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
             cookbook_path [ '#{@source_git_parent_path}' ] # Directory where the cookbook you're uploading resides.
           EOT
@@ -127,14 +127,14 @@ module CapsuleCD
         end
 
         File.open(pem_path, 'w+') do |file|
-          key = Base64.strict_decode64(ENV['CAPSULE_CHEF_SUPERMARKET_KEY'])
+          key = Base64.strict_decode64(@config.chef_supermarket_key)
           file.write(key)
         end
 
         metadata_str = CapsuleCD::ChefHelper.read_repo_metadata(@source_git_local_path)
         chef_metadata = CapsuleCD::ChefHelper.parse_metadata(metadata_str)
 
-        command = "knife cookbook site share #{chef_metadata.name} #{ENV['CAPSULE_CHEF_SUPERMARKET_TYPE'] || 'Other'}  -c #{knife_path}"
+        command = "knife cookbook site share #{chef_metadata.name} #{@config.chef_supermarket_type}  -c #{knife_path}"
         Open3.popen3(command) do |_stdin, stdout, stderr, external|
           { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
             Thread.new do

@@ -114,7 +114,7 @@ module CapsuleCD
         super
         pypirc_path = File.expand_path('~/.pypirc')
 
-        unless ENV['CAPSULE_PYPI_USERNAME'] || ENV['CAPSULE_PYPI_PASSWORD']
+        unless @config.pypi_username || @config.pypi_password
           fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy package to pip, credentials missing'
           return
         end
@@ -127,8 +127,8 @@ module CapsuleCD
 
             [pypi]
             repository = https://pypi.python.org/pypi
-            username = #{ENV['CAPSULE_PYPI_USERNAME']}
-            password = #{ENV['CAPSULE_PYPI_PASSWORD']}
+            username = #{@config.pypi_username}
+            password = #{@config.pypi_password}
           EOT
                     )
         end

@@ -6,9 +6,9 @@ module CapsuleCD
     # Order of inheritance: file <- environment <- cli options
     # <- means 'overridden by', eg. file overridden by environment vars
     # @param [String] config_path The path to the configuration file
-    def initialize(config_path, options)
+    def initialize(options)
       @options = options
-      @config_path = config_path
+      @config_path = @options[:config_file]
       @configuration = parse_config_file
       detect_runner_and_populate
       populate_overrides
@@ -61,8 +61,9 @@ module CapsuleCD
     # The raw parsed configuration file
 
     def parse_config_file
-      unless File.exist?(@config_path)
-        fail 'The configuration file could not be found. Using defaults'
+      if !@config_path || !File.exist?(@config_path)
+        puts 'The configuration file could not be found. Using defaults'
+        return
       end
 
       file = File.open(@config_path).read

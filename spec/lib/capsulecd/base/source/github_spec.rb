@@ -3,19 +3,25 @@ require 'capsulecd/base/source/github'
 
 describe CapsuleCD::Source::Github do
   describe '#source_configure' do
-    let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
+
     describe 'when no authentication token is present' do
+      let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
+      let(:config) { CapsuleCD::Configuration.new({}) }
       it 'should raise an error' do
         engine = test_engine.new
+        engine.instance_variable_set(:@config, config)
         expect { engine.source_configure }.to raise_error(CapsuleCD::Error::SourceAuthenticationFailed)
       end
     end
 
     describe 'when authentication token is present' do
+      let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
+      let(:config) { CapsuleCD::Configuration.new({:config_file => 'spec/fixtures/sample_configuration.yml'}) }
+
       it 'should successfully create an source_client' do
-        allow(ENV).to receive(:[]).with('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN').and_return('test_token')
         allow(Dir).to receive(:mktmpdir).and_return('/tmp')
         engine = test_engine.new
+        engine.instance_variable_set(:@config, config)
         engine.source_configure
         expect(engine.source_client).to be_a_kind_of Octokit::Client
       end
@@ -36,9 +42,10 @@ describe CapsuleCD::Source::Github do
         }
       }
     end
+    let(:config) { CapsuleCD::Configuration.new({:config_file => 'spec/fixtures/sample_configuration.yml'}) }
     it 'should clone git repo' do
-      allow(ENV).to receive(:[]).with('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN').and_return('test_token')
       engine = test_engine.new
+      engine.instance_variable_set(:@config, config)
       engine.instance_variable_set(:@source_git_parent_path, '/tmp')
       allow(CapsuleCD::GitUtils).to receive(:clone).and_return(engine.source_git_parent_path + payload['head']['repo']['name'])
       allow(CapsuleCD::GitUtils).to receive(:checkout).and_return(true)
@@ -53,6 +60,7 @@ describe CapsuleCD::Source::Github do
     describe 'with an invalid payload' do
       it 'should raise an error' do
         engine = test_engine.new
+        engine.instance_variable_set(:@config, config)
         engine.instance_variable_set(:@source_git_parent_path, '/tmp')
         expect { engine.source_process_push_payload('head' => {}) }.to raise_error(CapsuleCD::Error::SourcePayloadFormatError)
       end
@@ -62,6 +70,7 @@ describe CapsuleCD::Source::Github do
   describe '#source_process_pull_request_payload' do
     let(:test_engine) { Class.new { include CapsuleCD::Source::Github } }
     let(:source_client_double) { instance_double(Octokit::Client) }
+    let(:config) { CapsuleCD::Configuration.new({:config_file => 'spec/fixtures/sample_configuration.yml'}) }
 
     describe 'with a closed pull request payload' do
       let(:payload) do
@@ -71,11 +80,13 @@ describe CapsuleCD::Source::Github do
       end
       it 'should raise an error' do
         engine = test_engine.new
+        engine.instance_variable_set(:@config, config)
         expect { engine.source_process_pull_request_payload(payload) }.to raise_error(CapsuleCD::Error::SourcePayloadUnsupported)
       end
     end
 
     describe 'when the default branch is not the same as the pull request base branch' do
+      let(:config) { CapsuleCD::Configuration.new({:config_file => 'spec/fixtures/sample_configuration.yml'}) }
       let(:payload) do
         {
           'state' => 'open',
@@ -89,6 +100,7 @@ describe CapsuleCD::Source::Github do
       end
       it 'should raise an error' do
         engine = test_engine.new
+        engine.instance_variable_set(:@config, config)
         expect { engine.source_process_pull_request_payload(payload) }.to raise_error(CapsuleCD::Error::SourcePayloadUnsupported)
       end
     end
@@ -155,6 +167,7 @@ describe CapsuleCD::Source::Github do
 
       it 'should clone merged repo' do
         engine = test_engine.new
+        engine.instance_variable_set(:@config, config)
         engine.instance_variable_set(:@source_client, source_client_double)
         engine.instance_variable_set(:@source_git_parent_path, '/tmp')
 

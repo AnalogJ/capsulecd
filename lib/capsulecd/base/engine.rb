@@ -1,4 +1,5 @@
 require_relative 'runner/default'
+require_relative 'configuration'
 require 'hooks'
 module CapsuleCD
   class Engine
@@ -23,15 +24,15 @@ module CapsuleCD
     end
 
     def initialize(options)
-      @options = options
-      if options[:source] == :github
+      @config = CapsuleCD::Configuration.new(options)
+      if @config.source == :github
         require_relative 'source/github'
         self.class.send(:include, CapsuleCD::Source::Github)
       else
         fail 'No source defined.'
       end
 
-      if options[:runner] == :circleci
+      if @config == :circleci
         require_relative 'runner/circleci'
         self.class.send(:include, CapsuleCD::Runner::Circleci)
       else

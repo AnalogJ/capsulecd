@@ -25,14 +25,18 @@ module CapsuleCD
       # MUST set @source_client
       def source_configure
         puts 'github source_configure'
-        fail CapsuleCD::Error::SourceAuthenticationFailed, 'Missing "CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN" env variable' unless ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
+        fail CapsuleCD::Error::SourceAuthenticationFailed, 'Missing github access token' unless @config.source_github_access_token
 
         @source_release_commit = nil
         @source_release_artifacts = []
 
-        @source_git_parent_path = Dir.mktmpdir
+        @source_git_parent_path = @config.source_git_parent_path || Dir.mktmpdir
         Octokit.auto_paginate = true
-        @source_client = Octokit::Client.new(access_token: ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN'])
+        Octokit.configure do |c|
+          c.api_endpoint = @config.source_github_api_endpoint if @config.source_github_api_endpoint
+          c.web_endpoint = @config.source_github_web_endpoint if @config.source_github_web_endpoint
+        end
+        @source_client = Octokit::Client.new(access_token: @config.source_github_access_token)
       end
 
       # all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the webhook data.
@@ -49,7 +53,7 @@ module CapsuleCD
 
         # set the remote url, with embedded token
         uri = URI.parse(@source_git_head_info['repo']['clone_url'])
-        uri.user = ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
+        uri.user = @config.source_github_access_token
         @source_git_remote = uri.to_s
         @source_git_local_branch = @source_git_head_info['repo']['ref']
         # clone the merged branch
@@ -94,7 +98,7 @@ module CapsuleCD
 
         # set the remote url, with embedded token
         uri = URI.parse(payload['base']['repo']['clone_url'])
-        uri.user = ENV['CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN']
+        uri.user = @config.source_github_access_token
         @source_git_remote = uri.to_s
 
         # clone the merged branch

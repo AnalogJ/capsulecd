@@ -33,11 +33,15 @@ module CapsuleCD
            default: false,
            desc: 'Specifies that no changes should be pushed to source and no package will be released'
 
+    option :config_file,
+           type: :string,
+           default: nil,
+           desc: 'Specifies the location of the config file'
+
     # Begin processing
     def start
       # parse runner from env
       engine_opts = {}
-      engine_opts[:runner] = :circleci if ENV['CIRCLECI']
 
       engine_opts[:runner] = options[:runner].to_sym # TODO: we cant modify the hash sent by Thor, so we'll duplicate it
       engine_opts[:source] = options[:source].to_sym
