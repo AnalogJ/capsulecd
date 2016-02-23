@@ -33,13 +33,17 @@ module CapsuleCD
            default: false,
            desc: 'Specifies that no changes should be pushed to source and no package will be released'
 
+    option :config_file,
+           type: :string,
+           default: nil,
+           desc: 'Specifies the location of the config file'
+
     # Begin processing
     def start
       # parse runner from env
       engine_opts = {}
-      engine_opts[:runner] = :circleci if ENV['CIRCLECI']
 
-      engine_opts[:runner] = options[:runner].to_sym #TODO: we cant modify the hash sent by Thor, so we'll duplicate it
+      engine_opts[:runner] = options[:runner].to_sym # TODO: we cant modify the hash sent by Thor, so we'll duplicate it
       engine_opts[:source] = options[:source].to_sym
       engine_opts[:package_type] = options[:package_type].to_sym
       engine_opts[:dry_run] = options[:dry_run]
@@ -50,15 +54,15 @@ module CapsuleCD
 
       if engine_opts[:package_type] == :node
         require_relative 'node/node_engine'
-        engine = NodeEngine.new(engine_opts)
+        engine = CapsuleCD::Node::NodeEngine.new(engine_opts)
       elsif engine_opts[:package_type] == :chef
         require_relative 'chef/chef_engine'
-        engine = ChefEngine.new(engine_opts)
+        engine = CapsuleCD::Chef::ChefEngine.new(engine_opts)
       elsif engine_opts[:package_type] == :python
         require_relative 'python/python_engine'
-        engine = PythonEngine.new(engine_opts)
+        engine = CapsuleCD::Python::PythonEngine.new(engine_opts)
       else
-        engine = Engine.new(engine_opts)
+        engine = CapsuleCD::Engine.new(engine_opts)
       end
 
       engine.start
