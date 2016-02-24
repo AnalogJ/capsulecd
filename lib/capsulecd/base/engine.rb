@@ -4,6 +4,8 @@ require 'pp'
 require 'hooks'
 module CapsuleCD
   class Engine
+    attr_reader :config
+
     include Hooks
     define_hooks :before_source_configure, :after_source_configure,
                  :before_source_process_pull_request_payload, :after_source_process_pull_request_payload,
