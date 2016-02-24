@@ -24,7 +24,7 @@ module CapsuleCD
     attr_reader :config_path
     attr_reader :configuration
 
-    # Source config
+    # Source config (any credentials added here should also be added to the spec_helper.rb VCR config)
     attr_reader :source_git_parent_path
     attr_reader :source_github_api_endpoint
     attr_reader :source_github_web_endpoint
@@ -38,7 +38,7 @@ module CapsuleCD
     attr_reader :runner_repo_full_name
     attr_reader :runner_repo_name
 
-    # Engine config
+    # Engine config (any credentials added here should also be added to the spec_helper.rb VCR config)
     attr_reader :chef_supermarket_username
     attr_reader :npm_auth_token
     attr_reader :pypi_username

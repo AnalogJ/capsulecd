@@ -1,5 +1,6 @@
 require_relative 'runner/default'
 require_relative 'configuration'
+require 'pp'
 require 'hooks'
 module CapsuleCD
   class Engine
@@ -32,7 +33,7 @@ module CapsuleCD
         fail 'No source defined.'
       end
 
-      if @config == :circleci
+      if @config.runner == :circleci
         require_relative 'runner/circleci'
         self.class.send(:include, CapsuleCD::Runner::Circleci)
       else

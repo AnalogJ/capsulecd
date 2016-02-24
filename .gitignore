@@ -91,3 +91,5 @@ test.rb
 vendor
 Gemfile.lock
 spec/vcr.log
+
+spec/fixtures/live_*_configuration.yml
