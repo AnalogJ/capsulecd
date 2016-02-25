@@ -13,11 +13,29 @@ require 'capsulecd'
 
 Dir['spec/support/*.rb'].each { |f| require File.expand_path(f) }
 
+python_config_file = 'spec/fixtures/sample_configuration.yml'
+chef_config_file = 'spec/fixtures/sample_configuration.yml'
+node_config_file = 'spec/fixtures/sample_configuration.yml'
+ruby_config_file = 'spec/fixtures/sample_configuration.yml'
 
-python_configuration = CapsuleCD::Configuration.new(config_file: 'spec/fixtures/live_python_configuration.yml')
-chef_configuration = CapsuleCD::Configuration.new(config_file: 'spec/fixtures/live_chef_configuration.yml')
-node_configuration = CapsuleCD::Configuration.new(config_file: 'spec/fixtures/live_node_configuration.yml')
-ruby_configuration = CapsuleCD::Configuration.new(config_file: 'spec/fixtures/live_ruby_configuration.yml')
+if File.exist?('spec/fixtures/live_python_configuration.yml')
+  python_config_file = 'spec/fixtures/live_python_configuration.yml'
+end
+if File.exist?('spec/fixtures/live_chef_configuration.yml')
+  chef_config_file = 'spec/fixtures/live_chef_configuration.yml'
+end
+if File.exist?('spec/fixtures/live_node_configuration.yml')
+  node_config_file = 'spec/fixtures/live_node_configuration.yml'
+end
+if File.exist?('spec/fixtures/live_ruby_configuration.yml')
+  ruby_config_file = 'spec/fixtures/live_ruby_configuration.yml'
+end
+
+
+python_configuration = CapsuleCD::Configuration.new(config_file: python_config_file)
+chef_configuration = CapsuleCD::Configuration.new(config_file: chef_config_file)
+node_configuration = CapsuleCD::Configuration.new(config_file: node_config_file)
+ruby_configuration = CapsuleCD::Configuration.new(config_file: ruby_config_file)
 
 def configure_vcr(vcr_config, type, capsulecd_config)
   vcr_config.filter_sensitive_data('<GITHUB_ACCESS_TOKEN>', type) do
