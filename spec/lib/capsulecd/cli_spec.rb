@@ -22,7 +22,7 @@ describe CapsuleCD::Cli do
         expect(CapsuleCD::Node::NodeEngine).to receive(:new).with(
           runner: :default, source: :default, package_type: :node, dry_run: false).and_return engine_double
 
-        CapsuleCD::Cli.start %w(start--package_type node)
+        CapsuleCD::Cli.start %w(start --package_type node)
       end
     end
 
