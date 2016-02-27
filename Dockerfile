@@ -3,6 +3,7 @@ maintainer Jason Kulatunga <jk17@ualberta.ca>
 
 run apt-get install -y git curl
 run gem install bundler
+run npm install -g bower
 
 #install pip
 run curl -o /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py

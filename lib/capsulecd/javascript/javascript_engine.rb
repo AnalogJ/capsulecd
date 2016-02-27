@@ -26,7 +26,7 @@ module CapsuleCD
           next_version = SemVer.parse(bower_data['version'])
           next_version.patch = next_version.patch + 1
           bower_data['version'] = next_version.to_s
-          File.write(@source_git_local_path + '/bower.json', bower_data.to_json)
+          File.write(@source_git_local_path + '/bower.json', JSON.pretty_generate(bower_data))
         end
 
 
@@ -95,7 +95,7 @@ module CapsuleCD
 
         if @_is_bower
           # lets make sure all the bower dependencies are available.
-          Open3.popen3('bower install', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          Open3.popen3('bower install --allow-root', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
             { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
               Thread.new do
                 until (line = stream_buffer.gets).nil?
@@ -197,10 +197,10 @@ module CapsuleCD
 
         if(bower_version>package_version)
           package_data['version'] = bower_version.to_s
-          File.write(@source_git_local_path + '/package.json', package_data.to_json)
+          File.write(@source_git_local_path + '/package.json', JSON.pretty_generate(package_data))
         else
           bower_data['version'] = package_version.to_s
-          File.write(@source_git_local_path + '/bower.json', bower_data.to_json)
+          File.write(@source_git_local_path + '/bower.json', JSON.pretty_generate(bower_data))
         end
       end
     end
