@@ -43,20 +43,18 @@ module CapsuleCD
         end
 
         # create a shrinkwrap file.
-        unless File.exist?(@source_git_local_path + '/npm-shrinkwrap.json')
-          Open3.popen3('npm shrinkwrap', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
-            { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
-              Thread.new do
-                until (line = stream_buffer.gets).nil?
-                  puts "#{name} -> #{line}"
-                end
+        Open3.popen3('npm shrinkwrap', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+            Thread.new do
+              until (line = stream_buffer.gets).nil?
+                puts "#{name} -> #{line}"
               end
             end
-            # wait for process
-            external.join
-            unless external.value.success?
-              fail CapsuleCD::Error::TestDependenciesError, 'npm shrinkwrap failed. Check log for exact error'
-            end
+          end
+          # wait for process
+          external.join
+          unless external.value.success?
+            fail CapsuleCD::Error::TestDependenciesError, 'npm shrinkwrap failed. Check log for exact error'
           end
         end
 
