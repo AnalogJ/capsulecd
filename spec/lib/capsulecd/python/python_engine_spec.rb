@@ -57,7 +57,7 @@ describe CapsuleCD::Python::PythonEngine, :python do
     describe 'when testing python package' do
       it 'should complete successfully' do
 
-        VCR.use_cassette('integration_circleci_python',:tag => :python) do
+        VCR.use_cassette('integration_python',:tag => :python) do
           #stub methods in source_process_pull_request_payload
           allow(CapsuleCD::GitUtils).to receive(:clone).and_return(engine.config.source_git_parent_path + '/pip_analogj_test')
           allow(CapsuleCD::GitUtils).to receive(:fetch).and_return(true)
@@ -65,6 +65,8 @@ describe CapsuleCD::Python::PythonEngine, :python do
 
           #stub methods in build_step
           allow(File).to receive(:open).with('spec/fixtures/python/pip_analogj_test/VERSION','w').and_call_original
+          allow(CapsuleCD::GitUtils).to receive(:create_gitignore).with(engine.config.source_git_parent_path + '/pip_analogj_test', ['Python']).and_return(true)
+
 
           #stub methods in test_step
           allow(Open3).to receive(:popen3).with('pip install -r requirements.txt', {:chdir=>'spec/fixtures/python/pip_analogj_test'}).and_call_original

@@ -38,7 +38,7 @@ module CapsuleCD
           FileUtils.mkdir(@source_git_local_path + '/spec')
         end
         unless File.exist?(@source_git_local_path + '/.gitignore')
-          CapsuleCD::GitHelper.create_gitignore(@source_git_local_path, ['ChefCookbook'])
+          CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['ChefCookbook'])
         end
       end
 

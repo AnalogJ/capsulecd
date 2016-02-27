@@ -44,7 +44,7 @@ module CapsuleCD
           File.open(@source_git_local_path + '/tests/__init__.py', 'w') { |file| file.write('') }
         end
         unless File.exist?(@source_git_local_path + '/.gitignore')
-          CapsuleCD::GitHelper.create_gitignore(@source_git_local_path, ['Python'])
+          CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['Python'])
         end
       end
 

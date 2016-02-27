@@ -1,3 +1,5 @@
 --- 
   npm_auth_token: sample_auth_token
   source_github_access_token: sample_test_token
+  pypi_username: sample_pypi_username
+  pypi_password: sample_pypi_password

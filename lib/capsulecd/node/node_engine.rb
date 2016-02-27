@@ -19,7 +19,7 @@ module CapsuleCD
           FileUtils.mkdir(@source_git_local_path + '/test')
         end
         unless File.exist?(@source_git_local_path + '/.gitignore')
-          CapsuleCD::GitHelper.create_gitignore(@source_git_local_path, ['Node'])
+          CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['Node'])
         end
       end
 
@@ -103,7 +103,7 @@ module CapsuleCD
       # this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
       def release_step
         super
-        npmrc_path = File.join(@source_git_local_path, '.npmrc')
+        npmrc_path = File.expand_path('~/.npmrc')
 
         unless @config.npm_auth_token
           fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'

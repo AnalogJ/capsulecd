@@ -37,7 +37,7 @@ module CapsuleCD
           FileUtils.mkdir(@source_git_local_path + '/test')
         end
         unless File.exist?(@source_git_local_path + '/.gitignore')
-          CapsuleCD::GitHelper.create_gitignore(@source_git_local_path, ['Node','Yeoman'])
+          CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['Node','Yeoman'])
         end
       end
 
@@ -151,7 +151,7 @@ module CapsuleCD
         super
 
         if @_is_npm
-          npmrc_path = File.join(@source_git_local_path, '.npmrc')
+          npmrc_path = File.expand_path('~/.npmrc')
 
           unless @config.npm_auth_token
             fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'
