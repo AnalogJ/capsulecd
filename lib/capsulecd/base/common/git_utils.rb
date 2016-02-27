@@ -46,8 +46,13 @@ module CapsuleCD
     # gets the commit of the latest tag on current branch
     def self.get_latest_tag_commit(repo_path)
       repo = Git.open(repo_path)
-      tag = repo.describe(nil,:abbrev => 0, :exact_match => true)
-      repo.tag(tag)
+      tag_name = repo.describe(nil,:abbrev => 0, :exact_match => true)
+
+      #we're dealing with annotated tags, which have thier own git commit, which causes issues with the github release api
+      # so we're manually creating a Git Object with the data we need (.sha and .name)
+      tag_sha = repo.tag(tag_name).log.first.sha
+
+      Git::Object::Tag.new(repo,tag_sha, tag_name)
     end
 
     def self.generate_changelog(repo_path, base_sha, head_sha, full_name)

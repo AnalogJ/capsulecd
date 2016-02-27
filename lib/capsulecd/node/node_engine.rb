@@ -83,7 +83,7 @@ module CapsuleCD
 
         # commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
         # as they will be included in the commmit and any release artifacts)
-        CapsuleCD::GitUtils.commit(@source_git_local_path, 'Committing automated changes before packaging.') rescue puts 'Could not commit changes locally..'
+        CapsuleCD::GitUtils.commit(@source_git_local_path, 'Committing automated changes before packaging.') rescue puts 'No changes to commit..'
 
         # run npm publish
         Open3.popen3('npm version patch -m "(v%s) Automated packaging of release by CapsuleCD"', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|

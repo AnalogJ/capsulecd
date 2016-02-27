@@ -128,7 +128,7 @@ module CapsuleCD
 
         # push the version bumped metadata file + newly created files to
         CapsuleCD::GitUtils.push(@source_git_local_path, @source_git_local_branch, @source_git_base_info['ref'])
-        # sleept because github needs time to process the new tag.
+        # sleep because github needs time to process the new tag.
         sleep 5
 
         # calculate the release sha
