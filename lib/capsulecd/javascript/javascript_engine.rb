@@ -10,10 +10,22 @@ module CapsuleCD
       def build_step
         super
 
-        # we can't bump the version here because the npm version patch command will set it.
+        # we can't bump the npm version here because the npm version patch command will set it.
         # howerver we need to make sure the bower.json and package.json versions are insync.
         # we'll take the latest version of either the package.json or bower.json and set that as the version of both.
         sync_versions
+
+        # now that the bower and package versions are in sync, lets bump the version of bower.json
+        # (because package.json will be bumped automatically.)
+        if File.exist?(@source_git_local_path + '/bower.json')
+          bower_file = File.read(@source_git_local_path + '/bower.json')
+          bower_data = JSON.parse(bower_file)
+          next_version = SemVer.parse(bower_data['version'])
+          next_version.patch = next_version.patch + 1
+          bower_data['version'] = next_version.to_s
+          File.write(@source_git_local_path + '/bower.json', bower_data.to_json)
+        end
+
 
         # TODO: check if this module name and version already exist.
 
@@ -118,10 +130,7 @@ module CapsuleCD
           fail 'npm version bump failed' unless external.value.success?
         end
 
-        # now that the package.json version has been bumped up, lets sync with bower if needed before commiting.
-        sync_versions
-
-        @source_release_commit = CapsuleCD::GitUtils.head_commit(@source_git_local_path)
+        @source_release_commit = CapsuleCD::GitUtils.get_latest_tag_commit(@source_git_local_path)
       end
 
       # this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)

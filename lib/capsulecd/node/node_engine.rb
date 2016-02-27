@@ -99,7 +99,7 @@ module CapsuleCD
           fail 'npm version bump failed' unless external.value.success?
         end
 
-        @source_release_commit = CapsuleCD::GitUtils.head_commit(@source_git_local_path)
+        @source_release_commit = CapsuleCD::GitUtils.get_latest_tag_commit(@source_git_local_path)
       end
 
       # this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)

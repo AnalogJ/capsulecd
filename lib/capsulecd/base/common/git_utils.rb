@@ -43,9 +43,11 @@ module CapsuleCD
       repo.push('origin', "#{local_branch}:#{remote_branch}", tags: true)
     end
 
-    # gets the HEAD commit on current branch
-    def self.head_commit(repo_path)
+    # gets the commit of the latest tag on current branch
+    def self.get_latest_tag_commit(repo_path)
       repo = Git.open(repo_path)
+      tag = repo.describe(nil,:abbrev => 0, :exact_match => true)
+      repo.tag(tag)
     end
 
     def self.generate_changelog(repo_path, base_sha, head_sha, full_name)
