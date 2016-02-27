@@ -1,4 +1,6 @@
 require 'git'
+require 'mkgitignore'
+
 module CapsuleCD
   class GitUtils
     def self.clone(parent_path, repository_name, git_remote)
@@ -55,5 +57,21 @@ module CapsuleCD
       end
       markdown
     end
+
+    def self.create_gitignore(repo_path, ignore_types)
+      #store current working directory, and change to the cookbook
+      wd = Dir.getwd
+      Dir.chdir(repo_path)
+
+      #download gitignore templates and write them
+      templates = Mkgitignore::searchForTemplatesWithNames(ignore_types)
+      gitignore = String.new
+      templates.each { |t| gitignore += Mkgitignore::downloadFromURL(t["url"], t["name"]) }
+      Mkgitignore::writeGitignore(gitignore, true)
+
+      #restore previous working dir
+      Dir.chdir(wd)
+    end
+
   end
 end

@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+gem 'mkgitignore', :github => 'analogj/mkgitignore', :branch => 'library_support'
 gemspec
 
 # These gems are required for testing

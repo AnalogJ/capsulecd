@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'git'
   spec.add_dependency 'semverly'
   spec.add_dependency 'hooks'
-  spec.add_dependency 'gitignore'
+  spec.add_dependency 'mkgitignore'
 end

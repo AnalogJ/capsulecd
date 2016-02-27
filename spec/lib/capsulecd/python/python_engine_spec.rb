@@ -16,6 +16,7 @@ describe CapsuleCD::Python::PythonEngine, :python do
 
         File.exist?('spec/fixtures/empty_package/VERSION')
         File.exist?('spec/fixtures/empty_package/requirements.txt')
+        File.exist?('spec/fixtures/empty_package/.gitignore')
 
         FileUtils.rm_rf(Dir['spec/fixtures/empty_package/[^.]*'])
       end
