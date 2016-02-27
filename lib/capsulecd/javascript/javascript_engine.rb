@@ -18,6 +18,12 @@ module CapsuleCD
         unless File.exist?(@source_git_local_path + '/test')
           FileUtils.mkdir(@source_git_local_path + '/test')
         end
+        unless File.exist?(@source_git_local_path + '/.gitignore')
+          wd = Dir.getwd
+          Dir.chdir(@source_git_local_path)
+          Gitignore::create_gitignore(['Node','Yeoman'],false) #todo: change Yeoman to Bower
+          Dir.chdir(wd)
+        end
       end
 
       def test_step
@@ -37,7 +43,23 @@ module CapsuleCD
           unless external.value.success?
             fail CapsuleCD::Error::TestDependenciesError, 'npm install failed. Check module dependencies'
           end
-        end
+        end if File.exist?(@source_git_local_path + '/package.json')
+
+        # lets make sure all the bower dependencies are available.
+        Open3.popen3('bower install', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+            Thread.new do
+              until (line = stream_buffer.gets).nil?
+                puts "#{name} -> #{line}"
+              end
+            end
+          end
+          # wait for process
+          external.join
+          unless external.value.success?
+            fail CapsuleCD::Error::TestDependenciesError, 'npm install failed. Check module dependencies'
+          end
+        end if File.exist?(@source_git_local_path + '/bower.json')
 
         # create a shrinkwrap file.
         unless File.exist?(@source_git_local_path + '/npm-shrinkwrap.json')

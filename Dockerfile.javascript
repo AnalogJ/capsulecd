@@ -9,5 +9,6 @@ run npm install -g bower
 workdir /srv/capsulecd
 run git clone https://github.com/AnalogJ/capsulecd.git .
 
-run bundle install --without chef ruby python
+run bundle install --with test --without chef ruby python npm
+run bundle exec rake spec:javascript
 CMD ["bundle", "exec", "capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "javascript"]

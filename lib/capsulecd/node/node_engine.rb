@@ -18,6 +18,12 @@ module CapsuleCD
         unless File.exist?(@source_git_local_path + '/test')
           FileUtils.mkdir(@source_git_local_path + '/test')
         end
+        unless File.exist?(@source_git_local_path + '/.gitignore')
+          wd = Dir.getwd
+          Dir.chdir(@source_git_local_path)
+          Gitignore::create_gitignore(['Node'],false)
+          Dir.chdir(wd)
+        end
       end
 
       def test_step

@@ -8,5 +8,6 @@ run gem install bundler
 workdir /srv/capsulecd
 run git clone https://github.com/AnalogJ/capsulecd.git .
 
-run bundle install --without chef node python
+run bundle install --with test --without chef node python
+run bundle exec rake spec:ruby
 CMD ["bundle", "exec", "capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "ruby"]

@@ -33,3 +33,6 @@ end
 
 group :python do
 end
+
+group :javascript do
+end

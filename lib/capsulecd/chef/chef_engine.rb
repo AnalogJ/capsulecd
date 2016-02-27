@@ -5,6 +5,7 @@ require_relative '../base/engine'
 require_relative 'chef_helper'
 require 'base64'
 require 'fileutils'
+require 'gitignore'
 
 module CapsuleCD
   module Chef
@@ -36,6 +37,12 @@ module CapsuleCD
         end
         unless File.exist?(@source_git_local_path + '/spec')
           FileUtils.mkdir(@source_git_local_path + '/spec')
+        end
+        unless File.exist?(@source_git_local_path + '/.gitignore')
+          wd = Dir.getwd
+          Dir.chdir(@source_git_local_path)
+          Gitignore::create_gitignore(['ChefCookbook'],false)
+          Dir.chdir(wd)
         end
       end
 
