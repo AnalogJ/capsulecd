@@ -1,6 +1,7 @@
 require 'semverly'
 require 'open3'
 require 'bundler'
+require 'json'
 require_relative '../base/engine'
 
 module CapsuleCD
@@ -9,8 +10,10 @@ module CapsuleCD
       def build_step
         super
 
-        # no need to bump up the version here. It will automatically be bumped up via the npm version patch command.
-        # however we need to read the version from the package.json file and check if a npm module already exists.
+        # we can't bump the version here because the npm version patch command will set it.
+        # howerver we need to make sure the bower.json and package.json versions are insync.
+        # we'll take the latest version of either the package.json or bower.json and set that as the version of both.
+        sync_versions
 
         # TODO: check if this module name and version already exist.
 
@@ -115,6 +118,9 @@ module CapsuleCD
           fail 'npm version bump failed' unless external.value.success?
         end
 
+        # now that the package.json version has been bumped up, lets sync with bower if needed before commiting.
+        sync_versions
+
         @source_release_commit = CapsuleCD::GitUtils.head_commit(@source_git_local_path)
       end
 
@@ -147,6 +153,29 @@ module CapsuleCD
           unless external.value.success?
             fail CapsuleCD::Error::ReleasePackageError, 'npm publish failed. Check log for exact error'
           end
+        end
+      end
+
+      private
+      def sync_versions
+        #this method only needs to run if bower and package json files exist.
+        if !File.exist?(@source_git_local_path + '/bower.json') || !File.exist?(@source_git_local_path + '/package.json')
+          return
+        end
+
+        bower_file = File.read(@source_git_local_path + '/bower.json')
+        bower_data = JSON.parse(bower_file)
+        bower_version = SemVer.parse(bower_data['version'])
+        package_file = File.read(@source_git_local_path + '/package.json')
+        package_data = JSON.parse(package_file)
+        package_version = SemVer.parse(package_data['version'])
+
+        if(bower_version>package_version)
+          package_data['version'] = bower_version.to_s
+          File.write(@source_git_local_path + '/package.json', package_data.to_json)
+        else
+          bower_data['version'] = package_version.to_s
+          File.write(@source_git_local_path + '/bower.json', bower_data.to_json)
         end
       end
     end
