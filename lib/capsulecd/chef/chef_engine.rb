@@ -124,38 +124,48 @@ module CapsuleCD
           return
         end
 
-        # write the knife.rb config jfile.
-        File.open(knife_path, 'w+') do |file|
-          file.write(<<-EOT.gsub(/^\s+/, '')
-            node_name "#{@config.chef_supermarket_username }" # Replace with the login name you use to login to the Supermarket.
-            client_key "#{pem_path}" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
-            cookbook_path [ '#{@source_git_parent_path}' ] # Directory where the cookbook you're uploading resides.
-          EOT
-                    )
-        end
-
-        File.open(pem_path, 'w+') do |file|
-          file.write(@config.chef_supermarket_key)
-        end
-
+        # knife is really sensitive to folder names. The cookbook name MUST match the folder name otherwise knife throws up
+        # when doing a knife cookbook share. So we're going to make a new tmp directory, create a subdirectory with the EXACT
+        # cookbook name, and then copy the cookbook contents into it. Yeah yeah, its pretty nasty, but blame Chef.
         metadata_str = CapsuleCD::Chef::ChefHelper.read_repo_metadata(@source_git_local_path)
         chef_metadata = CapsuleCD::Chef::ChefHelper.parse_metadata(metadata_str)
 
-        command = "knife cookbook site share #{chef_metadata.name} #{@config.chef_supermarket_type}  -c #{knife_path}"
-        Open3.popen3(command) do |_stdin, stdout, stderr, external|
-          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
-            Thread.new do
-              until (line = stream_buffer.gets).nil?
-                puts "#{name} -> #{line}"
+        Dir.mktmpdir {|tmp_parent_path|
+          # create cookbook folder
+          tmp_local_path = File.join(tmp_parent_path, chef_metadata.name)
+          FileUtils.mkdir_p(tmp_local_path)
+          FileUtils.copy_entry(@source_git_local_path, tmp_local_path)
+
+          # write the knife.rb config jfile.
+          File.open(knife_path, 'w+') do |file|
+            file.write(<<-EOT.gsub(/^\s+/, '')
+            node_name "#{@config.chef_supermarket_username }" # Replace with the login name you use to login to the Supermarket.
+            client_key "#{pem_path}" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
+            cookbook_path [ '#{tmp_parent_path}' ] # Directory where the cookbook you're uploading resides.
+            EOT
+            )
+          end
+
+          File.open(pem_path, 'w+') do |file|
+            file.write(@config.chef_supermarket_key)
+          end
+
+          command = "knife cookbook site share #{chef_metadata.name} #{@config.chef_supermarket_type} -c #{knife_path}"
+          Open3.popen3(command) do |_stdin, stdout, stderr, external|
+            { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+              Thread.new do
+                until (line = stream_buffer.gets).nil?
+                  puts "#{name} -> #{line}"
+                end
               end
             end
+            # wait for process
+            external.join
+            unless external.value.success?
+              fail CapsuleCD::Error::ReleasePackageError, 'knife cookbook upload to supermarket failed'
+            end
           end
-          # wait for process
-          external.join
-          unless external.value.success?
-            fail CapsuleCD::Error::ReleasePackageError, 'knife cookbook upload to supermarket failed'
-          end
-        end
+        }
       end
     end
   end

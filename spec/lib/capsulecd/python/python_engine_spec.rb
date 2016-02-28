@@ -1,30 +1,48 @@
 require 'spec_helper'
-require 'capsulecd/python/python_engine'
 
-describe CapsuleCD::Python::PythonEngine, :python do
+describe 'CapsuleCD::Python::PythonEngine', :python do
   describe '#build_step' do
-    let(:engine) do
-      CapsuleCD::Python::PythonEngine.new(source: :github,
-                                          runner: :circleci,
-                                          package_type: :python)
+    describe 'when building an empty package' do
+      let(:engine) do
+        require 'capsulecd/python/python_engine'
+        CapsuleCD::Python::PythonEngine.new(source: :github,
+                                            runner: :circleci,
+                                            package_type: :python)
+      end
+      it 'should raise an error' do
+        engine.instance_variable_set(:@source_git_local_path, test_directory )
+
+        expect { engine.build_step }.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
+      end
     end
-    describe 'when building an empty package ' do
+    describe 'when building a simple package ' do
+      before(:each) do
+        FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
+      end
+      let(:engine) do
+        require 'capsulecd/python/python_engine'
+        CapsuleCD::Python::PythonEngine.new(source: :github,
+                                            runner: :circleci,
+                                            package_type: :python)
+      end
       it 'should create a VERSION file, requirements.txt file and tests folder' do
-        engine.instance_variable_set(:@source_git_local_path, 'spec/fixtures/empty_package')
+        engine.instance_variable_set(:@source_git_local_path, test_directory)
 
         engine.build_step
 
-        File.exist?('spec/fixtures/empty_package/VERSION')
-        File.exist?('spec/fixtures/empty_package/requirements.txt')
-        File.exist?('spec/fixtures/empty_package/.gitignore')
-
-        FileUtils.rm_rf(Dir['spec/fixtures/empty_package/[^.]*'])
+        File.exist?(test_directory+'/VERSION')
+        File.exist?(test_directory+'/requirements.txt')
+        File.exist?(test_directory+'/.gitignore')
       end
     end
   end
 
   describe '#test_step' do
+    before(:each) do
+      FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
+    end
     let(:engine) do
+      require 'capsulecd/python/python_engine'
       CapsuleCD::Python::PythonEngine.new(source: :github,
                                           runner: :circleci,
                                           package_type: :python)
@@ -33,55 +51,54 @@ describe CapsuleCD::Python::PythonEngine, :python do
       it 'should run install dependencies' do
         allow(Open3).to receive(:popen3).and_return(false)
 
-        engine.instance_variable_set(:@source_git_local_path, 'spec/fixtures/empty_package')
+        engine.instance_variable_set(:@source_git_local_path, test_directory)
 
         engine.test_step
 
-        File.exist?('spec/fixtures/empty_package/VERSION')
-        File.exist?('spec/fixtures/empty_package/requirements.txt')
-
-        FileUtils.rm_rf(Dir['spec/fixtures/empty_package/[^.]*'])
+        File.exist?(test_directory+'/VERSION')
+        File.exist?(test_directory+'/requirements.txt')
       end
     end
   end
 
   describe 'integration tests' do
     let(:engine) do
+      require 'capsulecd/python/python_engine'
       CapsuleCD::Python::PythonEngine.new(source: :github,
                                           runner: :circleci,
                                           package_type: :python,
-                                          config_file: 'spec/fixtures/live_python_configuration.yml'
+                                          config_file: 'spec/fixtures/sample_configuration.yml'
+                                          # config_file: 'spec/fixtures/live_python_configuration.yml'
       )
     end
     let(:git_commit_double) { instance_double(Git::Object::Commit) }
     describe 'when testing python package' do
       it 'should complete successfully' do
+        FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
 
         VCR.use_cassette('integration_python',:tag => :python) do
+          #set defaults for stubbed classes
+          source_git_local_path = test_directory
+          allow(File).to receive(:exist?).and_call_original
+          allow(File).to receive(:open).and_call_original
+          allow(Open3).to receive(:popen3).and_call_original
+
           #stub methods in source_process_pull_request_payload
-          allow(CapsuleCD::GitUtils).to receive(:clone).and_return(engine.config.source_git_parent_path + '/pip_analogj_test')
+          allow(CapsuleCD::GitUtils).to receive(:clone).and_return(source_git_local_path)
           allow(CapsuleCD::GitUtils).to receive(:fetch).and_return(true)
           allow(CapsuleCD::GitUtils).to receive(:checkout).and_return(true)
 
           #stub methods in build_step
-          allow(File).to receive(:open).with('spec/fixtures/python/pip_analogj_test/VERSION','w').and_call_original
-          allow(CapsuleCD::GitUtils).to receive(:create_gitignore).with(engine.config.source_git_parent_path + '/pip_analogj_test', ['Python']).and_return(true)
-
-
-          #stub methods in test_step
-          allow(Open3).to receive(:popen3).with('pip install -r requirements.txt', {:chdir=>'spec/fixtures/python/pip_analogj_test'}).and_call_original
-          allow(Open3).to receive(:popen3).with('pip install -e .', {:chdir=>'spec/fixtures/python/pip_analogj_test'}).and_call_original
-          allow(Open3).to receive(:popen3).with('python setup.py test', {:chdir=>'spec/fixtures/python/pip_analogj_test'}).and_call_original
-
+          allow(CapsuleCD::GitUtils).to receive(:create_gitignore).with(source_git_local_path+'/pip_analogj_test', ['Python']).and_return(true)
 
           #stub methods in package_step
           allow(CapsuleCD::GitUtils).to receive(:commit).and_return(true)
-          allow(CapsuleCD::GitUtils).to receive(:tag).and_return(git_commit_double)
+          allow(CapsuleCD::GitUtils).to receive(:tag).with(source_git_local_path,'1.0.7').and_return(git_commit_double)
           allow(git_commit_double).to receive(:sha).and_return('0a5948802a2bba02e019fd13bf3db3c5329faae6')
-          allow(git_commit_double).to receive(:name).and_return('v1.0.0')
+          allow(git_commit_double).to receive(:name).and_return('v1.0.7')
 
           #stub methods in release_step
-          allow(Open3).to receive(:popen3).with('python setup.py sdist upload',{:chdir=>'spec/fixtures/python/pip_analogj_test'}).and_return(true)
+          allow(Open3).to receive(:popen3).with('python setup.py sdist upload',{:chdir=>source_git_local_path}).and_return(true)
           allow(File).to receive(:open).with(File.expand_path('~/.pypirc'), 'w+').and_return(true)
 
           #stub methods in source_release

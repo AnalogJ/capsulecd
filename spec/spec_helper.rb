@@ -75,6 +75,15 @@ end
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  config.include CapsuleCD::RSpecSupport::FileSystem
+
+  config.before(:each) {
+    make_test_directory
+  }
+  config.after(:each) {
+    remove_test_directory
+  }
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
