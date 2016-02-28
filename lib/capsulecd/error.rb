@@ -15,6 +15,9 @@ module CapsuleCD
     # Raised when the user who started the packaging is unauthorized (non-collaborator)
     class SourceUnauthorizedUser < BaseError; end
 
+    # Raised when the package is missing certain required files (ie metadata.rb, package.json, setup.py, etc)
+    class BuildPackageInvalid < BaseError; end
+
     # Raised when package dependencies fail to install correctly.
     class TestDependenciesError < BaseError; end
 

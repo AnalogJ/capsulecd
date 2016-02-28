@@ -30,6 +30,7 @@ begin
 
   end
 
+  task :test => 'spec:unit'
   task :default => 'spec:unit'
 
   rescue LoadError

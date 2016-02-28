@@ -13,6 +13,11 @@ module CapsuleCD
         @_is_bower = File.exist?(@source_git_local_path + '/bower.json')
         @_is_npm = File.exist?(@source_git_local_path + '/package.json')
 
+        # validate that the metadata files exist
+        if !@_is_bower && !@_is_npm
+          fail CapsuleCD::Error::BuildPackageInvalid, 'package.json or bower.json file must be present for Javascript packages'
+        end
+
         # we can't bump the npm version here because the npm version patch command will set it.
         # howerver we need to make sure the bower.json and package.json versions are insync.
         # we'll take the latest version of either the package.json or bower.json and set that as the version of both.

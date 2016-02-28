@@ -8,6 +8,10 @@ module CapsuleCD
     class NodeEngine < Engine
       def build_step
         super
+        # validate that the chef metadata.rb file exists
+        unless File.exist?(@source_git_local_path + '/package.json')
+          fail CapsuleCD::Error::BuildPackageInvalid, 'package.json file is required to process Npm package'
+        end
 
         # no need to bump up the version here. It will automatically be bumped up via the npm version patch command.
         # however we need to read the version from the package.json file and check if a npm module already exists.

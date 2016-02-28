@@ -8,6 +8,9 @@ module CapsuleCD
     class PythonEngine < Engine
       def build_step
         super
+        unless File.exist?(@source_git_local_path + '/setup.py')
+          fail CapsuleCD::Error::BuildPackageInvalid, 'setup.py file is required to process Python package'
+        end
 
         # check for/create required VERSION file
         unless File.exist?(@source_git_local_path + '/VERSION')

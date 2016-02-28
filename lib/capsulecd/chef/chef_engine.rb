@@ -11,15 +11,20 @@ module CapsuleCD
     class ChefEngine < Engine
       def build_step
         super
+        # validate that the chef metadata.rb file exists
+
+        unless File.exist?(@source_git_local_path + '/metadata.rb')
+          fail CapsuleCD::Error::BuildPackageInvalid, 'metadata.rb file is required to process Chef cookbook'
+        end
 
         # bump up the chef cookbook version
-        metadata_str = CapsuleCD::ChefHelper.read_repo_metadata(@source_git_local_path)
-        chef_metadata = CapsuleCD::ChefHelper.parse_metadata(metadata_str)
+        metadata_str = CapsuleCD::Chef::ChefHelper.read_repo_metadata(@source_git_local_path)
+        chef_metadata = CapsuleCD::Chef::ChefHelper.parse_metadata(metadata_str)
         next_version = SemVer.parse(chef_metadata.version)
         next_version.patch = next_version.patch + 1
 
         new_metadata_str = metadata_str.gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{next_version}\\2")
-        CapsuleCD::ChefHelper.write_repo_metadata(@source_git_local_path, new_metadata_str)
+        CapsuleCD::Chef::ChefHelper.write_repo_metadata(@source_git_local_path, new_metadata_str)
 
         # TODO: check if this cookbook name and version already exist.
 
@@ -98,8 +103,8 @@ module CapsuleCD
 
       def package_step
         super
-        metadata_str = CapsuleCD::ChefHelper.read_repo_metadata(@source_git_local_path)
-        chef_metadata = CapsuleCD::ChefHelper.parse_metadata(metadata_str)
+        metadata_str = CapsuleCD::Chef::ChefHelper.read_repo_metadata(@source_git_local_path)
+        chef_metadata = CapsuleCD::Chef::ChefHelper.parse_metadata(metadata_str)
         next_version = SemVer.parse(chef_metadata.version)
         # commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
         # as they will be included in the commmit and any release artifacts)
@@ -111,15 +116,15 @@ module CapsuleCD
       def release_step
         super
         puts @source_git_parent_path
-        pem_path = File.join(@source_git_parent_path, 'client.pem')
-        knife_path = File.join(@source_git_parent_path, 'knife.rb')
+        pem_path = File.expand_path('~/client.pem')
+        knife_path = File.expand_path('~/knife.rb')
 
         unless @config.chef_supermarket_username || @config.chef_supermarket_key
           fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy cookbook to supermarket, credentials missing'
           return
         end
 
-        # write the knife.rb config file.
+        # write the knife.rb config jfile.
         File.open(knife_path, 'w+') do |file|
           file.write(<<-EOT.gsub(/^\s+/, '')
             node_name "#{@config.chef_supermarket_username }" # Replace with the login name you use to login to the Supermarket.
@@ -130,12 +135,11 @@ module CapsuleCD
         end
 
         File.open(pem_path, 'w+') do |file|
-          key = Base64.strict_decode64(@config.chef_supermarket_key)
-          file.write(key)
+          file.write(@config.chef_supermarket_key)
         end
 
-        metadata_str = CapsuleCD::ChefHelper.read_repo_metadata(@source_git_local_path)
-        chef_metadata = CapsuleCD::ChefHelper.parse_metadata(metadata_str)
+        metadata_str = CapsuleCD::Chef::ChefHelper.read_repo_metadata(@source_git_local_path)
+        chef_metadata = CapsuleCD::Chef::ChefHelper.parse_metadata(metadata_str)
 
         command = "knife cookbook site share #{chef_metadata.name} #{@config.chef_supermarket_type}  -c #{knife_path}"
         Open3.popen3(command) do |_stdin, stdout, stderr, external|

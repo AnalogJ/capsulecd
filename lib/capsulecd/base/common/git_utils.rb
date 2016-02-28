@@ -70,15 +70,16 @@ module CapsuleCD
       wd = Dir.getwd
       Dir.chdir(repo_path)
 
-      #download gitignore templates and write them
-      templates = Mkgitignore::searchForTemplatesWithNames(ignore_types)
-      gitignore = String.new
-      templates.each { |t| gitignore += Mkgitignore::downloadFromURL(t["url"], t["name"]) }
-      Mkgitignore::writeGitignore(gitignore, true)
-
-      #restore previous working dir
-      Dir.chdir(wd)
+      begin
+        #download gitignore templates and write them
+        templates = Mkgitignore::searchForTemplatesWithNames(ignore_types)
+        gitignore = String.new
+        templates.each { |t| gitignore += Mkgitignore::downloadFromURL(t["url"], t["name"]) }
+        Mkgitignore::writeGitignore(gitignore, true)
+      ensure
+        #restore previous working dir
+        Dir.chdir(wd)
+      end
     end
-
   end
 end
