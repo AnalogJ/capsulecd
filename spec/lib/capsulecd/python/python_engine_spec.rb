@@ -15,10 +15,8 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
         expect { engine.build_step }.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
       end
     end
+
     describe 'when building a simple package ' do
-      before(:each) do
-        FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
-      end
       let(:engine) do
         require 'capsulecd/python/python_engine'
         CapsuleCD::Python::PythonEngine.new(source: :github,
@@ -26,9 +24,12 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
                                             package_type: :python)
       end
       it 'should create a VERSION file, requirements.txt file and tests folder' do
+        FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
         engine.instance_variable_set(:@source_git_local_path, test_directory)
 
-        engine.build_step
+        VCR.use_cassette('pip_build_step',:tag => :chef) do
+          engine.build_step
+        end
 
         File.exist?(test_directory+'/VERSION')
         File.exist?(test_directory+'/requirements.txt')

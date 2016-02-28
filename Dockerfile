@@ -30,7 +30,7 @@ RUN ls -alt /srv/capsulecd
 
 workdir /srv/capsulecd
 
-run bundle install --path vendor/bundle --without ruby chef python --with github
+run bundle install --path vendor/bundle --with github
 
 CMD ["bash"]
 #CMD ["bundle", "exec", "capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "node"]

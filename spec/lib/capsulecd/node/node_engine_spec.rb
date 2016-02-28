@@ -27,7 +27,7 @@ describe 'CapsuleCD::Node::NodeEngine', :node do
         FileUtils.copy_entry('spec/fixtures/node/npm_analogj_test', test_directory)
         engine.instance_variable_set(:@source_git_local_path, test_directory)
 
-        VCR.use_cassette('chef_build_step',:tag => :chef) do
+        VCR.use_cassette('node_build_step',:tag => :chef) do
           engine.build_step
         end
 

@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/pulls/12
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/pulls/13
     body:
       encoding: US-ASCII
       base64_string: ''
@@ -25,7 +25,7 @@ http_interactions:
       Server:
       - GitHub.com
       Date:
-      - Sat, 27 Feb 2016 19:42:19 GMT
+      - Sun, 28 Feb 2016 07:10:12 GMT
       Content-Type:
       - application/json; charset=utf-8
       Transfer-Encoding:
@@ -35,18 +35,18 @@ http_interactions:
       X-Ratelimit-Limit:
       - '5000'
       X-Ratelimit-Remaining:
-      - '4997'
+      - '4994'
       X-Ratelimit-Reset:
-      - '1456605492'
+      - '1456646331'
       Cache-Control:
       - private, max-age=60, s-maxage=60
       Vary:
       - Accept, Authorization, Cookie, X-GitHub-OTP
       - Accept-Encoding
       Etag:
-      - W/"98c6bfeeab0320323ea97fc063fca44f"
+      - W/"4a19362cc1b6b6620f1ee03fd267ace0"
       Last-Modified:
-      - Sat, 27 Feb 2016 19:24:32 GMT
+      - Sun, 28 Feb 2016 07:03:05 GMT
       X-Oauth-Scopes:
       - repo
       X-Accepted-Oauth-Scopes:
@@ -71,21 +71,21 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Served-By:
-      - 2c18a09f3ac5e4dd1e004af7c5a94769
+      - d594a23ec74671eba905bf91ef329026
       X-Github-Request-Id:
-      - D0488EB8:6DAD:187E05A:56D1FC1B
+      - D0488EB8:6DB0:3B3E583:56D29D54
     body:
       encoding: ASCII-8BIT
       base64_string: |
         eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
-        bnBtX2FuYWxvZ2pfdGVzdC9wdWxscy8xMiIsImlkIjo2MDk2MTU0NCwiaHRt
+        bnBtX2FuYWxvZ2pfdGVzdC9wdWxscy8xMyIsImlkIjo2MDk4MTU2NiwiaHRt
         bF91cmwiOiJodHRwczovL2dpdGh1Yi5jb20vQW5hbG9nSi9ucG1fYW5hbG9n
-        al90ZXN0L3B1bGwvMTIiLCJkaWZmX3VybCI6Imh0dHBzOi8vZ2l0aHViLmNv
-        bS9BbmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcHVsbC8xMi5kaWZmIiwicGF0
+        al90ZXN0L3B1bGwvMTMiLCJkaWZmX3VybCI6Imh0dHBzOi8vZ2l0aHViLmNv
+        bS9BbmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcHVsbC8xMy5kaWZmIiwicGF0
         Y2hfdXJsIjoiaHR0cHM6Ly9naXRodWIuY29tL0FuYWxvZ0ovbnBtX2FuYWxv
-        Z2pfdGVzdC9wdWxsLzEyLnBhdGNoIiwiaXNzdWVfdXJsIjoiaHR0cHM6Ly9h
+        Z2pfdGVzdC9wdWxsLzEzLnBhdGNoIiwiaXNzdWVfdXJsIjoiaHR0cHM6Ly9h
         cGkuZ2l0aHViLmNvbS9yZXBvcy9BbmFsb2dKL25wbV9hbmFsb2dqX3Rlc3Qv
-        aXNzdWVzLzEyIiwibnVtYmVyIjoxMiwic3RhdGUiOiJvcGVuIiwibG9ja2Vk
+        aXNzdWVzLzEzIiwibnVtYmVyIjoxMywic3RhdGUiOiJvcGVuIiwibG9ja2Vk
         IjpmYWxzZSwidGl0bGUiOiJVcGRhdGUgUkVBRE1FLm1kIiwidXNlciI6eyJs
         b2dpbiI6IkFuYWxvZ0oiLCJpZCI6ODkxODc1LCJhdmF0YXJfdXJsIjoiaHR0
         cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91Lzg5MTg3NT92
@@ -106,25 +106,25 @@ http_interactions:
         bmFsb2dKL2V2ZW50c3svcHJpdmFjeX0iLCJyZWNlaXZlZF9ldmVudHNfdXJs
         IjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9BbmFsb2dKL3JlY2Vp
         dmVkX2V2ZW50cyIsInR5cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6ZmFsc2V9
-        LCJib2R5IjoiIiwiY3JlYXRlZF9hdCI6IjIwMTYtMDItMjdUMTk6MjQ6MzJa
-        IiwidXBkYXRlZF9hdCI6IjIwMTYtMDItMjdUMTk6MjQ6MzJaIiwiY2xvc2Vk
+        LCJib2R5IjoiIiwiY3JlYXRlZF9hdCI6IjIwMTYtMDItMjhUMDc6MDM6MDVa
+        IiwidXBkYXRlZF9hdCI6IjIwMTYtMDItMjhUMDc6MDM6MDVaIiwiY2xvc2Vk
         X2F0IjpudWxsLCJtZXJnZWRfYXQiOm51bGwsIm1lcmdlX2NvbW1pdF9zaGEi
-        OiJjYzllMDJkZWUwMWNjMzVhYjYxNTgxZjk0ZjM3MWQyZjViYTg5ZDYxIiwi
+        OiI4ODU1NGE3YTNlYzI1YmRmMTQ3MWNmYTA0ZThlYzZjM2VhODMyMWU3Iiwi
         YXNzaWduZWUiOm51bGwsIm1pbGVzdG9uZSI6bnVsbCwiY29tbWl0c191cmwi
         OiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ovbnBtX2Fu
-        YWxvZ2pfdGVzdC9wdWxscy8xMi9jb21taXRzIiwicmV2aWV3X2NvbW1lbnRz
+        YWxvZ2pfdGVzdC9wdWxscy8xMy9jb21taXRzIiwicmV2aWV3X2NvbW1lbnRz
         X3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vcmVwb3MvQW5hbG9nSi9u
-        cG1fYW5hbG9nal90ZXN0L3B1bGxzLzEyL2NvbW1lbnRzIiwicmV2aWV3X2Nv
+        cG1fYW5hbG9nal90ZXN0L3B1bGxzLzEzL2NvbW1lbnRzIiwicmV2aWV3X2Nv
         bW1lbnRfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9BbmFs
         b2dKL25wbV9hbmFsb2dqX3Rlc3QvcHVsbHMvY29tbWVudHN7L251bWJlcn0i
         LCJjb21tZW50c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9z
-        L0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC9pc3N1ZXMvMTIvY29tbWVudHMi
+        L0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC9pc3N1ZXMvMTMvY29tbWVudHMi
         LCJzdGF0dXNlc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9z
-        L0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy84NGZjMTg4Yzli
-        YmYxODk3NjFlOTE2NGZmOWFlMGE5MjkwYTAxYThhIiwiaGVhZCI6eyJsYWJl
-        bCI6IkFuYWxvZ0o6QW5hbG9nSi1wYXRjaC02IiwicmVmIjoiQW5hbG9nSi1w
-        YXRjaC02Iiwic2hhIjoiODRmYzE4OGM5YmJmMTg5NzYxZTkxNjRmZjlhZTBh
-        OTI5MGEwMWE4YSIsInVzZXIiOnsibG9naW4iOiJBbmFsb2dKIiwiaWQiOjg5
+        L0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2
+        ZWY2NWI3ODdjZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaGVhZCI6eyJsYWJl
+        bCI6IkFuYWxvZ0o6QW5hbG9nSi1wYXRjaC03IiwicmVmIjoiQW5hbG9nSi1w
+        YXRjaC03Iiwic2hhIjoiMDAzMTYwZGZkNmVmNjViNzg3Y2VmZDEyOWQzZjY1
+        NjYwNmM2MjhmMiIsInVzZXIiOnsibG9naW4iOiJBbmFsb2dKIiwiaWQiOjg5
         MTg3NSwiYXZhdGFyX3VybCI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2Vy
         Y29udGVudC5jb20vdS84OTE4NzU/dj0zIiwiZ3JhdmF0YXJfaWQiOiIiLCJ1
         cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0FuYWxvZ0oiLCJo
@@ -240,21 +240,21 @@ http_interactions:
         OiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ovbnBtX2Fu
         YWxvZ2pfdGVzdC9kZXBsb3ltZW50cyIsImNyZWF0ZWRfYXQiOiIyMDE2LTAy
         LTA5VDIzOjI0OjA0WiIsInVwZGF0ZWRfYXQiOiIyMDE2LTAyLTExVDAwOjQ5
-        OjQ5WiIsInB1c2hlZF9hdCI6IjIwMTYtMDItMjdUMTk6MjQ6MzJaIiwiZ2l0
+        OjQ5WiIsInB1c2hlZF9hdCI6IjIwMTYtMDItMjhUMDc6MDM6MDVaIiwiZ2l0
         X3VybCI6ImdpdDovL2dpdGh1Yi5jb20vQW5hbG9nSi9ucG1fYW5hbG9nal90
         ZXN0LmdpdCIsInNzaF91cmwiOiJnaXRAZ2l0aHViLmNvbTpBbmFsb2dKL25w
         bV9hbmFsb2dqX3Rlc3QuZ2l0IiwiY2xvbmVfdXJsIjoiaHR0cHM6Ly9naXRo
         dWIuY29tL0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC5naXQiLCJzdm5fdXJs
         IjoiaHR0cHM6Ly9naXRodWIuY29tL0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVz
-        dCIsImhvbWVwYWdlIjpudWxsLCJzaXplIjoxMSwic3RhcmdhemVyc19jb3Vu
+        dCIsImhvbWVwYWdlIjpudWxsLCJzaXplIjoxMiwic3RhcmdhemVyc19jb3Vu
         dCI6MCwid2F0Y2hlcnNfY291bnQiOjAsImxhbmd1YWdlIjpudWxsLCJoYXNf
         aXNzdWVzIjp0cnVlLCJoYXNfZG93bmxvYWRzIjp0cnVlLCJoYXNfd2lraSI6
         dHJ1ZSwiaGFzX3BhZ2VzIjpmYWxzZSwiZm9ya3NfY291bnQiOjAsIm1pcnJv
         cl91cmwiOm51bGwsIm9wZW5faXNzdWVzX2NvdW50IjoxLCJmb3JrcyI6MCwi
         b3Blbl9pc3N1ZXMiOjEsIndhdGNoZXJzIjowLCJkZWZhdWx0X2JyYW5jaCI6
         Im1hc3RlciJ9fSwiYmFzZSI6eyJsYWJlbCI6IkFuYWxvZ0o6bWFzdGVyIiwi
-        cmVmIjoibWFzdGVyIiwic2hhIjoiNWE3MTBjYjBkMzg2MDA5N2Q3YjcwZmM4
-        NDNiNTQ5YTA0ODBmODdmNSIsInVzZXIiOnsibG9naW4iOiJBbmFsb2dKIiwi
+        cmVmIjoibWFzdGVyIiwic2hhIjoiYTE4MGZmNzk0ODljODZjN2JhNzQzMmU2
+        Y2FmOTBkNTA0NDQ3ODBmNCIsInVzZXIiOnsibG9naW4iOiJBbmFsb2dKIiwi
         aWQiOjg5MTg3NSwiYXZhdGFyX3VybCI6Imh0dHBzOi8vYXZhdGFycy5naXRo
         dWJ1c2VyY29udGVudC5jb20vdS84OTE4NzU/dj0zIiwiZ3JhdmF0YXJfaWQi
         OiIiLCJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0FuYWxv
@@ -370,13 +370,13 @@ http_interactions:
         c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
         bnBtX2FuYWxvZ2pfdGVzdC9kZXBsb3ltZW50cyIsImNyZWF0ZWRfYXQiOiIy
         MDE2LTAyLTA5VDIzOjI0OjA0WiIsInVwZGF0ZWRfYXQiOiIyMDE2LTAyLTEx
-        VDAwOjQ5OjQ5WiIsInB1c2hlZF9hdCI6IjIwMTYtMDItMjdUMTk6MjQ6MzJa
+        VDAwOjQ5OjQ5WiIsInB1c2hlZF9hdCI6IjIwMTYtMDItMjhUMDc6MDM6MDVa
         IiwiZ2l0X3VybCI6ImdpdDovL2dpdGh1Yi5jb20vQW5hbG9nSi9ucG1fYW5h
         bG9nal90ZXN0LmdpdCIsInNzaF91cmwiOiJnaXRAZ2l0aHViLmNvbTpBbmFs
         b2dKL25wbV9hbmFsb2dqX3Rlc3QuZ2l0IiwiY2xvbmVfdXJsIjoiaHR0cHM6
         Ly9naXRodWIuY29tL0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC5naXQiLCJz
         dm5fdXJsIjoiaHR0cHM6Ly9naXRodWIuY29tL0FuYWxvZ0ovbnBtX2FuYWxv
-        Z2pfdGVzdCIsImhvbWVwYWdlIjpudWxsLCJzaXplIjoxMSwic3RhcmdhemVy
+        Z2pfdGVzdCIsImhvbWVwYWdlIjpudWxsLCJzaXplIjoxMiwic3RhcmdhemVy
         c19jb3VudCI6MCwid2F0Y2hlcnNfY291bnQiOjAsImxhbmd1YWdlIjpudWxs
         LCJoYXNfaXNzdWVzIjp0cnVlLCJoYXNfZG93bmxvYWRzIjp0cnVlLCJoYXNf
         d2lraSI6dHJ1ZSwiaGFzX3BhZ2VzIjpmYWxzZSwiZm9ya3NfY291bnQiOjAs
@@ -384,28 +384,28 @@ http_interactions:
         cyI6MCwib3Blbl9pc3N1ZXMiOjEsIndhdGNoZXJzIjowLCJkZWZhdWx0X2Jy
         YW5jaCI6Im1hc3RlciJ9fSwiX2xpbmtzIjp7InNlbGYiOnsiaHJlZiI6Imh0
         dHBzOi8vYXBpLmdpdGh1Yi5jb20vcmVwb3MvQW5hbG9nSi9ucG1fYW5hbG9n
-        al90ZXN0L3B1bGxzLzEyIn0sImh0bWwiOnsiaHJlZiI6Imh0dHBzOi8vZ2l0
-        aHViLmNvbS9BbmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcHVsbC8xMiJ9LCJp
+        al90ZXN0L3B1bGxzLzEzIn0sImh0bWwiOnsiaHJlZiI6Imh0dHBzOi8vZ2l0
+        aHViLmNvbS9BbmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcHVsbC8xMyJ9LCJp
         c3N1ZSI6eyJocmVmIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9B
-        bmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvaXNzdWVzLzEyIn0sImNvbW1lbnRz
+        bmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvaXNzdWVzLzEzIn0sImNvbW1lbnRz
         Ijp7ImhyZWYiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxv
-        Z0ovbnBtX2FuYWxvZ2pfdGVzdC9pc3N1ZXMvMTIvY29tbWVudHMifSwicmV2
+        Z0ovbnBtX2FuYWxvZ2pfdGVzdC9pc3N1ZXMvMTMvY29tbWVudHMifSwicmV2
         aWV3X2NvbW1lbnRzIjp7ImhyZWYiOiJodHRwczovL2FwaS5naXRodWIuY29t
-        L3JlcG9zL0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC9wdWxscy8xMi9jb21t
+        L3JlcG9zL0FuYWxvZ0ovbnBtX2FuYWxvZ2pfdGVzdC9wdWxscy8xMy9jb21t
         ZW50cyJ9LCJyZXZpZXdfY29tbWVudCI6eyJocmVmIjoiaHR0cHM6Ly9hcGku
         Z2l0aHViLmNvbS9yZXBvcy9BbmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcHVs
         bHMvY29tbWVudHN7L251bWJlcn0ifSwiY29tbWl0cyI6eyJocmVmIjoiaHR0
         cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9BbmFsb2dKL25wbV9hbmFsb2dq
-        X3Rlc3QvcHVsbHMvMTIvY29tbWl0cyJ9LCJzdGF0dXNlcyI6eyJocmVmIjoi
+        X3Rlc3QvcHVsbHMvMTMvY29tbWl0cyJ9LCJzdGF0dXNlcyI6eyJocmVmIjoi
         aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9BbmFsb2dKL25wbV9hbmFs
-        b2dqX3Rlc3Qvc3RhdHVzZXMvODRmYzE4OGM5YmJmMTg5NzYxZTkxNjRmZjlh
-        ZTBhOTI5MGEwMWE4YSJ9fSwibWVyZ2VkIjpmYWxzZSwibWVyZ2VhYmxlIjp0
+        b2dqX3Rlc3Qvc3RhdHVzZXMvMDAzMTYwZGZkNmVmNjViNzg3Y2VmZDEyOWQz
+        ZjY1NjYwNmM2MjhmMiJ9fSwibWVyZ2VkIjpmYWxzZSwibWVyZ2VhYmxlIjp0
         cnVlLCJtZXJnZWFibGVfc3RhdGUiOiJjbGVhbiIsIm1lcmdlZF9ieSI6bnVs
         bCwiY29tbWVudHMiOjAsInJldmlld19jb21tZW50cyI6MCwiY29tbWl0cyI6
-        MSwiYWRkaXRpb25zIjowLCJkZWxldGlvbnMiOjIsImNoYW5nZWRfZmlsZXMi
-        OjF9
+        MSwiYWRkaXRpb25zIjowLCJkZWxldGlvbnMiOjAsImNoYW5nZWRfZmlsZXMi
+        OjB9
     http_version: 
-  recorded_at: Sat, 27 Feb 2016 19:42:19 GMT
+  recorded_at: Sun, 28 Feb 2016 07:10:12 GMT
 - request:
     method: get
     uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/collaborators/AnalogJ
@@ -431,15 +431,15 @@ http_interactions:
       Server:
       - GitHub.com
       Date:
-      - Sat, 27 Feb 2016 19:42:19 GMT
+      - Sun, 28 Feb 2016 07:10:12 GMT
       Status:
       - 204 No Content
       X-Ratelimit-Limit:
       - '5000'
       X-Ratelimit-Remaining:
-      - '4996'
+      - '4993'
       X-Ratelimit-Reset:
-      - '1456605492'
+      - '1456646331'
       X-Oauth-Scopes:
       - repo
       X-Accepted-Oauth-Scopes:
@@ -466,17 +466,17 @@ http_interactions:
       Vary:
       - Accept-Encoding
       X-Served-By:
-      - 2c18a09f3ac5e4dd1e004af7c5a94769
+      - a474937f3b2fa272558fa6dc951018ad
       X-Github-Request-Id:
-      - D0488EB8:6DB1:2BB2167:56D1FC1B
+      - D0488EB8:6DB1:35CA060:56D29D54
     body:
       encoding: UTF-8
       base64_string: ''
     http_version: 
-  recorded_at: Sat, 27 Feb 2016 19:42:19 GMT
+  recorded_at: Sun, 28 Feb 2016 07:10:12 GMT
 - request:
     method: post
-    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/84fc188c9bbf189761e9164ff9ae0a9290a01a8a
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
     body:
       encoding: UTF-8
       base64_string: |
@@ -504,7 +504,7 @@ http_interactions:
       Server:
       - GitHub.com
       Date:
-      - Sat, 27 Feb 2016 19:42:22 GMT
+      - Sun, 28 Feb 2016 07:10:15 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
@@ -514,22 +514,22 @@ http_interactions:
       X-Ratelimit-Limit:
       - '5000'
       X-Ratelimit-Remaining:
-      - '4995'
+      - '4992'
       X-Ratelimit-Reset:
-      - '1456605492'
+      - '1456646331'
       Cache-Control:
       - private, max-age=60, s-maxage=60
       Vary:
       - Accept, Authorization, Cookie, X-GitHub-OTP
       - Accept-Encoding
       Etag:
-      - '"237cd5fb25e023e5b3d53a2beb73f72e"'
+      - '"08098534cc37deef3fcb360771dfced8"'
       X-Oauth-Scopes:
       - repo
       X-Accepted-Oauth-Scopes:
       - ''
       Location:
-      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/84fc188c9bbf189761e9164ff9ae0a9290a01a8a
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
       X-Github-Media-Type:
       - github.v3; format=json
       Access-Control-Allow-Credentials:
@@ -550,22 +550,22 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Served-By:
-      - a7f8a126c9ed3f1c4715a34c0ddc7290
+      - 5aeb3f30c9e3ef6ef7bcbcddfd9a68f7
       X-Github-Request-Id:
-      - D0488EB8:6DAB:D16593:56D1FC1D
+      - D0488EB8:6DAD:1CC8DD1:56D29D56
     body:
       encoding: UTF-8
       base64_string: |
         eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
-        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy84NGZjMTg4YzliYmYxODk3NjFl
-        OTE2NGZmOWFlMGE5MjkwYTAxYThhIiwiaWQiOjQ2NzAxMzIzNCwic3RhdGUi
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjQ2NzE2OTYxMiwic3RhdGUi
         OiJwZW5kaW5nIiwiZGVzY3JpcHRpb24iOiJDYXBzdWxlQ0QgaGFzIHN0YXJ0
         ZWQgcHJvY2Vzc2luZyBjb29rYm9vay4gUHVsbCByZXF1ZXN0IHdpbGwgYmUg
         bWVyZ2VkIGF1dG9tYXRpY2FsbHkgd2hlbiBjb21wbGV0ZS4iLCJ0YXJnZXRf
         dXJsIjoiaHR0cDovL3d3dy5naXRodWIuY29tL0FuYWxvZ0ovY2Fwc3VsZWNk
         IiwiY29udGV4dCI6ImRlZmF1bHQiLCJjcmVhdGVkX2F0IjoiMjAxNi0wMi0y
-        N1QxOTo0MjoyMloiLCJ1cGRhdGVkX2F0IjoiMjAxNi0wMi0yN1QxOTo0Mjoy
-        MloiLCJjcmVhdG9yIjp7ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQiOjEzODI0
+        OFQwNzoxMDoxNVoiLCJ1cGRhdGVkX2F0IjoiMjAxNi0wMi0yOFQwNzoxMDox
+        NVoiLCJjcmVhdG9yIjp7ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQiOjEzODI0
         Mzg3LCJhdmF0YXJfdXJsIjoiaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJj
         b250ZW50LmNvbS91LzEzODI0Mzg3P3Y9MyIsImdyYXZhdGFyX2lkIjoiIiwi
         dXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qi
@@ -587,22 +587,22 @@ http_interactions:
         dmVkX2V2ZW50cyIsInR5cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6ZmFsc2V9
         fQ==
     http_version: 
-  recorded_at: Sat, 27 Feb 2016 19:42:22 GMT
+  recorded_at: Sun, 28 Feb 2016 07:10:15 GMT
 - request:
     method: post
     uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/releases
     body:
       encoding: UTF-8
       base64_string: |
-        eyJ0YXJnZXRfY29tbWl0aXNoIjoiYTE4MGZmNzk0ODljODZjN2JhNzQzMmU2
-        Y2FmOTBkNTA0NDQ3ODBmNCIsIm5hbWUiOiJ2MS4wLjgiLCJib2R5IjoiVGlt
+        eyJ0YXJnZXRfY29tbWl0aXNoIjoiODZjNjJhOGJmM2MyNjllYjZmODJlOWY4
+        ZjFiYzA2NDZkNWY0NmVmMSIsIm5hbWUiOiJ2MS4wLjkiLCJib2R5IjoiVGlt
         ZXN0YW1wIHwgIFNIQSB8IE1lc3NhZ2UgfCBBdXRob3IgXG4tLS0tLS0tLS0t
         LS0tIHwgLS0tLS0tLS0tLS0tLSB8IC0tLS0tLS0tLS0tLS0gfCAtLS0tLS0t
-        LS0tLS0tIFxuMjAxNi0wMi0yNyAxOToyNDozMCswMDAwIHwgW2A4NGZjMTg4
-        YzlgXShodHRwczovL2dpdGh1Yi5jb20vQW5hbG9nSi9ucG1fYW5hbG9nal90
-        ZXN0L2NvbW1pdC84NGZjMTg4YzliYmYxODk3NjFlOTE2NGZmOWFlMGE5Mjkw
-        YTAxYThhKSB8IFVwZGF0ZSBSRUFETUUubWQgfCBKYXNvbiBLdWxhdHVuZ2Eg
-        XG4iLCJ0YWdfbmFtZSI6InYxLjAuOCJ9
+        LS0tLS0tIFxuMjAxNi0wMi0yOCAwNzowMzowMyswMDAwIHwgW2AwMDMxNjBk
+        ZmRgXShodHRwczovL2dpdGh1Yi5jb20vQW5hbG9nSi9ucG1fYW5hbG9nal90
+        ZXN0L2NvbW1pdC8wMDMxNjBkZmQ2ZWY2NWI3ODdjZWZkMTI5ZDNmNjU2NjA2
+        YzYyOGYyKSB8IFVwZGF0ZSBSRUFETUUubWQgfCBKYXNvbiBLdWxhdHVuZ2Eg
+        XG4iLCJ0YWdfbmFtZSI6InYxLjAuOSJ9
     headers:
       Accept:
       - application/vnd.github.v3+json
@@ -622,7 +622,7 @@ http_interactions:
       Server:
       - GitHub.com
       Date:
-      - Sat, 27 Feb 2016 19:42:36 GMT
+      - Sun, 28 Feb 2016 07:10:30 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
@@ -632,22 +632,22 @@ http_interactions:
       X-Ratelimit-Limit:
       - '5000'
       X-Ratelimit-Remaining:
-      - '4994'
+      - '4991'
       X-Ratelimit-Reset:
-      - '1456605492'
+      - '1456646331'
       Cache-Control:
       - private, max-age=60, s-maxage=60
       Vary:
       - Accept, Authorization, Cookie, X-GitHub-OTP
       - Accept-Encoding
       Etag:
-      - '"c1070bf9080f7e835b9fa6d7a12846cb"'
+      - '"b07b1d7ff4231ea9bf48b82ed9613dbb"'
       X-Oauth-Scopes:
       - repo
       X-Accepted-Oauth-Scopes:
       - ''
       Location:
-      - https://api.github.com/repos/AnalogJ/npm_analogj_test/releases/2703079
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/releases/2704263
       X-Github-Media-Type:
       - github.v3; format=json
       Access-Control-Allow-Credentials:
@@ -670,21 +670,21 @@ http_interactions:
       X-Served-By:
       - bae57931a6fe678a3dffe9be8e7819c8
       X-Github-Request-Id:
-      - D0488EB8:CE53:E2A4D0:56D1FC2B
+      - D0488EB8:6DB0:3B3F967:56D29D65
     body:
       encoding: UTF-8
       base64_string: |
         eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
-        bnBtX2FuYWxvZ2pfdGVzdC9yZWxlYXNlcy8yNzAzMDc5IiwiYXNzZXRzX3Vy
+        bnBtX2FuYWxvZ2pfdGVzdC9yZWxlYXNlcy8yNzA0MjYzIiwiYXNzZXRzX3Vy
         bCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vcmVwb3MvQW5hbG9nSi9ucG1f
-        YW5hbG9nal90ZXN0L3JlbGVhc2VzLzI3MDMwNzkvYXNzZXRzIiwidXBsb2Fk
+        YW5hbG9nal90ZXN0L3JlbGVhc2VzLzI3MDQyNjMvYXNzZXRzIiwidXBsb2Fk
         X3VybCI6Imh0dHBzOi8vdXBsb2Fkcy5naXRodWIuY29tL3JlcG9zL0FuYWxv
-        Z0ovbnBtX2FuYWxvZ2pfdGVzdC9yZWxlYXNlcy8yNzAzMDc5L2Fzc2V0c3s/
+        Z0ovbnBtX2FuYWxvZ2pfdGVzdC9yZWxlYXNlcy8yNzA0MjYzL2Fzc2V0c3s/
         bmFtZSxsYWJlbH0iLCJodG1sX3VybCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9B
-        bmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcmVsZWFzZXMvdGFnL3YxLjAuOCIs
-        ImlkIjoyNzAzMDc5LCJ0YWdfbmFtZSI6InYxLjAuOCIsInRhcmdldF9jb21t
-        aXRpc2giOiJhMTgwZmY3OTQ4OWM4NmM3YmE3NDMyZTZjYWY5MGQ1MDQ0NDc4
-        MGY0IiwibmFtZSI6InYxLjAuOCIsImRyYWZ0IjpmYWxzZSwiYXV0aG9yIjp7
+        bmFsb2dKL25wbV9hbmFsb2dqX3Rlc3QvcmVsZWFzZXMvdGFnL3YxLjAuOSIs
+        ImlkIjoyNzA0MjYzLCJ0YWdfbmFtZSI6InYxLjAuOSIsInRhcmdldF9jb21t
+        aXRpc2giOiI4NmM2MmE4YmYzYzI2OWViNmY4MmU5ZjhmMWJjMDY0NmQ1ZjQ2
+        ZWYxIiwibmFtZSI6InYxLjAuOSIsImRyYWZ0IjpmYWxzZSwiYXV0aG9yIjp7
         ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQiOjEzODI0Mzg3LCJhdmF0YXJfdXJs
         IjoiaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzEz
         ODI0Mzg3P3Y9MyIsImdyYXZhdGFyX2lkIjoiIiwidXJsIjoiaHR0cHM6Ly9h
@@ -705,24 +705,24 @@ http_interactions:
         aXZhY3l9IiwicmVjZWl2ZWRfZXZlbnRzX3VybCI6Imh0dHBzOi8vYXBpLmdp
         dGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3JlY2VpdmVkX2V2ZW50cyIsInR5
         cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6ZmFsc2V9LCJwcmVyZWxlYXNlIjpm
-        YWxzZSwiY3JlYXRlZF9hdCI6IjIwMTYtMDItMjdUMTk6NDI6MjNaIiwicHVi
-        bGlzaGVkX2F0IjoiMjAxNi0wMi0yN1QxOTo0MjozNloiLCJhc3NldHMiOltd
+        YWxzZSwiY3JlYXRlZF9hdCI6IjIwMTYtMDItMjhUMDc6MTA6MTdaIiwicHVi
+        bGlzaGVkX2F0IjoiMjAxNi0wMi0yOFQwNzoxMDozMFoiLCJhc3NldHMiOltd
         LCJ0YXJiYWxsX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vcmVwb3Mv
-        QW5hbG9nSi9ucG1fYW5hbG9nal90ZXN0L3RhcmJhbGwvdjEuMC44Iiwiemlw
+        QW5hbG9nSi9ucG1fYW5hbG9nal90ZXN0L3RhcmJhbGwvdjEuMC45Iiwiemlw
         YmFsbF91cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxv
-        Z0ovbnBtX2FuYWxvZ2pfdGVzdC96aXBiYWxsL3YxLjAuOCIsImJvZHkiOiJU
+        Z0ovbnBtX2FuYWxvZ2pfdGVzdC96aXBiYWxsL3YxLjAuOSIsImJvZHkiOiJU
         aW1lc3RhbXAgfCAgU0hBIHwgTWVzc2FnZSB8IEF1dGhvciBcbi0tLS0tLS0t
         LS0tLS0gfCAtLS0tLS0tLS0tLS0tIHwgLS0tLS0tLS0tLS0tLSB8IC0tLS0t
-        LS0tLS0tLS0gXG4yMDE2LTAyLTI3IDE5OjI0OjMwKzAwMDAgfCBbYDg0ZmMx
-        ODhjOWBdKGh0dHBzOi8vZ2l0aHViLmNvbS9BbmFsb2dKL25wbV9hbmFsb2dq
-        X3Rlc3QvY29tbWl0Lzg0ZmMxODhjOWJiZjE4OTc2MWU5MTY0ZmY5YWUwYTky
-        OTBhMDFhOGEpIHwgVXBkYXRlIFJFQURNRS5tZCB8IEphc29uIEt1bGF0dW5n
+        LS0tLS0tLS0gXG4yMDE2LTAyLTI4IDA3OjAzOjAzKzAwMDAgfCBbYDAwMzE2
+        MGRmZGBdKGh0dHBzOi8vZ2l0aHViLmNvbS9BbmFsb2dKL25wbV9hbmFsb2dq
+        X3Rlc3QvY29tbWl0LzAwMzE2MGRmZDZlZjY1Yjc4N2NlZmQxMjlkM2Y2NTY2
+        MDZjNjI4ZjIpIHwgVXBkYXRlIFJFQURNRS5tZCB8IEphc29uIEt1bGF0dW5n
         YSBcbiJ9
     http_version: 
-  recorded_at: Sat, 27 Feb 2016 19:42:36 GMT
+  recorded_at: Sun, 28 Feb 2016 07:10:30 GMT
 - request:
     method: post
-    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/84fc188c9bbf189761e9164ff9ae0a9290a01a8a
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
     body:
       encoding: UTF-8
       base64_string: |
@@ -749,7 +749,7 @@ http_interactions:
       Server:
       - GitHub.com
       Date:
-      - Sat, 27 Feb 2016 19:42:36 GMT
+      - Sun, 28 Feb 2016 07:10:30 GMT
       Content-Type:
       - application/json; charset=utf-8
       Content-Length:
@@ -759,22 +759,22 @@ http_interactions:
       X-Ratelimit-Limit:
       - '5000'
       X-Ratelimit-Remaining:
-      - '4993'
+      - '4990'
       X-Ratelimit-Reset:
-      - '1456605492'
+      - '1456646331'
       Cache-Control:
       - private, max-age=60, s-maxage=60
       Vary:
       - Accept, Authorization, Cookie, X-GitHub-OTP
       - Accept-Encoding
       Etag:
-      - '"c0f402859da6dcad0c549612048bfd30"'
+      - '"95e4a9f5cda72325f8b4fc4d3dd7e772"'
       X-Oauth-Scopes:
       - repo
       X-Accepted-Oauth-Scopes:
       - ''
       Location:
-      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/84fc188c9bbf189761e9164ff9ae0a9290a01a8a
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
       X-Github-Media-Type:
       - github.v3; format=json
       Access-Control-Allow-Credentials:
@@ -795,21 +795,21 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Served-By:
-      - a6882e5cd2513376cb9481dbcd83f3a2
+      - 8a5c38021a5cd7cef7b8f49a296fee40
       X-Github-Request-Id:
-      - D0488EB8:CE53:E2A55B:56D1FC2C
+      - D0488EB8:6DAD:1CC95B6:56D29D66
     body:
       encoding: UTF-8
       base64_string: |
         eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
-        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy84NGZjMTg4YzliYmYxODk3NjFl
-        OTE2NGZmOWFlMGE5MjkwYTAxYThhIiwiaWQiOjQ2NzAxMzMzMCwic3RhdGUi
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjQ2NzE2OTcwMSwic3RhdGUi
         OiJzdWNjZXNzIiwiZGVzY3JpcHRpb24iOiJwdWxsLXJlcXVlc3Qgd2FzIHN1
         Y2Nlc3NmdWxseSBtZXJnZWQsIG5ldyByZWxlYXNlIGNyZWF0ZWQuIiwidGFy
         Z2V0X3VybCI6Imh0dHA6Ly93d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1
         bGVjZCIsImNvbnRleHQiOiJkZWZhdWx0IiwiY3JlYXRlZF9hdCI6IjIwMTYt
-        MDItMjdUMTk6NDI6MzZaIiwidXBkYXRlZF9hdCI6IjIwMTYtMDItMjdUMTk6
-        NDI6MzZaIiwiY3JlYXRvciI6eyJsb2dpbiI6IkNhcHN1bGVDRCIsImlkIjox
+        MDItMjhUMDc6MTA6MzBaIiwidXBkYXRlZF9hdCI6IjIwMTYtMDItMjhUMDc6
+        MTA6MzBaIiwiY3JlYXRvciI6eyJsb2dpbiI6IkNhcHN1bGVDRCIsImlkIjox
         MzgyNDM4NywiYXZhdGFyX3VybCI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1
         c2VyY29udGVudC5jb20vdS8xMzgyNDM4Nz92PTMiLCJncmF2YXRhcl9pZCI6
         IiIsInVybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3Vs
@@ -831,5 +831,5 @@ http_interactions:
         ZWNlaXZlZF9ldmVudHMiLCJ0eXBlIjoiVXNlciIsInNpdGVfYWRtaW4iOmZh
         bHNlfX0=
     http_version: 
-  recorded_at: Sat, 27 Feb 2016 19:42:36 GMT
+  recorded_at: Sun, 28 Feb 2016 07:10:30 GMT
 recorded_with: VCR 3.0.1

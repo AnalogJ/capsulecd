@@ -23,15 +23,15 @@ def configure_vcr(vcr_config, type, config_file)
   vcr_config.filter_sensitive_data('<GITHUB_ACCESS_TOKEN>', type) do
     capsulecd_config.source_github_access_token
   end
-  vcr_config.filter_sensitive_data('<SUPERMARKET_USERNAME>', type) do
-    capsulecd_config.chef_supermarket_username
-  end
+  # vcr_config.filter_sensitive_data('<SUPERMARKET_USERNAME>', type) do
+  #   capsulecd_config.chef_supermarket_username
+  # end
   vcr_config.filter_sensitive_data('<NPM_AUTH_TOKEN>', type) do
     capsulecd_config.npm_auth_token
   end
-  vcr_config.filter_sensitive_data('<PYPI_USERNAME>', type) do
-    capsulecd_config.pypi_username
-  end
+  # vcr_config.filter_sensitive_data('<PYPI_USERNAME>', type) do
+  #   capsulecd_config.pypi_username
+  # end
   vcr_config.filter_sensitive_data('<PYPI_PASSWORD>', type) do
     capsulecd_config.pypi_password
   end
