@@ -21,7 +21,6 @@ describe CapsuleCD::Configuration do
       it 'should have correct defaults' do
         expect(subject.engine_version_bump_type).to eql(:patch)
         expect(subject.chef_supermarket_type).to eql('Other')
-        expect(subject.chef_supermarket_key).to eql(nil)
       end
     end
 

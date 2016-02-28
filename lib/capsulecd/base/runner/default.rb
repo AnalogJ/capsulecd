@@ -29,8 +29,7 @@ module CapsuleCD
           payload
         else
           @runner_is_pullrequest = true
-          # parse the PR# from the environment variable, eg. https://github.com/AnalogJ/cookbook_analogj_test/pull/9
-          pull_request_number =  File.basename(URI.parse(@config.runner_pull_request).path).to_i # => baz
+          pull_request_number =  @config.runner_pull_request.to_i
           @source_client.pull_request(@config.runner_repo_full_name, pull_request_number)
         end
       end

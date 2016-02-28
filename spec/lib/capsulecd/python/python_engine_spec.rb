@@ -65,9 +65,9 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
     let(:engine) do
       require 'capsulecd/python/python_engine'
       CapsuleCD::Python::PythonEngine.new(source: :github,
-                                          runner: :circleci,
+                                          runner: :default,
                                           package_type: :python,
-                                          config_file: 'spec/fixtures/sample_configuration.yml'
+                                          config_file: 'spec/fixtures/sample_python_configuration.yml'
                                           # config_file: 'spec/fixtures/live_python_configuration.yml'
       )
     end
@@ -89,7 +89,7 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
           allow(CapsuleCD::GitUtils).to receive(:checkout).and_return(true)
 
           #stub methods in build_step
-          allow(CapsuleCD::GitUtils).to receive(:create_gitignore).with(source_git_local_path+'/pip_analogj_test', ['Python']).and_return(true)
+          allow(CapsuleCD::GitUtils).to receive(:create_gitignore).with(source_git_local_path, ['Python']).and_return(true)
 
           #stub methods in package_step
           allow(CapsuleCD::GitUtils).to receive(:commit).and_return(true)

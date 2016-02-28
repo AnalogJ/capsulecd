@@ -61,9 +61,9 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
     let(:engine) do
       require 'capsulecd/chef/chef_engine'
       CapsuleCD::Chef::ChefEngine.new(source: :github,
-                                      runner: :circleci,
+                                      runner: :default,
                                       package_type: :chef,
-                                      config_file: 'spec/fixtures/sample_configuration.yml'
+                                      config_file: 'spec/fixtures/sample_chef_configuration.yml'
                                      # config_file: 'spec/fixtures/live_chef_configuration.yml'
       )
     end

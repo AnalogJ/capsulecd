@@ -1,0 +1,7 @@
+--- 
+  npm_auth_token: sample_auth_token
+  source_github_access_token: sample_test_token
+  runner_pull_request: 12
+  runner_clone_url: http://github.com/AnalogJ/npm_analogj_test.git
+  runner_repo_name: npm_analogj_test
+  runner_repo_full_name: AnalogJ/npm_analogj_test

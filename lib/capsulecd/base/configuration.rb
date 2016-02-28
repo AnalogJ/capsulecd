@@ -77,7 +77,8 @@ module CapsuleCD
 
     def populate_runner
       if (@runner == :circleci)
-        @runner_pull_request ||= ENV['CI_PULL_REQUEST']
+        # parse the PR# from the environment variable, eg. https://github.com/AnalogJ/cookbook_analogj_test/pull/9
+        @runner_pull_request ||= File.basename(URI.parse(ENV['CI_PULL_REQUEST']).path).to_i # => baz
         @runner_sha ||= ENV['CIRCLE_SHA1']
         @runner_branch ||= ENV['CIRCLE_BRANCH']
         @runner_clone_url ||= 'https://github.com/' + ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'] + '.git'

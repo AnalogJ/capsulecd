@@ -60,9 +60,9 @@ describe 'CapsuleCD::Node::NodeEngine', :node do
     let(:engine) do
       require 'capsulecd/node/node_engine'
       CapsuleCD::Node::NodeEngine.new(source: :github,
-                                          runner: :circleci,
+                                          runner: :default,
                                           package_type: :node,
-                                          config_file: 'spec/fixtures/sample_configuration.yml'
+                                          config_file: 'spec/fixtures/sample_node_configuration.yml'
                                           # config_file: 'spec/fixtures/live_node_configuration.yml'
       )
     end
