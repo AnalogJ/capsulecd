@@ -89,9 +89,9 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
 
           #stub methods in package_step
           allow(CapsuleCD::GitUtils).to receive(:commit).and_return(true)
-          allow(CapsuleCD::GitUtils).to receive(:tag).with(source_git_local_path,'v0.1.10').and_return(git_commit_double)
+          allow(CapsuleCD::GitUtils).to receive(:tag).with(source_git_local_path,'v0.1.11').and_return(git_commit_double)
           allow(git_commit_double).to receive(:sha).and_return('0a5948802a2bba02e019fd13bf3db3c5329faae6')
-          allow(git_commit_double).to receive(:name).and_return('0.1.10')
+          allow(git_commit_double).to receive(:name).and_return('0.1.11')
 
           #stub methods in release_step
           allow(Open3).to receive(:popen3).with("knife cookbook site share cookbook_analogj_test Other -c #{File.expand_path('~/knife.rb')}").and_return(true)
