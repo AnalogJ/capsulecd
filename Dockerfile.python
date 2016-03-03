@@ -1,21 +1,16 @@
-from phusion/passenger-full
-maintainer Jason Kulatunga <jk17@ualberta.ca>
+FROM ruby:2.1.8-alpine
+MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
-run \
-	apt-get update && \
-	apt-get install -y build-essential python-dev git libffi-dev libssl-dev && \
-	rm -rf /var/lib/apt/lists/*
-
-run gem install bundler
-
-#install pip
-run curl -o /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py
-run python /tmp/get-pip.py
-
-# copy the application files to the image
+RUN mkdir -p /srv/capsulecd
+COPY . /srv/capsulecd
 workdir /srv/capsulecd
-run git clone https://github.com/AnalogJ/capsulecd.git .
 
-run bundle install --with test --without chef node ruby
-run bundle exec rake spec:python
-CMD ["bundle", "exec", "capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "python"]
+RUN apk --update add --virtual build_deps \
+    build-base ruby-dev libc-dev linux-headers \
+    openssl-dev libxml2-dev libxslt-dev && \
+	apk --no-cache add git python python-dev py-pip && \
+    bundle install --without test chef && \
+    apk del build_deps
+
+#CMD ["sh"]
+CMD ["capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "python"]

@@ -1,13 +1,16 @@
-from phusion/passenger-full
-maintainer Jason Kulatunga <jk17@ualberta.ca>
+FROM ruby:2.1.8-alpine
+MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
-run apt-get install -y git
-run gem install bundler
-
-# copy the application files to the image
+RUN mkdir -p /srv/capsulecd
+COPY . /srv/capsulecd
 workdir /srv/capsulecd
-run git clone https://github.com/AnalogJ/capsulecd.git .
 
-run bundle install --with test --without chef ruby python javascript
-run bundle exec rake spec:node
-CMD ["bundle", "exec", "capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "node"]
+RUN apk --update add --virtual build_deps \
+    build-base ruby-dev libc-dev linux-headers \
+    openssl-dev libxml2-dev libxslt-dev && \
+	apk --no-cache add git nodejs && \
+    bundle install --without test chef && \
+    apk del build_deps
+
+#CMD ["sh"]
+CMD ["capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "node"]

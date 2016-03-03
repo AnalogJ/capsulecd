@@ -1,5 +1,4 @@
 source 'https://rubygems.org'
-gem 'mkgitignore', :github => 'analogj/mkgitignore', :branch => 'library_support'
 gemspec
 
 # These gems are required for testing
@@ -26,14 +25,3 @@ group :chef do
   gem 'stove'
 end
 
-group :node do
-end
-
-group :ruby do
-end
-
-group :python do
-end
-
-group :javascript do
-end
