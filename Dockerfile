@@ -5,10 +5,9 @@ RUN mkdir -p /srv/capsulecd
 COPY . /srv/capsulecd
 workdir /srv/capsulecd
 
-RUN apk --update --no-cache add build_deps \
+RUN apk --update --no-cache add \
     build-base ruby-dev libc-dev linux-headers \
-    openssl-dev libxml2-dev libxslt-dev \
-	git && \
+    openssl-dev libxml2-dev libxslt-dev git && \
     bundle install --without test chef
 
 CMD ["sh"]
