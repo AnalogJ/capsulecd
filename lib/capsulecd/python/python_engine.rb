@@ -33,7 +33,31 @@ module CapsuleCD
           file.write(next_version)
         end
 
-        # TODO: check if this module name and version already exist.
+        # make sure the package testing manager is available.
+        # there is a standardized way to test packages (python setup.py tests), however for automation tox is preferred
+        # because of virtualenv and its support for multiple interpreters.
+        unless File.exist?(@source_git_local_path + '/tox.ini')
+          # if a tox.ini file is not present, we'll create a default one and specify 'python setup.py test' as the test
+          # runner command, and requirements.txt as the dependencies for this package.
+          File.open(@source_git_local_path + '/tox.ini', 'w') { |file|
+            file.write(<<-TOX
+# Tox (http://tox.testrun.org/) is a tool for running tests
+# in multiple virtualenvs. This configuration file will run the
+# test suite on all supported python versions. To use it, "pip install tox"
+# and then run "tox" from this directory.
+
+[tox]
+envlist = py27
+usedevelop = True
+
+[testenv]
+commands = python setup.py test
+deps =
+  -rrequirements.txt
+TOX
+            )
+          }
+        end
 
         # check for/create any required missing folders/files
         unless File.exist?(@source_git_local_path + '/requirements.txt')
@@ -54,24 +78,11 @@ module CapsuleCD
       def test_step
         super
 
-        Open3.popen3('pip install -r requirements.txt', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
-          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
-            Thread.new do
-              until (line = stream_buffer.gets).nil?
-                puts "#{name} -> #{line}"
-              end
-            end
-          end
-          # wait for process
-          external.join
-          unless external.value.success?
-            fail CapsuleCD::Error::TestDependenciesError, 'pip install package requirements failed. Check module dependencies'
-          end
-        end
 
-        # the module has already been downloaded. lets make sure all its dependencies are available.
+        # download the package dependencies and register it in the virtualenv using tox (which will do pip install -e .)
         # https://packaging.python.org/en/latest/distributing/
-        Open3.popen3('pip install -e .', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+        # once that's done, tox will run tests
+        Open3.popen3('tox', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
           { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
             Thread.new do
               until (line = stream_buffer.gets).nil?
@@ -82,23 +93,7 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            fail CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
-          end
-        end
-
-        # run tests
-        Open3.popen3('python setup.py test', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
-          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
-            Thread.new do
-              until (line = stream_buffer.gets).nil?
-                puts "#{name} -> #{line}"
-              end
-            end
-          end
-          # wait for process
-          external.join
-          unless external.value.success?
-            fail CapsuleCD::Error::TestDependenciesError, 'pip install package in development mode failed.'
+            fail CapsuleCD::Error::TestDependenciesError, 'tox failed to test package.'
           end
         end
       end

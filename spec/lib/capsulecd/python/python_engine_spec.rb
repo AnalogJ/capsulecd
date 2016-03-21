@@ -94,7 +94,7 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
 
           #stub methods in package_step
           allow(CapsuleCD::GitUtils).to receive(:commit).and_return(true)
-          allow(CapsuleCD::GitUtils).to receive(:tag).with(source_git_local_path,'1.0.7').and_return(git_commit_double)
+          allow(CapsuleCD::GitUtils).to receive(:tag).with(source_git_local_path,'v1.0.7').and_return(git_commit_double)
           allow(git_commit_double).to receive(:sha).and_return('0a5948802a2bba02e019fd13bf3db3c5329faae6')
           allow(git_commit_double).to receive(:name).and_return('v1.0.7')
 
