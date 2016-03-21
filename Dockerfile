@@ -8,6 +8,7 @@ workdir /srv/capsulecd
 RUN apk --update --no-cache add \
     build-base ruby-dev libc-dev linux-headers \
     openssl-dev libxml2-dev libxslt-dev openssh git && \
+    ssh-keyscan github.com >> ~/.ssh/known_hosts && \
     bundle install --without test chef
 
 CMD ["sh"]
