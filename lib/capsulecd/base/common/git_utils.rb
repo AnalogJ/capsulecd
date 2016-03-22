@@ -43,6 +43,11 @@ module CapsuleCD
       repo.push('origin', "#{local_branch}:#{remote_branch}", tags: true)
     end
 
+    def self.pull(repo_path)
+      repo = Git.open(repo_path)
+      repo.pull
+    end
+
     # gets the commit of the latest tag on current branch
     def self.get_latest_tag_commit(repo_path)
       repo = Git.open(repo_path)
@@ -60,7 +65,7 @@ module CapsuleCD
       markdown = "Timestamp |  SHA | Message | Author \n"
       markdown += "------------- | ------------- | ------------- | ------------- \n"
       repo.log.between(base_sha, head_sha).each do |commit|
-        markdown += "#{commit.date.strftime('%Y-%m-%d %H:%M:%S%z')} | [`#{commit.sha.slice 0..8}`](https://github.com/#{full_name}/commit/#{commit.sha}) | #{commit.message.gsub('|', '!') || '--'} | #{commit.author.name} \n"
+        markdown += "#{commit.date.strftime('%Y-%m-%d %H:%M:%S%z')} | [`#{commit.sha.slice 0..8}`](https://github.com/#{full_name}/commit/#{commit.sha}) | #{commit.message.gsub('|', '!').gsub(/[\n]+/,' ') || '--'} | #{commit.author.name} \n"
       end
       markdown
     end
