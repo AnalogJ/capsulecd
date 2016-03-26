@@ -111,8 +111,9 @@ module CapsuleCD
 
         # show a processing message on the github PR.
         @source_client.create_status(payload['base']['repo']['full_name'], @source_git_head_info['sha'], 'pending',
+                                     context: 'CapsuleCD',
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
-                                     description: 'CapsuleCD has started processing cookbook. Pull request will be merged automatically when complete.')
+                                     description: 'Started processing package. Pull request will be merged automatically when complete.')
       end
 
       # REQUIRES source_client
@@ -147,15 +148,19 @@ module CapsuleCD
 
         FileUtils.remove_entry_secure @source_git_parent_path
         # set the pull request status
-        @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',      target_url: 'http://www.github.com/AnalogJ/capsulecd',
-                                                                                                                               description: 'pull-request was successfully merged, new release created.')
+        @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',
+                                     context: 'CapsuleCD',
+                                     target_url: 'http://www.github.com/AnalogJ/capsulecd',
+                                     description: 'Pull-request was successfully merged, new release created.')
       end
 
       def source_process_failure(ex)
         puts 'github source_process_failure'
         FileUtils.remove_entry_secure @source_git_parent_path
-        @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',       target_url: 'http://www.github.com/AnalogJ/capsulecd',
-                                                                                                                                description: ex.message.slice!(0..135))
+        @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',
+                                     context: 'CapsuleCD',
+                                     target_url: 'http://www.github.com/AnalogJ/capsulecd',
+                                     description: ex.message.slice!(0..135))
       end
     end
   end
