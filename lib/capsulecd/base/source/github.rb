@@ -107,7 +107,7 @@ module CapsuleCD
         # https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
         @source_git_local_path = CapsuleCD::GitUtils.clone(@source_git_parent_path, @source_git_head_info['repo']['name'], @source_git_remote)
         @source_git_local_branch = "pr_#{payload['number']}"
-        CapsuleCD::GitUtils.fetch(@source_git_local_path, "refs/pull/#{payload['number']}/head", @source_git_local_branch)
+        CapsuleCD::GitUtils.fetch(@source_git_local_path, "refs/pull/#{payload['number']}/merge", @source_git_local_branch)
         CapsuleCD::GitUtils.checkout(@source_git_local_path, @source_git_local_branch)
 
         # show a processing message on the github PR.
