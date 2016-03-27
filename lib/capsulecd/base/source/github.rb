@@ -147,7 +147,7 @@ module CapsuleCD
           @source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
         end
 
-        FileUtils.remove_entry_secure @source_git_parent_path
+        FileUtils.remove_entry_secure @source_git_parent_path if Dir.exists?(@source_git_parent_path)
         # set the pull request status
         @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',
                                      context: 'CapsuleCD',
@@ -170,11 +170,12 @@ module CapsuleCD
 
       rescue => ex
         puts 'github source_process_failure'
-        FileUtils.remove_entry_secure @source_git_parent_path
+        FileUtils.remove_entry_secure @source_git_parent_path if Dir.exists?(@source_git_parent_path)
         @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',
                                      context: 'CapsuleCD',
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
                                      description: ex.message.slice!(0..135))
+        raise 
       end
 
     end

@@ -40,7 +40,7 @@ module CapsuleCD
           # if a tox.ini file is not present, we'll create a default one and specify 'python setup.py test' as the test
           # runner command, and requirements.txt as the dependencies for this package.
           File.open(@source_git_local_path + '/tox.ini', 'w') { |file|
-            file.write(<<-TOX
+            file.write(<<-TOX.gsub(/^\s+/, '')
 # Tox (http://tox.testrun.org/) is a tool for running tests
 # in multiple virtualenvs. This configuration file will run the
 # test suite on all supported python versions. To use it, "pip install tox"
