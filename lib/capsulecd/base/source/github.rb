@@ -84,11 +84,12 @@ module CapsuleCD
         end
         # check the payload push user.
 
-        unless @source_client.collaborator?(payload['base']['repo']['full_name'], payload['user']['login'])
-
-          @source_client.add_comment(payload['base']['repo']['full_name'], payload['number'], CapsuleCD::BotUtils.pull_request_comment)
-          fail CapsuleCD::Error::SourceUnauthorizedUser, 'Pull request was opened by an unauthorized user'
-        end
+        # TODO: figure out how to do optional authenication. possible options, Source USER, token based auth, no auth when used with capsulecd.com.
+        # unless @source_client.collaborator?(payload['base']['repo']['full_name'], payload['user']['login'])
+        #
+        #   @source_client.add_comment(payload['base']['repo']['full_name'], payload['number'], CapsuleCD::BotUtils.pull_request_comment)
+        #   fail CapsuleCD::Error::SourceUnauthorizedUser, 'Pull request was opened by an unauthorized user'
+        # end
 
         # set the processed base/head info,
         @source_git_base_info = payload['base']
