@@ -88,33 +88,34 @@ module CapsuleCD
       # now that the payload has been processed we can begin by building the code.
       # this may be creating missing files/default structure, compilation, version bumping, etc.
       run_hook :before_build_step
-      build_step
+      source_notify('build') do build_step end
       run_hook :after_build_step
 
       # this step should download dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test)
       run_hook :before_test_step
-      test_step
+      source_notify('test') do test_step end
       run_hook :after_test_step
 
       # this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
       run_hook :before_package_step
-      package_step
+      source_notify('package') do package_step end
       run_hook :after_package_step
 
       if @runner_is_pullrequest
         # this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
         run_hook :before_release_step
-        release_step
+        source_notify('release') do release_step end
         run_hook :after_release_step
 
         # this step should push the merged, tested and version updated code up to the source code repository
         # this step should also do any source specific releases (github release, asset uploading, etc)
         run_hook :before_source_release
-        source_release
+        source_notify('source release') do source_release end
         run_hook :after_source_release
       end
 
       # rescue => ex #TODO if you enable this rescue block, hooks stop working.
+      # TODO: it shouldnt be required anylonger because source_notify will handle rescueing the failures.
       #   puts ex
       #
       #   self.run_hook :before_source_process_failure, ex

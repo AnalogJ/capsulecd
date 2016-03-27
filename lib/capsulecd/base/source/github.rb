@@ -154,7 +154,20 @@ module CapsuleCD
                                      description: 'Pull-request was successfully merged, new release created.')
       end
 
-      def source_process_failure(ex)
+      # requires @source_client
+      # requires @source_git_parent_path
+      # requires @source_git_base_info
+      # requires @source_git_head_info
+      def source_notify(step, status='pending')
+
+        @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], status,
+          context: 'CapsuleCD',
+          target_url: 'http://www.github.com/AnalogJ/capsulecd',
+          description: "Started '#{step}' step. Pull request will be merged automatically when complete.")
+
+        yield
+
+      rescue => ex
         puts 'github source_process_failure'
         FileUtils.remove_entry_secure @source_git_parent_path
         @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',
@@ -162,6 +175,7 @@ module CapsuleCD
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
                                      description: ex.message.slice!(0..135))
       end
+
     end
   end
 end
