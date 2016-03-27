@@ -175,7 +175,7 @@ module CapsuleCD
                                      context: 'CapsuleCD',
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
                                      description: ex.message.slice!(0..135))
-        raise 
+        raise
       end
 
     end

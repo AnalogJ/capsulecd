@@ -2,7 +2,6 @@ module CapsuleCD
   require 'capsulecd/base/engine'
   require 'capsulecd/base/configuration'
 
-  require 'capsulecd/base/common/bot_utils'
   require 'capsulecd/base/common/git_utils'
   require 'capsulecd/base/common/validation_utils'
 
