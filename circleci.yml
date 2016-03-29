@@ -1,0 +1,23 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker pull analogj/capsulecd
+    - docker pull analogj/capsulecd:chef
+    - docker pull analogj/capsulecd:javascript
+    - docker pull analogj/capsulecd:node
+    - docker pull analogj/capsulecd:python
+
+test:
+  override:
+    - >
+      docker run -e CIRCLECI
+      -e CI_PULL_REQUEST
+      -e CIRCLE_PROJECT_USERNAME
+      -e CIRCLE_PROJECT_REPONAME
+      -e CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN
+      -e CAPSULE_NODE_AUTH_TOKEN
+      analogj/capsulecd:node

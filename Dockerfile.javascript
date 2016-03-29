@@ -1,17 +1,7 @@
-FROM ruby:2.1.8-alpine
+FROM analogj/capsulecd:latest
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
-RUN mkdir -p /srv/capsulecd
-COPY . /srv/capsulecd
-workdir /srv/capsulecd
-
-RUN apk --update --no-cache add \
-    build-base ruby-dev libc-dev linux-headers \
-    openssh openssl-dev libxml2-dev libxslt-dev git nodejs && \
-	mkdir ~/.ssh && \
-    ssh-keyscan github.com >> ~/.ssh/known_hosts && \
-    bundle install --without test chef && \
+RUN apk --update --no-cache add nodejs && \
     npm install -g bower
 
-#CMD ["sh"]
-CMD ["capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "javascript"]
+CMD ["capsulecd", "start", "--source", "github", "--package_type", "javascript"]
