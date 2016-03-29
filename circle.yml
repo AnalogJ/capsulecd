@@ -13,11 +13,12 @@ dependencies:
 
 test:
   override:
-    - docker run:
-      parallel: true
-      commands:
-        - analogj/capsulecd bundle install --with test && rake 'spec:ruby'
-        - analogj/capsulecd:chef bundle install --with test && rake 'spec:chef'
-        - analogj/capsulecd:javascript bundle install --with test && rake 'spec:javascript'
-        - analogj/capsulecd:node bundle install --with test && rake 'spec:node'
-        - analogj/capsulecd:python bundle install --with test && rake 'spec:python'
+    - >
+      case $CIRCLE_NODE_INDEX in
+      0) docker run analogj/capsulecd bundle install --with test && rake 'spec:ruby' ;;
+      1) docker run analogj/capsulecd:chef bundle install --with test && rake 'spec:chef' ;;
+      2) docker run analogj/capsulecd:javascript bundle install --with test && rake 'spec:javascript' ;;
+      3) docker run analogj/capsulecd:node bundle install --with test && rake 'spec:node';;
+      4) docker run analogj/capsulecd:python bundle install --with test && rake 'spec:python' ;; esac:
+        parallel: true
+
