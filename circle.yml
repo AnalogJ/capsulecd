@@ -5,7 +5,6 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker pull analogj/capsulecd
     - docker pull analogj/capsulecd:chef
     - docker pull analogj/capsulecd:javascript
     - docker pull analogj/capsulecd:node
@@ -13,7 +12,6 @@ dependencies:
 
 test:
   override:
-    - docker run analogj/capsulecd bundle install --with test && rake 'spec:ruby'
     - docker run analogj/capsulecd:chef bundle install --with test && rake 'spec:chef'
     - docker run analogj/capsulecd:javascript bundle install --with test && rake 'spec:javascript'
     - docker run analogj/capsulecd:node bundle install --with test && rake 'spec:node'
