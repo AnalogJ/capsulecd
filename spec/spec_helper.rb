@@ -46,7 +46,7 @@ VCR.configure do |c|
   c.preserve_exact_body_bytes { true }
 
   c.default_cassette_options = {
-      record: ENV['TRAVIS'] ? :none : :once
+      record: :once #:new_episodes
   }
 
   configure_vcr(c, :python, 'spec/fixtures/live_python_configuration.yml')

@@ -832,4 +832,557 @@ http_interactions:
         bHNlfX0=
     http_version: 
   recorded_at: Sun, 28 Feb 2016 07:10:30 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiU3RhcnRlZCAndGVzdCcgc3RlcC4gUHVsbCByZXF1ZXN0IHdpbGwgYmUg
+        bWVyZ2VkIGF1dG9tYXRpY2FsbHkgd2hlbiBjb21wbGV0ZS4iLCJzdGF0ZSI6
+        InBlbmRpbmcifQ==
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:44:37 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1286'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4995'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"08ca84de6cb270f7afc38b3013b95495"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - ef96c2e493b28ffea49b891b085ed2dd
+      X-Github-Request-Id:
+      - D0488EB8:1805A:526A5CF:56FA2454
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjUwMzEwMTYxNCwic3RhdGUi
+        OiJwZW5kaW5nIiwiZGVzY3JpcHRpb24iOiJTdGFydGVkICd0ZXN0JyBzdGVw
+        LiBQdWxsIHJlcXVlc3Qgd2lsbCBiZSBtZXJnZWQgYXV0b21hdGljYWxseSB3
+        aGVuIGNvbXBsZXRlLiIsInRhcmdldF91cmwiOiJodHRwOi8vd3d3LmdpdGh1
+        Yi5jb20vQW5hbG9nSi9jYXBzdWxlY2QiLCJjb250ZXh0IjoiQ2Fwc3VsZUNE
+        IiwiY3JlYXRlZF9hdCI6IjIwMTYtMDMtMjlUMDY6NDQ6MzdaIiwidXBkYXRl
+        ZF9hdCI6IjIwMTYtMDMtMjlUMDY6NDQ6MzdaIiwiY3JlYXRvciI6eyJsb2dp
+        biI6IkNhcHN1bGVDRCIsImlkIjoxMzgyNDM4NywiYXZhdGFyX3VybCI6Imh0
+        dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xMzgyNDM4
+        Nz92PTMiLCJncmF2YXRhcl9pZCI6IiIsInVybCI6Imh0dHBzOi8vYXBpLmdp
+        dGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEIiwiaHRtbF91cmwiOiJodHRwczov
+        L2dpdGh1Yi5jb20vQ2Fwc3VsZUNEIiwiZm9sbG93ZXJzX3VybCI6Imh0dHBz
+        Oi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2ZvbGxvd2VycyIs
+        ImZvbGxvd2luZ191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJz
+        L0NhcHN1bGVDRC9mb2xsb3dpbmd7L290aGVyX3VzZXJ9IiwiZ2lzdHNfdXJs
+        IjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZ2lz
+        dHN7L2dpc3RfaWR9Iiwic3RhcnJlZF91cmwiOiJodHRwczovL2FwaS5naXRo
+        dWIuY29tL3VzZXJzL0NhcHN1bGVDRC9zdGFycmVkey9vd25lcn17L3JlcG99
+        Iiwic3Vic2NyaXB0aW9uc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29t
+        L3VzZXJzL0NhcHN1bGVDRC9zdWJzY3JpcHRpb25zIiwib3JnYW5pemF0aW9u
+        c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVD
+        RC9vcmdzIiwicmVwb3NfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91
+        c2Vycy9DYXBzdWxlQ0QvcmVwb3MiLCJldmVudHNfdXJsIjoiaHR0cHM6Ly9h
+        cGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZXZlbnRzey9wcml2YWN5
+        fSIsInJlY2VpdmVkX2V2ZW50c191cmwiOiJodHRwczovL2FwaS5naXRodWIu
+        Y29tL3VzZXJzL0NhcHN1bGVDRC9yZWNlaXZlZF9ldmVudHMiLCJ0eXBlIjoi
+        VXNlciIsInNpdGVfYWRtaW4iOmZhbHNlfX0=
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:44:37 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiU3RhcnRlZCAncmVsZWFzZScgc3RlcC4gUHVsbCByZXF1ZXN0IHdpbGwg
+        YmUgbWVyZ2VkIGF1dG9tYXRpY2FsbHkgd2hlbiBjb21wbGV0ZS4iLCJzdGF0
+        ZSI6InBlbmRpbmcifQ==
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:44:39 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1289'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4994'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"729ef39488cd61f65d653030451e69f7"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - a7f8a126c9ed3f1c4715a34c0ddc7290
+      X-Github-Request-Id:
+      - D0488EB8:1805F:14479E45:56FA2457
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjUwMzEwMTY0OCwic3RhdGUi
+        OiJwZW5kaW5nIiwiZGVzY3JpcHRpb24iOiJTdGFydGVkICdyZWxlYXNlJyBz
+        dGVwLiBQdWxsIHJlcXVlc3Qgd2lsbCBiZSBtZXJnZWQgYXV0b21hdGljYWxs
+        eSB3aGVuIGNvbXBsZXRlLiIsInRhcmdldF91cmwiOiJodHRwOi8vd3d3Lmdp
+        dGh1Yi5jb20vQW5hbG9nSi9jYXBzdWxlY2QiLCJjb250ZXh0IjoiQ2Fwc3Vs
+        ZUNEIiwiY3JlYXRlZF9hdCI6IjIwMTYtMDMtMjlUMDY6NDQ6MzlaIiwidXBk
+        YXRlZF9hdCI6IjIwMTYtMDMtMjlUMDY6NDQ6MzlaIiwiY3JlYXRvciI6eyJs
+        b2dpbiI6IkNhcHN1bGVDRCIsImlkIjoxMzgyNDM4NywiYXZhdGFyX3VybCI6
+        Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8xMzgy
+        NDM4Nz92PTMiLCJncmF2YXRhcl9pZCI6IiIsInVybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEIiwiaHRtbF91cmwiOiJodHRw
+        czovL2dpdGh1Yi5jb20vQ2Fwc3VsZUNEIiwiZm9sbG93ZXJzX3VybCI6Imh0
+        dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2ZvbGxvd2Vy
+        cyIsImZvbGxvd2luZ191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3Vz
+        ZXJzL0NhcHN1bGVDRC9mb2xsb3dpbmd7L290aGVyX3VzZXJ9IiwiZ2lzdHNf
+        dXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qv
+        Z2lzdHN7L2dpc3RfaWR9Iiwic3RhcnJlZF91cmwiOiJodHRwczovL2FwaS5n
+        aXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9zdGFycmVkey9vd25lcn17L3Jl
+        cG99Iiwic3Vic2NyaXB0aW9uc191cmwiOiJodHRwczovL2FwaS5naXRodWIu
+        Y29tL3VzZXJzL0NhcHN1bGVDRC9zdWJzY3JpcHRpb25zIiwib3JnYW5pemF0
+        aW9uc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1
+        bGVDRC9vcmdzIiwicmVwb3NfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNv
+        bS91c2Vycy9DYXBzdWxlQ0QvcmVwb3MiLCJldmVudHNfdXJsIjoiaHR0cHM6
+        Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZXZlbnRzey9wcml2
+        YWN5fSIsInJlY2VpdmVkX2V2ZW50c191cmwiOiJodHRwczovL2FwaS5naXRo
+        dWIuY29tL3VzZXJzL0NhcHN1bGVDRC9yZWNlaXZlZF9ldmVudHMiLCJ0eXBl
+        IjoiVXNlciIsInNpdGVfYWRtaW4iOmZhbHNlfX0=
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:44:39 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiU3RhcnRlZCAnc291cmNlIHJlbGVhc2UnIHN0ZXAuIFB1bGwgcmVxdWVz
+        dCB3aWxsIGJlIG1lcmdlZCBhdXRvbWF0aWNhbGx5IHdoZW4gY29tcGxldGUu
+        Iiwic3RhdGUiOiJwZW5kaW5nIn0=
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:44:39 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1296'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4993'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"1bda4ebaf647cca0b4ff5cab0c140194"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - 76d9828c7e4f1d910f7ba069e90ce976
+      X-Github-Request-Id:
+      - D0488EB8:18060:C5D1B34:56FA2457
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjUwMzEwMTY1NSwic3RhdGUi
+        OiJwZW5kaW5nIiwiZGVzY3JpcHRpb24iOiJTdGFydGVkICdzb3VyY2UgcmVs
+        ZWFzZScgc3RlcC4gUHVsbCByZXF1ZXN0IHdpbGwgYmUgbWVyZ2VkIGF1dG9t
+        YXRpY2FsbHkgd2hlbiBjb21wbGV0ZS4iLCJ0YXJnZXRfdXJsIjoiaHR0cDov
+        L3d3dy5naXRodWIuY29tL0FuYWxvZ0ovY2Fwc3VsZWNkIiwiY29udGV4dCI6
+        IkNhcHN1bGVDRCIsImNyZWF0ZWRfYXQiOiIyMDE2LTAzLTI5VDA2OjQ0OjM5
+        WiIsInVwZGF0ZWRfYXQiOiIyMDE2LTAzLTI5VDA2OjQ0OjM5WiIsImNyZWF0
+        b3IiOnsibG9naW4iOiJDYXBzdWxlQ0QiLCJpZCI6MTM4MjQzODcsImF2YXRh
+        cl91cmwiOiJodHRwczovL2F2YXRhcnMuZ2l0aHVidXNlcmNvbnRlbnQuY29t
+        L3UvMTM4MjQzODc/dj0zIiwiZ3JhdmF0YXJfaWQiOiIiLCJ1cmwiOiJodHRw
+        czovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRCIsImh0bWxfdXJs
+        IjoiaHR0cHM6Ly9naXRodWIuY29tL0NhcHN1bGVDRCIsImZvbGxvd2Vyc191
+        cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9m
+        b2xsb3dlcnMiLCJmb2xsb3dpbmdfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHVi
+        LmNvbS91c2Vycy9DYXBzdWxlQ0QvZm9sbG93aW5ney9vdGhlcl91c2VyfSIs
+        Imdpc3RzX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fw
+        c3VsZUNEL2dpc3Rzey9naXN0X2lkfSIsInN0YXJyZWRfdXJsIjoiaHR0cHM6
+        Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qvc3RhcnJlZHsvb3du
+        ZXJ9ey9yZXBvfSIsInN1YnNjcmlwdGlvbnNfdXJsIjoiaHR0cHM6Ly9hcGku
+        Z2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qvc3Vic2NyaXB0aW9ucyIsIm9y
+        Z2FuaXphdGlvbnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vy
+        cy9DYXBzdWxlQ0Qvb3JncyIsInJlcG9zX3VybCI6Imh0dHBzOi8vYXBpLmdp
+        dGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3JlcG9zIiwiZXZlbnRzX3VybCI6
+        Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2V2ZW50
+        c3svcHJpdmFjeX0iLCJyZWNlaXZlZF9ldmVudHNfdXJsIjoiaHR0cHM6Ly9h
+        cGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvcmVjZWl2ZWRfZXZlbnRz
+        IiwidHlwZSI6IlVzZXIiLCJzaXRlX2FkbWluIjpmYWxzZX19
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:44:39 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiUHVsbC1yZXF1ZXN0IHdhcyBzdWNjZXNzZnVsbHkgbWVyZ2VkLCBuZXcg
+        cmVsZWFzZSBjcmVhdGVkLiIsInN0YXRlIjoic3VjY2VzcyJ9
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:44:45 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1267'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4992'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"43ffe95c826f3e796d5652029f48a8e8"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - c6c65e5196703428e7641f7d1e9bc353
+      X-Github-Request-Id:
+      - D0488EB8:1805D:E66F5C0:56FA245C
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjUwMzEwMTcyMSwic3RhdGUi
+        OiJzdWNjZXNzIiwiZGVzY3JpcHRpb24iOiJQdWxsLXJlcXVlc3Qgd2FzIHN1
+        Y2Nlc3NmdWxseSBtZXJnZWQsIG5ldyByZWxlYXNlIGNyZWF0ZWQuIiwidGFy
+        Z2V0X3VybCI6Imh0dHA6Ly93d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1
+        bGVjZCIsImNvbnRleHQiOiJDYXBzdWxlQ0QiLCJjcmVhdGVkX2F0IjoiMjAx
+        Ni0wMy0yOVQwNjo0NDo0NVoiLCJ1cGRhdGVkX2F0IjoiMjAxNi0wMy0yOVQw
+        Njo0NDo0NVoiLCJjcmVhdG9yIjp7ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQi
+        OjEzODI0Mzg3LCJhdmF0YXJfdXJsIjoiaHR0cHM6Ly9hdmF0YXJzLmdpdGh1
+        YnVzZXJjb250ZW50LmNvbS91LzEzODI0Mzg3P3Y9MyIsImdyYXZhdGFyX2lk
+        IjoiIiwidXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBz
+        dWxlQ0QiLCJodG1sX3VybCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DYXBzdWxl
+        Q0QiLCJmb2xsb3dlcnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91
+        c2Vycy9DYXBzdWxlQ0QvZm9sbG93ZXJzIiwiZm9sbG93aW5nX3VybCI6Imh0
+        dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2ZvbGxvd2lu
+        Z3svb3RoZXJfdXNlcn0iLCJnaXN0c191cmwiOiJodHRwczovL2FwaS5naXRo
+        dWIuY29tL3VzZXJzL0NhcHN1bGVDRC9naXN0c3svZ2lzdF9pZH0iLCJzdGFy
+        cmVkX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3Vs
+        ZUNEL3N0YXJyZWR7L293bmVyfXsvcmVwb30iLCJzdWJzY3JpcHRpb25zX3Vy
+        bCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3N1
+        YnNjcmlwdGlvbnMiLCJvcmdhbml6YXRpb25zX3VybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL29yZ3MiLCJyZXBvc191cmwi
+        OiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9yZXBv
+        cyIsImV2ZW50c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJz
+        L0NhcHN1bGVDRC9ldmVudHN7L3ByaXZhY3l9IiwicmVjZWl2ZWRfZXZlbnRz
+        X3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNE
+        L3JlY2VpdmVkX2V2ZW50cyIsInR5cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6
+        ZmFsc2V9fQ==
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:44:45 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiUHVsbC1yZXF1ZXN0IHdhcyBzdWNjZXNzZnVsbHkgbWVyZ2VkLCBuZXcg
+        cmVsZWFzZSBjcmVhdGVkLiIsInN0YXRlIjoic3VjY2VzcyJ9
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:51:39 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1267'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4982'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"e955165b4bb0b709d809323e7b2c0079"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/npm_analogj_test/statuses/003160dfd6ef65b787cefd129d3f656606c628f2
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - 4c8b2d4732c413f4b9aefe394bd65569
+      X-Github-Request-Id:
+      - D0488EB8:2E06:10FA1DC2:56FA25FB
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        bnBtX2FuYWxvZ2pfdGVzdC9zdGF0dXNlcy8wMDMxNjBkZmQ2ZWY2NWI3ODdj
+        ZWZkMTI5ZDNmNjU2NjA2YzYyOGYyIiwiaWQiOjUwMzEwNjUwNSwic3RhdGUi
+        OiJzdWNjZXNzIiwiZGVzY3JpcHRpb24iOiJQdWxsLXJlcXVlc3Qgd2FzIHN1
+        Y2Nlc3NmdWxseSBtZXJnZWQsIG5ldyByZWxlYXNlIGNyZWF0ZWQuIiwidGFy
+        Z2V0X3VybCI6Imh0dHA6Ly93d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1
+        bGVjZCIsImNvbnRleHQiOiJDYXBzdWxlQ0QiLCJjcmVhdGVkX2F0IjoiMjAx
+        Ni0wMy0yOVQwNjo1MTozOVoiLCJ1cGRhdGVkX2F0IjoiMjAxNi0wMy0yOVQw
+        Njo1MTozOVoiLCJjcmVhdG9yIjp7ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQi
+        OjEzODI0Mzg3LCJhdmF0YXJfdXJsIjoiaHR0cHM6Ly9hdmF0YXJzLmdpdGh1
+        YnVzZXJjb250ZW50LmNvbS91LzEzODI0Mzg3P3Y9MyIsImdyYXZhdGFyX2lk
+        IjoiIiwidXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBz
+        dWxlQ0QiLCJodG1sX3VybCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9DYXBzdWxl
+        Q0QiLCJmb2xsb3dlcnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91
+        c2Vycy9DYXBzdWxlQ0QvZm9sbG93ZXJzIiwiZm9sbG93aW5nX3VybCI6Imh0
+        dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2ZvbGxvd2lu
+        Z3svb3RoZXJfdXNlcn0iLCJnaXN0c191cmwiOiJodHRwczovL2FwaS5naXRo
+        dWIuY29tL3VzZXJzL0NhcHN1bGVDRC9naXN0c3svZ2lzdF9pZH0iLCJzdGFy
+        cmVkX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3Vs
+        ZUNEL3N0YXJyZWR7L293bmVyfXsvcmVwb30iLCJzdWJzY3JpcHRpb25zX3Vy
+        bCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3N1
+        YnNjcmlwdGlvbnMiLCJvcmdhbml6YXRpb25zX3VybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL29yZ3MiLCJyZXBvc191cmwi
+        OiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9yZXBv
+        cyIsImV2ZW50c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJz
+        L0NhcHN1bGVDRC9ldmVudHN7L3ByaXZhY3l9IiwicmVjZWl2ZWRfZXZlbnRz
+        X3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNE
+        L3JlY2VpdmVkX2V2ZW50cyIsInR5cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6
+        ZmFsc2V9fQ==
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:51:39 GMT
 recorded_with: VCR 3.0.1

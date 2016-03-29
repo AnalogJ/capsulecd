@@ -843,4 +843,557 @@ http_interactions:
         biI6ZmFsc2V9fQ==
     http_version: 
   recorded_at: Sun, 28 Feb 2016 06:59:42 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiU3RhcnRlZCAndGVzdCcgc3RlcC4gUHVsbCByZXF1ZXN0IHdpbGwgYmUg
+        bWVyZ2VkIGF1dG9tYXRpY2FsbHkgd2hlbiBjb21wbGV0ZS4iLCJzdGF0ZSI6
+        InBlbmRpbmcifQ==
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:46:12 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1291'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4991'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"364e9617a6085552b3244a41610c8dc3"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - 7f48e2f7761567e923121f17538d7a6d
+      X-Github-Request-Id:
+      - D0488EB8:6B9D:111BCC73:56FA24B4
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        Y29va2Jvb2tfYW5hbG9nal90ZXN0L3N0YXR1c2VzL2Q0YjhjM2I1ZjdmZjIx
+        MGE2MmU5ZTRhZDlmMDI2NDczMGJjNTcyMTIiLCJpZCI6NTAzMTAyNzc4LCJz
+        dGF0ZSI6InBlbmRpbmciLCJkZXNjcmlwdGlvbiI6IlN0YXJ0ZWQgJ3Rlc3Qn
+        IHN0ZXAuIFB1bGwgcmVxdWVzdCB3aWxsIGJlIG1lcmdlZCBhdXRvbWF0aWNh
+        bGx5IHdoZW4gY29tcGxldGUuIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93d3cu
+        Z2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImNvbnRleHQiOiJDYXBz
+        dWxlQ0QiLCJjcmVhdGVkX2F0IjoiMjAxNi0wMy0yOVQwNjo0NjoxMloiLCJ1
+        cGRhdGVkX2F0IjoiMjAxNi0wMy0yOVQwNjo0NjoxMloiLCJjcmVhdG9yIjp7
+        ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQiOjEzODI0Mzg3LCJhdmF0YXJfdXJs
+        IjoiaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91LzEz
+        ODI0Mzg3P3Y9MyIsImdyYXZhdGFyX2lkIjoiIiwidXJsIjoiaHR0cHM6Ly9h
+        cGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QiLCJodG1sX3VybCI6Imh0
+        dHBzOi8vZ2l0aHViLmNvbS9DYXBzdWxlQ0QiLCJmb2xsb3dlcnNfdXJsIjoi
+        aHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZm9sbG93
+        ZXJzIiwiZm9sbG93aW5nX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20v
+        dXNlcnMvQ2Fwc3VsZUNEL2ZvbGxvd2luZ3svb3RoZXJfdXNlcn0iLCJnaXN0
+        c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVD
+        RC9naXN0c3svZ2lzdF9pZH0iLCJzdGFycmVkX3VybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3N0YXJyZWR7L293bmVyfXsv
+        cmVwb30iLCJzdWJzY3JpcHRpb25zX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1
+        Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3N1YnNjcmlwdGlvbnMiLCJvcmdhbml6
+        YXRpb25zX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fw
+        c3VsZUNEL29yZ3MiLCJyZXBvc191cmwiOiJodHRwczovL2FwaS5naXRodWIu
+        Y29tL3VzZXJzL0NhcHN1bGVDRC9yZXBvcyIsImV2ZW50c191cmwiOiJodHRw
+        czovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9ldmVudHN7L3By
+        aXZhY3l9IiwicmVjZWl2ZWRfZXZlbnRzX3VybCI6Imh0dHBzOi8vYXBpLmdp
+        dGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3JlY2VpdmVkX2V2ZW50cyIsInR5
+        cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6ZmFsc2V9fQ==
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:46:12 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiU3RhcnRlZCAncmVsZWFzZScgc3RlcC4gUHVsbCByZXF1ZXN0IHdpbGwg
+        YmUgbWVyZ2VkIGF1dG9tYXRpY2FsbHkgd2hlbiBjb21wbGV0ZS4iLCJzdGF0
+        ZSI6InBlbmRpbmcifQ==
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:46:15 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1294'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4990'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"4ea881287de39cc658cf7bd93da4b0c7"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - 8dd185e423974a7e13abbbe6e060031e
+      X-Github-Request-Id:
+      - D0488EB8:6B9B:106EB47E:56FA24B6
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        Y29va2Jvb2tfYW5hbG9nal90ZXN0L3N0YXR1c2VzL2Q0YjhjM2I1ZjdmZjIx
+        MGE2MmU5ZTRhZDlmMDI2NDczMGJjNTcyMTIiLCJpZCI6NTAzMTAyNzkzLCJz
+        dGF0ZSI6InBlbmRpbmciLCJkZXNjcmlwdGlvbiI6IlN0YXJ0ZWQgJ3JlbGVh
+        c2UnIHN0ZXAuIFB1bGwgcmVxdWVzdCB3aWxsIGJlIG1lcmdlZCBhdXRvbWF0
+        aWNhbGx5IHdoZW4gY29tcGxldGUuIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImNvbnRleHQiOiJD
+        YXBzdWxlQ0QiLCJjcmVhdGVkX2F0IjoiMjAxNi0wMy0yOVQwNjo0NjoxNVoi
+        LCJ1cGRhdGVkX2F0IjoiMjAxNi0wMy0yOVQwNjo0NjoxNVoiLCJjcmVhdG9y
+        Ijp7ImxvZ2luIjoiQ2Fwc3VsZUNEIiwiaWQiOjEzODI0Mzg3LCJhdmF0YXJf
+        dXJsIjoiaHR0cHM6Ly9hdmF0YXJzLmdpdGh1YnVzZXJjb250ZW50LmNvbS91
+        LzEzODI0Mzg3P3Y9MyIsImdyYXZhdGFyX2lkIjoiIiwidXJsIjoiaHR0cHM6
+        Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QiLCJodG1sX3VybCI6
+        Imh0dHBzOi8vZ2l0aHViLmNvbS9DYXBzdWxlQ0QiLCJmb2xsb3dlcnNfdXJs
+        IjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZm9s
+        bG93ZXJzIiwiZm9sbG93aW5nX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5j
+        b20vdXNlcnMvQ2Fwc3VsZUNEL2ZvbGxvd2luZ3svb3RoZXJfdXNlcn0iLCJn
+        aXN0c191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1
+        bGVDRC9naXN0c3svZ2lzdF9pZH0iLCJzdGFycmVkX3VybCI6Imh0dHBzOi8v
+        YXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3N0YXJyZWR7L293bmVy
+        fXsvcmVwb30iLCJzdWJzY3JpcHRpb25zX3VybCI6Imh0dHBzOi8vYXBpLmdp
+        dGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3N1YnNjcmlwdGlvbnMiLCJvcmdh
+        bml6YXRpb25zX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMv
+        Q2Fwc3VsZUNEL29yZ3MiLCJyZXBvc191cmwiOiJodHRwczovL2FwaS5naXRo
+        dWIuY29tL3VzZXJzL0NhcHN1bGVDRC9yZXBvcyIsImV2ZW50c191cmwiOiJo
+        dHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9ldmVudHN7
+        L3ByaXZhY3l9IiwicmVjZWl2ZWRfZXZlbnRzX3VybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL3JlY2VpdmVkX2V2ZW50cyIs
+        InR5cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6ZmFsc2V9fQ==
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:46:15 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiU3RhcnRlZCAnc291cmNlIHJlbGVhc2UnIHN0ZXAuIFB1bGwgcmVxdWVz
+        dCB3aWxsIGJlIG1lcmdlZCBhdXRvbWF0aWNhbGx5IHdoZW4gY29tcGxldGUu
+        Iiwic3RhdGUiOiJwZW5kaW5nIn0=
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:46:15 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1301'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4989'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"45a1f8c350905ce4674b066cd1cba0de"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - bd82876e9bf04990f289ba22f246ee9b
+      X-Github-Request-Id:
+      - D0488EB8:6B9D:111BCF3D:56FA24B7
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        Y29va2Jvb2tfYW5hbG9nal90ZXN0L3N0YXR1c2VzL2Q0YjhjM2I1ZjdmZjIx
+        MGE2MmU5ZTRhZDlmMDI2NDczMGJjNTcyMTIiLCJpZCI6NTAzMTAyNzk5LCJz
+        dGF0ZSI6InBlbmRpbmciLCJkZXNjcmlwdGlvbiI6IlN0YXJ0ZWQgJ3NvdXJj
+        ZSByZWxlYXNlJyBzdGVwLiBQdWxsIHJlcXVlc3Qgd2lsbCBiZSBtZXJnZWQg
+        YXV0b21hdGljYWxseSB3aGVuIGNvbXBsZXRlLiIsInRhcmdldF91cmwiOiJo
+        dHRwOi8vd3d3LmdpdGh1Yi5jb20vQW5hbG9nSi9jYXBzdWxlY2QiLCJjb250
+        ZXh0IjoiQ2Fwc3VsZUNEIiwiY3JlYXRlZF9hdCI6IjIwMTYtMDMtMjlUMDY6
+        NDY6MTVaIiwidXBkYXRlZF9hdCI6IjIwMTYtMDMtMjlUMDY6NDY6MTVaIiwi
+        Y3JlYXRvciI6eyJsb2dpbiI6IkNhcHN1bGVDRCIsImlkIjoxMzgyNDM4Nywi
+        YXZhdGFyX3VybCI6Imh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVu
+        dC5jb20vdS8xMzgyNDM4Nz92PTMiLCJncmF2YXRhcl9pZCI6IiIsInVybCI6
+        Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEIiwiaHRt
+        bF91cmwiOiJodHRwczovL2dpdGh1Yi5jb20vQ2Fwc3VsZUNEIiwiZm9sbG93
+        ZXJzX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3Vs
+        ZUNEL2ZvbGxvd2VycyIsImZvbGxvd2luZ191cmwiOiJodHRwczovL2FwaS5n
+        aXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9mb2xsb3dpbmd7L290aGVyX3Vz
+        ZXJ9IiwiZ2lzdHNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vy
+        cy9DYXBzdWxlQ0QvZ2lzdHN7L2dpc3RfaWR9Iiwic3RhcnJlZF91cmwiOiJo
+        dHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9zdGFycmVk
+        ey9vd25lcn17L3JlcG99Iiwic3Vic2NyaXB0aW9uc191cmwiOiJodHRwczov
+        L2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9zdWJzY3JpcHRpb25z
+        Iiwib3JnYW5pemF0aW9uc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29t
+        L3VzZXJzL0NhcHN1bGVDRC9vcmdzIiwicmVwb3NfdXJsIjoiaHR0cHM6Ly9h
+        cGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvcmVwb3MiLCJldmVudHNf
+        dXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qv
+        ZXZlbnRzey9wcml2YWN5fSIsInJlY2VpdmVkX2V2ZW50c191cmwiOiJodHRw
+        czovL2FwaS5naXRodWIuY29tL3VzZXJzL0NhcHN1bGVDRC9yZWNlaXZlZF9l
+        dmVudHMiLCJ0eXBlIjoiVXNlciIsInNpdGVfYWRtaW4iOmZhbHNlfX0=
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:46:15 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiUHVsbC1yZXF1ZXN0IHdhcyBzdWNjZXNzZnVsbHkgbWVyZ2VkLCBuZXcg
+        cmVsZWFzZSBjcmVhdGVkLiIsInN0YXRlIjoic3VjY2VzcyJ9
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:46:20 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1272'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4988'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"b8a21526d508cbd7604a8e03ed9ead0f"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - c6c65e5196703428e7641f7d1e9bc353
+      X-Github-Request-Id:
+      - D0488EB8:6B9B:106EBB1F:56FA24BC
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        Y29va2Jvb2tfYW5hbG9nal90ZXN0L3N0YXR1c2VzL2Q0YjhjM2I1ZjdmZjIx
+        MGE2MmU5ZTRhZDlmMDI2NDczMGJjNTcyMTIiLCJpZCI6NTAzMTAyODYwLCJz
+        dGF0ZSI6InN1Y2Nlc3MiLCJkZXNjcmlwdGlvbiI6IlB1bGwtcmVxdWVzdCB3
+        YXMgc3VjY2Vzc2Z1bGx5IG1lcmdlZCwgbmV3IHJlbGVhc2UgY3JlYXRlZC4i
+        LCJ0YXJnZXRfdXJsIjoiaHR0cDovL3d3dy5naXRodWIuY29tL0FuYWxvZ0ov
+        Y2Fwc3VsZWNkIiwiY29udGV4dCI6IkNhcHN1bGVDRCIsImNyZWF0ZWRfYXQi
+        OiIyMDE2LTAzLTI5VDA2OjQ2OjIwWiIsInVwZGF0ZWRfYXQiOiIyMDE2LTAz
+        LTI5VDA2OjQ2OjIwWiIsImNyZWF0b3IiOnsibG9naW4iOiJDYXBzdWxlQ0Qi
+        LCJpZCI6MTM4MjQzODcsImF2YXRhcl91cmwiOiJodHRwczovL2F2YXRhcnMu
+        Z2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTM4MjQzODc/dj0zIiwiZ3JhdmF0
+        YXJfaWQiOiIiLCJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJz
+        L0NhcHN1bGVDRCIsImh0bWxfdXJsIjoiaHR0cHM6Ly9naXRodWIuY29tL0Nh
+        cHN1bGVDRCIsImZvbGxvd2Vyc191cmwiOiJodHRwczovL2FwaS5naXRodWIu
+        Y29tL3VzZXJzL0NhcHN1bGVDRC9mb2xsb3dlcnMiLCJmb2xsb3dpbmdfdXJs
+        IjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZm9s
+        bG93aW5ney9vdGhlcl91c2VyfSIsImdpc3RzX3VybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2dpc3Rzey9naXN0X2lkfSIs
+        InN0YXJyZWRfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9D
+        YXBzdWxlQ0Qvc3RhcnJlZHsvb3duZXJ9ey9yZXBvfSIsInN1YnNjcmlwdGlv
+        bnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxl
+        Q0Qvc3Vic2NyaXB0aW9ucyIsIm9yZ2FuaXphdGlvbnNfdXJsIjoiaHR0cHM6
+        Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qvb3JncyIsInJlcG9z
+        X3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNE
+        L3JlcG9zIiwiZXZlbnRzX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20v
+        dXNlcnMvQ2Fwc3VsZUNEL2V2ZW50c3svcHJpdmFjeX0iLCJyZWNlaXZlZF9l
+        dmVudHNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBz
+        dWxlQ0QvcmVjZWl2ZWRfZXZlbnRzIiwidHlwZSI6IlVzZXIiLCJzaXRlX2Fk
+        bWluIjpmYWxzZX19
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:46:20 GMT
+- request:
+    method: post
+    uri: https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJjb250ZXh0IjoiQ2Fwc3VsZUNEIiwidGFyZ2V0X3VybCI6Imh0dHA6Ly93
+        d3cuZ2l0aHViLmNvbS9BbmFsb2dKL2NhcHN1bGVjZCIsImRlc2NyaXB0aW9u
+        IjoiUHVsbC1yZXF1ZXN0IHdhcyBzdWNjZXNzZnVsbHkgbWVyZ2VkLCBuZXcg
+        cmVsZWFzZSBjcmVhdGVkLiIsInN0YXRlIjoic3VjY2VzcyJ9
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - Octokit Ruby Gem 4.2.0
+      Content-Type:
+      - application/json
+      Authorization:
+      - token <GITHUB_ACCESS_TOKEN>
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Tue, 29 Mar 2016 06:52:16 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '1272'
+      Status:
+      - 201 Created
+      X-Ratelimit-Limit:
+      - '5000'
+      X-Ratelimit-Remaining:
+      - '4981'
+      X-Ratelimit-Reset:
+      - '1459237375'
+      Cache-Control:
+      - private, max-age=60, s-maxage=60
+      Vary:
+      - Accept, Authorization, Cookie, X-GitHub-OTP
+      - Accept-Encoding
+      Etag:
+      - '"4b0e995d903cf04b8404a042ccdd1b7f"'
+      X-Oauth-Scopes:
+      - repo
+      X-Accepted-Oauth-Scopes:
+      - ''
+      Location:
+      - https://api.github.com/repos/AnalogJ/cookbook_analogj_test/statuses/d4b8c3b5f7ff210a62e9e4ad9f0264730bc57212
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset,
+        X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+      Access-Control-Allow-Origin:
+      - "*"
+      Content-Security-Policy:
+      - default-src 'none'
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Served-By:
+      - e183f7c661b1bbc2c987b3c4dc7b04e0
+      X-Github-Request-Id:
+      - D0488EB8:36C7:6E7607D:56FA2620
+    body:
+      encoding: UTF-8
+      base64_string: |
+        eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ov
+        Y29va2Jvb2tfYW5hbG9nal90ZXN0L3N0YXR1c2VzL2Q0YjhjM2I1ZjdmZjIx
+        MGE2MmU5ZTRhZDlmMDI2NDczMGJjNTcyMTIiLCJpZCI6NTAzMTA2OTU0LCJz
+        dGF0ZSI6InN1Y2Nlc3MiLCJkZXNjcmlwdGlvbiI6IlB1bGwtcmVxdWVzdCB3
+        YXMgc3VjY2Vzc2Z1bGx5IG1lcmdlZCwgbmV3IHJlbGVhc2UgY3JlYXRlZC4i
+        LCJ0YXJnZXRfdXJsIjoiaHR0cDovL3d3dy5naXRodWIuY29tL0FuYWxvZ0ov
+        Y2Fwc3VsZWNkIiwiY29udGV4dCI6IkNhcHN1bGVDRCIsImNyZWF0ZWRfYXQi
+        OiIyMDE2LTAzLTI5VDA2OjUyOjE2WiIsInVwZGF0ZWRfYXQiOiIyMDE2LTAz
+        LTI5VDA2OjUyOjE2WiIsImNyZWF0b3IiOnsibG9naW4iOiJDYXBzdWxlQ0Qi
+        LCJpZCI6MTM4MjQzODcsImF2YXRhcl91cmwiOiJodHRwczovL2F2YXRhcnMu
+        Z2l0aHVidXNlcmNvbnRlbnQuY29tL3UvMTM4MjQzODc/dj0zIiwiZ3JhdmF0
+        YXJfaWQiOiIiLCJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJz
+        L0NhcHN1bGVDRCIsImh0bWxfdXJsIjoiaHR0cHM6Ly9naXRodWIuY29tL0Nh
+        cHN1bGVDRCIsImZvbGxvd2Vyc191cmwiOiJodHRwczovL2FwaS5naXRodWIu
+        Y29tL3VzZXJzL0NhcHN1bGVDRC9mb2xsb3dlcnMiLCJmb2xsb3dpbmdfdXJs
+        IjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0QvZm9s
+        bG93aW5ney9vdGhlcl91c2VyfSIsImdpc3RzX3VybCI6Imh0dHBzOi8vYXBp
+        LmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNEL2dpc3Rzey9naXN0X2lkfSIs
+        InN0YXJyZWRfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9D
+        YXBzdWxlQ0Qvc3RhcnJlZHsvb3duZXJ9ey9yZXBvfSIsInN1YnNjcmlwdGlv
+        bnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxl
+        Q0Qvc3Vic2NyaXB0aW9ucyIsIm9yZ2FuaXphdGlvbnNfdXJsIjoiaHR0cHM6
+        Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBzdWxlQ0Qvb3JncyIsInJlcG9z
+        X3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQ2Fwc3VsZUNE
+        L3JlcG9zIiwiZXZlbnRzX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20v
+        dXNlcnMvQ2Fwc3VsZUNEL2V2ZW50c3svcHJpdmFjeX0iLCJyZWNlaXZlZF9l
+        dmVudHNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9DYXBz
+        dWxlQ0QvcmVjZWl2ZWRfZXZlbnRzIiwidHlwZSI6IlVzZXIiLCJzaXRlX2Fk
+        bWluIjpmYWxzZX19
+    http_version: 
+  recorded_at: Tue, 29 Mar 2016 06:52:16 GMT
 recorded_with: VCR 3.0.1
