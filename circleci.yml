@@ -21,4 +21,3 @@ test:
         - analogj/capsulecd:javascript bundle install --with test && rake 'spec:javascript'
         - analogj/capsulecd:node bundle install --with test && rake 'spec:node'
         - analogj/capsulecd:python bundle install --with test && rake 'spec:python'
-        
