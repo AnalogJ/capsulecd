@@ -13,7 +13,7 @@ dependencies:
 
 test:
   override:
-    - docker run analogj/capsulecd bundle install --with test && rake 'spec:ruby'
+    - docker run:
       parallel: true
       commands:
         - analogj/capsulecd bundle install --with test && rake 'spec:ruby'
