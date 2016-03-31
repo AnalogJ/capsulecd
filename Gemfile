@@ -16,7 +16,6 @@ group :github do
 end
 
 # These gems are required for the various language packages
-
 group :chef do
   gem 'ridley'
   gem 'berkshelf'

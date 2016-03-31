@@ -82,7 +82,9 @@ TOX
         # download the package dependencies and register it in the virtualenv using tox (which will do pip install -e .)
         # https://packaging.python.org/en/latest/distributing/
         # once that's done, tox will run tests
-        Open3.popen3('tox', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+        # run test command
+        test_cmd = @config.engine_cmd_test || 'tox'
+        Open3.popen3(test_cmd, chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
           { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
             Thread.new do
               until (line = stream_buffer.gets).nil?
@@ -93,9 +95,9 @@ TOX
           # wait for process
           external.join
           unless external.value.success?
-            fail CapsuleCD::Error::TestDependenciesError, 'tox failed to test package.'
+            fail CapsuleCD::Error::TestDependenciesError, test_cmd + ' failed to test package.'
           end
-        end
+        end unless @config.engine_disable_test
       end
 
       # run npm publish

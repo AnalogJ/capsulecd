@@ -92,6 +92,8 @@ module CapsuleCD
       run_hook :after_build_step
 
       # this step should download dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test)
+      # REQUIRES @config.engine_cmd_test
+      # REQUIRES @config.engine_disable_test
       run_hook :before_test_step
       source_notify('test') do test_step end
       run_hook :after_test_step

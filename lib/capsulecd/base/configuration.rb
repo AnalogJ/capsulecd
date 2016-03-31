@@ -6,7 +6,7 @@ module CapsuleCD
     # Order of inheritance: file <- environment <- cli options
     # <- means 'overridden by', eg. file overridden by environment vars
     # @param [String] config_path The path to the configuration file
-    def initialize(options)
+    def initialize(options={})
       @options = options
       @config_path = @options[:config_file]
       @configuration = parse_config_file
@@ -38,22 +38,30 @@ module CapsuleCD
     attr_reader :runner_repo_full_name
     attr_reader :runner_repo_name
 
-    # Engine config (any credentials added here should also be added to the spec_helper.rb VCR config)
+    # Package auth/config (any credentials added here should also be added to the spec_helper.rb VCR config)
     attr_reader :chef_supermarket_username
     attr_reader :npm_auth_token
     attr_reader :pypi_username
     attr_reader :pypi_password
-
-    def engine_version_bump_type
-      @engine_version_bump_type ||= :patch # can be :major, :minor, :patch
-    end
-
     def chef_supermarket_key
       @chef_supermarket_key.to_s.empty? ? nil : Base64.strict_decode64(@chef_supermarket_key)
     end
-
     def chef_supermarket_type
       @chef_supermarket_type ||= 'Other'
+    end
+
+    # Engine config
+    attr_reader :engine_disable_test
+    attr_reader :engine_disable_minification
+    attr_reader :engine_disable_lint
+    attr_reader :engine_disable_coverage
+    attr_reader :engine_cmd_test
+    attr_reader :engine_cmd_minification
+    attr_reader :engine_cmd_lint
+    attr_reader :engine_cmd_coverage
+
+    def engine_version_bump_type
+      @engine_version_bump_type ||= :patch # can be :major, :minor, :patch
     end
 
     private

@@ -62,8 +62,9 @@ module CapsuleCD
           end
         end
 
-        # run npm test
-        Open3.popen3(ENV, 'npm test', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+        # run test command
+        test_cmd = @config.engine_cmd_test || 'npm test'
+        Open3.popen3(ENV, test_cmd, chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
           { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
             Thread.new do
               until (line = stream_buffer.gets).nil?
@@ -74,9 +75,9 @@ module CapsuleCD
           # wait for process
           external.join
           unless external.value.success?
-            fail CapsuleCD::Error::TestRunnerError, 'npm test failed. Check log for exact error'
+            fail CapsuleCD::Error::TestRunnerError, test_cmd + ' failed. Check log for exact error'
           end
-        end
+        end unless @config.engine_disable_test
       end
 
       # run npm publish

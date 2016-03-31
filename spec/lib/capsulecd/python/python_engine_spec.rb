@@ -48,11 +48,15 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
                                           runner: :circleci,
                                           package_type: :python)
     end
+    let(:config_double) { CapsuleCD::Configuration.new }
     describe 'when testing python package' do
       it 'should run install dependencies' do
         allow(Open3).to receive(:popen3).and_return(false)
+        allow(config_double).to receive(:engine_cmd_test).and_call_original
+        allow(config_double).to receive(:engine_disable_test).and_call_original
 
         engine.instance_variable_set(:@source_git_local_path, test_directory)
+        engine.instance_variable_set(:@config, config_double)
 
         engine.test_step
 

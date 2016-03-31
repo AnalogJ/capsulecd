@@ -83,8 +83,9 @@ module CapsuleCD
             end
           end
 
-          # run rake test
-          Open3.popen3('rake test', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          # run test command
+          test_cmd = @config.engine_cmd_test || 'rake test'
+          Open3.popen3(test_cmd, chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
             { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
               Thread.new do
                 until (line = stream_buffer.gets).nil?
@@ -95,9 +96,9 @@ module CapsuleCD
             # wait for process
             external.join
             unless external.value.success?
-              fail CapsuleCD::Error::TestRunnerError, 'rake test failed. Check log for exact error'
+              fail CapsuleCD::Error::TestRunnerError, test_cmd + ' failed. Check log for exact error'
             end
-          end
+          end unless @config.engine_disable_test
         end
       end
 
