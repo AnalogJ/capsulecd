@@ -1,6 +1,6 @@
 # capsulecd
+[![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=svg)](https://circleci.com/gh/AnalogJ/capsulecd)
 Continuous Delivery scripts for automating package releases (npm, chef, ruby, python, crate)
-
 
 #capsule.yml
 capsume.yml file should have the following sections:

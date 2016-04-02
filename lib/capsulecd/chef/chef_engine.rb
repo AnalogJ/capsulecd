@@ -20,8 +20,7 @@ module CapsuleCD
         # bump up the chef cookbook version
         metadata_str = CapsuleCD::Chef::ChefHelper.read_repo_metadata(@source_git_local_path)
         chef_metadata = CapsuleCD::Chef::ChefHelper.parse_metadata(metadata_str)
-        next_version = SemVer.parse(chef_metadata.version)
-        next_version.patch = next_version.patch + 1
+        next_version = bump_version(SemVer.parse(chef_metadata.version))
 
         new_metadata_str = metadata_str.gsub(/(version\s+['"])[0-9\.]+(['"])/, "\\1#{next_version}\\2")
         CapsuleCD::Chef::ChefHelper.write_repo_metadata(@source_git_local_path, new_metadata_str)

@@ -28,8 +28,7 @@ module CapsuleCD
         if @_is_bower
           bower_file = File.read(@source_git_local_path + '/bower.json')
           bower_data = JSON.parse(bower_file)
-          next_version = SemVer.parse(bower_data['version'])
-          next_version.patch = next_version.patch + 1
+          next_version = bump_version(SemVer.parse(bower_data['version']))
           bower_data['version'] = next_version.to_s
           File.write(@source_git_local_path + '/bower.json', JSON.pretty_generate(bower_data))
         end
@@ -134,7 +133,7 @@ module CapsuleCD
         else
 
           # run npm publish
-          Open3.popen3('npm version patch -m "(v%s) Automated packaging of release by CapsuleCD"', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          Open3.popen3("npm version #{@config.engine_version_bump_type} -m '(v%s) Automated packaging of release by CapsuleCD'", chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
             { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
               Thread.new do
                 until (line = stream_buffer.gets).nil?

@@ -9,9 +9,13 @@ module CapsuleCD
     def initialize(options={})
       @options = options
       @config_path = @options[:config_file]
-      @configuration = parse_config_file
-      detect_runner_and_populate
-      populate_overrides
+
+      populate_defaults
+      populate_system_config_file
+      populate_runner_overrides
+      populate_env_overrides
+      populate_cli_overrides
+      standardize_settings
     end
 
     # Cli config, shouldnt be set via environmental variables (will be overridden)
@@ -43,11 +47,9 @@ module CapsuleCD
     attr_reader :npm_auth_token
     attr_reader :pypi_username
     attr_reader :pypi_password
+    attr_reader :chef_supermarket_type
     def chef_supermarket_key
       @chef_supermarket_key.to_s.empty? ? nil : Base64.strict_decode64(@chef_supermarket_key)
-    end
-    def chef_supermarket_type
-      @chef_supermarket_type ||= 'Other'
     end
 
     # Engine config
@@ -59,26 +61,40 @@ module CapsuleCD
     attr_reader :engine_cmd_minification
     attr_reader :engine_cmd_lint
     attr_reader :engine_cmd_coverage
+    attr_reader :engine_version_bump_type
 
-    def engine_version_bump_type
-      @engine_version_bump_type ||= :patch # can be :major, :minor, :patch
+    def populate_repo_config_file(repo_local_path)
+      repo_config_file_path = repo_local_path + '/.capsule.yml'
+      load_config_file(repo_config_file_path)
+      populate_runner_overrides
+      populate_env_overrides
+      populate_cli_overrides
+      standardize_settings
+    end
+
+    # The raw parsed configuration file, system level, a repo level configuration file will override settings in this file.
+    def populate_system_config_file
+      load_config_file(@config_path)
     end
 
     private
+    # These are defaults for engine settings. They can be overridden via configuration files or env variables
+    def populate_defaults
+      @engine_version_bump_type = :patch # can be :major, :minor, :patch
+      @chef_supermarket_type = 'Other'
+    end
 
-    # The raw parsed configuration file
-
-    def parse_config_file
-      if !@config_path || !File.exist?(@config_path)
+    def load_config_file(path)
+      if !path || !File.exist?(path)
         puts 'The configuration file could not be found. Using defaults'
         return
       end
-
-      file = File.open(@config_path).read
+      file = File.open(path).read
       unserialize(file)
     end
 
-    def detect_runner_and_populate
+
+    def populate_runner_overrides
       @runner = :circleci unless ENV['CIRCLECI'].to_s.empty?
       populate_runner
     end
@@ -95,7 +111,7 @@ module CapsuleCD
       end
     end
 
-    def populate_overrides
+    def populate_env_overrides
       # override config file with env variables.
       ENV.each do|key, value|
         config_key = key.dup
@@ -107,12 +123,17 @@ module CapsuleCD
           instance_variable_set('@' + config_key, value)
         end
       end
+    end
 
+    def populate_cli_overrides
       # then override with cli options
       @options.each do|key, value|
         instance_variable_set('@' + key.to_s, value)
       end
+    end
 
+    # certain settings are symbols, so make sure that any settings that are specified via a string are converted to the correct type.
+    def standardize_settings
       # set types if missing
       @engine_version_bump_type = @engine_version_bump_type.to_sym if @engine_version_bump_type.is_a? String
     end

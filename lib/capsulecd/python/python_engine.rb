@@ -27,8 +27,7 @@ module CapsuleCD
         # http://stackoverflow.com/a/7071358/1157633
 
         version = File.read(@source_git_local_path + '/VERSION').strip
-        next_version = SemVer.parse(version)
-        next_version.patch = next_version.patch + 1
+        next_version = bump_version(SemVer.parse(version))
         File.open(@source_git_local_path + '/VERSION', 'w') do |file|
           file.write(next_version)
         end

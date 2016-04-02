@@ -44,13 +44,24 @@ describe CapsuleCD::Configuration do
     describe 'when overriding sample configuration file' do
       let(:config_file_path) { 'spec/fixtures/sample_configuration.yml' }
 
-      it 'should use CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN instead of config file' do
-        allow(ENV).to receive(:each).and_yield('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN', 'override_test_token')
+      describe 'with ENV variables' do
+        it 'should use CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN instead of config file' do
+          allow(ENV).to receive(:each).and_yield('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN', 'override_test_token')
 
-        config = CapsuleCD::Configuration.new(config_file: config_file_path, runner: :circleci, source: :github, package_type: :node)
+          config = CapsuleCD::Configuration.new(config_file: config_file_path, runner: :circleci, source: :github, package_type: :node)
 
-        expect(config.source_github_access_token).to eql('override_test_token')
+          expect(config.source_github_access_token).to eql('override_test_token')
+        end
+
+        it 'should use CAPSULE_ENGINE_VERSION_BUMP_TYPE instead of default and return symbol' do
+          allow(ENV).to receive(:each).and_yield('CAPSULE_ENGINE_VERSION_BUMP_TYPE', 'patch')
+
+          config = CapsuleCD::Configuration.new(config_file: config_file_path, runner: :circleci, source: :github, package_type: :node)
+
+          expect(config.engine_version_bump_type).to eql(:patch)
+        end
       end
     end
+
   end
 end

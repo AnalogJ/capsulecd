@@ -141,5 +141,24 @@ module CapsuleCD
     def release_step
       puts 'release_step'
     end
+
+    protected
+
+    # determine which segment of the semvar version to bump/increment. The default (as specified in CapsuleCD::Configuration is :patch)
+    def bump_version(current_version)
+      next_version = current_version
+
+      if @config.engine_version_bump_type == :major
+        next_version.major = next_version.major + 1
+        next_version.minor = 0
+        next_version.patch = 0
+      elsif @config.engine_version_bump_type == :minor
+        next_version.minor = next_version.minor + 1
+        next_version.patch = 0
+      else
+        next_version.patch = next_version.patch + 1
+      end
+      return next_version
+    end
   end
 end
