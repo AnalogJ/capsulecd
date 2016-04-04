@@ -64,7 +64,7 @@ module CapsuleCD
     attr_reader :engine_version_bump_type
 
     def populate_repo_config_file(repo_local_path)
-      repo_config_file_path = repo_local_path + '/.capsule.yml'
+      repo_config_file_path = repo_local_path + '/capsule.yml'
       load_config_file(repo_config_file_path)
       populate_runner_overrides
       populate_env_overrides
