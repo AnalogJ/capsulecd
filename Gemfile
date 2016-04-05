@@ -6,7 +6,7 @@ group :test do
   gem 'rake'
   gem 'rspec'
   gem 'vcr'
-  gem 'simplecov'
+  gem 'coveralls'
   gem 'webmock'
 end
 

@@ -1,10 +1,5 @@
-begin
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter '/spec/'
-  end
-rescue LoadError
-end
+require 'simplecov'
+require 'coveralls'
 
 require 'rspec'
 require 'vcr'
