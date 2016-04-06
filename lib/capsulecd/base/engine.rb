@@ -7,23 +7,23 @@ module CapsuleCD
     attr_reader :config
 
     include Hooks
-    define_hooks :before_source_configure, :after_source_configure,
-                 :before_source_process_pull_request_payload, :after_source_process_pull_request_payload,
-                 :before_source_process_push_payload, :after_source_process_push_payload,
-                 :before_runner_retrieve_payload, :after_runner_retrieve_payload,
-                 :before_build_step, :after_build_step,
-                 :before_test_step, :after_test_step,
-                 :before_package_step, :after_package_step,
-                 :before_source_release, :after_source_release,
-                 :before_release_step, :after_release_step
+    define_hooks :pre_source_configure, :post_source_configure,
+                 :pre_source_process_pull_request_payload, :post_source_process_pull_request_payload,
+                 :pre_source_process_push_payload, :post_source_process_push_payload,
+                 :pre_runner_retrieve_payload, :post_runner_retrieve_payload,
+                 :pre_build_step, :post_build_step,
+                 :pre_test_step, :post_test_step,
+                 :pre_package_step, :post_package_step,
+                 :pre_source_release, :post_source_release,
+                 :pre_release_step, :post_release_step
 
     # empty hooks
-    before_source_configure do
-      puts 'before_source_configure'
+    pre_source_configure do
+      puts 'pre_source_configure'
     end
 
-    after_source_configure do
-      puts 'after_source_configure'
+    post_source_configure do
+      puts 'post_source_configure'
     end
 
     def initialize(options)
@@ -47,9 +47,9 @@ module CapsuleCD
       # start the source, and whatever work needs to be done there.
       # MUST set @source_git_parent_path
       # MUST set @source_client
-      run_hook :before_source_configure
+      run_hook :pre_source_configure
       source_configure
-      run_hook :after_source_configure
+      run_hook :post_source_configure
 
       # runner must determine if this is a pull request or a push.
       # if it's a pull request the runner must retrieve the pull request payload and return it
@@ -57,9 +57,9 @@ module CapsuleCD
       # the variable @runner_is_pullrequest will be true if a pull request was created.
       # MUST set runner_is_pullrequest
       # REQUIRES source_client
-      run_hook :before_runner_retrieve_payload
+      run_hook :pre_runner_retrieve_payload
       payload = runner_retrieve_payload(@options)
-      run_hook :after_runner_retrieve_payload
+      run_hook :post_runner_retrieve_payload
 
       if @runner_is_pullrequest
         # all capsule CD processing will be kicked off via a payload. In this case the payload is the pull request data.
@@ -70,9 +70,9 @@ module CapsuleCD
         # MUST set source_git_base_info
         # MUST set source_git_head_info
         # REQUIRES source_client
-        run_hook :before_source_process_pull_request_payload
+        run_hook :pre_source_process_pull_request_payload
         source_process_pull_request_payload(payload)
-        run_hook :after_source_process_pull_request_payload
+        run_hook :post_source_process_pull_request_payload
       else
         # start processing the payload, which should result in a local git repository that we
         # can begin to test. Since this is a push, no packaging is required
@@ -80,49 +80,49 @@ module CapsuleCD
         # MUST set source_git_local_branch
         # MUST set source_git_head_info
         # REQUIRES source_client
-        run_hook :before_source_process_push_payload
+        run_hook :pre_source_process_push_payload
         source_process_push_payload(payload)
-        run_hook :after_source_process_push_payload
+        run_hook :post_source_process_push_payload
       end
 
       # now that the payload has been processed we can begin by building the code.
       # this may be creating missing files/default structure, compilation, version bumping, etc.
-      run_hook :before_build_step
+      run_hook :pre_build_step
       source_notify('build') do build_step end
-      run_hook :after_build_step
+      run_hook :post_build_step
 
       # this step should download dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test)
       # REQUIRES @config.engine_cmd_test
       # REQUIRES @config.engine_disable_test
-      run_hook :before_test_step
+      run_hook :pre_test_step
       source_notify('test') do test_step end
-      run_hook :after_test_step
+      run_hook :post_test_step
 
       # this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
-      run_hook :before_package_step
+      run_hook :pre_package_step
       source_notify('package') do package_step end
-      run_hook :after_package_step
+      run_hook :post_package_step
 
       if @runner_is_pullrequest
         # this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
-        run_hook :before_release_step
+        run_hook :pre_release_step
         source_notify('release') do release_step end
-        run_hook :after_release_step
+        run_hook :post_release_step
 
         # this step should push the merged, tested and version updated code up to the source code repository
         # this step should also do any source specific releases (github release, asset uploading, etc)
-        run_hook :before_source_release
+        run_hook :pre_source_release
         source_notify('source release') do source_release end
-        run_hook :after_source_release
+        run_hook :post_source_release
       end
 
       # rescue => ex #TODO if you enable this rescue block, hooks stop working.
       # TODO: it shouldnt be required anylonger because source_notify will handle rescueing the failures.
       #   puts ex
       #
-      #   self.run_hook :before_source_process_failure, ex
+      #   self.run_hook :pre_source_process_failure, ex
       #   source_process_failure(ex)
-      #   self.run_hook :after_source_process_failure, ex
+      #   self.run_hook :post_source_process_failure, ex
     end
 
     def build_step
@@ -160,5 +160,12 @@ module CapsuleCD
       end
       return next_version
     end
+
+    # metaprogramming method to
+    def modules_include
+
+    end
+
+
   end
 end

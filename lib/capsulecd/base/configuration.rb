@@ -141,6 +141,7 @@ module CapsuleCD
     def unserialize(string)
       obj = YAML.load(string)
       obj.keys.each do |key|
+        next if %w(source_configure source_process_pull_request_payload source_process_push_payload runner_retrieve_payload build_step test_step package_step source_release release_step).include?(key)
         instance_variable_set('@' + key, obj[key])
       end
       obj

@@ -1,0 +1,69 @@
+require 'spec_helper'
+
+describe CapsuleCD::TransformEngine do
+  describe '::new' do
+    describe 'with a global configuration file' do
+      let(:config_file_path) { 'spec/fixtures/sample_global_configuration.yml' }
+      subject { CapsuleCD::TransformEngine.new() }
+
+      it 'should raise an error if we specify that its a repo configuration' do
+        expect{
+          subject.transform(nil, config_file_path)
+        }.to raise_error(CapsuleCD::Error::EngineTransformUnavailableStep)
+      end
+
+      # it 'should populate engine_npm_auth_token' do
+      #   expect(subject.npm_auth_token).to eql('sample_auth_token')
+      # end
+      #
+      # it 'should use cli specified source' do
+      #   expect(subject.source).to eql(:github)
+      # end
+      #
+      # it 'should have correct defaults' do
+      #   expect(subject.engine_version_bump_type).to eql(:patch)
+      #   expect(subject.chef_supermarket_type).to eql('Other')
+      # end
+    end
+
+    # describe 'with an incorrect configuration file' do
+    #   let(:config_file_path) { 'spec/fixtures/sample_configuration.yml' }
+    #   subject { CapsuleCD::Configuration.new(config_file:config_file_path, runner: :circleci, source: :github, package_type: :node) }
+    #
+    #   it 'should populate github_access_token' do
+    #     expect(subject.source_github_access_token).to eql('sample_test_token')
+    #   end
+    #
+    #   it 'should populate engine_npm_auth_token' do
+    #     expect(subject.npm_auth_token).to eql('sample_auth_token')
+    #   end
+    #
+    #   it 'should use cli specified source' do
+    #     expect(subject.source).to eql(:github)
+    #   end
+    # end
+    #
+    # describe 'when overriding sample configuration file' do
+    #   let(:config_file_path) { 'spec/fixtures/sample_configuration.yml' }
+    #
+    #   describe 'with ENV variables' do
+    #     it 'should use CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN instead of config file' do
+    #       allow(ENV).to receive(:each).and_yield('CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN', 'override_test_token')
+    #
+    #       config = CapsuleCD::Configuration.new(config_file: config_file_path, runner: :circleci, source: :github, package_type: :node)
+    #
+    #       expect(config.source_github_access_token).to eql('override_test_token')
+    #     end
+    #
+    #     it 'should use CAPSULE_ENGINE_VERSION_BUMP_TYPE instead of default and return symbol' do
+    #       allow(ENV).to receive(:each).and_yield('CAPSULE_ENGINE_VERSION_BUMP_TYPE', 'patch')
+    #
+    #       config = CapsuleCD::Configuration.new(config_file: config_file_path, runner: :circleci, source: :github, package_type: :node)
+    #
+    #       expect(config.engine_version_bump_type).to eql(:patch)
+    #     end
+    #   end
+    # end
+
+  end
+end
