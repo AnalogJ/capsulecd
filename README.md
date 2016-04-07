@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=svg)](https://circleci.com/gh/AnalogJ/capsulecd)
+[![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
 [![Coverage Status](https://coveralls.io/repos/github/AnalogJ/capsulecd/badge.svg)](https://coveralls.io/github/AnalogJ/capsulecd)
 
 # capsulecd

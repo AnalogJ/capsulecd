@@ -3,6 +3,9 @@ module CapsuleCD
   module Error
     class BaseError < StandardError; end
 
+    # Raised when the config file specifies a hook/override for a step when the type is :repo
+    class EngineTransformUnavailableStep < BaseError; end
+
     # Raised when capsule cannot create an authenticated client for the source.
     class SourceAuthenticationFailed < BaseError; end
 

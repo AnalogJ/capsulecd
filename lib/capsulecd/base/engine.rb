@@ -1,30 +1,9 @@
 require_relative 'runner/default'
 require_relative 'configuration'
 require 'pp'
-require 'hooks'
 module CapsuleCD
   class Engine
     attr_reader :config
-
-    include Hooks
-    define_hooks :before_source_configure, :after_source_configure,
-                 :before_source_process_pull_request_payload, :after_source_process_pull_request_payload,
-                 :before_source_process_push_payload, :after_source_process_push_payload,
-                 :before_runner_retrieve_payload, :after_runner_retrieve_payload,
-                 :before_build_step, :after_build_step,
-                 :before_test_step, :after_test_step,
-                 :before_package_step, :after_package_step,
-                 :before_source_release, :after_source_release,
-                 :before_release_step, :after_release_step
-
-    # empty hooks
-    before_source_configure do
-      puts 'before_source_configure'
-    end
-
-    after_source_configure do
-      puts 'after_source_configure'
-    end
 
     def initialize(options)
       @config = CapsuleCD::Configuration.new(options)
@@ -47,9 +26,9 @@ module CapsuleCD
       # start the source, and whatever work needs to be done there.
       # MUST set @source_git_parent_path
       # MUST set @source_client
-      run_hook :before_source_configure
+      pre_source_configure
       source_configure
-      run_hook :after_source_configure
+      post_source_configure
 
       # runner must determine if this is a pull request or a push.
       # if it's a pull request the runner must retrieve the pull request payload and return it
@@ -57,9 +36,9 @@ module CapsuleCD
       # the variable @runner_is_pullrequest will be true if a pull request was created.
       # MUST set runner_is_pullrequest
       # REQUIRES source_client
-      run_hook :before_runner_retrieve_payload
+      pre_runner_retrieve_payload
       payload = runner_retrieve_payload(@options)
-      run_hook :after_runner_retrieve_payload
+      post_runner_retrieve_payload
 
       if @runner_is_pullrequest
         # all capsule CD processing will be kicked off via a payload. In this case the payload is the pull request data.
@@ -70,9 +49,9 @@ module CapsuleCD
         # MUST set source_git_base_info
         # MUST set source_git_head_info
         # REQUIRES source_client
-        run_hook :before_source_process_pull_request_payload
+        pre_source_process_pull_request_payload
         source_process_pull_request_payload(payload)
-        run_hook :after_source_process_pull_request_payload
+        post_source_process_pull_request_payload
       else
         # start processing the payload, which should result in a local git repository that we
         # can begin to test. Since this is a push, no packaging is required
@@ -80,67 +59,87 @@ module CapsuleCD
         # MUST set source_git_local_branch
         # MUST set source_git_head_info
         # REQUIRES source_client
-        run_hook :before_source_process_push_payload
+        pre_source_process_push_payload
         source_process_push_payload(payload)
-        run_hook :after_source_process_push_payload
+        post_source_process_push_payload
       end
 
       # now that the payload has been processed we can begin by building the code.
       # this may be creating missing files/default structure, compilation, version bumping, etc.
-      run_hook :before_build_step
-      source_notify('build') do build_step end
-      run_hook :after_build_step
+
+      source_notify('build') do
+        pre_build_step
+        build_step
+        post_build_step
+      end
 
       # this step should download dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test)
       # REQUIRES @config.engine_cmd_test
       # REQUIRES @config.engine_disable_test
-      run_hook :before_test_step
-      source_notify('test') do test_step end
-      run_hook :after_test_step
+      source_notify('test') do
+        pre_test_step
+        test_step
+        post_test_step
+      end
 
       # this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
-      run_hook :before_package_step
-      source_notify('package') do package_step end
-      run_hook :after_package_step
+      source_notify('package') do
+        pre_package_step
+        package_step
+        post_package_step
+      end
 
       if @runner_is_pullrequest
         # this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
-        run_hook :before_release_step
-        source_notify('release') do release_step end
-        run_hook :after_release_step
+        source_notify('release') do
+          pre_release_step
+          release_step
+          post_release_step
+        end
 
         # this step should push the merged, tested and version updated code up to the source code repository
         # this step should also do any source specific releases (github release, asset uploading, etc)
-        run_hook :before_source_release
-        source_notify('source release') do source_release end
-        run_hook :after_source_release
+        source_notify('source release') do
+          pre_source_release
+          source_release
+          post_source_release
+        end
       end
 
       # rescue => ex #TODO if you enable this rescue block, hooks stop working.
       # TODO: it shouldnt be required anylonger because source_notify will handle rescueing the failures.
       #   puts ex
       #
-      #   self.run_hook :before_source_process_failure, ex
+      #   self.run_hook :pre_source_process_failure, ex
       #   source_process_failure(ex)
-      #   self.run_hook :after_source_process_failure, ex
+      #   self.run_hook :post_source_process_failure, ex
     end
 
-    def build_step
-      puts 'build_step'
-    end
+    # base methods
+    def pre_source_configure; puts 'pre_source_configure'; end
+    def post_source_configure; puts 'post_source_configure'; end
+    def pre_source_process_pull_request_payload; puts 'pre_source_process_pull_request_payload'; end
+    def post_source_process_pull_request_payload; puts 'post_source_process_pull_request_payload'; end
+    def pre_source_process_push_payload; puts 'pre_source_process_push_payload'; end
+    def post_source_process_push_payload; puts 'post_source_process_push_payload'; end
+    def pre_source_release; puts 'pre_source_release'; end
+    def post_source_release; puts 'post_source_release'; end
 
-    def test_step
-      puts 'test_step'
-    end
+    def pre_runner_retrieve_payload; puts 'pre_runner_retrieve_payload'; end
+    def post_runner_retrieve_payload; puts 'post_runner_retrieve_payload'; end
 
-    # the package_step should always set the @source_release_commit and optionally set add-to/set the @source_release_artifacts array
-    def package_step
-      puts 'package_step'
-    end
-
-    def release_step
-      puts 'release_step'
-    end
+    def pre_build_step; puts 'pre_build_step'; end
+    def build_step; puts 'build_step'; end
+    def post_build_step; puts 'post_build_step'; end
+    def pre_test_step; puts 'pre_test_step'; end
+    def test_step; puts 'test_step'; end
+    def post_test_step; puts 'post_test_step'; end
+    def pre_package_step; puts 'pre_package_step'; end
+    def package_step; puts 'package_step'; end
+    def post_package_step; puts 'post_package_step'; end
+    def pre_release_step; puts 'pre_release_step'; end
+    def release_step; puts 'release_step'; end
+    def post_release_step; puts 'post_release_step'; end
 
     protected
 
