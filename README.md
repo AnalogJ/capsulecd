@@ -1,5 +1,14 @@
 [![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
 [![Coverage Status](https://coveralls.io/repos/github/AnalogJ/capsulecd/badge.svg)](https://coveralls.io/github/AnalogJ/capsulecd)
+[![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
+[![Gratipay User](https://img.shields.io/gratipay/user/analogj.svg)](https://gratipay.com/~AnalogJ/)
+
+<!-- 
+[![Gem](https://img.shields.io/gem/dt/capsulecd.svg)]()
+[![Gem](https://img.shields.io/gem/v/capsulecd.svg)]()
+[![Gemnasium](https://img.shields.io/gemnasium/analogj/capsulecd.svg)]()
+[![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg)]()
+-->
 
 # capsulecd
 Continuous Delivery scripts for automating package releases (npm, chef, ruby, python, crate)

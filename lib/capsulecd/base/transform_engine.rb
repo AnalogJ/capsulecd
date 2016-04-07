@@ -30,9 +30,11 @@ module CapsuleCD
         end
       end
 
-      # yeah yeah, metaprogramming is evil. But actually its really just a tool, and like any tool, you can use it incorrectly.
+      # yeah yeah, metaprogramming is evil. But actually its really just a powerful tool, albeit a really complicated one.
+      # Like any tool, you can use it incorrectly. With great power comes.. yada yada.
       # In general metaprogramming is bad because it makes it hard to reason about your code. In this case we're using it
-      # to allow other developers to override our engine steps, and/or attach to our hooks.
+      # to allow other developers to override our engine steps, and/or attach to our hooks. In this case its their
+      # responsibility not to f*&^ it all up.
 
       # http://www.monkeyandcrow.com/blog/building_classes_dynamically/
       # https://rubymonk.com/learning/books/5-metaprogramming-ruby-ascent/chapters/24-eval/lessons/68-class-eval
