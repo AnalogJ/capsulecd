@@ -21,6 +21,9 @@ module CapsuleCD
     # Raised when the package is missing certain required files (ie metadata.rb, package.json, setup.py, etc)
     class BuildPackageInvalid < BaseError; end
 
+    # Raised when the source could not be compiled or build for any reason
+    class BuildPackageFailed < BaseError; end
+
     # Raised when package dependencies fail to install correctly.
     class TestDependenciesError < BaseError; end
 
