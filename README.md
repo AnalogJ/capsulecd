@@ -95,8 +95,21 @@ Or you could install and call CapsuleCD directly to merge a pull request to your
 
 	TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
 	
-# Stages
+# Engine
+Every package type is mapped to an engine class which inherits from a `BaseEngine` clas, ie `PythonEngine`, `NodeEngine`, `RubyEngine` etc. 
+Every source type is mapped to a source module, ie `GithubSource`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Source module.
+Then it begins processing your source code step by step.
 
+Step | Description
+------------ | ------------ 
+source_configure | This will initialize the source client, ensuring that we can authenticate with the git server
+runner_retrieve_payload | If a Pull Request # is specified, the payload is retrieved from Source api, otherwise the repo default branch HEAD info is retrived.
+source_process_pull_request_payload __or__ source_process_push_payload | Depending on the retrieve_payload step, the merged pull request is cloned, or the default branch is cloned locally
+build_step | Code is built, which includes adding any missing files/default structure, compilation, version bumping, etc.
+test_step | Download package dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test, tox)
+package_step | Commit any local changes and create a git tag. Nothing should be pushed to remote repository
+release_step | Push the release to the package repository (ie. npm, chef supermarket, rubygems)
+source_release | Push the merged, tested and version updated code up to the source code repository. Also do any source specific releases (github release, asset uploading, etc)
 
 # Configuration
 Specifying your `GITHUB_ACCESS_TOKEN` and `PYPI_PASSWORD` via an environmental variable might make sense, but do you 
