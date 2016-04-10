@@ -1,5 +1,4 @@
 # CapsuleCD
----
 
 [![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
 [![Coverage Status](https://coveralls.io/repos/github/AnalogJ/capsulecd/badge.svg)](https://coveralls.io/github/AnalogJ/capsulecd)
@@ -47,7 +46,6 @@ A short list of the features...
 * Bugs:   <http://github.com/AnalogJ/capsulecd/issues>
 
 # Introduction
----
 
 ## What is CapsuleCD
 
@@ -94,8 +92,11 @@ Or you could install and call CapsuleCD directly to merge a pull request to your
 	
 ### Creating a branch release
 
-TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
+	TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
 	
+# Stages
+
+
 # Configuration
 Specifying your `GITHUB_ACCESS_TOKEN` and `PYPI_PASSWORD` via an environmental variable might make sense, but do you 
 really want to specify the `PYPI_USERNAME`, `REPO_FULL_NAME` each time? Probably not. 
@@ -137,7 +138,7 @@ engine_cmd_minification | Yes | Yes | Specifies the minification command to befo
 engine_cmd_lint | Yes | Yes | Specifies the lint command to before releasing package
 engine_version_bump_type | Yes | Yes | Specifies the Semvar segment (`major`, `minor`, `patch`) to bump before releasing package
 
-TODO: specify the missing `BRANCH` release style settings.
+	TODO: specify the missing `BRANCH` release style settings.
 
 As mentioned above, all settings can be specified via Environmental variable. All you need to do is convert the setting to uppercase
 and then prefix it with `CAPSULE_`. So `pypi_password` can be set with `CAPSULE_PYPI_PASSWORD` and `engine_cmd_test` with `CAPSULE_ENGINE_CMD_TEST`
@@ -152,92 +153,60 @@ source_github_api_endpoint: https://git.mycorpsubnet.example.com/v2
 source_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 ```
 
-# Testing
----
+## Stage pre/post hooks and overrides
 
-##Test suite and continuous integration
+	TODO: add example and documetnation on how to override stages. 
+
+# Testing
+
+## Test suite and continuous integration
 
 CapsuleCD provides an extensive test-suite based on rspec and a full integration suite which uses VCR. 
 You can run the unit tests with `rake  test`. The integration tests can be run by `rake 'spec:<package_type>'`. 
 So to run the Python integration tests you would call `rake 'spec:python'`.
 
-Travis-CI is used for continuous integration testing: http://travis-ci.org/slim-template/slim
+CircleCI is used for continuous integration testing: <https://circleci.com/gh/AnalogJ/capsulecd>
 
-Slim is working well on all major Ruby implementations:
+# Contributing
 
-Ruby 1.9.3, 2.0.0, 2.1.0 and 2.2.0
-Ruby EE
-JRuby 1.9 mode
-Rubinius 2.0
+If you'd like to help improve CapsuleCD, clone the project with Git by running:
 
+$ git clone git://github.com/AnalogJ/capsulecd
+Work your magic and then submit a pull request. We love pull requests!
 
+If you find the documentation lacking, help us out and update this README.md. If you don't have the time to work on CapsuleCD, but found something we should know about, please submit an issue.
 
+## To-do List
 
+We're actively looking for pull requests in the following areas:
 
-
-# capsulecd
-Continuous Delivery scripts for automating package releases (npm, chef, ruby, python, crate)
-
-# Support
-The current languages, and their packages, are supported:
-
-- Chef (Cookbook)	
-- Javascript (Bower)
-- NodeJS (Npm, Bower)
-- Python (Pip)
-
-Support for the following languages will be added in the future (feel free to open a PR) 
-
-- C#
-- Objective C
-- Dash
-- Go
-- Java
-- Lua
-- Rust
-- Ruby
-- Scala
-- Swift
-- Any others you can think of. 
-
-#capsule.yml
-capsume.yml file should have the following sections:
-
-	# TODO:
-
-# Hosted CI Providers
-
-# Environmental Variables
+- CapsuleCD Engines for other languages
+	- C#
+	- Objective C
+	- Dash
+	- Go
+	- Java
+	- Lua
+	- Rust
+	- Scala
+	- Swift
+	- Any others you can think of
+- CapsuleCD Sources
+	- GitLab
+	- Bitbucket
+	- Beanstalk
+	- Kiln
+	- Any others you can think of
 
 
-Hosted Service | Pricing | Docker | Pull Request | Secrets |  Comments
------------- | ------------- | ------------- | ------------- | -------------  | -------------
-Appveyor | Free Tier | No | [Yes](https://www.appveyor.com/docs/environment-variables) | Yes | Windows only
-Codeship | Free Tier | [No](http://pages.codeship.com/docker?utm_source=CodeshipNavBar) | [Yes](https://codeship.com/documentation/continuous-integration/set-environment-variables/) | Yes | Docker support not publically available. 
-Circleci | Free Tier | [Yes](https://circleci.com/integrations/docker/) | [Yes](https://circleci.com/docs/environment-variables) | Yes | n/a
-Drone.io | Free Tier | No | [Yes](http://docs.drone.io/env.html) | Yes | Opensource Drone lets you specify a .drone.yml file and Docker image, but hosted Drone does not. 
-Shippable | Free Tier | Yes | [Yes](http://docs.shippable.com/yml_reference/) | Yes | Terrible UI. 
-Travis.ci | Free Tier | [Yes](https://docs.travis-ci.com/user/docker/) | [Yes](https://docs.travis-ci.com/user/pull-requests) | Yes | Pull requests have a [security restriction](https://docs.travis-ci.com/user/pull-requests#Security-Restrictions-when-testing-Pull-Requests). Secrets arn't available
-Wercker | Free Tier | [Yes](http://devcenter.wercker.com/docs/containers/private-containers.html) | [No](https://github.com/wercker/support/issues/19) | Yes | Pull requests do not specify the PR , or even that they are a [Pull Request](https://github.com/wercker/support/issues/19)
+# Versioning
 
+We use SemVer for versioning. For the versions available, see the tags on this repository.
 
-## Runner
+# Authors
 
-Runner Name | Required Variables
------------- | -------------
-CircleCI | `CI_PULL_REQUEST`, `CIRCLE_PROJECT_USERNAME`, `CIRCLE_PROJECT_REPONAME`
+Jason Kulatunga - [@AnalogJ](https://github.com/AnalogJ)
 
-## Source
+#License
 
-Source Name | Required Variables
------------- | -------------
-Github | `CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN`
-
-## Type
-
-Package Type | Required Variables
------------- | -------------
-Chef | `CAPSULE_CHEF_SUPERMARKET_USERNAME`, `CAPSULE_CHEF_SUPERMARKET_KEY` (base64 encoded), `CAPSULE_CHEF_SUPERMARKET_TYPE`
-Node | `CAPSULE_NPM_AUTH_TOKEN`
-Javascript | `CAPSULE_NPM_AUTH_TOKEN`
-Python | `CAPSULE_PYPI_USERNAME`, `CAPSULE_PYPI_PASSWORD`
+CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE.md) file for details
