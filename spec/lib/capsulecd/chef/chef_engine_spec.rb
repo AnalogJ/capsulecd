@@ -6,7 +6,6 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
       let(:engine) do
         require 'capsulecd/chef/chef_engine'
         CapsuleCD::Chef::ChefEngine.new(source: :github,
-                                        runner: :circleci,
                                         package_type: :chef)
       end
       it 'should raise an error' do
@@ -20,7 +19,6 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
       let(:engine) do
         require 'capsulecd/chef/chef_engine'
         CapsuleCD::Chef::ChefEngine.new(source: :github,
-                                        runner: :circleci,
                                         package_type: :chef)
       end
       it 'should create a Rakefile, Berksfile, .gitignore file,  file and tests folder' do
@@ -43,7 +41,6 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
     let(:engine) do
       require 'capsulecd/chef/chef_engine'
       CapsuleCD::Chef::ChefEngine.new(source: :github,
-                                          runner: :circleci,
                                           package_type: :chef)
     end
     let(:config_double) { CapsuleCD::Configuration.new }

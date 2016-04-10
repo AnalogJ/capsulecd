@@ -83,7 +83,7 @@ module CapsuleCD
         # lets install the gem, and any dependencies
         # http://guides.rubygems.org/make-your-own-gem/
         Bundler.with_clean_env do
-          Open3.popen3('gem install ./' + File.basename(gem_path), chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          Open3.popen3('gem install ./' + File.basename(gem_path) + ' --ignore-dependencies', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
             { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
               Thread.new do
                 until (line = stream_buffer.gets).nil?

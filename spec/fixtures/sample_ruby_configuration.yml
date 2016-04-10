@@ -1,2 +1,3 @@
 --- 
   source_github_access_token: sample_test_token
+  rubygems_api_key: sample_rubygems_api_key

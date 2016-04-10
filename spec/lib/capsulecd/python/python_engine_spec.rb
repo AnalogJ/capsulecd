@@ -6,7 +6,6 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
       let(:engine) do
         require 'capsulecd/python/python_engine'
         CapsuleCD::Python::PythonEngine.new(source: :github,
-                                            runner: :circleci,
                                             package_type: :python)
       end
       it 'should raise an error' do
@@ -20,7 +19,6 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
       let(:engine) do
         require 'capsulecd/python/python_engine'
         CapsuleCD::Python::PythonEngine.new(source: :github,
-                                            runner: :circleci,
                                             package_type: :python)
       end
       it 'should create a VERSION file, requirements.txt file and tests folder' do
@@ -45,7 +43,6 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
     let(:engine) do
       require 'capsulecd/python/python_engine'
       CapsuleCD::Python::PythonEngine.new(source: :github,
-                                          runner: :circleci,
                                           package_type: :python)
     end
     let(:config_double) { CapsuleCD::Configuration.new }
