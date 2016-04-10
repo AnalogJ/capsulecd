@@ -64,8 +64,9 @@ Well, not always:
 - Did you remember to tag your source when the new version was created (making it easy to determine what's changed between versions?)
 - Did you update your changelog?
 
-CapsuleCD handles all of that (and more!) for you. It pretty much guarantees that your library will have consitent and correct releases every time. 
-CapsuleCD is simple and fully tested, unlike the release scripts you've manually cobbled together for each library. 
+CapsuleCD handles all of that (and more!) for you. It pretty much guarantees that your library will have proper and consistent releases every time. 
+CapsuleCD is well structured and fully tested, unlike the release scripts you've manually cobbled together for each library. It can be customized as needed without rewriting from scratch.
+The best part is that CapsuleCD uses CapsuleCD to automate its releases. We dogfood it so we're the first ones to find any issues with a new release. 
 
 ## How do I start?
 You can use CapsuleCD to automate creating a new release from a pull request __or__ from the latest code on your default branch.
