@@ -14,7 +14,7 @@ module CapsuleCD
         # check for/create required VERSION file
         gemspec_data = CapsuleCD::Ruby::RubyHelper.load_gemspec_data(gemspec_path)
 
-        unless File.exist?(CapsuleCD::Ruby::RubyHelper.version_filepath(@source_git_local_path, gemspec_data.name))
+        if !gemspec_data || !File.exist?(CapsuleCD::Ruby::RubyHelper.version_filepath(@source_git_local_path, gemspec_data.name))
           fail CapsuleCD::Error::BuildPackageInvalid, 'version.rb file is required to process Ruby gem'
         end
 

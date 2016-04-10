@@ -23,13 +23,25 @@ describe 'CapsuleCD::Ruby::RubyEngine', :ruby do
       end
       it 'should create a .gitignore file and spec folder' do
         FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+
         engine.instance_variable_set(:@source_git_local_path, test_directory)
 
-        VCR.use_cassette('gem_build_step',:tag => :chef) do
+        VCR.use_cassette('gem_build_step',:tag => :ruby) do
           engine.build_step
         end
 
         expect(File.exist?(test_directory+'/.gitignore')).to eql(true)
+      end
+
+      it 'should raise an error if version.rb is missing' do
+        FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+        FileUtils.rm(test_directory + '/lib/gem_analogj_test/version.rb')
+        engine.instance_variable_set(:@source_git_local_path, test_directory)
+
+        VCR.use_cassette('gem_build_step_without_version.rb',:tag => :ruby) do
+          expect{engine.build_step}.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
+        end
+
       end
     end
   end

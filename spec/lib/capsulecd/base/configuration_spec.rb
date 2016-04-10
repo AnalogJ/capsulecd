@@ -18,6 +18,10 @@ describe CapsuleCD::Configuration do
         expect(subject.source).to eql(:github)
       end
 
+      it 'should correctly base64 decode chef supermarket key' do
+        expect(subject.chef_supermarket_key).to eql("-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n")
+      end
+
       it 'should have correct defaults' do
         expect(subject.engine_version_bump_type).to eql(:patch)
         expect(subject.chef_supermarket_type).to eql('Other')
@@ -25,7 +29,7 @@ describe CapsuleCD::Configuration do
     end
 
     describe 'with an incorrect configuration file' do
-      let(:config_file_path) { 'spec/fixtures/sample_configuration.yml' }
+      let(:config_file_path) { 'spec/fixtures/incorrect_configuration.yml' }
       subject { CapsuleCD::Configuration.new(config_file:config_file_path, source: :github, package_type: :node) }
 
       it 'should populate github_access_token' do
@@ -38,6 +42,10 @@ describe CapsuleCD::Configuration do
 
       it 'should use cli specified source' do
         expect(subject.source).to eql(:github)
+      end
+
+      it 'should have a nil chef supermarket key' do
+        expect(subject.chef_supermarket_key).to eql(nil)
       end
     end
 
