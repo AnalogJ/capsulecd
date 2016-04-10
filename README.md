@@ -171,7 +171,8 @@ CircleCI is used for continuous integration testing: <https://circleci.com/gh/An
 
 If you'd like to help improve CapsuleCD, clone the project with Git by running:
 
-$ git clone git://github.com/AnalogJ/capsulecd
+    $ git clone git://github.com/AnalogJ/capsulecd
+    
 Work your magic and then submit a pull request. We love pull requests!
 
 If you find the documentation lacking, help us out and update this README.md. If you don't have the time to work on CapsuleCD, but found something we should know about, please submit an issue.
@@ -205,7 +206,7 @@ We use SemVer for versioning. For the versions available, see the tags on this r
 
 # Authors
 
-Jason Kulatunga - [@AnalogJ](https://github.com/AnalogJ)
+Jason Kulatunga - Initial Development -  [@AnalogJ](https://github.com/AnalogJ)
 
 #License
 
