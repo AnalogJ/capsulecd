@@ -70,9 +70,11 @@ CapsuleCD handles all of that (and more!) for you. It pretty much guarantees tha
 CapsuleCD is simple and fully tested, unlike the release scripts you've manually cobbled together for each library. 
 
 ## How do I start?
-You can use CapsuleCD in a few ways:
+You can use CapsuleCD to automate creating a new release from a pull request __or__ from the latest code on your default branch.
 
-To release your Ruby package with the CapsuleCD Docker image:
+### Automated pull request processing:
+
+Here's how to use __docker__ to merge a pull request to your Ruby library
 
     CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
     CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/gem_analogj_test \
@@ -80,7 +82,7 @@ To release your Ruby package with the CapsuleCD Docker image:
     CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
     docker run AnalogJ/capsulecd:ruby capsulecd start --source github --package_type ruby
 
-Or you could manually add CapsuleCD to your existing Python library release script:
+Or you could install and call CapsuleCD directly to merge a pull request to your Python library:
 
 	gem install capsulecd
 	CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
@@ -89,6 +91,10 @@ Or you could manually add CapsuleCD to your existing Python library release scri
 	CAPSULE_PYPI_USERNAME=AnalogJ \
 	CAPSULE_PYPI_PASSWORD=mysupersecurepassword \
 	capsulecd start --source github --package_type python
+	
+### Creating a branch release
+
+TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
 	
 # Configuration
 Specifying your `GITHUB_ACCESS_TOKEN` and `PYPI_PASSWORD` via an environmental variable might make sense, but do you 
@@ -105,31 +111,69 @@ CapsuleCD settings are determined by loading configuration in the following orde
 
 ## Configuration Settings
 
-Setting | System Config | Repo Config | Environmental Variable | Notes
------------- | ------------- | ------------- | ------------- | -------------
-`package_type` | No | No | -- | Must be set by `--package-type` flag
-`source` | No | No | -- | Must be set by `--source` flag
-`runner` | No | No | -- | Must be set by `--runner` flag
-`dry_run` | Yes | No | CAPSULE_DRY_RUN | Can be `YES` or `NO`
-`source_git_parent_path` | Yes | No | `CAPSULE_SOURCE_GIT_PARENT_PATH` | Specifies the location where the git repo will be cloned
-`source_github_api_endpoint` | Yes | No | `CAPSULE_SOURCE_GITHUB_API_ENDPOINT` | Specifies the Github api endpoint to use (for use with Enterprise Github)
-`source_github_web_endpoint` | Yes | No | `CAPSULE_SOURCE_GITHUB_WEB_ENDPOINT` | Specifies the Github web endpoint to use (for use with Enterprise Github)
-`source_github_access_token` | Yes | No | `CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN` | Specifies the access token to use when cloning from and committing to Github
-`runner_pull_request` | Yes | No | `CAPSULE_RUNNER_PULL_REQUEST` | Specifies the repo pull request number to clone from  Github
-`runner_repo_full_name` | Yes | No | `CAPSULE_RUNNER_REPO_FULL_NAME` | Specifies the repo name to clone from Github
-`chef_supermarket_username` | Yes | Yes | `CAPSULE_CHEF_SUPERMARKET_USERNAME` | Specifies the Chef Supermarket username to use when creating public release for Chef cookbook
-`chef_supermarket_key` | Yes | Yes | `CAPSULE_CHEF_SUPERMARKET_KEY` | Specifies the Base64 encoded Chef Supermarket private key to use when creating public release for Chef cookbook
-`chef_supermarket_type` | Yes | Yes | `CAPSULE_CHEF_SUPERMARKET_TYPE` | Specifies the Chef Supermarket cookbook type to use when creating public release for Chef cookbook
-`npm_auth_token` | Yes | Yes | `CAPSULE_NPM_AUTH_TOKEN` | Specifies the NPM auth to use when creating public release for NPM package
-`pypi_username` | Yes | Yes | `CAPSULE_PYPI_USERNAME` | Specifies the PYPI username to use when creating public release for Pypi package
-`pypi_password` | Yes | Yes | `CAPSULE_PYPI_PASSWORD` | Specifies the PYPI password to use when creating public release for Pypi package
-`engine_disable_test` | Yes | Yes | `CAPSULE_ENGINE_DISABLE_TEST` | Disables test_step before releasing package
-`engine_disable_minification` | Yes | Yes | `CAPSULE_ENGINE_DISABLE_MINIFICATION` | Disables source minification (if applicable) before releasing package
-`engine_disable_lint` | Yes | Yes | `CAPSULE_ENGINE_DISABLE_LINT` | Disables source linting before releasing package
-`engine_cmd_test` | Yes | Yes | `CAPSULE_ENGINE_CMD_TEST` | Specifies the test command to before releasing package
-`engine_cmd_minification` | Yes | Yes | `CAPSULE_ENGINE_CMD_MINIFICATION` | Specifies the minification command to before releasing package
-`engine_cmd_lint` | Yes | Yes | `CAPSULE_ENGINE_CMD_LINT` | Specifies the lint command to before releasing package
-`engine_version_bump_type` | Yes | Yes | `CAPSULE_ENGINE_VERSION_BUMP_TYPE` | Specifies the Semvar segment (`major`, `minor`, `patch`) to bump before releasing package
+Setting | System Config | Repo Config | Notes
+------------ | ------------- | ------------- | -------------
+package_type | No | No | Must be set by `--package-type` flag
+source | No | No | Must be set by `--source` flag
+runner | No | No | Must be set by `--runner` flag
+dry_run | Yes | No | Can be `YES` or `NO`
+source_git_parent_path | Yes | No | Specifies the location where the git repo will be cloned, defaults to tmp directory
+source_github_api_endpoint | Yes | No | Specifies the Github api endpoint to use (for use with Enterprise Github)
+source_github_web_endpoint | Yes | No | Specifies the Github web endpoint to use (for use with Enterprise Github)
+source_github_access_token | Yes | No | Specifies the access token to use when cloning from and committing to Github
+runner_pull_request | Yes | No | Specifies the repo pull request number to clone from  Github
+runner_repo_full_name | Yes | No | Specifies the repo name to clone from Github
+chef_supermarket_username | Yes | Yes | Specifies the Chef Supermarket username to use when creating public release for Chef cookbook
+chef_supermarket_key | Yes | Yes | Specifies the Base64 encoded Chef Supermarket private key to use when creating public release for Chef cookbook
+chef_supermarket_type | Yes | Yes | Specifies the Chef Supermarket cookbook type to use when creating public release for Chef cookbook
+npm_auth_token | Yes | Yes | Specifies the NPM auth to use when creating public release for NPM package
+pypi_username | Yes | Yes | Specifies the PYPI username to use when creating public release for Pypi package
+pypi_password | Yes | Yes | Specifies the PYPI password to use when creating public release for Pypi package
+engine_disable_test | Yes | Yes | Disables test_step before releasing package
+engine_disable_minification | Yes | Yes | Disables source minification (if applicable) before releasing package
+engine_disable_lint | Yes | Yes | Disables source linting before releasing package
+engine_cmd_test | Yes | Yes | Specifies the test command to before releasing package
+engine_cmd_minification | Yes | Yes | Specifies the minification command to before releasing package
+engine_cmd_lint | Yes | Yes | Specifies the lint command to before releasing package
+engine_version_bump_type | Yes | Yes | Specifies the Semvar segment (`major`, `minor`, `patch`) to bump before releasing package
+
+TODO: specify the missing `BRANCH` release style settings.
+
+As mentioned above, all settings can be specified via Environmental variable. All you need to do is convert the setting to uppercase
+and then prefix it with `CAPSULE_`. So `pypi_password` can be set with `CAPSULE_PYPI_PASSWORD` and `engine_cmd_test` with `CAPSULE_ENGINE_CMD_TEST`
+
+### Example System Configuration File
+
+Here's what an example system configuration file might look like:
+
+```
+source_git_parent_path: /srv/myclonefolder
+source_github_api_endpoint: https://git.mycorpsubnet.example.com/v2
+source_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
+```
+
+# Testing
+---
+
+##Test suite and continuous integration
+
+CapsuleCD provides an extensive test-suite based on rspec and a full integration suite which uses VCR. 
+You can run the unit tests with `rake  test`. The integration tests can be run by `rake 'spec:<package_type>'`. 
+So to run the Python integration tests you would call `rake 'spec:python'`.
+
+Travis-CI is used for continuous integration testing: http://travis-ci.org/slim-template/slim
+
+Slim is working well on all major Ruby implementations:
+
+Ruby 1.9.3, 2.0.0, 2.1.0 and 2.2.0
+Ruby EE
+JRuby 1.9 mode
+Rubinius 2.0
+
+
+
+
+
 
 # capsulecd
 Continuous Delivery scripts for automating package releases (npm, chef, ruby, python, crate)
