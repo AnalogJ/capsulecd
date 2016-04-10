@@ -48,6 +48,7 @@ module CapsuleCD
     attr_reader :pypi_username
     attr_reader :pypi_password
     attr_reader :chef_supermarket_type
+    attr_reader :rubygems_api_key
     def chef_supermarket_key
       @chef_supermarket_key.to_s.empty? ? nil : Base64.strict_decode64(@chef_supermarket_key)
     end

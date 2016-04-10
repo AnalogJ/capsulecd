@@ -4,4 +4,4 @@ MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 RUN apk --update --no-cache add python python-dev py-pip && \
     pip install tox
 
-CMD ["capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "python"]
+CMD ["capsulecd", "start", "--source", "github", "--package_type", "python"]
