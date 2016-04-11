@@ -72,6 +72,22 @@ describe 'CapsuleCD::Ruby::RubyEngine', :ruby do
     end
   end
 
+  describe '#release_step' do
+    let(:engine) do
+      require 'capsulecd/ruby/ruby_engine'
+      CapsuleCD::Ruby::RubyEngine.new(source: :github,
+                                      package_type: :ruby)
+    end
+    let(:config_double) { CapsuleCD::Configuration.new }
+    describe 'when no rubygems_api_key provided' do
+      it 'should raise an error' do
+        engine.instance_variable_set(:@config, config_double)
+
+        expect{engine.release_step}.to raise_error(CapsuleCD::Error::ReleaseCredentialsMissing)
+      end
+    end
+  end
+
   describe 'integration tests' do
     let(:engine) do
       require 'capsulecd/ruby/ruby_engine'

@@ -39,13 +39,5 @@ module CapsuleCD
     # Raised when an error occurs while uploading package.
     class ReleasePackageError < BaseError; end
 
-    # Gracefully handle any errors raised by CapsuleCD, and exit with a failure
-    # status code.
-    # @param [CapsuleCD::Error::BaseError] ex
-    def self.handle_exception(ex)
-      puts ex.message
-      # Configuration.output.puts_red(ex.message)
-      exit false
-    end
   end
 end
