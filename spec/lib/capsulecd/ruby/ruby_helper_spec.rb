@@ -60,8 +60,28 @@ describe 'CapsuleCD::Ruby::RubyHelper', :ruby do
         new_version_str = version_str.gsub(/(VERSION\s*=\s*['"])[0-9\.]+(['"])/, "\\1#{next_version}\\2")
         CapsuleCD::Ruby::RubyHelper.write_version_file(test_directory, gemspec_data.name, new_version_str)
 
+        Open3.popen3('gem build gem_analogj_test.gemspec', chdir: test_directory) do |_stdin, stdout, stderr, external|
+          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+            Thread.new do
+              until (line = stream_buffer.gets).nil?
+                puts "#{name} -> #{line}"
+              end
+            end
+          end
+          # wait for process
+          external.join
+          unless external.value.success?
+            fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
+          end
+          unless File.exist?(test_directory + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
+            fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
+          end
+        end
+
         updated_gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(test_directory)
         expect(updated_gemspec_data.version.to_s).to eql('0.1.4')
+
+
 
       end
     end
