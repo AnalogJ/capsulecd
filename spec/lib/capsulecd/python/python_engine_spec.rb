@@ -63,6 +63,23 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
     end
   end
 
+  describe '#release_step' do
+    let(:engine) do
+      require 'capsulecd/python/python_engine'
+      CapsuleCD::Python::PythonEngine.new(source: :github,
+                                          package_type: :python)
+    end
+    let(:config_double) { CapsuleCD::Configuration.new }
+    describe 'when no pypi_username or no pypi_password provided' do
+      it 'should raise an error' do
+        engine.instance_variable_set(:@config, config_double)
+
+        expect{engine.release_step}.to raise_error(CapsuleCD::Error::ReleaseCredentialsMissing)
+
+      end
+    end
+  end
+
   describe 'integration tests' do
     let(:engine) do
       require 'capsulecd/python/python_engine'

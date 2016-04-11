@@ -27,6 +27,9 @@ module CapsuleCD
         self.load_gemspec_data(self.get_gemspec_path(repo_path))
       end
 
+      ##################################################################################################################
+      # protected/private methods.
+
       # since the Gem::Specification class is basically eval'ing the gemspec file, and the gemspec file is doing a require
       # to load the version.rb file, the version.rb file is cached in memory. We're going to try to get around that issue
       # by parsing the gemspec file in a forked process.
@@ -49,9 +52,13 @@ module CapsuleCD
       end
 
       def self.load_gemspec_data(gemspec_path)
-        return self.execute_in_child do
+        gemspec_data = self.execute_in_child do
           Gem::Specification::load(gemspec_path)
         end
+        if !gemspec_data
+          fail CapsuleCD::Error::BuildPackageInvalid, '*.gemspec could not be parsed.'
+        end
+        return gemspec_data
       end
 
 

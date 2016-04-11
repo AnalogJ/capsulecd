@@ -11,10 +11,10 @@ module CapsuleCD
         super
         gemspec_path = CapsuleCD::Ruby::RubyHelper.get_gemspec_path(@source_git_local_path)
 
-        # check for/create required VERSION file
-        gemspec_data = CapsuleCD::Ruby::RubyHelper.load_gemspec_data(gemspec_path)
+        # check for required VERSION file
+        gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(@source_git_local_path)
 
-        if !gemspec_data || !File.exist?(CapsuleCD::Ruby::RubyHelper.version_filepath(@source_git_local_path, gemspec_data.name))
+        if !File.exist?(CapsuleCD::Ruby::RubyHelper.version_filepath(@source_git_local_path, gemspec_data.name))
           fail CapsuleCD::Error::BuildPackageInvalid, 'version.rb file is required to process Ruby gem'
         end
 
@@ -67,6 +67,9 @@ module CapsuleCD
           external.join
           unless external.value.success?
             fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
+          end
+          unless File.exist?(@source_git_local_path + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
+            fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
           end
         end
       end

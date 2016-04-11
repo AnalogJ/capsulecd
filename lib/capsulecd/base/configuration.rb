@@ -96,20 +96,20 @@ module CapsuleCD
 
 
     def populate_runner_overrides
-      @runner = :circleci unless ENV['CIRCLECI'].to_s.empty?
+      # @runner = :circleci unless ENV['CIRCLECI'].to_s.empty?
       populate_runner
     end
 
     def populate_runner
-      if (@runner == :circleci)
-        # parse the PR# from the environment variable, eg. https://github.com/AnalogJ/cookbook_analogj_test/pull/9
-        @runner_pull_request ||= File.basename(URI.parse(ENV['CI_PULL_REQUEST']).path).to_i # => baz
-        @runner_sha ||= ENV['CIRCLE_SHA1']
-        @runner_branch ||= ENV['CIRCLE_BRANCH']
-        @runner_clone_url ||= 'https://github.com/' + ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'] + '.git'
-        @runner_repo_name ||= ENV['CIRCLE_PROJECT_REPONAME']
-        @runner_repo_full_name ||= ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME']
-      end
+      # if (@runner == :circleci)
+      #   # parse the PR# from the environment variable, eg. https://github.com/AnalogJ/cookbook_analogj_test/pull/9
+      #   @runner_pull_request ||= File.basename(URI.parse(ENV['CI_PULL_REQUEST']).path).to_i # => baz
+      #   @runner_sha ||= ENV['CIRCLE_SHA1']
+      #   @runner_branch ||= ENV['CIRCLE_BRANCH']
+      #   @runner_clone_url ||= 'https://github.com/' + ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME'] + '.git'
+      #   @runner_repo_name ||= ENV['CIRCLE_PROJECT_REPONAME']
+      #   @runner_repo_full_name ||= ENV['CIRCLE_PROJECT_USERNAME'] + '/' + ENV['CIRCLE_PROJECT_REPONAME']
+      # end
     end
 
     def populate_env_overrides

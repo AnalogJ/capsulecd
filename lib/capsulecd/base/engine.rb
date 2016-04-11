@@ -14,12 +14,12 @@ module CapsuleCD
         fail CapsuleCD::Error::SourceUnspecifiedError, 'No source defined.'
       end
 
-      if @config.runner == :circleci
-        require_relative 'runner/circleci'
-        self.class.send(:include, CapsuleCD::Runner::Circleci)
-      else
+      # if @config.runner == :circleci
+      #   require_relative 'runner/circleci'
+      #   self.class.send(:include, CapsuleCD::Runner::Circleci)
+      # else
         self.class.send(:include, CapsuleCD::Runner::Default)
-      end
+      # end
     end
 
     def start

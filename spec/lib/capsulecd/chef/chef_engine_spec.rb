@@ -58,6 +58,22 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
     end
   end
 
+  describe '#release_step' do
+    let(:engine) do
+      require 'capsulecd/chef/chef_engine'
+      CapsuleCD::Chef::ChefEngine.new(source: :github,
+                                      package_type: :chef)
+    end
+    let(:config_double) { CapsuleCD::Configuration.new }
+    describe 'when no chef_supermarket_username or chef_supermarket_key provided' do
+      it 'should raise an error' do
+        engine.instance_variable_set(:@config, config_double)
+
+        expect{engine.release_step}.to raise_error(CapsuleCD::Error::ReleaseCredentialsMissing)
+      end
+    end
+  end
+
   describe 'integration tests' do
     let(:engine) do
       require 'capsulecd/chef/chef_engine'
