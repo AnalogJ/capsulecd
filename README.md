@@ -172,7 +172,7 @@ source_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 CapsuleCD is completely customizable, to the extent that you can run your own Ruby code as `pre` and `post` hooks before every step. 
 If that's not enough, you can also completely override the step itself, allowing you to use your own business logic.
 To add a `pre`/`post` hook or override a step, just modify your config `yml` file by adding the step you want to modify, and 
-specify the `pre`, `post` or `override` as a subkey. Then specify your multiline ruby script:
+specify `pre`, `post` or `override` as a subkey. Then specify your multiline ruby script:
 
 	---
       source_configure:
