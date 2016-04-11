@@ -131,7 +131,7 @@ Setting | System Config | Repo Config | Notes
 package_type | No | No | Must be set by `--package-type` flag
 source | No | No | Must be set by `--source` flag
 runner | No | No | Must be set by `--runner` flag
-dry_run | Yes | No | Can be `YES` or `NO`
+dry_run | No | No | Must be set by `--[no]-dry-run` flag
 source_git_parent_path | Yes | No | Specifies the location where the git repo will be cloned, defaults to tmp directory
 source_github_api_endpoint | Yes | No | Specifies the Github api endpoint to use (for use with Enterprise Github)
 source_github_web_endpoint | Yes | No | Specifies the Github web endpoint to use (for use with Enterprise Github)
