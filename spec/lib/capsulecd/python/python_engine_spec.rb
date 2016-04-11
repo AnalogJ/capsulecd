@@ -6,7 +6,6 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
       let(:engine) do
         require 'capsulecd/python/python_engine'
         CapsuleCD::Python::PythonEngine.new(source: :github,
-                                            runner: :circleci,
                                             package_type: :python)
       end
       it 'should raise an error' do
@@ -20,14 +19,13 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
       let(:engine) do
         require 'capsulecd/python/python_engine'
         CapsuleCD::Python::PythonEngine.new(source: :github,
-                                            runner: :circleci,
                                             package_type: :python)
       end
       it 'should create a VERSION file, requirements.txt file and tests folder' do
         FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
         engine.instance_variable_set(:@source_git_local_path, test_directory)
 
-        VCR.use_cassette('pip_build_step',:tag => :chef) do
+        VCR.use_cassette('pip_build_step',:tag => :ruby) do
           engine.build_step
         end
 
@@ -45,7 +43,6 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
     let(:engine) do
       require 'capsulecd/python/python_engine'
       CapsuleCD::Python::PythonEngine.new(source: :github,
-                                          runner: :circleci,
                                           package_type: :python)
     end
     let(:config_double) { CapsuleCD::Configuration.new }

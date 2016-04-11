@@ -6,7 +6,6 @@ describe 'CapsuleCD::Node::NodeEngine', :node do
       let(:engine) do
         require 'capsulecd/node/node_engine'
         CapsuleCD::Node::NodeEngine.new(source: :github,
-                                        runner: :circleci,
                                         package_type: :node)
       end
       it 'should raise an error' do
@@ -20,7 +19,6 @@ describe 'CapsuleCD::Node::NodeEngine', :node do
       let(:engine) do
         require 'capsulecd/node/node_engine'
         CapsuleCD::Node::NodeEngine.new(source: :github,
-                                        runner: :circleci,
                                         package_type: :node)
       end
       it 'should create a .gitignore file and tests folder' do
@@ -40,7 +38,6 @@ describe 'CapsuleCD::Node::NodeEngine', :node do
     let(:engine) do
       require 'capsulecd/node/node_engine'
       CapsuleCD::Node::NodeEngine.new(source: :github,
-                                          runner: :circleci,
                                           package_type: :node)
     end
     let(:config_double) { CapsuleCD::Configuration.new }

@@ -11,7 +11,7 @@ module CapsuleCD
         require_relative 'source/github'
         self.class.send(:include, CapsuleCD::Source::Github)
       else
-        fail 'No source defined.'
+        fail CapsuleCD::Error::SourceUnspecifiedError, 'No source defined.'
       end
 
       if @config.runner == :circleci
