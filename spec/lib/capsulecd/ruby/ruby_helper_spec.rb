@@ -46,6 +46,26 @@ describe 'CapsuleCD::Ruby::RubyHelper', :ruby do
       end
     end
 
+    describe 'when modifying gemspec file' do
+      it 'should not keep old constant from version.rb file in memory' do
+        FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+
+        gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(test_directory)
+        expect(gemspec_data.version.to_s).to eql('0.1.3')
+
+        version_str = CapsuleCD::Ruby::RubyHelper.read_version_file(test_directory, gemspec_data.name)
+        next_version = CapsuleCD::Engine.new(:source => :github).send(:bump_version, SemVer.parse(gemspec_data.version.to_s))
+        expect(next_version.to_s).to eql('0.1.4')
+
+        new_version_str = version_str.gsub(/(VERSION\s*=\s*['"])[0-9\.]+(['"])/, "\\1#{next_version}\\2")
+        CapsuleCD::Ruby::RubyHelper.write_version_file(test_directory, gemspec_data.name, new_version_str)
+
+        updated_gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(test_directory)
+        expect(updated_gemspec_data.version.to_s).to eql('0.1.4')
+
+      end
+    end
+
   end
 
 end

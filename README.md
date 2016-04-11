@@ -3,13 +3,13 @@
 [![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
 [![Coverage Status](https://coveralls.io/repos/github/AnalogJ/capsulecd/badge.svg)](https://coveralls.io/github/AnalogJ/capsulecd)
 [![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
+[![Gem](https://img.shields.io/gem/dt/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
+[![Gem](https://img.shields.io/gem/v/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
+[![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg)](https://hub.docker.com/r/analogj/capsulecd)
 [![Gratipay User](https://img.shields.io/gratipay/user/analogj.svg)](https://gratipay.com/~AnalogJ/)
 
 <!-- 
-[![Gem](https://img.shields.io/gem/dt/capsulecd.svg)]()
-[![Gem](https://img.shields.io/gem/v/capsulecd.svg)]()
 [![Gemnasium](https://img.shields.io/gemnasium/analogj/capsulecd.svg)]()
-[![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg)]()
 -->
 
 CapsuleCD is a generic Continuous Delivery pipeline for versioned artifacts and libraries written in any language. 
@@ -57,16 +57,16 @@ It automates away all the common steps required when creating a new version of y
 At first glance, it seems simple to publish a new library version. Just bump the version number and publish, right?
 Well, not always:
 
-- If you're library includes a Gemfile.lock, Berksfile.lock or other most common lock files, you'll need to regenerate them. 
-- Everyone runs their library unit tests before creating a new release, but hat about validating that your library dependencies exist (maybe in your Company's private repo)?
+- If you're library includes a Gemfile.lock, Berksfile.lock or other common lock files, you'll need to regenerate them as the old version number is embedded inside. 
+- Everyone runs their library unit tests before creating a new release (right?!), but what about validating that your [library dependencies exist](http://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) (maybe in your Company's private repo)?
 - How about linting your source, to ensure that it follows common/team conventions? 
 - Who owns the gem? Is there one developer who has the credentials to push to RubyGems.org? Are they still on your team? 
 - Did you remember to tag your source when the new version was created (making it easy to determine what's changed between versions?)
 - Did you update your changelog?
 
 CapsuleCD handles all of that (and more!) for you. It pretty much guarantees that your library will have proper and consistent releases every time. 
-CapsuleCD is well structured and fully tested, unlike the release scripts you've manually cobbled together for each library. It can be customized as needed without rewriting from scratch.
-The best part is that CapsuleCD uses CapsuleCD to automate its releases. We dogfood it so we're the first ones to find any issues with a new release. 
+CapsuleCD is well structured and fully tested, unlike the release scripts you've manually cobbled together for each library and language. It can be customized as needed without rewriting from scratch.
+The best part is that CapsuleCD uses CapsuleCD to automate its releases. We [dogfood](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) it so we're the first ones to find any issues with a new release. 
 
 ## How do I start?
 You can use CapsuleCD to automate creating a new release from a pull request __or__ from the latest code on your default branch.
@@ -81,7 +81,7 @@ Here's how to use __docker__ to merge a pull request to your Ruby library
     CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
     docker run AnalogJ/capsulecd:ruby capsulecd start --source github --package_type ruby
 
-Or you could install and call CapsuleCD directly to merge a pull request to your Python library:
+Or you could __install__ and call CapsuleCD directly to merge a pull request to your Python library:
 
 	gem install capsulecd
 	CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
@@ -96,7 +96,7 @@ Or you could install and call CapsuleCD directly to merge a pull request to your
 	TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
 	
 # Engine
-Every package type is mapped to an engine class which inherits from a `BaseEngine` clas, ie `PythonEngine`, `NodeEngine`, `RubyEngine` etc. 
+Every package type is mapped to an engine class which inherits from a `BaseEngine` class, ie `PythonEngine`, `NodeEngine`, `RubyEngine` etc. 
 Every source type is mapped to a source module, ie `GithubSource`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Source module.
 Then it begins processing your source code step by step.
 
