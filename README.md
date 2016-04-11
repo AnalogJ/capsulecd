@@ -60,7 +60,7 @@ Well, not always:
 - If you're library includes a Gemfile.lock, Berksfile.lock or other common lock files, you'll need to regenerate them as the old version number is embedded inside. 
 - Everyone runs their library unit tests before creating a new release (right?!), but what about validating that your [library dependencies exist](http://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) (maybe in your Company's private repo)?
 - How about linting your source, to ensure that it follows common/team conventions? 
-- Who owns the gem? Is there one developer who has the credentials to push to RubyGems.org? Are they still on your team? 
+- Who owns the gem? Is there one developer who has the credentials to push to RubyGems.org? Are they still on your team/on vacation? 
 - Did you remember to tag your source when the new version was created (making it easy to determine what's changed between versions?)
 - Did you update your changelog?
 
@@ -169,7 +169,35 @@ source_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 
 ## Stage pre/post hooks and overrides
 
-	TODO: add example and documetnation on how to override stages. 
+CapsuleCD is completely customizable, to the extent that you can run your own Ruby code as `pre` and `post` hooks before every step. 
+If that's not enough, you can also completely override the step itself, allowing you to use your own business logic.
+To add a `pre`/`post` hook or override a step, just modify your config `yml` file by adding the step you want to modify, and 
+specify the `pre`, `post` or `override` as a subkey. Then specify your multiline ruby script:
+
+	---
+      source_configure:
+        pre: |
+          # this is my multiline ruby script
+          # the pre hook script runs before the actual step (source_configure) executes
+          # we have access to any of the specified instance variables here.
+          # check the documentation for more information.
+          puts "override pre_source_configure" 
+          `git clone ...`
+        override: |
+          # override scripts can be used to completely replace the built-in step script.
+          # to ensure that you are compatible with the capsulecd runner, please ensure that you
+          # populate all the correct instance variables.
+          # see the documentation for more information
+          puts "override source_configure"
+        post: |
+          # post scripts run after the step (source_configure) executes
+          # you can override any instance variables here, do additional cleanup or anything else you want.
+          puts "override post_source_configure"
+      build_step:
+        post: |
+          # post build step runs after the build_step runs
+          # within the script you have access to all instance variables and other methods defined in the engine.
+          puts "override post_build_step" + @source_git_local_path
 
 # Testing
 
