@@ -121,7 +121,6 @@ module CapsuleCD
 
         unless @config.chef_supermarket_username || @config.chef_supermarket_key
           fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy cookbook to supermarket, credentials missing'
-          return
         end
 
         # knife is really sensitive to folder names. The cookbook name MUST match the folder name otherwise knife throws up

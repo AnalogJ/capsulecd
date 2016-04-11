@@ -23,6 +23,9 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
       end
       it 'should create a Rakefile, Berksfile, .gitignore file,  file and tests folder' do
         FileUtils.copy_entry('spec/fixtures/chef/cookbook_analogj_test', test_directory)
+        FileUtils.rm(test_directory + '/Rakefile')
+        FileUtils.rm(test_directory + '/Gemfile')
+
         engine.instance_variable_set(:@source_git_local_path, test_directory )
 
         VCR.use_cassette('chef_build_step',:tag => :chef) do
@@ -34,6 +37,8 @@ describe 'CapsuleCD::Chef::ChefEngine', :chef do
         File.exist?(test_directory+'/Gemfile')
 
       end
+
+
     end
   end
 

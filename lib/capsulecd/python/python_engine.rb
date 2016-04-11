@@ -118,7 +118,6 @@ TOX
 
         unless @config.pypi_username || @config.pypi_password
           fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy package to pip, credentials missing'
-          return
         end
 
         # write the knife.rb config file.

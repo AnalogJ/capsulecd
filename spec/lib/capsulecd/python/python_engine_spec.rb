@@ -23,6 +23,8 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
       end
       it 'should create a VERSION file, requirements.txt file and tests folder' do
         FileUtils.copy_entry('spec/fixtures/python/pip_analogj_test', test_directory)
+        FileUtils.rm(test_directory + '/VERSION')
+        FileUtils.rm(test_directory + '/tox.ini')
         engine.instance_variable_set(:@source_git_local_path, test_directory)
 
         VCR.use_cassette('pip_build_step',:tag => :ruby) do
@@ -30,6 +32,7 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
         end
 
         File.exist?(test_directory+'/VERSION')
+        File.exist?(test_directory+'/tox.ini')
         File.exist?(test_directory+'/requirements.txt')
         File.exist?(test_directory+'/.gitignore')
       end

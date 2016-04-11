@@ -160,7 +160,6 @@ module CapsuleCD
 
           unless @config.npm_auth_token
             fail CapsuleCD::Error::ReleaseCredentialsMissing, 'cannot deploy page to npm, credentials missing'
-            return
           end
 
           # write the knife.rb config file.

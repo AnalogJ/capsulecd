@@ -21,8 +21,10 @@ describe 'CapsuleCD::Ruby::RubyEngine', :ruby do
         CapsuleCD::Ruby::RubyEngine.new(source: :github,
                                             package_type: :ruby)
       end
-      it 'should create a .gitignore file and spec folder' do
+      it 'should create a Gemfile, Rakefile, .gitignore file and spec folder' do
         FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+        FileUtils.rm(test_directory + '/Gemfile')
+        FileUtils.rm(test_directory + '/Rakefile')
 
         engine.instance_variable_set(:@source_git_local_path, test_directory)
 
@@ -31,6 +33,8 @@ describe 'CapsuleCD::Ruby::RubyEngine', :ruby do
         end
 
         expect(File.exist?(test_directory+'/.gitignore')).to eql(true)
+        expect(File.exist?(test_directory+'/Gemfile')).to eql(true)
+        expect(File.exist?(test_directory+'/Rakefile')).to eql(true)
       end
 
       it 'should raise an error if version.rb is missing' do
