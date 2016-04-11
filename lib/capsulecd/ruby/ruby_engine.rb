@@ -68,6 +68,9 @@ module CapsuleCD
           unless external.value.success?
             fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
           end
+          unless File.exist?(@source_git_local_path + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
+            fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
+          end
         end
       end
 
