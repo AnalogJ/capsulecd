@@ -253,4 +253,3 @@ Jason Kulatunga - Initial Development -  [@AnalogJ](https://github.com/AnalogJ)
 # License
 
 CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE.md) file for details
-
