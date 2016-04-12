@@ -52,8 +52,11 @@ module CapsuleCD
       end
 
       def self.load_gemspec_data(gemspec_path)
-        gemspec_data = self.execute_in_child do
-          Gem::Specification::load(gemspec_path)
+        gemspec_data = nil
+        Bundler.with_clean_env do
+          gemspec_data = self.execute_in_child do
+            Gem::Specification::load(gemspec_path)
+          end
         end
         if !gemspec_data
           fail CapsuleCD::Error::BuildPackageInvalid, '*.gemspec could not be parsed.'
