@@ -34,7 +34,7 @@ module CapsuleCD
         version_str = CapsuleCD::Ruby::RubyHelper.read_version_file(@source_git_local_path, gemspec_data.name)
         next_version = bump_version(SemVer.parse(gemspec_data.version.to_s))
 
-        new_version_str = version_str.gsub(/(VERSION\s*=\s*['"])[0-9\.]+(['"])/, "\\1#{next_version}\\2")
+        new_version_str = version_str.gsub(/(VERSION\s*=\s*['"])[0-9\.]+(['"])/, "\\1#{next_version.to_s}\\2")
         CapsuleCD::Ruby::RubyHelper.write_version_file(@source_git_local_path, gemspec_data.name, new_version_str)
 
         # check for/create any required missing folders/files
@@ -55,21 +55,23 @@ module CapsuleCD
         end
 
         # package the gem, make sure it builds correctly
-        Open3.popen3('gem build '+ File.basename(gemspec_path), chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
-          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
-            Thread.new do
-              until (line = stream_buffer.gets).nil?
-                puts "#{name} -> #{line}"
+        Bundler.with_clean_env do
+          Open3.popen3('gem build '+ File.basename(gemspec_path), chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+            { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+              Thread.new do
+                until (line = stream_buffer.gets).nil?
+                  puts "#{name} -> #{line}"
+                end
               end
             end
-          end
-          # wait for process
-          external.join
-          unless external.value.success?
-            fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
-          end
-          unless File.exist?(@source_git_local_path + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
-            fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
+            # wait for process
+            external.join
+            unless external.value.success?
+              fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
+            end
+            unless File.exist?(@source_git_local_path + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
+              fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
+            end
           end
         end
       end
