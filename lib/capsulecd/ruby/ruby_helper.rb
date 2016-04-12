@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'thread'
+require 'bundler'
 module CapsuleCD
   module Ruby
     class RubyHelper
