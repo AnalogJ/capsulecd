@@ -1,9 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-load 'lib/capsulecd/version.rb' #using load here instead of require because of issues when dogfooding CapsuleCD.
-# The Gem::Specification::load() function that loads the gemspec in the RubyEngine detects that CapsuleCD version.rb is already
-# required, so it will ignore subsequent load commands. This problem only occurs in CapsuleCD, not any other Gem
+require 'capsulecd/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'capsulecd'
