@@ -167,7 +167,7 @@ source_github_api_endpoint: https://git.mycorpsubnet.example.com/v2
 source_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 ```
 
-## Stage pre/post hooks and overrides
+## Step pre/post hooks and overrides
 
 CapsuleCD is completely customizable, to the extent that you can run your own Ruby code as `pre` and `post` hooks before every step. 
 If that's not enough, you can also completely override the step itself, allowing you to use your own business logic.
