@@ -233,7 +233,7 @@ We're actively looking for pull requests in the following areas:
 	- Rust
 	- Scala
 	- Swift
-	- Any others you can think of
+	- [Any others you can think of](https://libraries.io/)
 - CapsuleCD Sources
 	- GitLab
 	- Bitbucket
