@@ -6,7 +6,7 @@
 [![Gem](https://img.shields.io/gem/dt/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
 [![Gem](https://img.shields.io/gem/v/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
 [![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg)](https://hub.docker.com/r/analogj/capsulecd)
-[![Flattr this git repo](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=jexon1&url=https%3A%2F%2Fgithub.com%2FAnalogJ%2Fcapsulecd&title=CapsuleCD&language=Ruby&tags=github&category=software)
+[![Flattr this git repo](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=analogj&url=https%3A%2F%2Fgithub.com%2FAnalogJ%2Fcapsulecd&title=CapsuleCD&language=Ruby&tags=github&category=software)
 
 <!-- 
 [![Gemnasium](https://img.shields.io/gemnasium/analogj/capsulecd.svg)]()
