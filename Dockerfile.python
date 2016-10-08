@@ -2,6 +2,6 @@ FROM analogj/capsulecd:latest
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
 RUN apk --update --no-cache add python python-dev py-pip && \
-    pip install tox
+	pip install --upgrade pip setuptools tox
 
 CMD ["capsulecd", "start", "--source", "github", "--package_type", "python"]
