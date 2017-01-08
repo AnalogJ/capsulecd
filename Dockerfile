@@ -1,4 +1,4 @@
-FROM ruby:2.1.8-alpine
+FROM ruby:2.3-alpine
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
 RUN mkdir -p /srv/capsulecd

@@ -6,7 +6,7 @@ dependencies:
   override:
     - docker info
     - docker pull analogj/capsulecd
-    - docker pull analogj/capsulecd:chef
+    #- docker pull analogj/capsulecd:chef
     - docker pull analogj/capsulecd:javascript
     - docker pull analogj/capsulecd:node
     - docker pull analogj/capsulecd:python
@@ -14,7 +14,7 @@ dependencies:
 
 test:
   override:
-    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:chef sh -c "bundle install --with test && rake 'spec:chef'"
+    #- docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:chef sh -c "bundle install --with test && rake 'spec:chef'"
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:javascript sh -c "bundle install --with test && rake 'spec:javascript'"
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:node sh -c "bundle install --with test && rake 'spec:node'"
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:python sh -c "bundle install --with test && rake 'spec:python'"
