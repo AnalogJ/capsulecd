@@ -51,6 +51,7 @@ module CapsuleCD
         # REQUIRES source_client
         pre_source_process_pull_request_payload
         source_process_pull_request_payload(payload)
+        @config.populate_repo_config_file(@source_git_local_path)
         post_source_process_pull_request_payload
       else
         # start processing the payload, which should result in a local git repository that we
@@ -61,6 +62,7 @@ module CapsuleCD
         # REQUIRES source_client
         pre_source_process_push_payload
         source_process_push_payload(payload)
+        @config.populate_repo_config_file(@source_git_local_path)
         post_source_process_push_payload
       end
 
