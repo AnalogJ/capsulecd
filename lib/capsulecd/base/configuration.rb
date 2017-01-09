@@ -90,6 +90,7 @@ module CapsuleCD
         puts 'The configuration file could not be found. Using defaults'
         return
       end
+      puts 'Loading configuration file: ' + path
       file = File.open(path).read
       unserialize(file)
     end
