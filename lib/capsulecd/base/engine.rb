@@ -7,6 +7,11 @@ module CapsuleCD
 
     def initialize(options)
       @config = CapsuleCD::Configuration.new(options)
+
+      # transform the engine with system config file hooks
+      transformer = CapsuleCD::TransformEngine.new()
+      transformer.transform(self, options[:config_file], :global)
+
       if @config.source == :github
         require_relative 'source/github'
         self.class.send(:include, CapsuleCD::Source::Github)
@@ -51,7 +56,6 @@ module CapsuleCD
         # REQUIRES source_client
         pre_source_process_pull_request_payload
         source_process_pull_request_payload(payload)
-        @config.populate_repo_config_file(@source_git_local_path)
         post_source_process_pull_request_payload
       else
         # start processing the payload, which should result in a local git repository that we
@@ -62,9 +66,16 @@ module CapsuleCD
         # REQUIRES source_client
         pre_source_process_push_payload
         source_process_push_payload(payload)
-        @config.populate_repo_config_file(@source_git_local_path)
         post_source_process_push_payload
       end
+
+      # update the config with repo config file options
+      @config.populate_repo_config_file(@source_git_local_path)
+
+      # transform the engine with the repo config file hooks
+      transformer = CapsuleCD::TransformEngine.new()
+      transformer.transform(self, @source_git_local_path + '/capsule.yml', :repo)
+
 
       # now that the payload has been processed we can begin by building the code.
       # this may be creating missing files/default structure, compilation, version bumping, etc.

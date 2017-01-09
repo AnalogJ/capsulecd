@@ -6,6 +6,12 @@ module CapsuleCD
   # The command line interface for CapsuleCD.
   class Cli < Thor
 
+    desc 'version', 'Print out the CapsuleCD version'
+    def version
+      require 'capsulecd/version'
+      puts CapsuleCD::VERSION
+    end
+
     ##
     # Run
     ##

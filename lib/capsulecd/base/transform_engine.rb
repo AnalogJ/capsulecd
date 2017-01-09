@@ -11,8 +11,8 @@ module CapsuleCD
       @engine = engine
       @type = type
 
-      unless File.exists?(config_file)
-        puts 'no configuration file found, no engine hooks'
+      if !config_file || !File.exists?(config_file)
+        puts "no #{type} configuration file found, no engine hooks applied"
         return
       end
 
