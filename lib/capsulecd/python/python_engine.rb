@@ -134,8 +134,7 @@ TOX
                     )
         end
 
-        # run python setup.py sdist upload
-        # TODO: use twine instead (it supports HTTPS.)https://python-packaging-user-guide.readthedocs.org/en/latest/distributing/#uploading-your-project-to-pypi
+        # run python setup.py sdist
         Open3.popen3('python setup.py sdist upload', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
           { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
             Thread.new do
@@ -147,7 +146,23 @@ TOX
           # wait for process
           external.join
           unless external.value.success?
-            fail CapsuleCD::Error::ReleasePackageError, 'python setup.py upload failed. Check log for exact error'
+            fail CapsuleCD::Error::ReleasePackageError, 'python setup.py sdist failed'
+          end
+        end
+
+        #using twine instead (it supports HTTPS.)https://python-packaging-user-guide.readthedocs.org/en/latest/distributing/#uploading-your-project-to-pypi
+        Open3.popen3("twine upload --config-file #{pypirc_path}  dist/*", chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+            Thread.new do
+              until (line = stream_buffer.gets).nil?
+                puts "#{name} -> #{line}"
+              end
+            end
+          end
+          # wait for process
+          external.join
+          unless external.value.success?
+            fail CapsuleCD::Error::ReleasePackageError, 'twine package upload failed. Check log for exact error'
           end
         end
       end
