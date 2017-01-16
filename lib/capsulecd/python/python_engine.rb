@@ -135,7 +135,7 @@ TOX
         end
 
         # run python setup.py sdist
-        Open3.popen3('python setup.py sdist upload', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
+        Open3.popen3('python setup.py sdist', chdir: @source_git_local_path) do |_stdin, stdout, stderr, external|
           { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
             Thread.new do
               until (line = stream_buffer.gets).nil?
