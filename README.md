@@ -151,6 +151,7 @@ engine_cmd_test | Yes | Yes | Specifies the test command to before releasing pac
 engine_cmd_minification | Yes | Yes | Specifies the minification command to before releasing package
 engine_cmd_lint | Yes | Yes | Specifies the lint command to before releasing package
 engine_version_bump_type | Yes | Yes | Specifies the Semvar segment (`major`, `minor`, `patch`) to bump before releasing package
+engine_disable_cleanup | Yes | Yes | Specifies if the engine should cleanup the working directory on exit
 
 	TODO: specify the missing `BRANCH` release style settings.
 
