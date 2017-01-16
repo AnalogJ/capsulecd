@@ -48,6 +48,45 @@ describe 'CapsuleCD::Ruby::RubyEngine', :ruby do
 
       end
     end
+
+
+    describe 'when building and dogfooding capsulecd package ' do
+      let(:engine) do
+        require 'capsulecd/ruby/ruby_engine'
+        CapsuleCD::Ruby::RubyEngine.new(source: :github,
+                                        package_type: :ruby)
+      end
+      it 'should create a Gemfile, Rakefile, .gitignore file and spec folder' do
+        FileUtils.copy_entry('spec/fixtures/ruby/capsulecd', test_directory)
+        FileUtils.rm(test_directory + '/Gemfile')
+        FileUtils.rm(test_directory + '/Rakefile')
+
+        engine.instance_variable_set(:@source_git_local_path, test_directory)
+
+        VCR.use_cassette('gem_build_step',:tag => :ruby) do
+          engine.build_step
+        end
+
+        expect(File.exist?(test_directory+'/.gitignore')).to eql(true)
+        expect(File.exist?(test_directory+'/Gemfile')).to eql(true)
+        expect(File.exist?(test_directory+'/Rakefile')).to eql(true)
+
+        expect(Dir.entries(test_directory)).to eql([])
+
+        expect(File.exist?(test_directory+'/capsulecd-1.0.2.gem')).to eql(true)
+      end
+
+      it 'should raise an error if version.rb is missing' do
+        FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+        FileUtils.rm(test_directory + '/lib/gem_analogj_test/version.rb')
+        engine.instance_variable_set(:@source_git_local_path, test_directory)
+
+        VCR.use_cassette('gem_build_step_without_version.rb',:tag => :ruby) do
+          expect{engine.build_step}.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
+        end
+
+      end
+    end
   end
 
   describe '#test_step' do
