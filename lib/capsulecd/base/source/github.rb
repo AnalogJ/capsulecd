@@ -174,7 +174,7 @@ module CapsuleCD
         @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',
                                      context: 'CapsuleCD',
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
-                                     description: ex.message.slice!(0..135))
+                                     description: ex.message.slice(0..135))
         raise
       end
 
