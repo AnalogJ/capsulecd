@@ -63,6 +63,8 @@ module CapsuleCD
     attr_reader :engine_cmd_lint
     attr_reader :engine_cmd_coverage
     attr_reader :engine_version_bump_type
+    attr_reader :engine_disable_cleanup
+
 
     def populate_repo_config_file(repo_local_path)
       repo_config_file_path = repo_local_path + '/capsule.yml'
@@ -83,6 +85,7 @@ module CapsuleCD
     def populate_defaults
       @engine_version_bump_type = :patch # can be :major, :minor, :patch
       @chef_supermarket_type = 'Other'
+      @engine_disable_cleanup = false
     end
 
     def load_config_file(path)

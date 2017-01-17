@@ -56,6 +56,9 @@ module CapsuleCD
         gemspec_data = nil
         Bundler.with_clean_env do
           gemspec_data = self.execute_in_child do
+            #reload the version.rb file if found (fixes dogfooding issue)
+            Dir["#{File.dirname(gemspec_path)}/**/version.rb"].each { |f| load(f) }
+
             Gem::Specification::load(gemspec_path)
           end
         end

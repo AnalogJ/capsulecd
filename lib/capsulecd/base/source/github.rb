@@ -159,6 +159,7 @@ module CapsuleCD
       # requires @source_git_parent_path
       # requires @source_git_base_info
       # requires @source_git_head_info
+      # requires @config.engine_disable_cleanup
       def source_notify(step, status='pending')
 
         @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], status,
@@ -170,11 +171,11 @@ module CapsuleCD
 
       rescue => ex
         puts 'github source_process_failure'
-        FileUtils.remove_entry_secure @source_git_parent_path if Dir.exists?(@source_git_parent_path)
+        FileUtils.remove_entry_secure @source_git_parent_path if (Dir.exists?(@source_git_parent_path) && !@config.engine_disable_cleanup)
         @source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'failure',
                                      context: 'CapsuleCD',
                                      target_url: 'http://www.github.com/AnalogJ/capsulecd',
-                                     description: ex.message.slice!(0..135))
+                                     description: ex.message.slice(0..135))
         raise
       end
 
