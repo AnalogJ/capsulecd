@@ -10,13 +10,7 @@ module CapsuleCD
       def build_step
         super
         gemspec_path = CapsuleCD::Ruby::RubyHelper.get_gemspec_path(@source_git_local_path)
-
-        # check for required VERSION file
-        gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(@source_git_local_path)
-
-        if !File.exist?(CapsuleCD::Ruby::RubyHelper.version_filepath(@source_git_local_path, gemspec_data.name))
-          fail CapsuleCD::Error::BuildPackageInvalid, 'version.rb file is required to process Ruby gem'
-        end
+        gem_name = CapsuleCD::Ruby::RubyHelper.get_gem_name(@source_git_local_path)
 
         # bump up the version here.
         # since there's no standardized way to bump up the version in the *.gemspec file, we're going to assume that the version
@@ -31,11 +25,9 @@ module CapsuleCD
         # http://timelessrepo.com/making-ruby-gems
         # http://guides.rubygems.org/make-your-own-gem/
 
-        version_str = CapsuleCD::Ruby::RubyHelper.read_version_file(@source_git_local_path, gemspec_data.name)
-        next_version = bump_version(SemVer.parse(gemspec_data.version.to_s))
-
-        new_version_str = version_str.gsub(/(VERSION\s*=\s*['"])[0-9\.]+(['"])/, "\\1#{next_version.to_s}\\2")
-        CapsuleCD::Ruby::RubyHelper.write_version_file(@source_git_local_path, gemspec_data.name, new_version_str)
+        gem_version = CapsuleCD::Ruby::RubyHelper.get_version(@source_git_local_path)
+        next_version = bump_version(SemVer.parse(gem_version))
+        CapsuleCD::Ruby::RubyHelper.set_version(@source_git_local_path, next_version.to_s)
 
         # check for/create any required missing folders/files
         unless File.exist?(@source_git_local_path + '/Gemfile')
@@ -69,8 +61,8 @@ module CapsuleCD
             unless external.value.success?
               fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
             end
-            unless File.exist?(@source_git_local_path + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
-              fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
+            unless File.exist?(@source_git_local_path + "/#{gem_name}-#{next_version.to_s}.gem")
+              fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gem_name}-#{next_version.to_s}.gem not found"
             end
           end
         end
@@ -143,8 +135,8 @@ module CapsuleCD
 
         # commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
         # as they will be included in the commmit and any release artifacts)
-        gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(@source_git_local_path)
-        next_version = SemVer.parse(gemspec_data.version.to_s)
+        gem_version = CapsuleCD::Ruby::RubyHelper.get_version(@source_git_local_path)
+        next_version = SemVer.parse(gem_version)
         CapsuleCD::GitUtils.commit(@source_git_local_path, "(v#{next_version}) Automated packaging of release by CapsuleCD")
         @source_release_commit = CapsuleCD::GitUtils.tag(@source_git_local_path, "v#{next_version}")
       end
