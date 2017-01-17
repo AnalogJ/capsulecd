@@ -4,14 +4,6 @@ describe 'CapsuleCD::Ruby::RubyHelper', :ruby do
   subject{
     CapsuleCD::Ruby::RubyHelper
   }
-  describe '#version_filepath' do
-    it 'default should generate the correct path to version.rb' do
-      expect(subject.version_filepath('/tmp','capsulecd')).to eql('/tmp/lib/capsulecd/version.rb')
-    end
-    it 'with custom version filename should generate the correct path' do
-      expect(subject.version_filepath('/tmp','capsulecd', 'VERSION.rb')).to eql('/tmp/lib/capsulecd/VERSION.rb')
-    end
-  end
 
   describe '#get_gemspec_path' do
     describe 'without a gemspec file' do
@@ -29,12 +21,11 @@ describe 'CapsuleCD::Ruby::RubyHelper', :ruby do
     end
   end
 
-  describe '#get_gemspec_data' do
+  describe '#get_gem_name' do
     it 'should parse gemspec data' do
       FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
-      gemspec_data = subject.get_gemspec_data(test_directory)
-      expect(gemspec_data.name).to eql('gem_analogj_test')
-      expect(gemspec_data.version.to_s).to eql('0.1.3')
+      gem_name = subject.get_gem_name(test_directory)
+      expect(gem_name).to eql('gem_analogj_test')
     end
 
     describe 'with an invalid gemspec file' do
@@ -42,48 +33,77 @@ describe 'CapsuleCD::Ruby::RubyHelper', :ruby do
         FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
         FileUtils.rm(test_directory + '/lib/gem_analogj_test/version.rb')
 
-        expect{subject.get_gemspec_data(test_directory)}.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
+        expect{subject.get_gem_name(test_directory)}.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
+      end
+    end
+  end
+
+  describe '#get_version' do
+
+    it 'should parse version.rb file' do
+      FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+      gem_version = subject.get_version(test_directory)
+      expect(gem_version).to eql('0.1.3')
+    end
+
+    describe 'without a version.rb file' do
+      it 'should raise an error' do
+        FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+        FileUtils.rm(test_directory + '/lib/gem_analogj_test/version.rb')
+
+        expect{subject.get_gem_name(test_directory)}.to raise_error(CapsuleCD::Error::BuildPackageInvalid)
       end
     end
 
-    describe 'when modifying gemspec file' do
-      it 'should not keep old constant from version.rb file in memory' do
+    describe 'with too many version.rb files' do
+      it 'should fallback to using version_filepath & gem name' do
         FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
+        FileUtils.mkdir_p(test_directory + '/lib/gem_analogj_test/test/')
+        FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test/lib/gem_analogj_test/version.rb',
+                             test_directory + '/lib/gem_analogj_test/test/version.rb')
 
-        gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(test_directory)
-        expect(gemspec_data.version.to_s).to eql('0.1.3')
+        gem_version = subject.get_version(test_directory)
+        expect(gem_version).to eql('0.1.3')
 
-        version_str = CapsuleCD::Ruby::RubyHelper.read_version_file(test_directory, gemspec_data.name)
-        next_version = CapsuleCD::Engine.new(:source => :github).send(:bump_version, SemVer.parse(gemspec_data.version.to_s))
-        expect(next_version.to_s).to eql('0.1.4')
+        #TODO: cant figure out how to verify that a class method was called.
+        # expect(CapsuleCD::Ruby::RubyHelper).to receive(:version_filepath).with(test_directory, 'gem_analogj_test')
+      end
+    end
+  end
 
-        new_version_str = version_str.gsub(/(VERSION\s*=\s*['"])[0-9\.]+(['"])/, "\\1#{next_version}\\2")
-        CapsuleCD::Ruby::RubyHelper.write_version_file(test_directory, gemspec_data.name, new_version_str)
+  describe '#set_version' do
+    it 'should correctly update version in version.rb file' do
+      FileUtils.copy_entry('spec/fixtures/ruby/gem_analogj_test', test_directory)
 
-        Open3.popen3('gem build gem_analogj_test.gemspec', chdir: test_directory) do |_stdin, stdout, stderr, external|
-          { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
-            Thread.new do
-              until (line = stream_buffer.gets).nil?
-                puts "#{name} -> #{line}"
-              end
+      gem_name = CapsuleCD::Ruby::RubyHelper.get_gem_name(test_directory)
+      gem_version = CapsuleCD::Ruby::RubyHelper.get_version(test_directory)
+      expect(gem_version).to eql('0.1.3')
+
+      next_version = CapsuleCD::Engine.new(:source => :github).send(:bump_version, SemVer.parse(gem_version))
+      expect(next_version.to_s).to eql('0.1.4')
+
+      CapsuleCD::Ruby::RubyHelper.set_version(test_directory, next_version.to_s)
+
+      Open3.popen3('gem build gem_analogj_test.gemspec', chdir: test_directory) do |_stdin, stdout, stderr, external|
+        { stdout: stdout, stderr: stderr }. each do |name, stream_buffer|
+          Thread.new do
+            until (line = stream_buffer.gets).nil?
+              puts "#{name} -> #{line}"
             end
           end
-          # wait for process
-          external.join
-          unless external.value.success?
-            fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
-          end
-          unless File.exist?(test_directory + "/#{gemspec_data.name}-#{next_version.to_s}.gem")
-            fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gemspec_data.name}-#{next_version.to_s}.gem not found"
-          end
         end
-
-        updated_gemspec_data = CapsuleCD::Ruby::RubyHelper.get_gemspec_data(test_directory)
-        expect(updated_gemspec_data.version.to_s).to eql('0.1.4')
-
-
-
+        # wait for process
+        external.join
+        unless external.value.success?
+          fail CapsuleCD::Error::BuildPackageFailed, 'gem build failed. Check gemspec file and dependencies'
+        end
+        unless File.exist?(test_directory + "/#{gem_name}-#{next_version.to_s}.gem")
+          fail CapsuleCD::Error::BuildPackageFailed, "gem build failed. #{gem_name}-#{next_version.to_s}.gem not found"
+        end
       end
+
+      updated_gem_version = CapsuleCD::Ruby::RubyHelper.get_version(test_directory)
+      expect(updated_gem_version).to eql('0.1.4')
     end
 
   end

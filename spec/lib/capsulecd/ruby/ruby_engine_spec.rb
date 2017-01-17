@@ -70,9 +70,6 @@ describe 'CapsuleCD::Ruby::RubyEngine', :ruby do
         expect(File.exist?(test_directory+'/.gitignore')).to eql(true)
         expect(File.exist?(test_directory+'/Gemfile')).to eql(true)
         expect(File.exist?(test_directory+'/Rakefile')).to eql(true)
-
-        expect(Dir.entries(test_directory)).to eql([])
-
         expect(File.exist?(test_directory+'/capsulecd-1.0.2.gem')).to eql(true)
       end
 
