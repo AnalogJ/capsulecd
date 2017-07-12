@@ -1,4 +1,0 @@
---- 
-  npm_auth_token: sample_auth_token
-  source_github_access_token: sample_test_token
-  source: 'invalid'

@@ -1,0 +1,5 @@
+package: github.com/AnalogJ/capsulecd
+import:
+- package: github.com/google/go-github
+- package: github.com/ad2games/vcr-go
+- package: gopkg.in/urfave/cli.v2
