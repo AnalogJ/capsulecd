@@ -1,0 +1,5 @@
+--- 
+  source_github_access_token: sample_test_token
+  rubygems_api_key: sample_rubygems_api_key
+  runner_repo_full_name: AnalogJ/gem_test
+  runner_pull_request: 5

@@ -1,0 +1,8 @@
+--- 
+  source_github_access_token: sample_test_token
+  chef_supermarket_username: sample_supermarket_username
+  chef_supermarket_key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpzYW1wbGVfc3VwZXJtYXJrZXRfa2V5Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+  runner_pull_request: 11
+  runner_clone_url: http://github.com/AnalogJ/cookbook_analogj_test.git
+  runner_repo_name: cookbook_analogj_test
+  runner_repo_full_name: AnalogJ/cookbook_analogj_test

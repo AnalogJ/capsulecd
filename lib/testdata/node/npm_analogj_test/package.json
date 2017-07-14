@@ -1,0 +1,19 @@
+{
+  "name": "npm_analogj_test",
+  "version": "1.0.8",
+  "description": "test javascript package for capsulecd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnalogJ/npm_analogj_test.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AnalogJ/npm_analogj_test/issues"
+  },
+  "homepage": "https://github.com/AnalogJ/npm_analogj_test#readme"
+}
