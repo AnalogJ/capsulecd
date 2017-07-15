@@ -33,6 +33,16 @@ func TestScmGithub_Configure(t *testing.T) {
 
 }
 
+//func TestScmGithub_Configure_WithNoAuthToken(t *testing.T) {
+//
+//	config.Init()
+//	config.Set("scm","github")
+//
+//	githubScm := scm.Create()
+//
+//	assert.Panics(t, func(){githubScm.Configure()}, "Should throw an error. ")
+//}
+
 
 func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
@@ -40,7 +50,7 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 	config.Set("scm","github")
 	config.Set("scm_pull_request","12")
 	config.Set("scm_repo_full_name","AnalogJ/cookbook_analogj_test")
-	config.Set("scm_github_access_token","7fb05afec5fafb011a28b8651e20aebde1f990cb")
+	config.Set("scm_github_access_token", "") //TODO: this shoudl be loaded from the test suite
 
 	githubScm := scm.Create()
 

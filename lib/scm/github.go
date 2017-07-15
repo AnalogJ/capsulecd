@@ -53,8 +53,8 @@ func (g *scmGithub) Configure() {
 
 
 // configure method will retrieve payload data from Scm using authenticated client.
-// MUST set options.GitParentPath
-// MUST set client
+// MUST set options.IsPullRequest
+// RETURNS ScmPayload
 func (g *scmGithub) RetrievePayload() *ScmPayload {
 	if !config.IsSet("scm_pull_request") {
 		log.Print("This is not a pull request. No automatic continuous deployment processing required. Continuous Integration testing will continue.")
@@ -76,11 +76,34 @@ func (g *scmGithub) RetrievePayload() *ScmPayload {
 		g.options.IsPullRequest = true
 		ctx := context.Background()
 		parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
-		pr, _, _ := g.client.PullRequests.Get(ctx, parts[0],parts[1], config.GetInt("scm_pull_request"))
+		pr, _, err := g.client.PullRequests.Get(ctx, parts[0],parts[1], config.GetInt("scm_pull_request"))
 
-		log.Print("GOT THE PR DATA", pr)
-		return &ScmPayload{}
+		if(err != nil){
+			log.Fatal("Could not retrieve pull request from Github", err)
+			return nil
+		}
 
+		return &ScmPayload{
+			Title: pr.GetTitle(),
+			Head: &ScmCommitInfo{
+				Sha: pr.Head.GetSHA(),
+				Ref: pr.Head.GetRef(),
+				Repo: &ScmRepoInfo{
+					CloneUrl: pr.Head.Repo.GetCloneURL(),
+					Name: pr.Head.Repo.GetName(),
+					FullName: pr.Head.Repo.GetFullName(),
+				},
+			},
+			Base: &ScmCommitInfo{
+				Sha: pr.Base.GetSHA(),
+				Ref: pr.Base.GetRef(),
+				Repo: &ScmRepoInfo{
+					CloneUrl: pr.Base.Repo.GetCloneURL(),
+					Name: pr.Base.Repo.GetName(),
+					FullName: pr.Base.Repo.GetFullName(),
+				},
+			},
+		}
 	}
 }
 

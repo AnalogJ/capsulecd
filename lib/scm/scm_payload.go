@@ -14,6 +14,7 @@ type ScmCommitInfo struct {
 }
 
 type ScmPayload struct {
+	Title string
 	Head *ScmCommitInfo
 	Base *ScmCommitInfo
 }
