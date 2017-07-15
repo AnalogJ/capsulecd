@@ -268,3 +268,5 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://stackoverflow.com/questions/6395076/using-reflect-how-do-you-set-the-value-of-a-struct-field
 - https://medium.com/@skdomino/writing-better-clis-one-snake-at-a-time-d22e50e60056
 - https://stackoverflow.com/questions/15148331/test-naming-conventions-in-golang
+- https://medium.com/@povilasve/go-advanced-tips-tricks-a872503ac859
+- https://blog.golang.org/error-handling-and-go

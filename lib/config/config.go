@@ -49,7 +49,7 @@ func ReadConfig(configFilePath string){
 		return
 	}
 
-	log.Print("Loading configuration file: %s", configFilePath)
+	log.Printf("Loading configuration file: %s", configFilePath)
 
 	config_data, err := os.Open(configFilePath)
 	if err != nil {

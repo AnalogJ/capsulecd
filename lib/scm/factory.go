@@ -2,29 +2,30 @@ package scm
 
 import (
 	"capsulecd/lib/config"
-	"log"
+	"net/http"
+	"capsulecd/lib/errors"
+	"fmt"
 )
 
 
 type Scm interface {
 	Options() *ScmOptions
-	Configure()
-	RetrievePayload() *ScmPayload
-	ProcessPushPayload()
-	ProcessPullRequestPayload()
-	Publish() //create release.
-	Notify()
+	Configure(client *http.Client) error
+	RetrievePayload() (*ScmPayload, error)
+	ProcessPushPayload(payload *ScmPayload) error
+	ProcessPullRequestPayload(payload *ScmPayload) error
+	Publish() error //create release.
+	Notify() error
 }
 
-func Create() Scm {
+func Create() (Scm, error) {
 
 	switch scmType := config.Get("scm"); scmType {
 	case "bitbucket":
-		return &scmBitbucket{}
+		return &scmBitbucket{}, nil
 	case "github":
-		return &scmGithub{}
+		return &scmGithub{}, nil
 	default:
-		log.Fatal("Unknown scm type")
-		return nil
+		return nil, errors.ScmUnspecifiedError(fmt.Sprintf("Unknown Scm Type: %s", scmType))
 	}
 }
