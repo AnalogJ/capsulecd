@@ -266,3 +266,5 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://medium.com/@matryer/5-simple-tips-and-tricks-for-writing-unit-tests-in-golang-619653f90742
 - http://ghodss.com/2014/the-right-way-to-handle-yaml-in-golang/
 - https://stackoverflow.com/questions/6395076/using-reflect-how-do-you-set-the-value-of-a-struct-field
+- https://medium.com/@skdomino/writing-better-clis-one-snake-at-a-time-d22e50e60056
+- https://stackoverflow.com/questions/15148331/test-naming-conventions-in-golang

@@ -1,9 +1,12 @@
-package: github.com/AnalogJ/capsulecd
+package: capsulecd
 import:
-- package: github.com/google/go-github
-- package: github.com/ad2games/vcr-go
+- package: github.com/spf13/viper
 - package: gopkg.in/urfave/cli.v2
-- package: golang.org/x/oauth2
-- package: gopkg.in/yaml.v2
+- package: github.com/google/go-github
+  subpackages:
+  - github
+testImport:
 - package: github.com/stretchr/testify
   version: ^1.1.4
+  subpackages:
+  - assert

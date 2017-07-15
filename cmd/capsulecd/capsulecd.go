@@ -1,10 +1,11 @@
 package main
 
 import (
-	"gopkg.in/urfave/cli.v2" // imports as package "cli"
 	"fmt"
 	"os"
 	"time"
+
+	"gopkg.in/urfave/cli.v2"
 )
 func main() {
 	app := &cli.App{

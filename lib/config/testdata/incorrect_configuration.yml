@@ -1,0 +1,4 @@
+--- 
+  npm_auth_token: sample_auth_token
+  scm_github_access_token: sample_test_token
+  scm: 'invalid'
