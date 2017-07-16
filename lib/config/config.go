@@ -5,6 +5,7 @@ import (
 	"os"
 	"log"
 	"encoding/base64"
+	"capsulecd/lib/utils"
 )
 
 
@@ -49,7 +50,7 @@ func IsInitialized() bool {
 func ReadConfig(configFilePath string){
 
 
-	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+	if !utils.FileExists(configFilePath) {
 		log.Print("The configuration file could not be found. Skipping")
 		return
 	}

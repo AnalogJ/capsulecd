@@ -26,7 +26,7 @@ func GitClone(parentPath string, repositoryName string, gitRemote string) (strin
 		return "", aerr
 	}
 
-	if _, err := os.Stat(absPath); os.IsNotExist(err) {
+	if !FileExists(absPath) {
 		os.MkdirAll(absPath, os.ModePerm)
 	} else {
 		return "", errors.ScmFilesystemError(fmt.Sprintf("The local repository path already exists, this should never happen. %s", absPath))

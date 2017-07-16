@@ -9,14 +9,15 @@ import (
 	"os/exec"
 	"capsulecd/lib/utils"
 	"encoding/json"
-	"log"
 )
 
 type chefMetadata struct {
-	version string
-	name string
+	Version string `json:"version"`
+	Name string `json:"name"`
 }
 type engineChef struct {
+	*EngineBase
+
 	Scm *scm.Scm
 	CurrentMetadata *chefMetadata
 	NextMetadata *chefMetadata
@@ -45,7 +46,7 @@ func (g *engineChef) Init(sourceScm *scm.Scm) (error) {
 func (g *engineChef) BuildStep() (error) {
 	//validate that the chef metadata.rb file exists
 
-	if _, err := os.Stat(path.Join((*g.Scm).Options().GitLocalPath, "metadata.rb")); os.IsNotExist(err) {
+	if !utils.FileExists(path.Join((*g.Scm).Options().GitLocalPath, "metadata.rb")) {
 		return errors.EngineBuildPackageInvalid("metadata.rb file is required to process Chef cookbook")
 	}
 
@@ -53,6 +54,35 @@ func (g *engineChef) BuildStep() (error) {
 	merr := g.retrieveCurrentMetadata((*g.Scm).Options().GitLocalPath)
 	if(merr != nil){ return merr }
 
+	perr := g.populateNextMetadata()
+	if(perr != nil){ return perr }
+
+	nerr := g.writeNextMetadata((*g.Scm).Options().GitLocalPath)
+	if(nerr != nil){ return nerr }
+
+	// TODO: check if this cookbook name and version already exist.
+	// check for/create any required missing folders/files
+	// Berksfile.lock and Gemfile.lock are not required to be commited, but they should be.
+	rakefilePath := path.Join((*g.Scm).Options().GitLocalPath, "Rakefile")
+	if !utils.FileExists(rakefilePath){
+		ioutil.WriteFile(rakefilePath, []byte("task :test"), 0644)
+	}
+	berksfilePath := path.Join((*g.Scm).Options().GitLocalPath, "Berksfile")
+	if !utils.FileExists(berksfilePath){
+		ioutil.WriteFile(berksfilePath, []byte("site :opscode"), 0644)
+	}
+	gemfilePath := path.Join((*g.Scm).Options().GitLocalPath, "Gemfile")
+	if !utils.FileExists(gemfilePath){
+		ioutil.WriteFile(gemfilePath, []byte("source \"https://rubygems.org\""), 0644)
+	}
+	specPath := path.Join((*g.Scm).Options().GitLocalPath, "spec")
+	if !utils.FileExists(specPath){
+		os.MkdirAll(specPath, 0777)
+	}
+
+	//unless File.exist?(@source_git_local_path + '/.gitignore')
+	//TODO: CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['ChefCookbook'])
+	//end
 	return nil
 }
 
@@ -85,4 +115,18 @@ func (g *engineChef) retrieveCurrentMetadata(gitLocalPath string) (error) {
 	if(uerr != nil) { return uerr }
 
 	return nil
+}
+
+func (g *engineChef) populateNextMetadata() error {
+
+	nextVersion, err := g.BumpVersion(g.CurrentMetadata.Version)
+	if err != nil {return err}
+
+	g.NextMetadata.Version = nextVersion
+	g.NextMetadata.Name = g.CurrentMetadata.Name
+	return nil
+}
+
+func (g *engineChef) writeNextMetadata(gitLocalPath string) (error) {
+	return utils.CmdExec("knife", []string{"spork", "bump", path.Base(gitLocalPath), "manual", g.NextMetadata.Version, "-o", "../"}, gitLocalPath, "")
 }

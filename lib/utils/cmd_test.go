@@ -19,6 +19,12 @@ func TestCmdExec_Echo(t *testing.T) {
 	assert.NoError(t, cerr)
 }
 
+func TestCmdExec_Error(t *testing.T) {
+
+	cerr := utils.CmdExec("/bin/bash", []string{"exit","1"},"","")
+	assert.Error(t, cerr)
+}
+
 func TestCmdExec_WorkingDirRelative(t *testing.T) {
 
 	cerr := utils.CmdExec("ls", []string{},"testdata","")
