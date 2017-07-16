@@ -121,7 +121,7 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 // all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
 // MUST set options.GitLocalPath
 // MUST set options.GitLocalBranch
-// MUST set options.itHeadInfo
+// MUST set options.GitHeadInfo
 // REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 	//set the processed head info
@@ -131,16 +131,19 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 		return err
 	}
 
-	// set the remote url, with embedded token
-	u, err := url.Parse(g.options.GitHeadInfo.Repo.CloneUrl)
-	if err != nil {
-		return err
+	if(config.IsSet("scm_github_access_token")){
+		// set the remote url, with embedded token
+		u, err := url.Parse(g.options.GitHeadInfo.Repo.CloneUrl)
+		if err != nil {
+			return err
+		}
+
+		u.User = url.UserPassword(config.GetString("scm_github_access_token"), "")
+		g.options.GitRemote  = u.String()
+	} else {
+		g.options.GitRemote = g.options.GitHeadInfo.Repo.CloneUrl
 	}
 
-	u.User = url.UserPassword(config.GetString("scm_github_access_token"), "")
-	log.Printf("%s", u)
-
-	g.options.GitRemote  = u.String()
 	g.options.GitLocalBranch = g.options.GitHeadInfo.Ref
 
 	// clone the merged branch
@@ -151,7 +154,7 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 	if(cerr != nil){return cerr}
 	g.options.GitLocalPath = gitLocalPath
 
-	return utils.GitCheckout(g.options.GitLocalPath, g.options.GitHeadInfo.Sha)
+	return utils.GitCheckout(g.options.GitLocalPath, g.options.GitHeadInfo.Ref)
 }
 
 // all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the pull request data.
