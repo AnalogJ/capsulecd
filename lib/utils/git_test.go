@@ -19,8 +19,6 @@ func TestGitClone(t *testing.T) {
 	clonePath, cerr := utils.GitClone(dirPath, "test", "https://github.com/AnalogJ/test.git")
 	assert.NoError(t, cerr)
 	assert.NotEmpty(t, clonePath)
-
-	//TODO add file cleanup after clone.
 }
 
 func TestGitFetch(t *testing.T) {
@@ -34,9 +32,6 @@ func TestGitFetch(t *testing.T) {
 
 	ferr := utils.GitFetch(clonePath, "refs/pull/12/merge", "localBranchName")
 	assert.NoError(t, ferr)
-
-	//TODO add file cleanup after clone.
-
 }
 
 func TestGitCheckout(t *testing.T) {
@@ -50,9 +45,6 @@ func TestGitCheckout(t *testing.T) {
 
 	ferr := utils.GitCheckout(clonePath, "branch_test")
 	assert.NoError(t, ferr)
-
-	//TODO add file cleanup after clone.
-
 }
 
 func TestGitCommit(t *testing.T) {
@@ -74,9 +66,6 @@ func TestGitCommit(t *testing.T) {
 
 	gcerr := utils.GitCommit(clonePath, "Added New File")
 	assert.NoError(t, gcerr)
-
-	//TODO add file cleanup after clone.
-
 }
 
 
@@ -103,8 +92,6 @@ func TestGitTag(t *testing.T) {
 	tid, terr := utils.GitTag(clonePath, "v9.9.9")
 	assert.NoError(t, terr)
 	assert.NotEmpty(t, tid)
-
-	//TODO add file cleanup after clone.
 }
 
 func TestGitPush(t *testing.T) {
@@ -129,8 +116,6 @@ func TestGitPush(t *testing.T) {
 
 	perr := utils.GitPush(clonePath, "branch_test", "branch_test")
 	assert.NoError(t, perr)
-
-	//TODO add file cleanup after clone.
 
 }
 
@@ -158,8 +143,6 @@ func TestGitPush_PullRequest(t *testing.T) {
 	perr := utils.GitPush(clonePath, "localBranchName", "master")
 	assert.NoError(t, perr)
 
-	//TODO add file cleanup after clone.
-
 }
 
 func TestGitLatestTaggedCommit(t *testing.T) {
@@ -174,8 +157,6 @@ func TestGitLatestTaggedCommit(t *testing.T) {
 	assert.NoError(t, ferr)
 
 	assert.Equal(t, "v0.1.11", tag.TagShortName)
-
-	//TODO add file cleanup after clone.
 
 }
 
@@ -200,9 +181,7 @@ func TestGitGenerateChangelog(t *testing.T) {
 	2016-02-28T06:52Z | d4b8c3b5 | Update README.md | Jason Kulatunga
 	2016-02-28T00:01Z | d0d3fc8f | (v0.1.10) Automated packaging of release by CapsuleCD | CapsuleCD
 	`, changelog)
-
-	//TODO add file cleanup after clone.
-
+	
 }
 
 func deleteTestRepo(testRepoDirectory string){
