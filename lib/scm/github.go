@@ -25,7 +25,7 @@ type scmGithub struct {
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set options.GitParentPath
 // MUST set client
-func (g *scmGithub) Configure(client *http.Client) (error) {
+func (g *scmGithub) Init(client *http.Client) (error) {
 
 	g.options = new(ScmOptions)
 
@@ -278,6 +278,7 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 	})
 	return serr
 }
+
 
 func (g *scmGithub) Options() *ScmOptions {
 	log.Print("ORINT THE PARENT PATH", g.options)

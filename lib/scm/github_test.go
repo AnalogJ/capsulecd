@@ -54,7 +54,7 @@ func TestScmGithub(t *testing.T) {
 }
 
 
-func TestScmGithub_Configure(t *testing.T) {
+func TestScmGithub_Init(t *testing.T) {
 
 	config.Init()
 	config.Set("scm","github")
@@ -62,8 +62,8 @@ func TestScmGithub_Configure(t *testing.T) {
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
-	githubScm.Configure(nil)
-	assert.NotEmpty(t, githubScm.Options().GitParentPath, "GitParentPath must be set after source Configure")
+	githubScm.Init(nil)
+	assert.NotEmpty(t, githubScm.Options().GitParentPath, "GitParentPath must be set after source Init")
 
 }
 
@@ -74,7 +74,7 @@ func TestScmGithub_Configure_WithNoAuthToken(t *testing.T) {
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
 
-	cerr := githubScm.Configure(nil)
+	cerr := githubScm.Init(nil)
 	assert.Error(t, cerr)
 }
 
@@ -92,13 +92,13 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Configure(client)
+	githubScm.Init(client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
 	log.Print(payload)
 
-	assert.NotEmpty(t, payload, "payload must be set after source Configure")
+	assert.NotEmpty(t, payload, "payload must be set after source Init")
 
 	assert.True(t, githubScm.Options().IsPullRequest)
 }
@@ -119,7 +119,7 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Configure(client)
+	githubScm.Init(client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
@@ -129,7 +129,7 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 	assert.Equal(t, payload.Head.Repo.Name, "capsulecd")
 	assert.Equal(t, payload.Head.Repo.FullName, "AnalogJ/capsulecd")
 
-	assert.NotEmpty(t, payload, "payload must be set after source Configure")
+	assert.NotEmpty(t, payload, "payload must be set after source Init")
 
 	assert.False(t, githubScm.Options().IsPullRequest)
 }
@@ -149,7 +149,7 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Configure(client)
+	githubScm.Init(client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
@@ -175,7 +175,7 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Configure(client)
+	githubScm.Init(client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 

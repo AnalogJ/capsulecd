@@ -10,7 +10,7 @@ import (
 
 type Scm interface {
 	Options() *ScmOptions
-	Configure(client *http.Client) error
+	Init(client *http.Client) error
 	RetrievePayload() (*ScmPayload, error)
 	ProcessPushPayload(payload *ScmPayload) error
 	ProcessPullRequestPayload(payload *ScmPayload) error

@@ -54,6 +54,18 @@ func (str ScmUnauthorizedUser) Error() string {
 	return fmt.Sprintf("Scm Unauthorized User %q", string(str))
 }
 
+// Raised when the environment is missing a required tool/binary
+type EngineValidateToolError string
+func (str EngineValidateToolError) Error() string {
+	return fmt.Sprintf("Engine Validate Tool Error %q", string(str))
+}
+
+// Raised when the engine is not recognized
+type EngineUnspecifiedError string
+func (str EngineUnspecifiedError) Error() string {
+	return fmt.Sprintf("Engine Unspecified Error %q", string(str))
+}
+
 // Raised when the package is missing certain required files (ie metadata.rb, package.json, setup.py, etc)
 type EngineBuildPackageInvalid string
 func (str EngineBuildPackageInvalid) Error() string {

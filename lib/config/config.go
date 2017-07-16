@@ -16,7 +16,7 @@ import (
 // key/value store
 // default
 var v = viper.New()
-
+var initialized = false
 func Init(){
 	v = viper.New()
 	//set defaults
@@ -39,13 +39,18 @@ func Init(){
 
 	//CLI options will be added via the `Set()` function
 
+	initialized = true;
+}
+
+func IsInitialized() bool {
+	return initialized;
 }
 
 func ReadConfig(configFilePath string){
 
 
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		log.Print("The configuration file could not be found. Using defaults")
+		log.Print("The configuration file could not be found. Skipping")
 		return
 	}
 
