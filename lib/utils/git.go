@@ -9,7 +9,14 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"strings"
 )
+
+type GitTagDetails struct {
+	TagShortName string
+	CommitSha string
+	CommitDate time.Time
+}
 
 
 func GitClone(parentPath string, repositoryName string, gitRemote string) (string, error) {
@@ -215,59 +222,102 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, &git.PushOptions{})
 }
 
-func GitLatestTaggedCommit(repoPath string) (string, error) {
+func GitLatestTaggedCommit(repoPath string) (*GitTagDetails, error) {
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){return "", oerr}
+	if(oerr != nil){return nil, oerr}
 
 
 	_, terr := repo.Tags.List()
-	if(terr != nil){return "", terr}
+	if(terr != nil){return nil, terr}
 
-	//return fmt.Sprintf("PRINTING TAGS: %v", tags[0]), nil
-
+	var latestTag *GitTagDetails = nil
 
 	repo.Tags.Foreach(func(name string, id *git.Oid) error {
-		log.Printf("TAG name: %s ", name)
 		tag, lerr := repo.LookupTag(id)
 
+		var currentTag *GitTagDetails
 		//handle lightweight(non-annotated) tags.
 		if(lerr != nil){
 			//this is a lightweight tag
 
 			commitRef, rerr := repo.LookupCommit(id)
-			if(rerr != nil){return nil}
+			if(rerr != nil){
+				log.Print(rerr)
+				return nil}
 
-			commitDetails, derr := commitRef.Describe(&git.DescribeOptions{})
-			if(derr != nil){return nil}
+			author := commitRef.Author()
 
-			commitDetails.Format()
-			log.Printf(commitDetails)
+			log.Printf("Light-weight tag lookup: %s, DATE: %s",commitRef.Id().String(), author.When.String())
 
-			log.Printf("Light-weight tag lookup: %s, commit ID: %s",commitRef.Id().String(), id.String())
-
+			currentTag = &GitTagDetails{
+				TagShortName: strings.TrimPrefix(name, "refs/tags/"),
+				CommitSha: commitRef.Id().String(),
+				CommitDate: author.When,
+			}
 
 		} else {
-			log.Printf( "Tag ID: %s, Commit ID: %s, DATE: %s", id.String(), tag.Id().String(), tag.Tagger().When.String())
+
+			log.Printf( "Tag ID: %s, Commit ID: %s, DATE: %s", tag.Id().String(), tag.TargetId().String(), tag.Tagger().When.String())
+
+			currentTag = &GitTagDetails{
+				TagShortName: strings.TrimPrefix(name, "/refs/tags/"),
+				CommitSha: tag.TargetId().String(),
+				CommitDate: tag.Tagger().When,
+			}
 		}
 
+		if(latestTag == nil) || (latestTag != nil && currentTag.CommitDate.After(latestTag.CommitDate)) {
+			latestTag = currentTag
+		}
 
-
-		//tag, err := r.repository.LookupTag(id)
-		//if err != nil {
-		//	return err
-		//}
-		//log.Info(tag.Tagger().When)
 		return nil
 	})
 
-	return "", nil
+	return latestTag, nil
 }
 
 func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullName string) (string, error) {
-	return "", nil
+	repo, oerr := git.OpenRepository(repoPath)
+	if(oerr != nil){return "", oerr}
+
+	markdown := `Timestamp |  SHA | Message | Author
+	------------- | ------------- | ------------- | -------------
+	`
+
+
+	revWalk, werr := repo.Walk()
+	if(werr != nil){return "", werr}
+
+	rerr := revWalk.PushRange(fmt.Sprintf("%s..%s",baseSha, headSha))
+	if(rerr != nil){return "", rerr}
+
+	revWalk.Iterate(func(commit *git.Commit) bool {
+		log.Print(commit.Id().String())
+
+
+
+		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n\t", //TODO: this should ahve a link for the SHA.
+			commit.Author().When.UTC().Format("2006-01-02T15:04Z"),
+			commit.Id().String(),
+			cleanCommitMessage(commit.Message()),
+			commit.Author().Name,
+		)
+		return true
+	})
+	//for {
+	//	err := revWalk.Next()
+	//	if err != nil {
+	//		break
+	//	}
+	//
+	//	log.Info(gi.String())
+	//}
+
+	return markdown, nil
 }
 
 func GitGenerateGitIgnore(repoPath string, ignoreTypes string) (string, error) {
+	//https://github.com/GlenDC/go-gitignore/blob/master/gitignore/provider/github.go
 return "", nil
 }
 
@@ -280,6 +330,18 @@ func gitSignature() *git.Signature {
 		Email: "CapsuleCD@users.noreply.github.com",
 		When: time.Now(),
 	}
+}
+
+func cleanCommitMessage(commitMessage string) string {
+	commitMessage = strings.TrimSpace(commitMessage)
+	if(commitMessage == ""){
+		return "--"
+	}
+
+	commitMessage = strings.Replace(commitMessage, "|", "/", -1)
+	commitMessage = strings.Replace(commitMessage, "\n", " ", -1)
+
+	return commitMessage
 }
 
 //func gitRemoteCallbacks() *git.RemoteCallbacks {
