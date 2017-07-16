@@ -181,7 +181,6 @@ func TestGitGenerateChangelog(t *testing.T) {
 	2016-02-28T06:52Z | d4b8c3b5 | Update README.md | Jason Kulatunga
 	2016-02-28T00:01Z | d0d3fc8f | (v0.1.10) Automated packaging of release by CapsuleCD | CapsuleCD
 	`, changelog)
-	
 }
 
 func deleteTestRepo(testRepoDirectory string){

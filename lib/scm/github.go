@@ -13,6 +13,7 @@ import (
 	"capsulecd/lib/errors"
 	"fmt"
 	"net/url"
+	"capsulecd/lib/utils"
 )
 
 type scmGithub struct {
@@ -145,11 +146,12 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 	// clone the merged branch
 	// https://sethvargo.com/checkout-a-github-pull-request/
 	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
-// @source_git_local_path = CapsuleCD::GitUtils.clone(@source_git_parent_path, @source_git_head_info['repo']['name'], @source_git_remote)
-// CapsuleCD::GitUtils.checkout(@source_git_local_path, @source_git_head_info['repo']['sha1'])
 
+	gitLocalPath, cerr := utils.GitClone(g.options.GitParentPath, g.options.GitHeadInfo.Repo.Name, g.options.GitRemote)
+	if(cerr != nil){return cerr}
+	g.options.GitLocalPath = gitLocalPath
 
-	return nil
+	return utils.GitCheckout(g.options.GitLocalPath, g.options.GitHeadInfo.Sha)
 }
 
 // all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the pull request data.
