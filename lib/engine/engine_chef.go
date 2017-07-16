@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"capsulecd/lib/utils"
 	"encoding/json"
+	"log"
 )
 
 type chefMetadata struct {
@@ -34,7 +35,7 @@ func (g *engineChef) ValidateTools() (error) {
 	return nil
 }
 
-func (g *engineChef) Init(sourceScm * scm.Scm) (error) {
+func (g *engineChef) Init(sourceScm *scm.Scm) (error) {
 	g.Scm = sourceScm
 	g.CurrentMetadata = new(chefMetadata)
 	g.NextMetadata = new(chefMetadata)
@@ -43,9 +44,15 @@ func (g *engineChef) Init(sourceScm * scm.Scm) (error) {
 
 func (g *engineChef) BuildStep() (error) {
 	//validate that the chef metadata.rb file exists
+
 	if _, err := os.Stat(path.Join((*g.Scm).Options().GitLocalPath, "metadata.rb")); os.IsNotExist(err) {
 		return errors.EngineBuildPackageInvalid("metadata.rb file is required to process Chef cookbook")
 	}
+
+	// bump up the chef cookbook version
+	merr := g.retrieveCurrentMetadata((*g.Scm).Options().GitLocalPath)
+	if(merr != nil){ return merr }
+
 	return nil
 }
 

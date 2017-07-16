@@ -3,6 +3,7 @@ package errors
 import (
 	"log"
 	"fmt"
+	"errors"
 )
 
 func CheckErr(err error) {
@@ -11,93 +12,96 @@ func CheckErr(err error) {
 	}
 }
 
+func Custom(args string) error {
+	return errors.New(args)
+}
 
 // Raised when the config file specifies a hook/override for a step when the type is :repo
 type EngineTransformUnavailableStep string
 func (str EngineTransformUnavailableStep) Error() string {
-	return fmt.Sprintf("Engine Transform Unavailable Step %q", string(str))
+	return fmt.Sprintf("EngineTransformUnavailableStep: %q", string(str))
 }
 
 // Raised when there is an issue with the filesystem for scm checkout
 type ScmFilesystemError string
 func (str ScmFilesystemError) Error() string {
-	return fmt.Sprintf("Scm Filesystem Error %q", string(str))
+	return fmt.Sprintf("ScmFilesystemError: %q", string(str))
 }
 
 // Raised when the scm is not recognized
 type ScmUnspecifiedError string
 func (str ScmUnspecifiedError) Error() string {
-	return fmt.Sprintf("Scm Unspecified Error %q", string(str))
+	return fmt.Sprintf("ScmUnspecifiedError: %q", string(str))
 }
 
 // Raised when capsule cannot create an authenticated client for the source.
 type ScmAuthenticationFailed string
 func (str ScmAuthenticationFailed) Error() string {
-	return fmt.Sprintf("Scm Authentication Failed %q", string(str))
+	return fmt.Sprintf("ScmAuthenticationFailed: %q", string(str))
 }
 
 // Raised when there is an error parsing the repo payload format.
 type ScmPayloadFormatError string
 func (str ScmPayloadFormatError) Error() string {
-	return fmt.Sprintf("Scm Payload Format Error %q", string(str))
+	return fmt.Sprintf("ScmPayloadFormatError: %q", string(str))
 }
 
 // Raised when a source payload is unsupported/action is invalid
 type ScmPayloadUnsupported string
 func (str ScmPayloadUnsupported) Error() string {
-	return fmt.Sprintf("Scm Payload Unsupported %q", string(str))
+	return fmt.Sprintf("ScmPayloadUnsupported: %q", string(str))
 }
 
 // Raised when the user who started the packaging is unauthorized (non-collaborator)
 type ScmUnauthorizedUser string
 func (str ScmUnauthorizedUser) Error() string {
-	return fmt.Sprintf("Scm Unauthorized User %q", string(str))
+	return fmt.Sprintf("ScmUnauthorizedUser: %q", string(str))
 }
 
 // Raised when the environment is missing a required tool/binary
 type EngineValidateToolError string
 func (str EngineValidateToolError) Error() string {
-	return fmt.Sprintf("Engine Validate Tool Error %q", string(str))
+	return fmt.Sprintf("EngineValidateToolError: %q", string(str))
 }
 
 // Raised when the engine is not recognized
 type EngineUnspecifiedError string
 func (str EngineUnspecifiedError) Error() string {
-	return fmt.Sprintf("Engine Unspecified Error %q", string(str))
+	return fmt.Sprintf("EngineUnspecifiedError: %q", string(str))
 }
 
 // Raised when the package is missing certain required files (ie metadata.rb, package.json, setup.py, etc)
 type EngineBuildPackageInvalid string
 func (str EngineBuildPackageInvalid) Error() string {
-	return fmt.Sprintf("Engine Build Package Invalid %q", string(str))
+	return fmt.Sprintf("EngineBuildPackageInvalid: %q", string(str))
 }
 
 // Raised when the source could not be compiled or build for any reason
 type EngineBuildPackageFailed string
 func (str EngineBuildPackageFailed) Error() string {
-	return fmt.Sprintf("Engine Build Package Failed %q", string(str))
+	return fmt.Sprintf("EngineBuildPackageFailed: %q", string(str))
 }
 
 // Raised when package dependencies fail to install correctly.
 type EngineTestDependenciesError string
 func (str EngineTestDependenciesError) Error() string {
-	return fmt.Sprintf("Engine Test Dependencies Error %q", string(str))
+	return fmt.Sprintf("EngineTestDependenciesError: %q", string(str))
 }
 
 // Raised when the package test runner fails
 type EngineTestRunnerError string
 func (str EngineTestRunnerError) Error() string {
-	return fmt.Sprintf("Engine Test Runner Error %q", string(str))
+	return fmt.Sprintf("EngineTestRunnerError: %q", string(str))
 }
 
 // Raised when credentials required to upload/deploy new package are missing.
 type EngineReleaseCredentialsMissing string
 func (str EngineReleaseCredentialsMissing) Error() string {
-	return fmt.Sprintf("Engine Release Credentials Missing %q", string(str))
+	return fmt.Sprintf("EngineReleaseCredentialsMissing: %q", string(str))
 }
 
 // Raised when an error occurs while uploading package.
 type EngineReleasePackageError string
 func (str EngineReleasePackageError) Error() string {
-	return fmt.Sprintf("Engine Release Package Error %q", string(str))
+	return fmt.Sprintf("EngineReleasePackageError: %q", string(str))
 }
