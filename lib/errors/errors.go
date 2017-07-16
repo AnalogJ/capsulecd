@@ -18,6 +18,12 @@ func (str EngineTransformUnavailableStep) Error() string {
 	return fmt.Sprintf("Engine Transform Unavailable Step %q", string(str))
 }
 
+// Raised when there is an issue with the filesystem for scm checkout
+type ScmFilesystemError string
+func (str ScmFilesystemError) Error() string {
+	return fmt.Sprintf("Scm Filesystem Error %q", string(str))
+}
+
 // Raised when the scm is not recognized
 type ScmUnspecifiedError string
 func (str ScmUnspecifiedError) Error() string {

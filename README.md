@@ -270,3 +270,7 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://stackoverflow.com/questions/15148331/test-naming-conventions-in-golang
 - https://medium.com/@povilasve/go-advanced-tips-tricks-a872503ac859
 - https://blog.golang.org/error-handling-and-go
+- http://blog.hashbangbash.com/2014/04/linking-golang-statically/
+- https://gist.github.com/danielfbm/ba4ae91efa96bb4771351bdbd2c8b06f
+- https://gist.github.com/danielfbm/37b0ca88b745503557b2b3f16865d8c3
+- https://stackoverflow.com/questions/37026399/git2go-after-createcommit-all-files-appear-like-being-added-for-deletion

@@ -136,7 +136,7 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 		return err
 	}
 
-	u.User = url.UserPassword("",config.GetString("scm_github_access_token"))
+	u.User = url.UserPassword(config.GetString("scm_github_access_token"), "")
 	log.Printf("%s", u)
 
 	g.options.GitRemote  = u.String()

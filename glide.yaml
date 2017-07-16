@@ -5,6 +5,7 @@ import:
 - package: github.com/google/go-github
   subpackages:
   - github
+- package: gopkg.in/libgit2/git2go.v25
 testImport:
 - package: github.com/seborama/govcr
   version: ^2.3.0
