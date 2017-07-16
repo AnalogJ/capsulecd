@@ -42,7 +42,7 @@ func (b *scmBitbucket) Publish() error {
 	return nil
 }
 
-func (b *scmBitbucket) Notify() error {
+func (b *scmBitbucket) Notify(ref string, state string, message string) error {
 	return nil
 }
 

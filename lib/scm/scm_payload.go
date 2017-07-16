@@ -14,9 +14,12 @@ type ScmCommitInfo struct {
 }
 
 type ScmPayload struct {
-	Title string
 	Head *ScmCommitInfo
 	Base *ScmCommitInfo
+
+	//Pull Request specific fields
+	Title string
+	PullRequestNumber string
 }
 
 // TODO: validation almost needs to be source specific (or inherit from this base function), because source methods

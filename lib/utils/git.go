@@ -353,7 +353,7 @@ func cleanCommitMessage(commitMessage string) string {
 //
 //func credentialsCallback(url string, username_from_url string, allowed_types git.CredType) (git.ErrorCode, *git.Cred) {
 //	log.Printf("This is the CRED URL FOR PUSH: %s %s",url, username_from_url)
-//	ret, cred := git.NewCredUserpassPlaintext("d1fb4e41af2af60fd255a1106c24df2a0da3b6cf", "") //TODO: remote cred.
+//	ret, cred := git.NewCredUserpassPlaintext("placeholder", "") //TODO: remote cred.
 //
 //	log.Printf("THIS IS THE CRED RESPONS: %s %s", ret, cred)
 //	return git.ErrorCode(ret), &cred

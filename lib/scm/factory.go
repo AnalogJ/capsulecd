@@ -15,7 +15,7 @@ type Scm interface {
 	ProcessPushPayload(payload *ScmPayload) error
 	ProcessPullRequestPayload(payload *ScmPayload) error
 	Publish() error //create release.
-	Notify() error
+	Notify(ref string, state string, message string) error
 }
 
 func Create() (Scm, error) {

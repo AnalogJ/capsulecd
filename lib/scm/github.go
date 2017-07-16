@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"net/url"
 	"capsulecd/lib/utils"
+	"strconv"
 )
 
 type scmGithub struct {
@@ -91,8 +92,25 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 			return nil, errors.ScmAuthenticationFailed(fmt.Sprintf("Could not retrieve pull request from Github: %s", err))
 		}
 
+		//validate pullrequest
+		if(pr.GetState() != "open"){
+			return nil, errors.ScmPayloadUnsupported("Pull request has an invalid action")
+		}
+		if(pr.Base.Repo.GetDefaultBranch() != pr.Base.GetRef()){
+			return nil, errors.ScmPayloadUnsupported(fmt.Sprintf("Pull request is not being created against the default branch of this repository (%s vs %s)", pr.Base.Repo.GetDefaultBranch(), pr.Base.GetRef() ))
+		}
+		// check the payload push user.
+
+		//TODO: figure out how to do optional authenication. possible options, Source USER, token based auth, no auth when used with capsulecd.com.
+		// unless @source_client.collaborator?(payload['base']['repo']['full_name'], payload['user']['login'])
+		//
+		//   @source_client.add_comment(payload['base']['repo']['full_name'], payload['number'], CapsuleCD::BotUtils.pull_request_comment)
+		//   fail CapsuleCD::Error::SourceUnauthorizedUser, 'Pull request was opened by an unauthorized user'
+        	// end
+
 		return &ScmPayload{
 			Title: pr.GetTitle(),
+			PullRequestNumber: strconv.Itoa(pr.GetNumber()),
 			Head: &ScmCommitInfo{
 				Sha: pr.Head.GetSHA(),
 				Ref: pr.Head.GetRef(),
@@ -131,19 +149,11 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 		return err
 	}
 
-	if(config.IsSet("scm_github_access_token")){
-		// set the remote url, with embedded token
-		u, err := url.Parse(g.options.GitHeadInfo.Repo.CloneUrl)
-		if err != nil {
-			return err
-		}
-
-		u.User = url.UserPassword(config.GetString("scm_github_access_token"), "")
-		g.options.GitRemote  = u.String()
-	} else {
-		g.options.GitRemote = g.options.GitHeadInfo.Repo.CloneUrl
+	authRemote, aerr := authGitRemote(g.options.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
+	if(aerr != nil){
+		return aerr
 	}
-
+	g.options.GitRemote = authRemote
 	g.options.GitLocalBranch = g.options.GitHeadInfo.Ref
 
 	// clone the merged branch
@@ -167,18 +177,126 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 // REQUIRES client
 // REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPullRequestPayload(payload *ScmPayload) error {
-	return nil
+	//set the processed head info
+	g.options.GitHeadInfo = payload.Head
+	g.options.GitBaseInfo = payload.Base
+	herr := g.options.GitHeadInfo.Validate()
+	berr := g.options.GitBaseInfo.Validate()
+	if(herr != nil){
+		return herr
+	} else if(berr != nil){
+		return berr
+	}
+
+
+	authRemote, aerr := authGitRemote(g.options.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
+	if(aerr != nil){
+		return aerr
+	}
+	g.options.GitRemote = authRemote
+
+	// clone the merged branch
+	// https://sethvargo.com/checkout-a-github-pull-request/
+	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
+
+	gitLocalPath, cerr := utils.GitClone(g.options.GitParentPath, g.options.GitHeadInfo.Repo.Name, g.options.GitRemote)
+	if(cerr != nil){return cerr}
+	g.options.GitLocalPath = gitLocalPath
+	g.options.GitLocalBranch = fmt.Sprintf("pr_%s",payload.PullRequestNumber)
+
+	ferr := utils.GitFetch(g.options.GitLocalPath, fmt.Sprintf("refs/pull/%s/merge", payload.PullRequestNumber), g.options.GitLocalBranch)
+	if(ferr != nil){return ferr}
+
+	//return utils.GitCheckout(g.options.GitLocalPath, g.options.GitLocalBranch)
+	//
+	// show a processing message on the github PR.
+	g.Notify(g.options.GitHeadInfo.Sha, "pending", "Started processing package. Pull request will be merged automatically when complete.")
+	return nil;
 }
 
+// REQUIRES client
+// REQUIRES options.ScmReleaseCommit
+// REQUIRES options.GitLocalPath
+// REQUIRES options.GitLocalBranch
+// REQUIRES options.GitBaseInfo
+// REQUIRES options.GitHeadInfo
+// REQUIRES options.ReleaseArtifacts
+// REQUIRES options.GitParentPath
 func (g *scmGithub) Publish() error {
+	//// push the version bumped metadata file + newly created files to
+	//utils.GitPush(g.options.GitLocalPath, g.options.GitLocalBranch, g.options.GitBaseInfo.Ref)
+	//
+	////sleep because github needs time to process the new tag.
+	//time.Sleep(5 * time.Second)
+	//
+	//// calculate teh relaese sha
+	//releaseSha := utils.LeftPad2Len(g.options.ReleaseCommit, "0", 40)
+	//
+	////get the release changelog
+	//releaseBody, clerr := utils.GitGenerateChangelog(g.options.GitLocalPath, g.options.GitBaseInfo.Sha, g.options.GitHeadInfo.Sha, g.options.GitBaseInfo.Repo.FullName)
+	//if(clerr != nil){
+	//	return clerr
+	//}
+
+	//create release.
+	//release = @source_client.create_release(@source_git_base_info['repo']['full_name'], @source_release_commit.name,       target_commitish: release_sha,
+	//	name: @source_release_commit.name,
+	//	body: release_body)
+	//
+	//@source_release_artifacts.each do |release_artifact|
+	//@source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
+	//end
+	//
+	//FileUtils.remove_entry_secure @source_git_parent_path if Dir.exists?(@source_git_parent_path)
+	//# set the pull request status
+	//@source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',
+	//context: 'CapsuleCD',
+	//target_url: 'http://www.github.com/AnalogJ/capsulecd',
+	//description: 'Pull-request was successfully merged, new release created.')
+
+
 	return nil
 }
 
-func (g *scmGithub) Notify() error {
-	return nil
+// requires @source_client
+// requires @source_git_parent_path
+// requires @source_git_base_info
+// requires @source_git_head_info
+// requires @config.engine_disable_cleanup
+func (g *scmGithub) Notify(ref string, state string, message string) error {
+
+	targetURL := "https://www.capsulecd.com"
+	contextApp := "CapsuleCD"
+
+	ctx := context.Background()
+	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
+	_, _, serr := g.client.Repositories.CreateStatus(ctx, parts[0], parts[1], ref, &github.RepoStatus{
+		State: &state,
+		TargetURL: &targetURL,
+		Description: &message,
+		Context: &contextApp,
+	})
+	return serr
 }
 
 func (g *scmGithub) Options() *ScmOptions {
 	log.Print("ORINT THE PARENT PATH", g.options)
 	return g.options
+}
+
+
+//private
+
+func authGitRemote(cloneUrl string, accessToken string) (string, error) {
+	if(accessToken != ""){
+		// set the remote url, with embedded token
+		u, err := url.Parse(cloneUrl)
+		if err != nil {
+			return "", err
+		}
+		u.User = url.UserPassword(accessToken, "")
+		return u.String(), nil
+	} else {
+		return cloneUrl, nil
+	}
 }

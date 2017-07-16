@@ -135,7 +135,6 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 }
 
 func TestScmGithub_ProcessPushPayload(t *testing.T) {
-
 	config.Init()
 	config.Set("scm","github")
 	config.Set("scm_sha","0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
@@ -160,4 +159,31 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	assert.NotEmpty(t, githubScm.Options().GitLocalPath)
 	assert.NotEmpty(t, githubScm.Options().GitLocalBranch)
 	assert.NotNil(t, githubScm.Options().GitHeadInfo)
+}
+
+
+func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
+
+	config.Init()
+	config.Set("scm","github")
+	config.Set("scm_pull_request","12")
+	config.Set("scm_repo_full_name","AnalogJ/cookbook_analogj_test")
+	config.Set("scm_github_access_token", "")
+
+	githubScm, err := scm.Create()
+	assert.NoError(t, err)
+
+	client := vcrSetup(t)
+
+	githubScm.Configure(client)
+	payload, perr := githubScm.RetrievePayload()
+	assert.NoError(t, perr)
+
+	pperr := githubScm.ProcessPullRequestPayload(payload)
+	assert.NoError(t, pperr)
+
+	assert.NotEmpty(t, githubScm.Options().GitLocalPath)
+	assert.NotEmpty(t, githubScm.Options().GitLocalBranch)
+	assert.NotNil(t, githubScm.Options().GitHeadInfo)
+	assert.NotNil(t, githubScm.Options().GitBaseInfo)
 }
