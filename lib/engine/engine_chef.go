@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"capsulecd/lib/config"
 	"fmt"
+	"path/filepath"
 )
 
 type chefMetadata struct {
@@ -132,6 +133,51 @@ func (g *engineChef) PackageStep() (error) {
 }
 
 func (g *engineChef) DistStep() (error) {
+	pemPath, _ := filepath.Abs("~/client.pem")
+	knifePath, _ := filepath.Abs("~/knife.rb")
+
+	if(!config.IsSet("chef_supermarket_username") || !config.IsSet("chef_supermarket_key")){
+		return errors.EngineDistCredentialsMissing("Cannot deploy cookbook to supermarket, credentials missing")
+	}
+
+	// knife is really sensitive to folder names. The cookbook name MUST match the folder name otherwise knife throws up
+	// when doing a knife cookbook share. So we're going to make a new tmp directory, create a subdirectory with the EXACT
+	// cookbook name, and then copy the cookbook contents into it. Yeah yeah, its pretty nasty, but blame Chef.
+	tmpParentPath, terr := ioutil.TempDir("","")
+	if(terr != nil){return terr}
+	defer os.RemoveAll(tmpParentPath)
+
+	tmpLocalPath := path.Join(tmpParentPath, g.NextMetadata.Name)
+	cerr := utils.CopyDir((*g.Scm).Options().GitLocalPath, tmpLocalPath)
+	if(cerr != nil){return cerr}
+
+	// write the knife.rb config jfile.
+	knifeContent := fmt.Sprintf(
+		`node_name "%s" # Replace with the login name you use to login to the Supermarket.
+    		client_key "%s" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
+        	cookbook_path [ '%s' ] # Directory where the cookbook you're uploading resides.
+		`,
+		config.GetString("chef_supermarket_username"),
+		pemPath,
+		tmpParentPath,
+	)
+
+	kerr := ioutil.WriteFile(knifePath, []byte(knifeContent), 0644)
+	if(kerr != nil){return kerr}
+
+	perr := ioutil.WriteFile(pemPath, []byte(config.GetBase64Decoded("chef_supermarket_key")), 0644)
+	if(perr != nil){return perr}
+
+	cookbookDistCmd := fmt.Sprintf("knife cookbook site share %s %s -c %s",
+		g.NextMetadata.Name,
+		config.GetString("chef_supermarket_type"),
+		knifePath,
+	)
+
+	derr := utils.BashCmdExec(cookbookDistCmd,"","")
+	if(derr != nil){
+		return errors.EngineDistPackageError("knife cookbook upload to supermarket failed")
+	}
 	return nil
 }
 

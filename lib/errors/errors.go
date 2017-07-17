@@ -16,12 +16,6 @@ func Custom(args string) error {
 	return errors.New(args)
 }
 
-// Raised when the config file specifies a hook/override for a step when the type is :repo
-type EngineTransformUnavailableStep string
-func (str EngineTransformUnavailableStep) Error() string {
-	return fmt.Sprintf("EngineTransformUnavailableStep: %q", string(str))
-}
-
 // Raised when there is an issue with the filesystem for scm checkout
 type ScmFilesystemError string
 func (str ScmFilesystemError) Error() string {
@@ -56,6 +50,12 @@ func (str ScmPayloadUnsupported) Error() string {
 type ScmUnauthorizedUser string
 func (str ScmUnauthorizedUser) Error() string {
 	return fmt.Sprintf("ScmUnauthorizedUser: %q", string(str))
+}
+
+// Raised when the config file specifies a hook/override for a step when the type is :repo
+type EngineTransformUnavailableStep string
+func (str EngineTransformUnavailableStep) Error() string {
+	return fmt.Sprintf("EngineTransformUnavailableStep: %q", string(str))
 }
 
 // Raised when the environment is missing a required tool/binary
@@ -95,13 +95,13 @@ func (str EngineTestRunnerError) Error() string {
 }
 
 // Raised when credentials required to upload/deploy new package are missing.
-type EngineReleaseCredentialsMissing string
-func (str EngineReleaseCredentialsMissing) Error() string {
-	return fmt.Sprintf("EngineReleaseCredentialsMissing: %q", string(str))
+type EngineDistCredentialsMissing string
+func (str EngineDistCredentialsMissing) Error() string {
+	return fmt.Sprintf("EngineDistCredentialsMissing: %q", string(str))
 }
 
 // Raised when an error occurs while uploading package.
-type EngineReleasePackageError string
-func (str EngineReleasePackageError) Error() string {
-	return fmt.Sprintf("EngineReleasePackageError: %q", string(str))
+type EngineDistPackageError string
+func (str EngineDistPackageError) Error() string {
+	return fmt.Sprintf("EngineDistPackageError: %q", string(str))
 }
