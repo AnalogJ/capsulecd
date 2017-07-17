@@ -127,7 +127,7 @@ TOX
             index-servers=pypi
 
             [pypi]
-            repository = https://pypi.python.org/pypi
+            repository = https://upload.pypi.org/legacy/
             username = #{@config.pypi_username}
             password = #{@config.pypi_password}
           EOT

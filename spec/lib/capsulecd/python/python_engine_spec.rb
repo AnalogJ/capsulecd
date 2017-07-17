@@ -120,7 +120,9 @@ describe 'CapsuleCD::Python::PythonEngine', :python do
           allow(git_commit_double).to receive(:name).and_return('v1.0.7')
 
           #stub methods in release_step
-          allow(Open3).to receive(:popen3).with('python setup.py sdist upload',{:chdir=>source_git_local_path}).and_return(true)
+          allow(Open3).to receive(:popen3).with('python setup.py sdist',{:chdir=>source_git_local_path}).and_return(true)
+          allow(Open3).to receive(:popen3).with("twine upload --config-file #{File.expand_path('~/.pypirc')}  dist/*",{:chdir=>source_git_local_path}).and_return(true)
+
           allow(File).to receive(:open).with(File.expand_path('~/.pypirc'), 'w+').and_return(true)
 
           #stub methods in source_release
