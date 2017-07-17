@@ -125,10 +125,10 @@ func (g *engineChef) PackageStep() (error) {
 
 	cerr := utils.GitCommit((*g.Scm).Options().GitLocalPath,fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version))
 	if(cerr != nil){return cerr}
-	_, terr := utils.GitTag((*g.Scm).Options().GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
+	tagCommit, terr := utils.GitTag((*g.Scm).Options().GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
 	if(terr != nil){return terr}
 
-	//TODO: do something with the tag output.
+	(*g.Scm).Options().ReleaseCommit = tagCommit
 	return nil
 }
 
