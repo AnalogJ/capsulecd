@@ -13,7 +13,7 @@ type Engine interface {
 	BuildStep() error
 	TestStep() error
 	PackageStep() error
-	ReleaseStep() error
+	DistStep() error
 }
 
 func Create() (Engine, error) {

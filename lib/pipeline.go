@@ -108,19 +108,19 @@ func (p *Pipeline) Start(){
 
 	if scmImpl.Options().IsPullRequest {
 		// this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
-		p.NotifyStep("release", func() error {
-			p.PreReleaseStep()
-			engineImpl.ReleaseStep()
-			p.PostReleaseStep()
+		p.NotifyStep("dist", func() error {
+			p.PreDistStep()
+			engineImpl.DistStep()
+			p.PostDistStep()
 			return nil
 		})
 
 		// this step should push the merged, tested and version updated code up to the source code repository
 		// this step should also do any source specific releases (github release, asset uploading, etc)
 		p.NotifyStep("scm publish", func() error {
-			p.PreScmRelease()
+			p.PreScmPublish()
 			scmImpl.Publish()
-			p.PostScmRelease()
+			p.PostScmPublish()
 			return nil
 		})
 	}
@@ -135,8 +135,8 @@ func (p *Pipeline) PreScmProcessPullRequestPayload(){}
 func (p *Pipeline) PostScmProcessPullRequestPayload(){}
 func (p *Pipeline) PreScmProcessPushPayload(){}
 func (p *Pipeline) PostScmProcessPushPayload(){}
-func (p *Pipeline) PreScmRelease(){}
-func (p *Pipeline) PostScmRelease(){}
+func (p *Pipeline) PreScmPublish(){}
+func (p *Pipeline) PostScmPublish(){}
 func (p *Pipeline) PreScmRetrievePayload(){}
 func (p *Pipeline) PostScmRetrievePayload(){}
 func (p *Pipeline) PreBuildStep(){}
@@ -145,8 +145,8 @@ func (p *Pipeline) PreTestStep(){}
 func (p *Pipeline) PostTestStep(){}
 func (p *Pipeline) PrePackageStep(){}
 func (p *Pipeline) PostPackageStep(){}
-func (p *Pipeline) PreReleaseStep(){}
-func (p *Pipeline) PostReleaseStep(){}
+func (p *Pipeline) PreDistStep(){}
+func (p *Pipeline) PostDistStep(){}
 
 func (p *Pipeline) NotifyStep(step string, callback func() error){
 	(*p.SourceScm).Notify((*p.SourceScm).Options().GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))

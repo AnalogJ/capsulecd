@@ -9,6 +9,8 @@ import (
 	"os/exec"
 	"capsulecd/lib/utils"
 	"encoding/json"
+	"capsulecd/lib/config"
+	"fmt"
 )
 
 type chefMetadata struct {
@@ -29,8 +31,12 @@ func (g *engineChef) ValidateTools() (error) {
 		return errors.EngineValidateToolError("knife binary is missing")
 	}
 
-	if _, berr := exec.LookPath("berkshelf"); berr != nil {
+	if _, berr := exec.LookPath("berks"); berr != nil {
 		return errors.EngineValidateToolError("berkshelf binary is missing")
+	}
+
+	if _, berr := exec.LookPath("bundle"); berr != nil {
+		return errors.EngineValidateToolError("bundler binary is missing")
 	}
 
 	return nil
@@ -69,7 +75,7 @@ func (g *engineChef) BuildStep() (error) {
 	}
 	berksfilePath := path.Join((*g.Scm).Options().GitLocalPath, "Berksfile")
 	if !utils.FileExists(berksfilePath){
-		ioutil.WriteFile(berksfilePath, []byte("site :opscode"), 0644)
+		ioutil.WriteFile(berksfilePath, []byte("site \"https://supermarket.chef.io\""), 0644)
 	}
 	gemfilePath := path.Join((*g.Scm).Options().GitLocalPath, "Gemfile")
 	if !utils.FileExists(gemfilePath){
@@ -87,14 +93,45 @@ func (g *engineChef) BuildStep() (error) {
 }
 
 func (g *engineChef) TestStep() (error) {
+	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
+	cerr := utils.CmdExec("berks", []string{"install"}, (*g.Scm).Options().GitLocalPath, "")
+	if(cerr != nil) {return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")}
+
+	//download all its gem dependencies
+	berr := utils.CmdExec("bundle", []string{"install"}, (*g.Scm).Options().GitLocalPath, "")
+	if(berr != nil) {return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")}
+
+	//skip the test command if disabled
+	if(config.GetBool("engine_disable_test")){
+		return nil
+	}
+
+	//run test command
+	var testCmd string
+	if config.IsSet("engine_cmd_test") {
+		testCmd = config.GetString("engine_cmd_test")
+	} else{
+		testCmd = "rake test"
+	}
+	terr := utils.BashCmdExec(testCmd, (*g.Scm).Options().GitLocalPath, "")
+	if(terr != nil){return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))}
 	return nil
 }
 
 func (g *engineChef) PackageStep() (error) {
+	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
+	// as they will be included in the commmit and any release artifacts)
+
+	cerr := utils.GitCommit((*g.Scm).Options().GitLocalPath,fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version))
+	if(cerr != nil){return cerr}
+	_, terr := utils.GitTag((*g.Scm).Options().GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
+	if(terr != nil){return terr}
+
+	//TODO: do something with the tag output.
 	return nil
 }
 
-func (g *engineChef) ReleaseStep() (error) {
+func (g *engineChef) DistStep() (error) {
 	return nil
 }
 

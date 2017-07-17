@@ -9,6 +9,10 @@ import (
 	"capsulecd/lib/errors"
 )
 
+func BashCmdExec(cmd string, workingDir string, logPrefix string) error {
+	return CmdExec("sh", []string{"-c", cmd}, workingDir, logPrefix)
+}
+
 func CmdExec(cmdName string, cmdArgs []string, workingDir string, logPrefix string) error {
 
 	if(logPrefix == ""){
