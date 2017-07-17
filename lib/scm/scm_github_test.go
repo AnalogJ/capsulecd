@@ -14,6 +14,7 @@ import (
 	"context"
 	"crypto/tls"
 	"os"
+	"capsulecd/lib/pipeline"
 )
 
 
@@ -60,10 +61,11 @@ func TestScmGithub_Init(t *testing.T) {
 	config.Set("scm","github")
 	config.Set("scm_github_access_token","github")
 
+	pipelineData := new(pipeline.PipelineData)
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
-	githubScm.Init(nil)
-	assert.NotEmpty(t, githubScm.Options().GitParentPath, "GitParentPath must be set after source Init")
+	githubScm.Init(pipelineData, nil)
+	assert.NotEmpty(t, pipelineData.GitParentPath, "GitParentPath must be set after source Init")
 
 }
 
@@ -74,7 +76,7 @@ func TestScmGithub_Configure_WithNoAuthToken(t *testing.T) {
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
 
-	cerr := githubScm.Init(nil)
+	cerr := githubScm.Init(new(pipeline.PipelineData), nil)
 	assert.Error(t, cerr)
 }
 
@@ -92,7 +94,8 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Init(client)
+	pipelineData := new(pipeline.PipelineData)
+	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
@@ -100,7 +103,7 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
 	assert.NotEmpty(t, payload, "payload must be set after source Init")
 
-	assert.True(t, githubScm.Options().IsPullRequest)
+	assert.True(t, pipelineData.IsPullRequest)
 }
 
 func TestScmGithub_RetrievePayload_Push(t *testing.T) {
@@ -119,7 +122,9 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Init(client)
+	pipelineData := new(pipeline.PipelineData)
+
+	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
@@ -131,7 +136,7 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	assert.NotEmpty(t, payload, "payload must be set after source Init")
 
-	assert.False(t, githubScm.Options().IsPullRequest)
+	assert.False(t, pipelineData.IsPullRequest)
 }
 
 func TestScmGithub_ProcessPushPayload(t *testing.T) {
@@ -149,16 +154,18 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	githubScm.Init(client)
+	pipelineData := new(pipeline.PipelineData)
+
+	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
 	pperr := githubScm.ProcessPushPayload(payload)
 	assert.NoError(t, pperr)
 
-	assert.NotEmpty(t, githubScm.Options().GitLocalPath)
-	assert.NotEmpty(t, githubScm.Options().GitLocalBranch)
-	assert.NotNil(t, githubScm.Options().GitHeadInfo)
+	assert.NotEmpty(t, pipelineData.GitLocalPath)
+	assert.NotEmpty(t, pipelineData.GitLocalBranch)
+	assert.NotNil(t, pipelineData.GitHeadInfo)
 }
 
 
@@ -174,16 +181,17 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	assert.NoError(t, err)
 
 	client := vcrSetup(t)
+	pipelineData := new(pipeline.PipelineData)
 
-	githubScm.Init(client)
+	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
 
 	pperr := githubScm.ProcessPullRequestPayload(payload)
 	assert.NoError(t, pperr)
 
-	assert.NotEmpty(t, githubScm.Options().GitLocalPath)
-	assert.NotEmpty(t, githubScm.Options().GitLocalBranch)
-	assert.NotNil(t, githubScm.Options().GitHeadInfo)
-	assert.NotNil(t, githubScm.Options().GitBaseInfo)
+	assert.NotEmpty(t, pipelineData.GitLocalPath)
+	assert.NotEmpty(t, pipelineData.GitLocalBranch)
+	assert.NotNil(t, pipelineData.GitHeadInfo)
+	assert.NotNil(t, pipelineData.GitBaseInfo)
 }

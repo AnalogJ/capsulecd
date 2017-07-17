@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"capsulecd/lib/utils"
 	"os"
+	"capsulecd/lib/pipeline"
 )
 
 func TestEngineChef(t *testing.T) {
@@ -42,7 +43,9 @@ func TestEngineChef_BuildStep(t *testing.T) {
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
-	githubScm.Init(nil)
+
+	pipelineData := new(pipeline.PipelineData)
+	githubScm.Init(pipelineData, nil)
 
 	chefEngine, err := engine.Create()
 	assert.NoError(t, err)
@@ -50,8 +53,8 @@ func TestEngineChef_BuildStep(t *testing.T) {
 	absPath, aerr := filepath.Abs(dirPath)
 	assert.NoError(t, aerr)
 
-	githubScm.Options().GitLocalPath = absPath
-	chefEngine.Init(githubScm)
+	pipelineData.GitLocalPath = absPath
+	chefEngine.Init(pipelineData, githubScm)
 
 	berr := chefEngine.BuildStep()
 	assert.NoError(t, berr)
@@ -77,7 +80,9 @@ func TestEngineChef_TestStep(t *testing.T) {
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
-	githubScm.Init(nil)
+
+	pipelineData := new(pipeline.PipelineData)
+	githubScm.Init(pipelineData, nil)
 
 	chefEngine, err := engine.Create()
 	assert.NoError(t, err)
@@ -85,8 +90,8 @@ func TestEngineChef_TestStep(t *testing.T) {
 	absPath, aerr := filepath.Abs(dirPath)
 	assert.NoError(t, aerr)
 
-	githubScm.Options().GitLocalPath = absPath
-	chefEngine.Init(githubScm)
+	pipelineData.GitLocalPath = absPath
+	chefEngine.Init(pipelineData, githubScm)
 
 	berr := chefEngine.BuildStep()
 	assert.NoError(t, berr)

@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"capsulecd/lib/errors"
 	"fmt"
+	"capsulecd/lib/pipeline"
 )
 
 
 type Scm interface {
-	Options() *ScmOptions
-	Init(client *http.Client) error
+	Init(pipelineData *pipeline.PipelineData, client *http.Client) error
 	RetrievePayload() (*ScmPayload, error)
 	ProcessPushPayload(payload *ScmPayload) error
 	ProcessPullRequestPayload(payload *ScmPayload) error

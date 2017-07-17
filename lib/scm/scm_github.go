@@ -16,37 +16,38 @@ import (
 	"capsulecd/lib/utils"
 	"strconv"
 	"time"
+	"capsulecd/lib/pipeline"
 )
 
 type scmGithub struct {
-	options *ScmOptions
-	client  *github.Client
+	PipelineData *pipeline.PipelineData
+	Client       *github.Client
 }
 
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set options.GitParentPath
 // MUST set client
-func (g *scmGithub) Init(client *http.Client) (error) {
+func (g *scmGithub) Init(pipelineData *pipeline.PipelineData, client *http.Client) (error) {
 
-	g.options = new(ScmOptions)
+	g.PipelineData = pipelineData
 
 	if !config.IsSet("scm_github_access_token") {
 		return errors.ScmAuthenticationFailed("Missing github access token")
 	}
 	if config.IsSet("scm_git_parent_path") {
-		g.options.GitParentPath = config.GetString("scm_git_parent_path")
-		os.MkdirAll(g.options.GitParentPath, os.ModePerm)
+		g.PipelineData.GitParentPath = config.GetString("scm_git_parent_path")
+		os.MkdirAll(g.PipelineData.GitParentPath, os.ModePerm)
 	} else {
 		dirPath, err := ioutil.TempDir("","")
 		if err != nil {
 			return err
 		}
-		g.options.GitParentPath = dirPath
+		g.PipelineData.GitParentPath = dirPath
 	}
 
 	if(client != nil){
 		//primarily used for testing.
-		g.client = github.NewClient(client)
+		g.Client = github.NewClient(client)
 	} else {
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(
@@ -56,7 +57,7 @@ func (g *scmGithub) Init(client *http.Client) (error) {
 
 		//TODO: autopaginate turned on.
 		//TODO: add support for alternative api endpoints "scm_github_api_endpoint"
-		g.client = github.NewClient(tc)
+		g.Client = github.NewClient(tc)
 	}
 
 	return nil
@@ -69,13 +70,13 @@ func (g *scmGithub) Init(client *http.Client) (error) {
 func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 	if !config.IsSet("scm_pull_request") {
 		log.Print("This is not a pull request. No automatic continuous deployment processing required. Continuous Integration testing will continue.")
-		g.options.IsPullRequest = false
+		g.PipelineData.IsPullRequest = false
 
 		return &ScmPayload{
-			Head: &ScmCommitInfo{
+			Head: &pipeline.PipelineScmCommitInfo{
 				Sha: config.GetString("scm_sha"),
 				Ref: config.GetString("scm_branch"),
-				Repo: &ScmRepoInfo{
+				Repo: &pipeline.PipelineScmRepoInfo{
 					CloneUrl: config.GetString("scm_clone_url"),
 					Name: config.GetString("scm_repo_name"),
 					FullName: config.GetString("scm_repo_full_name"),
@@ -84,10 +85,10 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 		}, nil
 		//make this as similar to a pull request as possible
 	} else {
-		g.options.IsPullRequest = true
+		g.PipelineData.IsPullRequest = true
 		ctx := context.Background()
 		parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
-		pr, _, err := g.client.PullRequests.Get(ctx, parts[0],parts[1], config.GetInt("scm_pull_request"))
+		pr, _, err := g.Client.PullRequests.Get(ctx, parts[0],parts[1], config.GetInt("scm_pull_request"))
 
 		if(err != nil){
 			return nil, errors.ScmAuthenticationFailed(fmt.Sprintf("Could not retrieve pull request from Github: %s", err))
@@ -112,19 +113,19 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 		return &ScmPayload{
 			Title: pr.GetTitle(),
 			PullRequestNumber: strconv.Itoa(pr.GetNumber()),
-			Head: &ScmCommitInfo{
+			Head: &pipeline.PipelineScmCommitInfo{
 				Sha: pr.Head.GetSHA(),
 				Ref: pr.Head.GetRef(),
-				Repo: &ScmRepoInfo{
+				Repo: &pipeline.PipelineScmRepoInfo{
 					CloneUrl: pr.Head.Repo.GetCloneURL(),
 					Name: pr.Head.Repo.GetName(),
 					FullName: pr.Head.Repo.GetFullName(),
 				},
 			},
-			Base: &ScmCommitInfo{
+			Base: &pipeline.PipelineScmCommitInfo{
 				Sha: pr.Base.GetSHA(),
 				Ref: pr.Base.GetRef(),
-				Repo: &ScmRepoInfo{
+				Repo: &pipeline.PipelineScmRepoInfo{
 					CloneUrl: pr.Base.Repo.GetCloneURL(),
 					Name: pr.Base.Repo.GetName(),
 					FullName: pr.Base.Repo.GetFullName(),
@@ -144,28 +145,28 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 // REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 	//set the processed head info
-	g.options.GitHeadInfo = payload.Head
-	err := g.options.GitHeadInfo.Validate()
+	g.PipelineData.GitHeadInfo = payload.Head
+	err := g.PipelineData.GitHeadInfo.Validate()
 	if(err != nil){
 		return err
 	}
 
-	authRemote, aerr := authGitRemote(g.options.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
 	if(aerr != nil){
 		return aerr
 	}
-	g.options.GitRemote = authRemote
-	g.options.GitLocalBranch = g.options.GitHeadInfo.Ref
+	g.PipelineData.GitRemote = authRemote
+	g.PipelineData.GitLocalBranch = g.PipelineData.GitHeadInfo.Ref
 
 	// clone the merged branch
 	// https://sethvargo.com/checkout-a-github-pull-request/
 	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
 
-	gitLocalPath, cerr := utils.GitClone(g.options.GitParentPath, g.options.GitHeadInfo.Repo.Name, g.options.GitRemote)
+	gitLocalPath, cerr := utils.GitClone(g.PipelineData.GitParentPath, g.PipelineData.GitHeadInfo.Repo.Name, g.PipelineData.GitRemote)
 	if(cerr != nil){return cerr}
-	g.options.GitLocalPath = gitLocalPath
+	g.PipelineData.GitLocalPath = gitLocalPath
 
-	return utils.GitCheckout(g.options.GitLocalPath, g.options.GitHeadInfo.Ref)
+	return utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref)
 }
 
 // all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the pull request data.
@@ -179,10 +180,10 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 // REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPullRequestPayload(payload *ScmPayload) error {
 	//set the processed head info
-	g.options.GitHeadInfo = payload.Head
-	g.options.GitBaseInfo = payload.Base
-	herr := g.options.GitHeadInfo.Validate()
-	berr := g.options.GitBaseInfo.Validate()
+	g.PipelineData.GitHeadInfo = payload.Head
+	g.PipelineData.GitBaseInfo = payload.Base
+	herr := g.PipelineData.GitHeadInfo.Validate()
+	berr := g.PipelineData.GitBaseInfo.Validate()
 	if(herr != nil){
 		return herr
 	} else if(berr != nil){
@@ -190,28 +191,28 @@ func (g *scmGithub) ProcessPullRequestPayload(payload *ScmPayload) error {
 	}
 
 
-	authRemote, aerr := authGitRemote(g.options.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
 	if(aerr != nil){
 		return aerr
 	}
-	g.options.GitRemote = authRemote
+	g.PipelineData.GitRemote = authRemote
 
 	// clone the merged branch
 	// https://sethvargo.com/checkout-a-github-pull-request/
 	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
 
-	gitLocalPath, cerr := utils.GitClone(g.options.GitParentPath, g.options.GitHeadInfo.Repo.Name, g.options.GitRemote)
+	gitLocalPath, cerr := utils.GitClone(g.PipelineData.GitParentPath, g.PipelineData.GitHeadInfo.Repo.Name, g.PipelineData.GitRemote)
 	if(cerr != nil){return cerr}
-	g.options.GitLocalPath = gitLocalPath
-	g.options.GitLocalBranch = fmt.Sprintf("pr_%s",payload.PullRequestNumber)
+	g.PipelineData.GitLocalPath = gitLocalPath
+	g.PipelineData.GitLocalBranch = fmt.Sprintf("pr_%s",payload.PullRequestNumber)
 
-	ferr := utils.GitFetch(g.options.GitLocalPath, fmt.Sprintf("refs/pull/%s/merge", payload.PullRequestNumber), g.options.GitLocalBranch)
+	ferr := utils.GitFetch(g.PipelineData.GitLocalPath, fmt.Sprintf("refs/pull/%s/merge", payload.PullRequestNumber), g.PipelineData.GitLocalBranch)
 	if(ferr != nil){return ferr}
 
 	//return utils.GitCheckout(g.options.GitLocalPath, g.options.GitLocalBranch)
 	//
 	// show a processing message on the github PR.
-	g.Notify(g.options.GitHeadInfo.Sha, "pending", "Started processing package. Pull request will be merged automatically when complete.")
+	g.Notify(g.PipelineData.GitHeadInfo.Sha, "pending", "Started processing package. Pull request will be merged automatically when complete.")
 	return nil;
 }
 
@@ -228,26 +229,26 @@ func (g *scmGithub) Publish() error {
 	// set the pull request status (we do this before the merge, because we cant update status on a merged
 	//PR anways. If the push fails, the status will be set to error correctly.
 	return g.Notify(
-		g.options.GitBaseInfo.Repo.FullName,
+		g.PipelineData.GitBaseInfo.Repo.FullName,
 		"success",
 		"Pull-request was successfully merged, new release created.",
 	)
 
 	// push the version bumped metadata file + newly created files to
-	perr := utils.GitPush(g.options.GitLocalPath, g.options.GitLocalBranch, g.options.GitBaseInfo.Ref)
+	perr := utils.GitPush(g.PipelineData.GitLocalPath, g.PipelineData.GitLocalBranch, g.PipelineData.GitBaseInfo.Ref)
 	if(perr != nil){ return perr }
 	//sleep because github needs time to process the new tag.
 	time.Sleep(5 * time.Second)
 
 	// calculate teh relaese sha
-	releaseSha := utils.LeftPad2Len(g.options.ReleaseCommit, "0", 40)
+	releaseSha := utils.LeftPad2Len(g.PipelineData.ReleaseCommit, "0", 40)
 
 	//get the release changelog
 	releaseBody, clerr := utils.GitGenerateChangelog(
-		g.options.GitLocalPath,
-		g.options.GitBaseInfo.Sha,
-		g.options.GitHeadInfo.Sha,
-		g.options.GitBaseInfo.Repo.FullName,
+		g.PipelineData.GitLocalPath,
+		g.PipelineData.GitBaseInfo.Sha,
+		g.PipelineData.GitHeadInfo.Sha,
+		g.PipelineData.GitBaseInfo.Repo.FullName,
 	)
 	if(clerr != nil){
 		return clerr
@@ -256,8 +257,8 @@ func (g *scmGithub) Publish() error {
 	//create release.
 	ctx := context.Background()
 	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
-	version := fmt.Sprintf("v%s", g.options.ReleaseVersion)
-	g.client.Repositories.CreateRelease(
+	version := fmt.Sprintf("v%s", g.PipelineData.ReleaseVersion)
+	g.Client.Repositories.CreateRelease(
 		ctx,
 		parts[0],
 		parts[1],
@@ -274,7 +275,7 @@ func (g *scmGithub) Publish() error {
 	//	@source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
 	//end
 	//
-	os.RemoveAll(g.options.GitParentPath)
+	os.RemoveAll(g.PipelineData.GitParentPath)
 	return nil
 
 }
@@ -291,7 +292,7 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 
 	ctx := context.Background()
 	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
-	_, _, serr := g.client.Repositories.CreateStatus(ctx, parts[0], parts[1], ref, &github.RepoStatus{
+	_, _, serr := g.Client.Repositories.CreateStatus(ctx, parts[0], parts[1], ref, &github.RepoStatus{
 		State: &state,
 		TargetURL: &targetURL,
 		Description: &message,
@@ -299,12 +300,6 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 	})
 	return serr
 }
-
-
-func (g *scmGithub) Options() *ScmOptions {
-	return g.options
-}
-
 
 //private
 

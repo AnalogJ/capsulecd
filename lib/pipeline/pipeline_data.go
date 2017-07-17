@@ -1,9 +1,9 @@
-package scm
+package pipeline
 
-type ScmOptions struct {
+type PipelineData struct {
 	IsPullRequest bool
-	GitBaseInfo *ScmCommitInfo
-	GitHeadInfo *ScmCommitInfo
+	GitBaseInfo *PipelineScmCommitInfo
+	GitHeadInfo *PipelineScmCommitInfo
 	GitParentPath string
 	GitLocalPath string
 	GitLocalBranch string

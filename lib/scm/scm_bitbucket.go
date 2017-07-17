@@ -5,29 +5,31 @@ import (
 	"context"
 	"golang.org/x/oauth2"
 	"net/http"
+	"capsulecd/lib/pipeline"
 )
 
 type scmBitbucket struct {
-	client *github.Client
-	options *ScmOptions
+	Client       *github.Client
+	PipelineData *pipeline.PipelineData
 }
 
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set @git_parent_path
 // MUST set @client field
-func (b *scmBitbucket) Init(client *http.Client) error {
+func (b *scmBitbucket) Init(pipelineData *pipeline.PipelineData, client *http.Client) error {
+	b.PipelineData = pipelineData
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: "... your access token ..."},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
-	b.client = github.NewClient(tc)
+	b.Client = github.NewClient(tc)
 	return nil
 }
 
 func (b *scmBitbucket) RetrievePayload() (*ScmPayload, error) {
-	return &ScmPayload{}, nil
+	return new(ScmPayload), nil
 }
 
 func (b *scmBitbucket) ProcessPushPayload(payload *ScmPayload) error {
@@ -44,8 +46,4 @@ func (b *scmBitbucket) Publish() error {
 
 func (b *scmBitbucket) Notify(ref string, state string, message string) error {
 	return nil
-}
-
-func (b *scmBitbucket) Options() *ScmOptions {
-	return b.options
 }

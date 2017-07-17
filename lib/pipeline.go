@@ -8,11 +8,13 @@ import (
 	"path"
 	"fmt"
 	"log"
+	"capsulecd/lib/pipeline"
 )
 
 type Pipeline struct {
-	SourceScm scm.Scm
-	Engine engine.Engine
+	Data	*pipeline.PipelineData
+	Scm    	scm.Scm
+	Engine 	engine.Engine
 }
 
 func (p *Pipeline) Start(){
@@ -22,16 +24,18 @@ func (p *Pipeline) Start(){
 		config.Init()
 	}
 
+	p.Data = new(pipeline.PipelineData)
+
 	//Generate a new instance of the sourceScm
 	scmImpl, serr := scm.Create()
 	errors.CheckErr(serr)
-	p.SourceScm = scmImpl
+	p.Scm = scmImpl
 
 	//Generate a new instance of the engine
 	engineImpl, eerr := engine.Create()
 	errors.CheckErr(eerr)
 	p.Engine = engineImpl
-	engineImpl.Init(scmImpl)
+	engineImpl.Init(p.Data, scmImpl)
 
 	p.PreValidateTools()
 	engineImpl.ValidateTools()
@@ -41,7 +45,7 @@ func (p *Pipeline) Start(){
 	// MUST set options.GitParentPath
 	// MUST set options.Client
 	p.PreScmInit()
-	scmImpl.Init(nil)
+	scmImpl.Init(p.Data, nil)
 	p.PostScmInit()
 
 	// runner must determine if this is a pull request or a push.
@@ -54,7 +58,7 @@ func (p *Pipeline) Start(){
 	payload, _ := scmImpl.RetrievePayload()
 	p.PostScmRetrievePayload()
 
-	if scmImpl.Options().IsPullRequest {
+	if p.Data.IsPullRequest {
 		// all capsule CD processing will be kicked off via a payload. In this case the payload is the pull request data.
 		// should check if the pull request opener even has permissions to create a release.
 		// all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
@@ -79,7 +83,7 @@ func (p *Pipeline) Start(){
 	}
 
 	// update the config with repo config file options
-	config.ReadConfig(path.Join(scmImpl.Options().GitLocalPath, "capsule.yml"))
+	config.ReadConfig(path.Join(p.Data.GitLocalPath, "capsule.yml"))
 
 	// now that the payload has been processed we can begin by building the code.
 	// this may be creating missing files/default structure, compilation, version bumping, etc.
@@ -108,7 +112,7 @@ func (p *Pipeline) Start(){
 		return nil
 	})
 
-	if scmImpl.Options().IsPullRequest {
+	if p.Data.IsPullRequest {
 		// this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
 		p.NotifyStep("dist", func() error {
 			p.PreDistStep()
@@ -151,11 +155,11 @@ func (p *Pipeline) PreDistStep(){}
 func (p *Pipeline) PostDistStep(){}
 
 func (p *Pipeline) NotifyStep(step string, callback func() error){
-	p.SourceScm.Notify(p.SourceScm.Options().GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
+	p.Scm.Notify(p.Data.GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
 	cerr := callback()
 	if(cerr != nil){
 		//TODO: remove the temp folder path.
-		p.SourceScm.Notify(p.SourceScm.Options().GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
+		p.Scm.Notify(p.Data.GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
 	}
 }
 

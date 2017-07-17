@@ -275,3 +275,4 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://gist.github.com/danielfbm/37b0ca88b745503557b2b3f16865d8c3
 - https://stackoverflow.com/questions/37026399/git2go-after-createcommit-all-files-appear-like-being-added-for-deletion
 - https://stackoverflow.com/questions/25965584/separating-unit-tests-and-integration-tests-in-go
+- https://peter.bourgon.org/go-best-practices-2016/
