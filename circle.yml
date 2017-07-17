@@ -18,7 +18,7 @@ test:
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:javascript sh -c "bundle install --with test && rake 'spec:javascript'"
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:node sh -c "bundle install --with test && rake 'spec:node'"
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:python sh -c "bundle install --with test && rake 'spec:python'"
-    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:ruby sh -c "bundle install --with test && rake 'spec:ruby'"
+    #- docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:ruby sh -c "bundle install --with test && rake 'spec:ruby'"
 
     - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd sh -c "bundle install --with test && rake 'coveralls:push'"
 
