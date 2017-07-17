@@ -6,6 +6,9 @@ import (
 	"time"
 
 	"gopkg.in/urfave/cli.v2"
+	"capsulecd/lib/config"
+	"path/filepath"
+	"capsulecd/lib"
 )
 func main() {
 	app := &cli.App{
@@ -26,12 +29,29 @@ func main() {
 				Usage:   "Start a new CapsuleCD package pipeline",
 				Action:  func(c *cli.Context) error {
 
+					config.Init()
+					config.Set("scm", c.String("scm"))
+					config.Set("package_type", c.String("package_type"))
+					config.Set("dry_run", c.String("dry_run"))
 
-					fmt.Println("runner:", c.String("runner"))
-					fmt.Println("source:", c.String("source"))
-					fmt.Println("package type:", c.String("package_type"))
-					fmt.Println("dry run:", c.Bool("dry_run"))
-					fmt.Println("config file:", c.String("config_file"))
+					//load configuration file.
+					if(c.String("config_file") != ""){
+						if absConfigPath, aerr := filepath.Abs(c.String("config_file")); aerr != nil {
+							config.ReadConfig(absConfigPath)
+						} else {
+							return aerr
+						}
+					}
+
+					fmt.Println("runner:", config.GetString("runner"))
+					fmt.Println("package type:", config.GetString("package_type"))
+					fmt.Println("scm:", config.GetString("scm"))
+					fmt.Println("repository:", config.GetString("scm_repo_full_name"))
+					fmt.Println("dry run:", config.GetString("dry_run"))
+
+					pipeline := lib.Pipeline{}
+					pipeline.Start()
+
 					return nil
 				},
 
@@ -43,9 +63,9 @@ func main() {
 					},
 
 					&cli.StringFlag{
-						Name: "source",
+						Name: "scm",
 						Value: "default",
-						Usage: "The source for the code, used to determine which git endpoint to clone from, and create releases on",
+						Usage: "The scm for the code, used to determine which git endpoint to clone from, and create releases on",
 					},
 
 					&cli.StringFlag{

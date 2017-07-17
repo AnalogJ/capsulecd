@@ -17,7 +17,7 @@ var snakeCaseTests = []struct {
 }
 
 func TestSnakeCaseToCamelCase(t *testing.T) {
-
+	t.Parallel()
 	for _, tt := range snakeCaseTests {
 		actual := utils.SnakeCaseToCamelCase(tt.n)
 

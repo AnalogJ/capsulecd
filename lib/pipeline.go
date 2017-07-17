@@ -7,6 +7,7 @@ import (
 	"capsulecd/lib/errors"
 	"path"
 	"fmt"
+	"log"
 )
 
 type Pipeline struct {
@@ -17,6 +18,7 @@ type Pipeline struct {
 func (p *Pipeline) Start(){
 	//Initialize Configuration not already initialized.
 	if(!config.IsInitialized()){
+		log.Printf("Configuration is not initialized, doing it now.")
 		config.Init()
 	}
 

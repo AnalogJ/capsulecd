@@ -73,3 +73,4 @@ _testmain.go
 
 .idea
 vendor
+glide.lock

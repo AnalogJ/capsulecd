@@ -1,16 +1,40 @@
-FROM ruby:2.3-alpine
+FROM golang:1.8 AS build
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
-RUN mkdir -p /srv/capsulecd
-COPY . /srv/capsulecd
-workdir /srv/capsulecd
+#################################################
+#
+# Build
+#
+#################################################
+WORKDIR /go/src/capsulecd
 
-RUN apk --update --no-cache add \
-    build-base ruby-dev libc-dev linux-headers \
-    openssl-dev libxml2-dev libxslt-dev openssh git curl && \
-    mkdir ~/.ssh && \
-    ssh-keyscan github.com >> ~/.ssh/known_hosts && \
-    bundle install --without test chef
+RUN apt-get update && apt-get install -y --no-install-recommends git curl cmake && \
+	rm -rf /var/lib/apt/lists/* && \
+	curl https://glide.sh/get | sh
+
+# build libgit2 from source, because the libgit2-dev package on jessie is ancient.
+RUN cd /tmp && \
+	git clone -b "maint/v0.25" https://github.com/libgit2/libgit2.git && \
+	mkdir -p libgit2/build && \
+	cd libgit2/build && \
+	cmake .. && \
+	cmake --build . --target install && \
+	cp /usr/local/lib/libgit2.so* /usr/lib
+
+COPY . .
+
+# download glide deps
+RUN glide install
+
+# build capsulecd executable
+RUN go build cmd/capsulecd/capsulecd.go && \
+	./capsulecd --version
 
 CMD ["sh"]
 #CMD ["capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "ruby"]
+
+#################################################
+#
+# Dist
+#
+#################################################

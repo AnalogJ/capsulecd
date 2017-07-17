@@ -75,41 +75,41 @@ You can use CapsuleCD to automate creating a new release from a pull request __o
 
 Here's how to use __docker__ to merge a pull request to your Ruby library
 
-    CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
+    CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
     CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/gem_analogj_test \
     CAPSULE_RUNNER_PULL_REQUEST=4 \
     CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
-    docker run AnalogJ/capsulecd:ruby capsulecd start --source github --package_type ruby
+    docker run AnalogJ/capsulecd:ruby capsulecd start --scm github --package_type ruby
 
 Or you could __install__ and call CapsuleCD directly to merge a pull request to your Python library:
 
 	gem install capsulecd
-	CAPSULE_SOURCE_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
+	CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
 	CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/pip_analogj_test \
 	CAPSULE_RUNNER_PULL_REQUEST=2 \
 	CAPSULE_PYPI_USERNAME=AnalogJ \
 	CAPSULE_PYPI_PASSWORD=mysupersecurepassword \
-	capsulecd start --source github --package_type python
+	capsulecd start --scm github --package_type python
 	
 ### Creating a branch release
 
 	TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
 	
 # Engine
-Every package type is mapped to an engine class which inherits from a `BaseEngine` class, ie `PythonEngine`, `NodeEngine`, `RubyEngine` etc. 
-Every source type is mapped to a source module, ie `GithubSource`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Source module.
+Every package type is mapped to an engine class which inherits from a `EngineScm` class, ie `EnginePython`, `EngineNode`, `EngineRuby` etc.
+Every source type is mapped to a source module, ie `ScmGithub`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Scm module.
 Then it begins processing your source code step by step.
 
 Step | Description
 ------------ | ------------ 
-source_configure | This will initialize the source client, ensuring that we can authenticate with the git server
-runner_retrieve_payload | If a Pull Request # is specified, the payload is retrieved from Source api, otherwise the repo default branch HEAD info is retrived.
-source_process_pull_request_payload __or__ source_process_push_payload | Depending on the retrieve_payload step, the merged pull request is cloned, or the default branch is cloned locally
+scm_configure | This will initialize the scm client, ensuring that we can authenticate with the git server
+runner_retrieve_payload | If a Pull Request # is specified, the payload is retrieved from Scm api, otherwise the repo default branch HEAD info is retrived.
+scm_process_pull_request_payload __or__ scm_process_push_payload | Depending on the retrieve_payload step, the merged pull request is cloned, or the default branch is cloned locally
 build_step | Code is built, which includes adding any missing files/default structure, compilation, version bumping, etc.
 test_step | Download package dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test, tox)
 package_step | Commit any local changes and create a git tag. Nothing should be pushed to remote repository
-release_step | Push the release to the package repository (ie. npm, chef supermarket, rubygems)
-source_release | Push the merged, tested and version updated code up to the source code repository. Also do any source specific releases (github release, asset uploading, etc)
+dist_step | Push the release to the package repository (ie. npm, chef supermarket, rubygems)
+scm_publish | Push the merged, tested and version updated code up to the source code repository. Also do any source specific releases (github release, asset uploading, etc)
 
 # Configuration
 Specifying your `GITHUB_ACCESS_TOKEN` and `PYPI_PASSWORD` via an environmental variable might make sense, but do you 
@@ -129,13 +129,13 @@ CapsuleCD settings are determined by loading configuration in the following orde
 Setting | System Config | Repo Config | Notes
 ------------ | ------------- | ------------- | -------------
 package_type | No | No | Must be set by `--package-type` flag
-source | No | No | Must be set by `--source` flag
+scm | No | No | Must be set by `--scm` flag
 runner | No | No | Must be set by `--runner` flag
 dry_run | No | No | Must be set by `--[no]-dry-run` flag
-source_git_parent_path | Yes | No | Specifies the location where the git repo will be cloned, defaults to tmp directory
-source_github_api_endpoint | Yes | No | Specifies the Github api endpoint to use (for use with Enterprise Github)
-source_github_web_endpoint | Yes | No | Specifies the Github web endpoint to use (for use with Enterprise Github)
-source_github_access_token | Yes | No | Specifies the access token to use when cloning from and committing to Github
+scm_git_parent_path | Yes | No | Specifies the location where the git repo will be cloned, defaults to tmp directory
+scm_github_api_endpoint | Yes | No | Specifies the Github api endpoint to use (for use with Enterprise Github)
+scm_github_web_endpoint | Yes | No | Specifies the Github web endpoint to use (for use with Enterprise Github)
+scm_github_access_token | Yes | No | Specifies the access token to use when cloning from and committing to Github
 runner_pull_request | Yes | No | Specifies the repo pull request number to clone from  Github
 runner_repo_full_name | Yes | No | Specifies the repo name to clone from Github
 chef_supermarket_username | Yes | Yes | Specifies the Chef Supermarket username to use when creating public release for Chef cookbook
@@ -145,8 +145,8 @@ npm_auth_token | Yes | Yes | Specifies the NPM auth to use when creating public 
 pypi_username | Yes | Yes | Specifies the PYPI username to use when creating public release for Pypi package
 pypi_password | Yes | Yes | Specifies the PYPI password to use when creating public release for Pypi package
 engine_disable_test | Yes | Yes | Disables test_step before releasing package
-engine_disable_minification | Yes | Yes | Disables source minification (if applicable) before releasing package
-engine_disable_lint | Yes | Yes | Disables source linting before releasing package
+engine_disable_minification | Yes | Yes | Disables source code minification (if applicable) before releasing package
+engine_disable_lint | Yes | Yes | Disables source code linting before releasing package
 engine_cmd_test | Yes | Yes | Specifies the test command to before releasing package
 engine_cmd_minification | Yes | Yes | Specifies the minification command to before releasing package
 engine_cmd_lint | Yes | Yes | Specifies the lint command to before releasing package
@@ -163,9 +163,9 @@ and then prefix it with `CAPSULE_`. So `pypi_password` can be set with `CAPSULE_
 Here's what an example system configuration file might look like:
 
 ```
-source_git_parent_path: /srv/myclonefolder
-source_github_api_endpoint: https://git.mycorpsubnet.example.com/v2
-source_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
+scm_git_parent_path: /srv/myclonefolder
+scm_github_api_endpoint: https://git.mycorpsubnet.example.com/v2
+scm_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 ```
 
 ## Step pre/post hooks and overrides
@@ -176,29 +176,29 @@ To add a `pre`/`post` hook or override a step, just modify your config `yml` fil
 specify `pre`, `post` or `override` as a subkey. Then specify your multiline ruby script:
 
 	---
-      source_configure:
+      scm_configure:
         pre: |
           # this is my multiline ruby script
           # the pre hook script runs before the actual step (source_configure) executes
           # we have access to any of the specified instance variables here.
           # check the documentation for more information.
-          puts "override pre_source_configure" 
+          puts "override pre_scm_configure"
           `git clone ...`
         override: |
           # override scripts can be used to completely replace the built-in step script.
           # to ensure that you are compatible with the capsulecd runner, please ensure that you
           # populate all the correct instance variables.
           # see the documentation for more information
-          puts "override source_configure"
+          puts "override scm_configure"
         post: |
           # post scripts run after the step (source_configure) executes
           # you can override any instance variables here, do additional cleanup or anything else you want.
-          puts "override post_source_configure"
+          puts "override post_scm_configure"
       build_step:
         post: |
           # post build step runs after the build_step runs
           # within the script you have access to all instance variables and other methods defined in the engine.
-          puts "override post_build_step" + @source_git_local_path
+          puts "override post_build_step" + @scm_git_local_path
 
 # Testing
 
