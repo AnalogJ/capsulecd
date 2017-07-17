@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"capsulecd/lib/utils"
 	"strconv"
+	"time"
 )
 
 type scmGithub struct {
@@ -223,39 +224,59 @@ func (g *scmGithub) ProcessPullRequestPayload(payload *ScmPayload) error {
 // REQUIRES options.ReleaseArtifacts
 // REQUIRES options.GitParentPath
 func (g *scmGithub) Publish() error {
-	//// push the version bumped metadata file + newly created files to
-	//utils.GitPush(g.options.GitLocalPath, g.options.GitLocalBranch, g.options.GitBaseInfo.Ref)
-	//
-	////sleep because github needs time to process the new tag.
-	//time.Sleep(5 * time.Second)
-	//
-	//// calculate teh relaese sha
-	//releaseSha := utils.LeftPad2Len(g.options.ReleaseCommit, "0", 40)
-	//
-	////get the release changelog
-	//releaseBody, clerr := utils.GitGenerateChangelog(g.options.GitLocalPath, g.options.GitBaseInfo.Sha, g.options.GitHeadInfo.Sha, g.options.GitBaseInfo.Repo.FullName)
-	//if(clerr != nil){
-	//	return clerr
-	//}
+
+	// set the pull request status (we do this before the merge, because we cant update status on a merged
+	//PR anways. If the push fails, the status will be set to error correctly.
+	return g.Notify(
+		g.options.GitBaseInfo.Repo.FullName,
+		"success",
+		"Pull-request was successfully merged, new release created.",
+	)
+
+	// push the version bumped metadata file + newly created files to
+	perr := utils.GitPush(g.options.GitLocalPath, g.options.GitLocalBranch, g.options.GitBaseInfo.Ref)
+	if(perr != nil){ return perr }
+	//sleep because github needs time to process the new tag.
+	time.Sleep(5 * time.Second)
+
+	// calculate teh relaese sha
+	releaseSha := utils.LeftPad2Len(g.options.ReleaseCommit, "0", 40)
+
+	//get the release changelog
+	releaseBody, clerr := utils.GitGenerateChangelog(
+		g.options.GitLocalPath,
+		g.options.GitBaseInfo.Sha,
+		g.options.GitHeadInfo.Sha,
+		g.options.GitBaseInfo.Repo.FullName,
+	)
+	if(clerr != nil){
+		return clerr
+	}
 
 	//create release.
-	//release = @source_client.create_release(@source_git_base_info['repo']['full_name'], @source_release_commit.name,       target_commitish: release_sha,
-	//	name: @source_release_commit.name,
-	//	body: release_body)
-	//
+	ctx := context.Background()
+	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
+
+	g.client.Repositories.CreateRelease(
+		ctx,
+		parts[0],
+		parts[1],
+		github.RepositoryRelease{
+			TargetCommitish: releaseSha,
+			Body: releaseBody,
+			TagName: fmt.Sprintf("v%s", g.options.ReleaseVersion),
+			Name: fmt.Sprintf("v%s", g.options.ReleaseVersion),
+		},
+	)
+
+	//TODO: upload artifacts
 	//@source_release_artifacts.each do |release_artifact|
-	//@source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
+	//	@source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
 	//end
 	//
-	//FileUtils.remove_entry_secure @source_git_parent_path if Dir.exists?(@source_git_parent_path)
-	//# set the pull request status
-	//@source_client.create_status(@source_git_base_info['repo']['full_name'], @source_git_head_info['sha'], 'success',
-	//context: 'CapsuleCD',
-	//target_url: 'http://www.github.com/AnalogJ/capsulecd',
-	//description: 'Pull-request was successfully merged, new release created.')
-
-
+	os.RemoveAll(g.options.GitParentPath)
 	return nil
+
 }
 
 // requires @source_client
@@ -281,7 +302,6 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 
 
 func (g *scmGithub) Options() *ScmOptions {
-	log.Print("ORINT THE PARENT PATH", g.options)
 	return g.options
 }
 

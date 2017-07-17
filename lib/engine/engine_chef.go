@@ -129,6 +129,7 @@ func (g *engineChef) PackageStep() (error) {
 	if(terr != nil){return terr}
 
 	(*g.Scm).Options().ReleaseCommit = tagCommit
+	(*g.Scm).Options().ReleaseVersion = g.NextMetadata.Version
 	return nil
 }
 

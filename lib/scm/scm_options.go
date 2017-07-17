@@ -8,6 +8,8 @@ type ScmOptions struct {
 	GitLocalPath string
 	GitLocalBranch string
 	GitRemote string
+
+	ReleaseVersion string
 	ReleaseCommit string
 	ReleaseArtifacts []string
 }
