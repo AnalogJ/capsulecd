@@ -10,10 +10,10 @@ import (
 
 
 type Scm interface {
-	Init(pipelineData *pipeline.PipelineData, client *http.Client) error
-	RetrievePayload() (*ScmPayload, error)
-	ProcessPushPayload(payload *ScmPayload) error
-	ProcessPullRequestPayload(payload *ScmPayload) error
+	Init(pipelineData *pipeline.Data, client *http.Client) error
+	RetrievePayload() (*Payload, error)
+	ProcessPushPayload(payload *Payload) error
+	ProcessPullRequestPayload(payload *Payload) error
 	Publish() error //create release.
 	Notify(ref string, state string, message string) error
 }

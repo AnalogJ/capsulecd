@@ -44,7 +44,7 @@ func TestEngineChef_BuildStep(t *testing.T) {
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
 
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 	githubScm.Init(pipelineData, nil)
 
 	chefEngine, err := engine.Create()
@@ -81,7 +81,7 @@ func TestEngineChef_TestStep(t *testing.T) {
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
 
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 	githubScm.Init(pipelineData, nil)
 
 	chefEngine, err := engine.Create()

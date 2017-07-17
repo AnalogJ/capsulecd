@@ -22,7 +22,7 @@ type chefMetadata struct {
 type engineChef struct {
 	*EngineBase
 
-	PipelineData *pipeline.PipelineData
+	PipelineData *pipeline.Data
 	Scm scm.Scm //Interface
 	CurrentMetadata *chefMetadata
 	NextMetadata *chefMetadata
@@ -45,7 +45,7 @@ func (g *engineChef) ValidateTools() (error) {
 	return nil
 }
 
-func (g *engineChef) Init(pipelineData *pipeline.PipelineData, sourceScm scm.Scm) (error) {
+func (g *engineChef) Init(pipelineData *pipeline.Data, sourceScm scm.Scm) (error) {
 	g.Scm = sourceScm
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(chefMetadata)

@@ -10,7 +10,7 @@ import (
 
 type Engine interface {
 	ValidateTools() error
-	Init(pipelineData *pipeline.PipelineData, sourceScm scm.Scm) error
+	Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error
 	BuildStep() error
 	TestStep() error
 	PackageStep() error

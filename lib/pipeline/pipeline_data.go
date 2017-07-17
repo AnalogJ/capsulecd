@@ -1,9 +1,9 @@
 package pipeline
 
-type PipelineData struct {
+type Data struct {
 	IsPullRequest bool
-	GitBaseInfo *PipelineScmCommitInfo
-	GitHeadInfo *PipelineScmCommitInfo
+	GitBaseInfo *ScmCommitInfo
+	GitHeadInfo *ScmCommitInfo
 	GitParentPath string
 	GitLocalPath string
 	GitLocalBranch string

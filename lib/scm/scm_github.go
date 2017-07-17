@@ -20,14 +20,14 @@ import (
 )
 
 type scmGithub struct {
-	PipelineData *pipeline.PipelineData
+	PipelineData *pipeline.Data
 	Client       *github.Client
 }
 
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set options.GitParentPath
 // MUST set client
-func (g *scmGithub) Init(pipelineData *pipeline.PipelineData, client *http.Client) (error) {
+func (g *scmGithub) Init(pipelineData *pipeline.Data, client *http.Client) (error) {
 
 	g.PipelineData = pipelineData
 
@@ -67,16 +67,16 @@ func (g *scmGithub) Init(pipelineData *pipeline.PipelineData, client *http.Clien
 // configure method will retrieve payload data from Scm using authenticated client.
 // MUST set options.IsPullRequest
 // RETURNS ScmPayload
-func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
+func (g *scmGithub) RetrievePayload() (*Payload, error) {
 	if !config.IsSet("scm_pull_request") {
 		log.Print("This is not a pull request. No automatic continuous deployment processing required. Continuous Integration testing will continue.")
 		g.PipelineData.IsPullRequest = false
 
-		return &ScmPayload{
-			Head: &pipeline.PipelineScmCommitInfo{
+		return &Payload{
+			Head: &pipeline.ScmCommitInfo{
 				Sha: config.GetString("scm_sha"),
 				Ref: config.GetString("scm_branch"),
-				Repo: &pipeline.PipelineScmRepoInfo{
+				Repo: &pipeline.ScmRepoInfo{
 					CloneUrl: config.GetString("scm_clone_url"),
 					Name: config.GetString("scm_repo_name"),
 					FullName: config.GetString("scm_repo_full_name"),
@@ -110,22 +110,22 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 		//   fail CapsuleCD::Error::SourceUnauthorizedUser, 'Pull request was opened by an unauthorized user'
         	// end
 
-		return &ScmPayload{
+		return &Payload{
 			Title: pr.GetTitle(),
 			PullRequestNumber: strconv.Itoa(pr.GetNumber()),
-			Head: &pipeline.PipelineScmCommitInfo{
+			Head: &pipeline.ScmCommitInfo{
 				Sha: pr.Head.GetSHA(),
 				Ref: pr.Head.GetRef(),
-				Repo: &pipeline.PipelineScmRepoInfo{
+				Repo: &pipeline.ScmRepoInfo{
 					CloneUrl: pr.Head.Repo.GetCloneURL(),
 					Name: pr.Head.Repo.GetName(),
 					FullName: pr.Head.Repo.GetFullName(),
 				},
 			},
-			Base: &pipeline.PipelineScmCommitInfo{
+			Base: &pipeline.ScmCommitInfo{
 				Sha: pr.Base.GetSHA(),
 				Ref: pr.Base.GetRef(),
-				Repo: &pipeline.PipelineScmRepoInfo{
+				Repo: &pipeline.ScmRepoInfo{
 					CloneUrl: pr.Base.Repo.GetCloneURL(),
 					Name: pr.Base.Repo.GetName(),
 					FullName: pr.Base.Repo.GetFullName(),
@@ -143,7 +143,7 @@ func (g *scmGithub) RetrievePayload() (*ScmPayload, error) {
 // MUST set options.GitLocalBranch
 // MUST set options.GitHeadInfo
 // REQUIRES options.GitParentPath
-func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
+func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
 	err := g.PipelineData.GitHeadInfo.Validate()
@@ -178,7 +178,7 @@ func (g *scmGithub) ProcessPushPayload(payload *ScmPayload) error {
 // MUST set options.GitHeadInfo
 // REQUIRES client
 // REQUIRES options.GitParentPath
-func (g *scmGithub) ProcessPullRequestPayload(payload *ScmPayload) error {
+func (g *scmGithub) ProcessPullRequestPayload(payload *Payload) error {
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
 	g.PipelineData.GitBaseInfo = payload.Base

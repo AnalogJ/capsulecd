@@ -10,13 +10,13 @@ import (
 
 type scmBitbucket struct {
 	Client       *github.Client
-	PipelineData *pipeline.PipelineData
+	PipelineData *pipeline.Data
 }
 
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set @git_parent_path
 // MUST set @client field
-func (b *scmBitbucket) Init(pipelineData *pipeline.PipelineData, client *http.Client) error {
+func (b *scmBitbucket) Init(pipelineData *pipeline.Data, client *http.Client) error {
 	b.PipelineData = pipelineData
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
@@ -28,15 +28,15 @@ func (b *scmBitbucket) Init(pipelineData *pipeline.PipelineData, client *http.Cl
 	return nil
 }
 
-func (b *scmBitbucket) RetrievePayload() (*ScmPayload, error) {
-	return new(ScmPayload), nil
+func (b *scmBitbucket) RetrievePayload() (*Payload, error) {
+	return new(Payload), nil
 }
 
-func (b *scmBitbucket) ProcessPushPayload(payload *ScmPayload) error {
+func (b *scmBitbucket) ProcessPushPayload(payload *Payload) error {
 	return nil
 }
 
-func (b *scmBitbucket) ProcessPullRequestPayload(payload *ScmPayload) error {
+func (b *scmBitbucket) ProcessPullRequestPayload(payload *Payload) error {
 	return nil
 }
 

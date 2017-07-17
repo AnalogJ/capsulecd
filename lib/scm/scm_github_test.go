@@ -61,7 +61,7 @@ func TestScmGithub_Init(t *testing.T) {
 	config.Set("scm","github")
 	config.Set("scm_github_access_token","github")
 
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
 	githubScm.Init(pipelineData, nil)
@@ -76,7 +76,7 @@ func TestScmGithub_Configure_WithNoAuthToken(t *testing.T) {
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
 
-	cerr := githubScm.Init(new(pipeline.PipelineData), nil)
+	cerr := githubScm.Init(new(pipeline.Data), nil)
 	assert.Error(t, cerr)
 }
 
@@ -94,7 +94,7 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
@@ -122,7 +122,7 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 
 	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
@@ -154,7 +154,7 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 
 	client := vcrSetup(t)
 
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 
 	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()
@@ -181,7 +181,7 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	assert.NoError(t, err)
 
 	client := vcrSetup(t)
-	pipelineData := new(pipeline.PipelineData)
+	pipelineData := new(pipeline.Data)
 
 	githubScm.Init(pipelineData, client)
 	payload, perr := githubScm.RetrievePayload()

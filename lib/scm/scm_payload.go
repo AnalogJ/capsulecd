@@ -2,9 +2,9 @@ package scm
 
 import "capsulecd/lib/pipeline"
 
-type ScmPayload struct {
-	Head *pipeline.PipelineScmCommitInfo
-	Base *pipeline.PipelineScmCommitInfo
+type Payload struct {
+	Head *pipeline.ScmCommitInfo
+	Base *pipeline.ScmCommitInfo
 
 	//Pull Request specific fields
 	Title string

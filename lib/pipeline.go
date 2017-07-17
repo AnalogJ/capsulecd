@@ -12,7 +12,7 @@ import (
 )
 
 type Pipeline struct {
-	Data	*pipeline.PipelineData
+	Data	*pipeline.Data
 	Scm    	scm.Scm
 	Engine 	engine.Engine
 }
@@ -24,7 +24,7 @@ func (p *Pipeline) Start(){
 		config.Init()
 	}
 
-	p.Data = new(pipeline.PipelineData)
+	p.Data = new(pipeline.Data)
 
 	//Generate a new instance of the sourceScm
 	scmImpl, serr := scm.Create()
