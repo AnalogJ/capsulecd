@@ -32,7 +32,7 @@ func GitClone(parentPath string, repositoryName string, gitRemote string) (strin
 		return "", errors.ScmFilesystemError(fmt.Sprintf("The local repository path already exists, this should never happen. %s", absPath))
 	}
 
-	_, err := git.Clone(gitRemote, absPath, &git.CloneOptions{})
+	_, err := git.Clone(gitRemote, absPath, new(git.CloneOptions))
 	return absPath, err
 }
 
@@ -51,7 +51,7 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 	if(lerr != nil){
 		return lerr
 	}
-	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, &git.FetchOptions{},"")
+	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git.FetchOptions),"")
 	if(ferr != nil){
 		return ferr
 	}
@@ -219,7 +219,7 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 
 
 	//err = remote.Push([]string{"refs/heads/master"}, nil, signature, message)
-	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, &git.PushOptions{})
+	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, new(git.PushOptions))
 }
 
 func GitLatestTaggedCommit(repoPath string) (*GitTagDetails, error) {
