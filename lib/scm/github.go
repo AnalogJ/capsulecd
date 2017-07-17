@@ -256,16 +256,16 @@ func (g *scmGithub) Publish() error {
 	//create release.
 	ctx := context.Background()
 	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
-
+	version := fmt.Sprintf("v%s", g.options.ReleaseVersion)
 	g.client.Repositories.CreateRelease(
 		ctx,
 		parts[0],
 		parts[1],
-		github.RepositoryRelease{
-			TargetCommitish: releaseSha,
-			Body: releaseBody,
-			TagName: fmt.Sprintf("v%s", g.options.ReleaseVersion),
-			Name: fmt.Sprintf("v%s", g.options.ReleaseVersion),
+		&github.RepositoryRelease{
+			TargetCommitish: &releaseSha,
+			Body: &releaseBody,
+			TagName: &version,
+			Name: &version,
 		},
 	)
 

@@ -22,9 +22,9 @@ func Create() (Scm, error) {
 
 	switch scmType := config.Get("scm"); scmType {
 	case "bitbucket":
-		return &scmBitbucket{}, nil
+		return new(scmBitbucket), nil
 	case "github":
-		return &scmGithub{}, nil
+		return new(scmGithub), nil
 	default:
 		return nil, errors.ScmUnspecifiedError(fmt.Sprintf("Unknown Scm Type: %s", scmType))
 	}

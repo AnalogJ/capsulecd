@@ -51,7 +51,7 @@ func TestEngineChef_BuildStep(t *testing.T) {
 	assert.NoError(t, aerr)
 
 	githubScm.Options().GitLocalPath = absPath
-	chefEngine.Init(&githubScm)
+	chefEngine.Init(githubScm)
 
 	berr := chefEngine.BuildStep()
 	assert.NoError(t, berr)
@@ -86,7 +86,7 @@ func TestEngineChef_TestStep(t *testing.T) {
 	assert.NoError(t, aerr)
 
 	githubScm.Options().GitLocalPath = absPath
-	chefEngine.Init(&githubScm)
+	chefEngine.Init(githubScm)
 
 	berr := chefEngine.BuildStep()
 	assert.NoError(t, berr)

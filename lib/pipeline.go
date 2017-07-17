@@ -10,8 +10,8 @@ import (
 )
 
 type Pipeline struct {
-	SourceScm *scm.Scm
-	Engine *engine.Engine
+	SourceScm scm.Scm
+	Engine engine.Engine
 }
 
 func (p *Pipeline) Start(){
@@ -23,13 +23,13 @@ func (p *Pipeline) Start(){
 	//Generate a new instance of the sourceScm
 	scmImpl, serr := scm.Create()
 	errors.CheckErr(serr)
-	p.SourceScm = &scmImpl
+	p.SourceScm = scmImpl
 
 	//Generate a new instance of the engine
 	engineImpl, eerr := engine.Create()
 	errors.CheckErr(eerr)
-	p.Engine = &engineImpl
-	engineImpl.Init(&scmImpl)
+	p.Engine = engineImpl
+	engineImpl.Init(scmImpl)
 
 	p.PreValidateTools()
 	engineImpl.ValidateTools()
@@ -149,11 +149,11 @@ func (p *Pipeline) PreDistStep(){}
 func (p *Pipeline) PostDistStep(){}
 
 func (p *Pipeline) NotifyStep(step string, callback func() error){
-	(*p.SourceScm).Notify((*p.SourceScm).Options().GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
+	p.SourceScm.Notify(p.SourceScm.Options().GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
 	cerr := callback()
 	if(cerr != nil){
 		//TODO: remove the temp folder path.
-		(*p.SourceScm).Notify((*p.SourceScm).Options().GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
+		p.SourceScm.Notify(p.SourceScm.Options().GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
 	}
 }
 
