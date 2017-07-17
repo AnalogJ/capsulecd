@@ -27,10 +27,9 @@ COPY . .
 RUN glide install
 
 # build capsulecd executable
-RUN go build cmd/capsulecd/capsulecd.go && \
+RUN go build --ldflags '-extldflags "-static"' cmd/capsulecd/capsulecd.go && \
 	./capsulecd --version
 
-CMD ["sh"]
 #CMD ["capsulecd", "start", "--runner", "circleci", "--source", "github", "--package_type", "ruby"]
 
 #################################################
@@ -38,3 +37,10 @@ CMD ["sh"]
 # Dist
 #
 #################################################
+
+FROM debian:jessie AS dist
+MAINTAINER Jason Kulatunga <jason@thesparktree.com>
+
+COPY --from=build /go/src/capsulecd/capsulecd /usr/local/bin/capsulecd
+
+CMD ["capsulecd"]

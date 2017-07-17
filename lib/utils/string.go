@@ -33,11 +33,11 @@ func SnakeCaseToCamelCase(inputUnderScoreStr string) (camelCase string) {
  *
  */
 
-func LeftPad(s string, padStr string, pLen int) string{
+func LeftPad(s string, padStr string, pLen int) string {
 	return strings.Repeat(padStr, pLen) + s
 }
-func RightPad(s string, padStr string, pLen int) string{
-	return s + strings.Repeat(padStr, pLen);
+func RightPad(s string, padStr string, pLen int) string {
+	return s + strings.Repeat(padStr, pLen)
 }
 
 /* the Pad2Len functions are generally assumed to be padded with short sequences of strings
@@ -56,15 +56,15 @@ func RightPad(s string, padStr string, pLen int) string{
  *
  */
 
-func RightPad2Len(s string, padStr string, overallLen int) string{
+func RightPad2Len(s string, padStr string, overallLen int) string {
 	var padCountInt int
-	padCountInt = 1 + ((overallLen-len(padStr))/len(padStr))
-	var retStr =  s + strings.Repeat(padStr, padCountInt)
+	padCountInt = 1 + ((overallLen - len(padStr)) / len(padStr))
+	var retStr = s + strings.Repeat(padStr, padCountInt)
 	return retStr[:overallLen]
 }
-func LeftPad2Len(s string, padStr string, overallLen int) string{
+func LeftPad2Len(s string, padStr string, overallLen int) string {
 	var padCountInt int
-	padCountInt = 1 + ((overallLen-len(padStr))/len(padStr))
+	padCountInt = 1 + ((overallLen - len(padStr)) / len(padStr))
 	var retStr = strings.Repeat(padStr, padCountInt) + s
-	return retStr[(len(retStr)-overallLen):]
+	return retStr[(len(retStr) - overallLen):]
 }

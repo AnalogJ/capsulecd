@@ -1,22 +1,21 @@
 package scm_test
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"capsulecd/lib/scm"
+	"github.com/stretchr/testify/assert"
+	"testing"
 
 	"capsulecd/lib/config"
-	"log"
-	"github.com/seborama/govcr"
-	"path"
-	"net/http"
-	"golang.org/x/oauth2"
+	"capsulecd/lib/pipeline"
 	"context"
 	"crypto/tls"
+	"github.com/seborama/govcr"
+	"golang.org/x/oauth2"
+	"log"
+	"net/http"
 	"os"
-	"capsulecd/lib/pipeline"
+	"path"
 )
-
 
 func vcrSetup(t *testing.T) *http.Client {
 
@@ -38,7 +37,7 @@ func vcrSetup(t *testing.T) *http.Client {
 	vcr := govcr.NewVCR(t.Name(),
 		&govcr.VCRConfig{
 			CassettePath: path.Join("testdata", "govcr-fixtures"),
-			Client: tc,
+			Client:       tc,
 		})
 	return vcr.Client
 }
@@ -46,7 +45,7 @@ func vcrSetup(t *testing.T) *http.Client {
 func TestScmGithub(t *testing.T) {
 
 	config.Init()
-	config.Set("scm","github")
+	config.Set("scm", "github")
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
@@ -54,12 +53,11 @@ func TestScmGithub(t *testing.T) {
 
 }
 
-
 func TestScmGithub_Init(t *testing.T) {
 
 	config.Init()
-	config.Set("scm","github")
-	config.Set("scm_github_access_token","github")
+	config.Set("scm", "github")
+	config.Set("scm_github_access_token", "github")
 
 	pipelineData := new(pipeline.Data)
 	githubScm, err := scm.Create()
@@ -71,7 +69,7 @@ func TestScmGithub_Init(t *testing.T) {
 
 func TestScmGithub_Configure_WithNoAuthToken(t *testing.T) {
 	config.Init()
-	config.Set("scm","github")
+	config.Set("scm", "github")
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
@@ -80,13 +78,12 @@ func TestScmGithub_Configure_WithNoAuthToken(t *testing.T) {
 	assert.Error(t, cerr)
 }
 
-
 func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
 	config.Init()
-	config.Set("scm","github")
-	config.Set("scm_pull_request","12")
-	config.Set("scm_repo_full_name","AnalogJ/cookbook_analogj_test")
+	config.Set("scm", "github")
+	config.Set("scm_pull_request", "12")
+	config.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
 	config.Set("scm_github_access_token", "placeholder")
 
 	githubScm, err := scm.Create()
@@ -109,12 +106,12 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	config.Init()
-	config.Set("scm","github")
-	config.Set("scm_sha","0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
-	config.Set("scm_branch","master")
-	config.Set("scm_clone_url","https://github.com/analogj/capsulecd.git")
-	config.Set("scm_repo_name","capsulecd")
-	config.Set("scm_repo_full_name","AnalogJ/capsulecd")
+	config.Set("scm", "github")
+	config.Set("scm_sha", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
+	config.Set("scm_branch", "master")
+	config.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
+	config.Set("scm_repo_name", "capsulecd")
+	config.Set("scm_repo_full_name", "AnalogJ/capsulecd")
 	config.Set("scm_github_access_token", "placeholder")
 
 	githubScm, err := scm.Create()
@@ -141,12 +138,12 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	config.Init()
-	config.Set("scm","github")
-	config.Set("scm_sha","0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
-	config.Set("scm_branch","master")
-	config.Set("scm_clone_url","https://github.com/analogj/capsulecd.git")
-	config.Set("scm_repo_name","capsulecd")
-	config.Set("scm_repo_full_name","AnalogJ/capsulecd")
+	config.Set("scm", "github")
+	config.Set("scm_sha", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
+	config.Set("scm_branch", "master")
+	config.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
+	config.Set("scm_repo_name", "capsulecd")
+	config.Set("scm_repo_full_name", "AnalogJ/capsulecd")
 	config.Set("scm_github_access_token", "")
 
 	githubScm, err := scm.Create()
@@ -168,13 +165,12 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	assert.NotNil(t, pipelineData.GitHeadInfo)
 }
 
-
 func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 
 	config.Init()
-	config.Set("scm","github")
-	config.Set("scm_pull_request","12")
-	config.Set("scm_repo_full_name","AnalogJ/cookbook_analogj_test")
+	config.Set("scm", "github")
+	config.Set("scm_pull_request", "12")
+	config.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
 	config.Set("scm_github_access_token", "")
 
 	githubScm, err := scm.Create()

@@ -1,23 +1,23 @@
 package engine_test
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"capsulecd/lib/config"
 	"capsulecd/lib/engine"
+	"capsulecd/lib/pipeline"
 	"capsulecd/lib/scm"
+	"capsulecd/lib/utils"
+	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"os"
 	"path"
 	"path/filepath"
-	"io/ioutil"
-	"capsulecd/lib/utils"
-	"os"
-	"capsulecd/lib/pipeline"
+	"testing"
 )
 
 func TestEngineChef(t *testing.T) {
 	config.Init()
-	config.Set("scm","github")
-	config.Set("package_type","chef")
+	config.Set("scm", "github")
+	config.Set("package_type", "chef")
 
 	//githubScm, err := scm.Create()
 	//assert.NoError(t, err)
@@ -29,17 +29,17 @@ func TestEngineChef(t *testing.T) {
 }
 
 func TestEngineChef_BuildStep(t *testing.T) {
-	parentPath, err := ioutil.TempDir("testdata","")
+	parentPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer os.RemoveAll(parentPath)
-	dirPath := path.Join(parentPath,"cookbook_analogj_test")
+	dirPath := path.Join(parentPath, "cookbook_analogj_test")
 
-	cerr := utils.CopyDir(path.Join("testdata","chef","cookbook_analogj_test"), dirPath)
+	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), dirPath)
 	assert.NoError(t, cerr)
 
 	config.Init()
-	config.Set("scm","github")
-	config.Set("package_type","chef")
+	config.Set("scm", "github")
+	config.Set("package_type", "chef")
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)
@@ -66,17 +66,17 @@ func TestEngineChef_BuildStep(t *testing.T) {
 }
 
 func TestEngineChef_TestStep(t *testing.T) {
-	parentPath, err := ioutil.TempDir("testdata","")
+	parentPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer os.RemoveAll(parentPath)
-	dirPath := path.Join(parentPath,"cookbook_analogj_test")
+	dirPath := path.Join(parentPath, "cookbook_analogj_test")
 
-	cerr := utils.CopyDir(path.Join("testdata","chef","cookbook_analogj_test"), dirPath)
+	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), dirPath)
 	assert.NoError(t, cerr)
 
 	config.Init()
-	config.Set("scm","github")
-	config.Set("package_type","chef")
+	config.Set("scm", "github")
+	config.Set("package_type", "chef")
 
 	githubScm, err := scm.Create()
 	assert.NoError(t, err)

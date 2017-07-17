@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"os/exec"
+	"bufio"
+	"capsulecd/lib/errors"
 	"fmt"
 	"os"
-	"bufio"
+	"os/exec"
 	"path"
-	"capsulecd/lib/errors"
 )
 
 func BashCmdExec(cmd string, workingDir string, logPrefix string) error {
@@ -15,17 +15,16 @@ func BashCmdExec(cmd string, workingDir string, logPrefix string) error {
 
 func CmdExec(cmdName string, cmdArgs []string, workingDir string, logPrefix string) error {
 
-	if(logPrefix == ""){
+	if logPrefix == "" {
 		logPrefix = logPrefix + " >> "
 	} else {
 		logPrefix = logPrefix + " | "
 	}
 
-
 	cmd := exec.Command(cmdName, cmdArgs...)
-	if(workingDir != "" && path.IsAbs(workingDir)){
+	if workingDir != "" && path.IsAbs(workingDir) {
 		cmd.Dir = workingDir
-	} else if (workingDir != "") {
+	} else if workingDir != "" {
 		return errors.Custom("Working Directory must be an absolute path")
 	}
 	cmdReader, err := cmd.StdoutPipe()

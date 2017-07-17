@@ -1,13 +1,13 @@
 package config
-import (
-	"github.com/spf13/viper"
-	"time"
-	"os"
-	"log"
-	"encoding/base64"
-	"capsulecd/lib/utils"
-)
 
+import (
+	"capsulecd/lib/utils"
+	"encoding/base64"
+	"github.com/spf13/viper"
+	"log"
+	"os"
+	"time"
+)
 
 //Viper uses the following precedence order. Each item takes precedence over the item below it:
 // explicit call to Set
@@ -18,7 +18,8 @@ import (
 // default
 var v = viper.New()
 var initialized = false
-func Init(){
+
+func Init() {
 	v = viper.New()
 	//set defaults
 	v.SetDefault("package_type", "default")
@@ -40,15 +41,14 @@ func Init(){
 
 	//CLI options will be added via the `Set()` function
 
-	initialized = true;
+	initialized = true
 }
 
 func IsInitialized() bool {
-	return initialized;
+	return initialized
 }
 
-func ReadConfig(configFilePath string){
-
+func ReadConfig(configFilePath string) {
 
 	if !utils.FileExists(configFilePath) {
 		log.Print("The configuration file could not be found. Skipping")

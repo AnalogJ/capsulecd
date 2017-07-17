@@ -1,18 +1,16 @@
 package utils_test
 
-
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"capsulecd/lib/utils"
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
+	"testing"
 )
-
 
 func TestGitClone(t *testing.T) {
 	t.Parallel()
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -24,7 +22,7 @@ func TestGitClone(t *testing.T) {
 func TestGitFetch(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -38,7 +36,7 @@ func TestGitFetch(t *testing.T) {
 func TestGitCheckout(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -52,7 +50,7 @@ func TestGitCheckout(t *testing.T) {
 func TestGitCommit(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -64,18 +62,17 @@ func TestGitCommit(t *testing.T) {
 
 	//create a new file
 	d1 := []byte("hello\nworld\n")
-	werr := ioutil.WriteFile(clonePath + "/commit_testfile.txt", d1, 0644)
+	werr := ioutil.WriteFile(clonePath+"/commit_testfile.txt", d1, 0644)
 	assert.NoError(t, werr)
 
 	gcerr := utils.GitCommit(clonePath, "Added New File")
 	assert.NoError(t, gcerr)
 }
 
-
 func TestGitTag(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -87,7 +84,7 @@ func TestGitTag(t *testing.T) {
 
 	//create a new file
 	d1 := []byte("hello\nworld\n")
-	werr := ioutil.WriteFile(clonePath + "/tag_testfile.txt", d1, 0644)
+	werr := ioutil.WriteFile(clonePath+"/tag_testfile.txt", d1, 0644)
 	assert.NoError(t, werr)
 
 	gcerr := utils.GitCommit(clonePath, "Added New File")
@@ -100,7 +97,7 @@ func TestGitTag(t *testing.T) {
 
 func TestGitPush(t *testing.T) {
 	t.Skip() //Skipping because access_token not available during remote testing.
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -112,7 +109,7 @@ func TestGitPush(t *testing.T) {
 
 	//create a new file
 	d1 := []byte("hello\nworld\n")
-	werr := ioutil.WriteFile(clonePath + "/push_testfile.txt", d1, 0644)
+	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
 	assert.NoError(t, werr)
 
 	gcerr := utils.GitCommit(clonePath, "Added New File")
@@ -125,10 +122,9 @@ func TestGitPush(t *testing.T) {
 
 func TestGitPush_PullRequest(t *testing.T) {
 	t.Skip() //Skipping because access_token not available during remote testing.
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
-
 
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://access_token_here:@github.com/AnalogJ/cookbook_analogj_test.git")
 	assert.NoError(t, cerr)
@@ -138,7 +134,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 
 	//create a new file
 	d1 := []byte("hello\nworld\n")
-	werr := ioutil.WriteFile(clonePath + "/push_testfile.txt", d1, 0644)
+	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
 	assert.NoError(t, werr)
 
 	gcerr := utils.GitCommit(clonePath, "Added New File")
@@ -152,7 +148,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 func TestGitLatestTaggedCommit(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -169,7 +165,7 @@ func TestGitLatestTaggedCommit(t *testing.T) {
 func TestGitGenerateChangelog(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata","")
+	dirPath, err := ioutil.TempDir("testdata", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -180,7 +176,7 @@ func TestGitGenerateChangelog(t *testing.T) {
 	assert.NoError(t, ferr)
 
 	assert.Equal(t,
-	`Timestamp |  SHA | Message | Author
+		`Timestamp |  SHA | Message | Author
 	------------- | ------------- | ------------- | -------------
 	2017-07-16T01:41Z | f3d573aa | Added New File | CapsuleCD
 	2017-07-16T01:26Z | 842436c9 | Merge 39e720e37a19716c098757cb5c78ea90b18111d3 into 97cae66b077de3798995342da781c270b1786820 | Jason Kulatunga
@@ -191,6 +187,6 @@ func TestGitGenerateChangelog(t *testing.T) {
 	`, changelog)
 }
 
-func deleteTestRepo(testRepoDirectory string){
+func deleteTestRepo(testRepoDirectory string) {
 	os.RemoveAll(testRepoDirectory)
 }

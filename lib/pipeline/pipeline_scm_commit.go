@@ -1,15 +1,16 @@
 package pipeline
+
 import "capsulecd/lib/errors"
 
 type ScmRepoInfo struct {
 	CloneUrl string
-	Name string
+	Name     string
 	FullName string
 }
 
 type ScmCommitInfo struct {
-	Sha string
-	Ref string
+	Sha  string
+	Ref  string
 	Repo *ScmRepoInfo
 }
 
@@ -18,11 +19,11 @@ type ScmCommitInfo struct {
 func (i *ScmCommitInfo) Validate() error {
 	if i.Sha == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'sha' key")
-	} else if(i.Ref == ""){
+	} else if i.Ref == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Ref' key")
-	} else if(i.Repo.CloneUrl == ""){
+	} else if i.Repo.CloneUrl == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo.CloneUrl' key")
-	} else if(i.Repo.Name == ""){
+	} else if i.Repo.Name == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo.Name' key")
 	} else {
 		return nil

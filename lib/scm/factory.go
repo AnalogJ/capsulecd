@@ -2,12 +2,11 @@ package scm
 
 import (
 	"capsulecd/lib/config"
-	"net/http"
 	"capsulecd/lib/errors"
-	"fmt"
 	"capsulecd/lib/pipeline"
+	"fmt"
+	"net/http"
 )
-
 
 type Scm interface {
 	Init(pipelineData *pipeline.Data, client *http.Client) error

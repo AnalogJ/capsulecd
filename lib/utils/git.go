@@ -1,28 +1,27 @@
 package utils
 
 import (
-	"gopkg.in/libgit2/git2go.v25"
-	"path"
-	"path/filepath"
-	"os"
 	"capsulecd/lib/errors"
 	"fmt"
+	"gopkg.in/libgit2/git2go.v25"
 	"log"
-	"time"
+	"os"
+	"path"
+	"path/filepath"
 	"strings"
+	"time"
 )
 
 type GitTagDetails struct {
 	TagShortName string
-	CommitSha string
-	CommitDate time.Time
+	CommitSha    string
+	CommitDate   time.Time
 }
-
 
 func GitClone(parentPath string, repositoryName string, gitRemote string) (string, error) {
 	//TODO: credentials may need to be specified
 	absPath, aerr := filepath.Abs(path.Join(parentPath, repositoryName))
-	if(aerr != nil){
+	if aerr != nil {
 		return "", aerr
 	}
 
@@ -39,7 +38,7 @@ func GitClone(parentPath string, repositoryName string, gitRemote string) (strin
 func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){
+	if oerr != nil {
 		return oerr
 	}
 
@@ -48,16 +47,16 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 	}
 
 	remote, lerr := repo.Remotes.Lookup("origin")
-	if(lerr != nil){
+	if lerr != nil {
 		return lerr
 	}
-	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git.FetchOptions),"")
-	if(ferr != nil){
+	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git.FetchOptions), "")
+	if ferr != nil {
 		return ferr
 	}
 
 	localBranch, berr := repo.LookupBranch(localBranchName, git.BranchLocal)
-	if(berr != nil){
+	if berr != nil {
 		return berr
 	}
 
@@ -88,7 +87,7 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 
 func GitCheckout(repoPath string, branchName string) error {
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){
+	if oerr != nil {
 		return oerr
 	}
 
@@ -162,7 +161,7 @@ func GitCheckout(repoPath string, branchName string) error {
 //Add all modified files to index, and commit.
 func GitCommit(repoPath string, message string) error {
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){
+	if oerr != nil {
 		return oerr
 	}
 
@@ -170,37 +169,57 @@ func GitCommit(repoPath string, message string) error {
 
 	//get repo index.
 	idx, ierr := repo.Index()
-	if(ierr != nil){return ierr}
+	if ierr != nil {
+		return ierr
+	}
 	aerr := idx.AddAll([]string{}, git.IndexAddDefault, nil)
-	if(aerr != nil){return aerr}
+	if aerr != nil {
+		return aerr
+	}
 	treeId, wterr := idx.WriteTree()
-	if(wterr != nil){return wterr}
+	if wterr != nil {
+		return wterr
+	}
 	werr := idx.Write()
-	if(werr != nil){return werr}
+	if werr != nil {
+		return werr
+	}
 
 	tree, lerr := repo.LookupTree(treeId)
-	if(lerr != nil){return lerr}
+	if lerr != nil {
+		return lerr
+	}
 
 	currentBranch, berr := repo.Head()
-	if(berr != nil){return berr}
+	if berr != nil {
+		return berr
+	}
 
 	commitTarget, terr := repo.LookupCommit(currentBranch.Target())
-	if terr != nil {return terr}
+	if terr != nil {
+		return terr
+	}
 
 	_, cerr := repo.CreateCommit("HEAD", signature, signature, message, tree, commitTarget)
 	//if(cerr != nil){return cerr}
 
-	return  cerr
+	return cerr
 }
 
 func GitTag(repoPath string, version string) (string, error) {
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){return "", oerr}
+	if oerr != nil {
+		return "", oerr
+	}
 	commitHead, herr := repo.Head()
-	if(herr != nil){return "", herr}
+	if herr != nil {
+		return "", herr
+	}
 
 	commit, lerr := repo.LookupCommit(commitHead.Target())
-	if(lerr != nil){return "", lerr}
+	if lerr != nil {
+		return "", lerr
+	}
 
 	tagId, terr := repo.Tags.CreateLightweight(version, commit, false) //TODO: this should be an annotated tag.
 	return tagId.String(), terr
@@ -210,13 +229,16 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 	//- https://gist.github.com/danielfbm/37b0ca88b745503557b2b3f16865d8c3
 	//- https://stackoverflow.com/questions/37026399/git2go-after-createcommit-all-files-appear-like-being-added-for-deletion
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){return oerr}
+	if oerr != nil {
+		return oerr
+	}
 
 	// Push
 	remote, lerr := repo.Remotes.Lookup("origin")
-	if(lerr != nil){return lerr}
+	if lerr != nil {
+		return lerr
+	}
 	//remote.ConnectPush(gitRemoteCallbacks(), &git.ProxyOptions{}, []string{})
-
 
 	//err = remote.Push([]string{"refs/heads/master"}, nil, signature, message)
 	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, new(git.PushOptions))
@@ -224,11 +246,14 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 
 func GitLatestTaggedCommit(repoPath string) (*GitTagDetails, error) {
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){return nil, oerr}
-
+	if oerr != nil {
+		return nil, oerr
+	}
 
 	_, terr := repo.Tags.List()
-	if(terr != nil){return nil, terr}
+	if terr != nil {
+		return nil, terr
+	}
 
 	var latestTag *GitTagDetails = nil
 
@@ -237,36 +262,37 @@ func GitLatestTaggedCommit(repoPath string) (*GitTagDetails, error) {
 
 		var currentTag *GitTagDetails
 		//handle lightweight(non-annotated) tags.
-		if(lerr != nil){
+		if lerr != nil {
 			//this is a lightweight tag
 
 			commitRef, rerr := repo.LookupCommit(id)
-			if(rerr != nil){
+			if rerr != nil {
 				log.Print(rerr)
-				return nil}
+				return nil
+			}
 
 			author := commitRef.Author()
 
-			log.Printf("Light-weight tag lookup: %s, DATE: %s",commitRef.Id().String(), author.When.String())
+			log.Printf("Light-weight tag lookup: %s, DATE: %s", commitRef.Id().String(), author.When.String())
 
 			currentTag = &GitTagDetails{
 				TagShortName: strings.TrimPrefix(name, "refs/tags/"),
-				CommitSha: commitRef.Id().String(),
-				CommitDate: author.When,
+				CommitSha:    commitRef.Id().String(),
+				CommitDate:   author.When,
 			}
 
 		} else {
 
-			log.Printf( "Tag ID: %s, Commit ID: %s, DATE: %s", tag.Id().String(), tag.TargetId().String(), tag.Tagger().When.String())
+			log.Printf("Tag ID: %s, Commit ID: %s, DATE: %s", tag.Id().String(), tag.TargetId().String(), tag.Tagger().When.String())
 
 			currentTag = &GitTagDetails{
 				TagShortName: strings.TrimPrefix(name, "/refs/tags/"),
-				CommitSha: tag.TargetId().String(),
-				CommitDate: tag.Tagger().When,
+				CommitSha:    tag.TargetId().String(),
+				CommitDate:   tag.Tagger().When,
 			}
 		}
 
-		if(latestTag == nil) || (latestTag != nil && currentTag.CommitDate.After(latestTag.CommitDate)) {
+		if (latestTag == nil) || (latestTag != nil && currentTag.CommitDate.After(latestTag.CommitDate)) {
 			latestTag = currentTag
 		}
 
@@ -278,23 +304,26 @@ func GitLatestTaggedCommit(repoPath string) (*GitTagDetails, error) {
 
 func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullName string) (string, error) {
 	repo, oerr := git.OpenRepository(repoPath)
-	if(oerr != nil){return "", oerr}
+	if oerr != nil {
+		return "", oerr
+	}
 
 	markdown := `Timestamp |  SHA | Message | Author
 	------------- | ------------- | ------------- | -------------
 	`
 
-
 	revWalk, werr := repo.Walk()
-	if(werr != nil){return "", werr}
+	if werr != nil {
+		return "", werr
+	}
 
-	rerr := revWalk.PushRange(fmt.Sprintf("%s..%s",baseSha, headSha))
-	if(rerr != nil){return "", rerr}
+	rerr := revWalk.PushRange(fmt.Sprintf("%s..%s", baseSha, headSha))
+	if rerr != nil {
+		return "", rerr
+	}
 
 	revWalk.Iterate(func(commit *git.Commit) bool {
 		log.Print(commit.Id().String())
-
-
 
 		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n\t", //TODO: this should ahve a link for the SHA.
 			commit.Author().When.UTC().Format("2006-01-02T15:04Z"),
@@ -318,23 +347,22 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullN
 
 func GitGenerateGitIgnore(repoPath string, ignoreTypes string) (string, error) {
 	//https://github.com/GlenDC/go-gitignore/blob/master/gitignore/provider/github.go
-return "", nil
+	return "", nil
 }
-
 
 //private methods
 
 func gitSignature() *git.Signature {
 	return &git.Signature{
-		Name: "CapsuleCD",
+		Name:  "CapsuleCD",
 		Email: "CapsuleCD@users.noreply.github.com",
-		When: time.Now(),
+		When:  time.Now(),
 	}
 }
 
 func cleanCommitMessage(commitMessage string) string {
 	commitMessage = strings.TrimSpace(commitMessage)
-	if(commitMessage == ""){
+	if commitMessage == "" {
 		return "--"
 	}
 

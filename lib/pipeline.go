@@ -2,24 +2,24 @@ package lib
 
 import (
 	"capsulecd/lib/config"
-	"capsulecd/lib/scm"
 	"capsulecd/lib/engine"
 	"capsulecd/lib/errors"
-	"path"
+	"capsulecd/lib/pipeline"
+	"capsulecd/lib/scm"
 	"fmt"
 	"log"
-	"capsulecd/lib/pipeline"
+	"path"
 )
 
 type Pipeline struct {
-	Data	*pipeline.Data
-	Scm    	scm.Scm
-	Engine 	engine.Engine
+	Data   *pipeline.Data
+	Scm    scm.Scm
+	Engine engine.Engine
 }
 
-func (p *Pipeline) Start(){
+func (p *Pipeline) Start() {
 	//Initialize Configuration not already initialized.
-	if(!config.IsInitialized()){
+	if !config.IsInitialized() {
 		log.Printf("Configuration is not initialized, doing it now.")
 		config.Init()
 	}
@@ -133,35 +133,34 @@ func (p *Pipeline) Start(){
 }
 
 // Hook methods
-func (p *Pipeline) PreValidateTools(){}
-func (p *Pipeline) PostValidateTools(){}
-func (p *Pipeline) PreScmInit(){}
-func (p *Pipeline) PostScmInit(){}
-func (p *Pipeline) PreScmProcessPullRequestPayload(){}
-func (p *Pipeline) PostScmProcessPullRequestPayload(){}
-func (p *Pipeline) PreScmProcessPushPayload(){}
-func (p *Pipeline) PostScmProcessPushPayload(){}
-func (p *Pipeline) PreScmPublish(){}
-func (p *Pipeline) PostScmPublish(){}
-func (p *Pipeline) PreScmRetrievePayload(){}
-func (p *Pipeline) PostScmRetrievePayload(){}
-func (p *Pipeline) PreBuildStep(){}
-func (p *Pipeline) PostBuildStep(){}
-func (p *Pipeline) PreTestStep(){}
-func (p *Pipeline) PostTestStep(){}
-func (p *Pipeline) PrePackageStep(){}
-func (p *Pipeline) PostPackageStep(){}
-func (p *Pipeline) PreDistStep(){}
-func (p *Pipeline) PostDistStep(){}
+func (p *Pipeline) PreValidateTools()                 {}
+func (p *Pipeline) PostValidateTools()                {}
+func (p *Pipeline) PreScmInit()                       {}
+func (p *Pipeline) PostScmInit()                      {}
+func (p *Pipeline) PreScmProcessPullRequestPayload()  {}
+func (p *Pipeline) PostScmProcessPullRequestPayload() {}
+func (p *Pipeline) PreScmProcessPushPayload()         {}
+func (p *Pipeline) PostScmProcessPushPayload()        {}
+func (p *Pipeline) PreScmPublish()                    {}
+func (p *Pipeline) PostScmPublish()                   {}
+func (p *Pipeline) PreScmRetrievePayload()            {}
+func (p *Pipeline) PostScmRetrievePayload()           {}
+func (p *Pipeline) PreBuildStep()                     {}
+func (p *Pipeline) PostBuildStep()                    {}
+func (p *Pipeline) PreTestStep()                      {}
+func (p *Pipeline) PostTestStep()                     {}
+func (p *Pipeline) PrePackageStep()                   {}
+func (p *Pipeline) PostPackageStep()                  {}
+func (p *Pipeline) PreDistStep()                      {}
+func (p *Pipeline) PostDistStep()                     {}
 
-func (p *Pipeline) NotifyStep(step string, callback func() error){
+func (p *Pipeline) NotifyStep(step string, callback func() error) {
 	p.Scm.Notify(p.Data.GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
 	cerr := callback()
-	if(cerr != nil){
+	if cerr != nil {
 		//TODO: remove the temp folder path.
 		p.Scm.Notify(p.Data.GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
 	}
 }
 
 //type NotifyStepCallback func() error
-

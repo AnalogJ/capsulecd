@@ -3,9 +3,9 @@ package engine
 import (
 	"capsulecd/lib/config"
 	"capsulecd/lib/errors"
-	"fmt"
-	"capsulecd/lib/scm"
 	"capsulecd/lib/pipeline"
+	"capsulecd/lib/scm"
+	"fmt"
 )
 
 type Engine interface {

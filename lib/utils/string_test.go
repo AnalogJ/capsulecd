@@ -1,18 +1,17 @@
 package utils_test
 
 import (
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"capsulecd/lib/utils"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
-
 
 var snakeCaseTests = []struct {
 	n        string // input
 	expected string // expected result
 }{
 	{"this_is_an_input", "ThisIsAnInput"},
-	{"",""},
+	{"", ""},
 	{"hello", "Hello"},
 }
 

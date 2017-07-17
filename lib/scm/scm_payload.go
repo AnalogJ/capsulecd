@@ -7,6 +7,6 @@ type Payload struct {
 	Base *pipeline.ScmCommitInfo
 
 	//Pull Request specific fields
-	Title string
+	Title             string
 	PullRequestNumber string
 }
