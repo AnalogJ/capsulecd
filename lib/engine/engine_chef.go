@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
 )
 
 type chefMetadata struct {
@@ -153,9 +152,6 @@ func (g *engineChef) PackageStep() error {
 }
 
 func (g *engineChef) DistStep() error {
-	pemPath, _ := filepath.Abs("~/client.pem")
-	knifePath, _ := filepath.Abs("~/knife.rb")
-
 	if !config.IsSet("chef_supermarket_username") || !config.IsSet("chef_supermarket_key") {
 		return errors.EngineDistCredentialsMissing("Cannot deploy cookbook to supermarket, credentials missing")
 	}
@@ -175,6 +171,11 @@ func (g *engineChef) DistStep() error {
 		return cerr
 	}
 
+	pemFile, _ := ioutil.TempFile("","client.pem")
+	defer os.Remove(pemFile.Name())
+	knifeFile, _ := ioutil.TempFile("","knife.rb")
+	defer os.Remove(knifeFile.Name())
+
 	// write the knife.rb config jfile.
 	knifeContent := fmt.Sprintf(
 		`node_name "%s" # Replace with the login name you use to login to the Supermarket.
@@ -182,16 +183,16 @@ func (g *engineChef) DistStep() error {
         	cookbook_path [ '%s' ] # Directory where the cookbook you're uploading resides.
 		`,
 		config.GetString("chef_supermarket_username"),
-		pemPath,
+		pemFile.Name(),
 		tmpParentPath,
 	)
 
-	kerr := ioutil.WriteFile(knifePath, []byte(knifeContent), 0644)
+	_, kerr := knifeFile.Write([]byte(knifeContent))
 	if kerr != nil {
 		return kerr
 	}
 
-	perr := ioutil.WriteFile(pemPath, []byte(config.GetBase64Decoded("chef_supermarket_key")), 0644)
+	_, perr := pemFile.Write([]byte(config.GetBase64Decoded("chef_supermarket_key")))
 	if perr != nil {
 		return perr
 	}
@@ -199,7 +200,7 @@ func (g *engineChef) DistStep() error {
 	cookbookDistCmd := fmt.Sprintf("knife cookbook site share %s %s -c %s",
 		g.NextMetadata.Name,
 		config.GetString("chef_supermarket_type"),
-		knifePath,
+		knifeFile.Name(),
 	)
 
 	derr := utils.BashCmdExec(cookbookDistCmd, "", "")

@@ -279,3 +279,7 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 
 - http://golangcookbook.com/chapters/running/cross-compiling/
 - https://github.com/kelseyhightower/confd/blob/20b3d37da7aaa2c176c0612202c06c5ba4f7d987/docs/release-checklist.md
+- https://gist.github.com/Ehekatl/93b4ac1621771f2889cd99c7b7cfc2ec
+- https://github.com/sithembiso/git2go-build
+- https://gist.github.com/Ehekatl/93b4ac1621771f2889cd99c7b7cfc2ec
+- https://github.com/danielfbm/docker-go-libgit2/blob/master/Dockerfile
