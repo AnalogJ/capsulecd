@@ -60,18 +60,15 @@ func (g *engineChef) BuildStep() error {
 	}
 
 	// bump up the chef cookbook version
-	merr := g.retrieveCurrentMetadata(g.PipelineData.GitLocalPath)
-	if merr != nil {
+	if merr := g.retrieveCurrentMetadata(g.PipelineData.GitLocalPath); merr != nil {
 		return merr
 	}
 
-	perr := g.populateNextMetadata()
-	if perr != nil {
+	if perr := g.populateNextMetadata(); perr != nil {
 		return perr
 	}
 
-	nerr := g.writeNextMetadata(g.PipelineData.GitLocalPath)
-	if nerr != nil {
+	if nerr := g.writeNextMetadata(g.PipelineData.GitLocalPath); nerr != nil {
 		return nerr
 	}
 
@@ -103,14 +100,12 @@ func (g *engineChef) BuildStep() error {
 
 func (g *engineChef) TestStep() error {
 	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
-	cerr := utils.CmdExec("berks", []string{"install"}, g.PipelineData.GitLocalPath, "")
-	if cerr != nil {
+	if cerr := utils.CmdExec("berks", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")
 	}
 
 	//download all its gem dependencies
-	berr := utils.CmdExec("bundle", []string{"install"}, g.PipelineData.GitLocalPath, "")
-	if berr != nil {
+	if berr := utils.CmdExec("bundle", []string{"install"}, g.PipelineData.GitLocalPath, ""); berr != nil {
 		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
 	}
 
@@ -121,8 +116,7 @@ func (g *engineChef) TestStep() error {
 	} else {
 		testCmd = "rake test"
 	}
-	terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, "")
-	if terr != nil {
+	if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 	}
 	return nil
@@ -132,8 +126,7 @@ func (g *engineChef) PackageStep() error {
 	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
 	// as they will be included in the commmit and any release artifacts)
 
-	cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version))
-	if cerr != nil {
+	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
 	}
 	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
@@ -161,8 +154,7 @@ func (g *engineChef) DistStep() error {
 	defer os.RemoveAll(tmpParentPath)
 
 	tmpLocalPath := path.Join(tmpParentPath, g.NextMetadata.Name)
-	cerr := utils.CopyDir(g.PipelineData.GitLocalPath, tmpLocalPath)
-	if cerr != nil {
+	if cerr := utils.CopyDir(g.PipelineData.GitLocalPath, tmpLocalPath); cerr != nil {
 		return cerr
 	}
 
@@ -198,8 +190,7 @@ func (g *engineChef) DistStep() error {
 		knifeFile.Name(),
 	)
 
-	derr := utils.BashCmdExec(cookbookDistCmd, "", "")
-	if derr != nil {
+	if derr := utils.BashCmdExec(cookbookDistCmd, "", ""); derr != nil {
 		return errors.EngineDistPackageError("knife cookbook upload to supermarket failed")
 	}
 	return nil
@@ -210,8 +201,7 @@ func (g *engineChef) DistStep() error {
 func (g *engineChef) retrieveCurrentMetadata(gitLocalPath string) error {
 	//dat, err := ioutil.ReadFile(path.Join(gitLocalPath, "metadata.rb"))
 	//knife cookbook metadata -o ../ chef-mycookbook -- will generate a metadata.json file.
-	cerr := utils.CmdExec("knife", []string{"cookbook", "metadata", "-o", "../", path.Base(gitLocalPath)}, gitLocalPath, "")
-	if cerr != nil {
+	if cerr := utils.CmdExec("knife", []string{"cookbook", "metadata", "-o", "../", path.Base(gitLocalPath)}, gitLocalPath, ""); cerr != nil {
 		return cerr
 	}
 	defer os.Remove(path.Join(gitLocalPath, "metadata.json"))
@@ -222,8 +212,7 @@ func (g *engineChef) retrieveCurrentMetadata(gitLocalPath string) error {
 		return rerr
 	}
 
-	uerr := json.Unmarshal(metadataContent, g.CurrentMetadata)
-	if uerr != nil {
+	if uerr := json.Unmarshal(metadataContent, g.CurrentMetadata); uerr != nil {
 		return uerr
 	}
 

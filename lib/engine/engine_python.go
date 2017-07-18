@@ -45,8 +45,8 @@ func (g *enginePython) ValidateTools() error {
 func (g *enginePython) Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error {
 	g.Scm = sourceScm
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(chefMetadata)
-	g.NextMetadata = new(chefMetadata)
+	g.CurrentMetadata = new(pythonMetadata)
+	g.NextMetadata = new(pythonMetadata)
 	return nil
 }
 
@@ -72,18 +72,16 @@ func (g *enginePython) BuildStep() error {
 	//
 	// additional packaging structures, like those listed below, may also be supported in the future.
 	// http://stackoverflow.com/a/7071358/1157633
-	merr := g.retrieveCurrentMetadata(g.PipelineData.GitLocalPath)
-	if merr != nil {
+
+	if merr := g.retrieveCurrentMetadata(g.PipelineData.GitLocalPath); merr != nil {
 		return merr
 	}
 
-	perr := g.populateNextMetadata()
-	if perr != nil {
+	if perr := g.populateNextMetadata(); perr != nil {
 		return perr
 	}
 
-	nerr := g.writeNextMetadata(g.PipelineData.GitLocalPath)
-	if nerr != nil {
+	if nerr := g.writeNextMetadata(g.PipelineData.GitLocalPath); nerr != nil {
 		return nerr
 	}
 
@@ -158,8 +156,7 @@ func (g *enginePython) PackageStep() error {
 	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
 	// as they will be included in the commmit and any release artifacts)
 
-	cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version))
-	if cerr != nil {
+	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
 	}
 	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
@@ -207,8 +204,7 @@ func (g *enginePython) DistStep() error {
 	}
 
 	pythonDistCmd := "python setup.py sdist"
-	derr := utils.BashCmdExec(pythonDistCmd, g.PipelineData.GitLocalPath, "")
-	if derr != nil {
+	if derr := utils.BashCmdExec(pythonDistCmd, g.PipelineData.GitLocalPath, ""); derr != nil {
 		return errors.EngineDistPackageError("python setup.py sdist failed")
 	}
 
@@ -217,8 +213,7 @@ func (g *enginePython) DistStep() error {
 		pypircFile.Name(),
 	)
 
-	uerr := utils.BashCmdExec(pypiUploadCmd, g.PipelineData.GitLocalPath, "")
-	if uerr != nil {
+	if uerr := utils.BashCmdExec(pypiUploadCmd, g.PipelineData.GitLocalPath, ""); uerr != nil {
 		return errors.EngineDistPackageError("twine package upload failed. Check log for exact error")
 	}
 	return nil
