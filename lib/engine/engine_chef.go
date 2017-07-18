@@ -114,11 +114,6 @@ func (g *engineChef) TestStep() error {
 		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
 	}
 
-	//skip the test command if disabled
-	if config.GetBool("engine_disable_test") {
-		return nil
-	}
-
 	//run test command
 	var testCmd string
 	if config.IsSet("engine_cmd_test") {
