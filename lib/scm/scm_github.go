@@ -28,7 +28,6 @@ type scmGithub struct {
 // MUST set options.GitParentPath
 // MUST set client
 func (g *scmGithub) Init(pipelineData *pipeline.Data, client *http.Client) error {
-
 	g.PipelineData = pipelineData
 
 	if !config.IsSet("scm_github_access_token") {
@@ -179,6 +178,7 @@ func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
 // REQUIRES client
 // REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPullRequestPayload(payload *Payload) error {
+	log.Printf("%v", payload)
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
 	g.PipelineData.GitBaseInfo = payload.Base
@@ -291,7 +291,6 @@ func (g *scmGithub) Publish() error {
 // requires @source_git_head_info
 // requires @config.engine_disable_cleanup
 func (g *scmGithub) Notify(ref string, state string, message string) error {
-
 	targetURL := "https://www.capsulecd.com"
 	contextApp := "CapsuleCD"
 

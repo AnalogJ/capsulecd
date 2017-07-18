@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"path"
+	"os"
 )
 
 type Pipeline struct {
@@ -18,6 +19,7 @@ type Pipeline struct {
 }
 
 func (p *Pipeline) Start() {
+	defer p.Cleanup()
 	//Initialize Configuration not already initialized.
 	if !config.IsInitialized() {
 		log.Printf("Configuration is not initialized, doing it now.")
@@ -35,17 +37,17 @@ func (p *Pipeline) Start() {
 	engineImpl, eerr := engine.Create()
 	errors.CheckErr(eerr)
 	p.Engine = engineImpl
-	engineImpl.Init(p.Data, scmImpl)
+	errors.CheckErr(engineImpl.Init(p.Data, scmImpl))
 
 	p.PreValidateTools()
-	engineImpl.ValidateTools()
+	errors.CheckErr(engineImpl.ValidateTools())
 	p.PostValidateTools()
 
 	// start the source, and whatever work needs to be done there.
 	// MUST set options.GitParentPath
 	// MUST set options.Client
 	p.PreScmInit()
-	scmImpl.Init(p.Data, nil)
+	errors.CheckErr(scmImpl.Init(p.Data, nil))
 	p.PostScmInit()
 
 	// runner must determine if this is a pull request or a push.
@@ -55,7 +57,8 @@ func (p *Pipeline) Start() {
 	// MUST set runner_is_pullrequest
 	// REQUIRES source_client
 	p.PreScmRetrievePayload()
-	payload, _ := scmImpl.RetrievePayload()
+	payload, perr := scmImpl.RetrievePayload()
+	errors.CheckErr(perr)
 	p.PostScmRetrievePayload()
 
 	if p.Data.IsPullRequest {
@@ -68,7 +71,7 @@ func (p *Pipeline) Start() {
 		// MUST set source_git_head_info
 		// REQUIRES source_client
 		p.PreScmProcessPullRequestPayload()
-		scmImpl.ProcessPullRequestPayload(payload)
+		errors.CheckErr(scmImpl.ProcessPullRequestPayload(payload))
 		p.PostScmProcessPullRequestPayload()
 	} else {
 		// start processing the payload, which should result in a local git repository that we
@@ -78,7 +81,7 @@ func (p *Pipeline) Start() {
 		// MUST set source_git_head_info
 		// REQUIRES source_client
 		p.PreScmProcessPushPayload()
-		scmImpl.ProcessPushPayload(payload)
+		errors.CheckErr(scmImpl.ProcessPushPayload(payload))
 		p.PostScmProcessPushPayload()
 	}
 
@@ -89,7 +92,9 @@ func (p *Pipeline) Start() {
 	// this may be creating missing files/default structure, compilation, version bumping, etc.
 	p.NotifyStep("build", func() error {
 		p.PreBuildStep()
-		engineImpl.BuildStep()
+		if berr := engineImpl.BuildStep(); berr!= nil{
+			return berr;
+		}
 		p.PostBuildStep()
 		return nil
 	})
@@ -99,7 +104,9 @@ func (p *Pipeline) Start() {
 	// REQUIRES @config.engine_disable_test
 	p.NotifyStep("test", func() error {
 		p.PreTestStep()
-		engineImpl.TestStep()
+		if terr := engineImpl.TestStep(); terr != nil {
+			return terr;
+		}
 		p.PostTestStep()
 		return nil
 	})
@@ -107,7 +114,9 @@ func (p *Pipeline) Start() {
 	// this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
 	p.NotifyStep("package", func() error {
 		p.PrePackageStep()
-		engineImpl.PackageStep()
+		if perr := engineImpl.PackageStep(); perr != nil {
+			return perr
+		}
 		p.PostPackageStep()
 		return nil
 	})
@@ -116,7 +125,9 @@ func (p *Pipeline) Start() {
 		// this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
 		p.NotifyStep("dist", func() error {
 			p.PreDistStep()
-			engineImpl.DistStep()
+			if derr := engineImpl.DistStep(); derr != nil {
+				return derr
+			}
 			p.PostDistStep()
 			return nil
 		})
@@ -125,7 +136,9 @@ func (p *Pipeline) Start() {
 		// this step should also do any source specific releases (github release, asset uploading, etc)
 		p.NotifyStep("scm publish", func() error {
 			p.PreScmPublish()
-			scmImpl.Publish()
+			if serr := scmImpl.Publish(); serr != nil{
+				return serr
+			}
 			p.PostScmPublish()
 			return nil
 		})
@@ -160,6 +173,14 @@ func (p *Pipeline) NotifyStep(step string, callback func() error) {
 	if cerr != nil {
 		//TODO: remove the temp folder path.
 		p.Scm.Notify(p.Data.GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
+		errors.CheckErr(cerr)
+	}
+}
+
+func (p *Pipeline) Cleanup(){
+	log.Printf("Running Cleanup...")
+	if p.Data != nil && p.Data.GitParentPath != "" {
+		os.RemoveAll(p.Data.GitParentPath)
 	}
 }
 
