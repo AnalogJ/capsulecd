@@ -158,9 +158,9 @@ func (g *engineChef) DistStep() error {
 		return cerr
 	}
 
-	pemFile, _ := ioutil.TempFile("","client.pem")
+	pemFile, _ := ioutil.TempFile("", "client.pem")
 	defer os.Remove(pemFile.Name())
-	knifeFile, _ := ioutil.TempFile("","knife.rb")
+	knifeFile, _ := ioutil.TempFile("", "knife.rb")
 	defer os.Remove(knifeFile.Name())
 
 	// write the knife.rb config jfile.

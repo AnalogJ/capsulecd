@@ -6,11 +6,11 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
-"fmt"
-"io/ioutil"
-"os"
-"os/exec"
-"path"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path"
 )
 
 type nodeMetadata struct {
@@ -19,8 +19,8 @@ type nodeMetadata struct {
 type engineNode struct {
 	*EngineBase
 
-	PipelineData    *pipeline.Data
-	Scm             scm.Scm //Interface
+	PipelineData *pipeline.Data
+	Scm          scm.Scm //Interface
 }
 
 func (n *engineNode) ValidateTools() error {
@@ -65,7 +65,6 @@ func (n *engineNode) BuildStep() error {
 
 func (n *engineNode) TestStep() error {
 
-
 	// the module has already been downloaded. lets make sure all its dependencies are available.
 	if derr := utils.BashCmdExec("npm install", n.PipelineData.GitLocalPath, ""); derr != nil {
 		return errors.EngineTestRunnerError("npm install failed. Check module dependencies")
@@ -75,7 +74,6 @@ func (n *engineNode) TestStep() error {
 	if derr := utils.BashCmdExec("npm shrinkwrap", n.PipelineData.GitLocalPath, ""); derr != nil {
 		return errors.EngineTestRunnerError("npm shrinkwrap failed. Check log for exact error")
 	}
-
 
 	//run test command
 	var testCmd string
@@ -99,7 +97,7 @@ func (n *engineNode) PackageStep() error {
 	}
 
 	// run npm publish
-	versionCmd :=  fmt.Sprintf("npm version %s -m '(v%%s) Automated packaging of release by CapsuleCD'",
+	versionCmd := fmt.Sprintf("npm version %s -m '(v%%s) Automated packaging of release by CapsuleCD'",
 		config.GetString("engine_version_bump_type"),
 	)
 	if verr := utils.BashCmdExec(versionCmd, n.PipelineData.GitLocalPath, ""); verr != nil {
@@ -107,7 +105,7 @@ func (n *engineNode) PackageStep() error {
 	}
 
 	tagCommit, terr := utils.GitLatestTaggedCommit(n.PipelineData.GitLocalPath)
-	if(terr != nil){
+	if terr != nil {
 		return terr
 	}
 
@@ -121,7 +119,7 @@ func (n *engineNode) DistStep() error {
 		return errors.EngineDistCredentialsMissing("cannot deploy page to npm, credentials missing")
 	}
 
-	npmrcFile, _ := ioutil.TempFile("",".npmrc")
+	npmrcFile, _ := ioutil.TempFile("", ".npmrc")
 	defer os.Remove(npmrcFile.Name())
 
 	// write the .npmrc config jfile.
@@ -130,7 +128,7 @@ func (n *engineNode) DistStep() error {
 		config.GetString("npm_auth_token"),
 	)
 
-	if _, werr := npmrcFile.Write([]byte(npmrcContent)); werr != nil{
+	if _, werr := npmrcFile.Write([]byte(npmrcContent)); werr != nil {
 		return werr
 	}
 

@@ -6,26 +6,26 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
-	"encoding/json"
 	"regexp"
 )
 
 type rubyMetadata struct {
-	Name string
+	Name    string
 	Version string
 }
 
 type rubyGemspec struct {
-	Name string `json:"name"`
+	Name    string `json:"name"`
 	Version struct {
 		Version string `json:"name"`
-	}`json:"version"`
+	} `json:"version"`
 }
 
 type engineRuby struct {
@@ -35,7 +35,7 @@ type engineRuby struct {
 	Scm             scm.Scm //Interface
 	CurrentMetadata *rubyMetadata
 	NextMetadata    *rubyMetadata
-	GemspecPath string
+	GemspecPath     string
 }
 
 func (g *engineRuby) ValidateTools() error {
@@ -92,7 +92,6 @@ func (g *engineRuby) BuildStep() error {
 		return nerr
 	}
 
-
 	// check for/create any required missing folders/files
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "Gemfile")) {
 		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "Gemfile"),
@@ -121,13 +120,13 @@ func (g *engineRuby) BuildStep() error {
 
 	// package the gem, make sure it builds correctly
 
-	gemCmd := fmt.Sprintf("gem build %s",g.GemspecPath)
+	gemCmd := fmt.Sprintf("gem build %s", g.GemspecPath)
 	if terr := utils.BashCmdExec(gemCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 		return errors.EngineBuildPackageFailed("gem build failed. Check gemspec file and dependencies")
 	}
 
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, fmt.Sprintf("%s-%s.gem", g.NextMetadata.Name, g.NextMetadata.Version))) {
-		return errors.EngineBuildPackageFailed(fmt.Sprintf("gem build failed. %s-%s.gem not found", g.NextMetadata.Name, g.NextMetadata.Version ))
+		return errors.EngineBuildPackageFailed(fmt.Sprintf("gem build failed. %s-%s.gem not found", g.NextMetadata.Name, g.NextMetadata.Version))
 	}
 	return nil
 }
@@ -182,8 +181,7 @@ func (g *engineRuby) DistStep() error {
 		return errors.EngineDistCredentialsMissing("Cannot deploy package to rubygems, credentials missing")
 	}
 
-
-	credFile, _ := ioutil.TempFile("","gem_credentials")
+	credFile, _ := ioutil.TempFile("", "gem_credentials")
 	defer os.Remove(credFile.Name())
 
 	// write the .gem/credentials config jfile.
@@ -194,7 +192,7 @@ func (g *engineRuby) DistStep() error {
 		config.GetString("rubygems_api_key"),
 	)
 
-	if _, perr := credFile.Write([]byte(credContent)); perr != nil{
+	if _, perr := credFile.Write([]byte(credContent)); perr != nil {
 		return perr
 	}
 
@@ -215,13 +213,13 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 	gemspecFiles, gerr := filepath.Glob(path.Join(gitLocalPath, "/*.gemspec"))
 	if gerr != nil {
 		return errors.EngineBuildPackageInvalid("*.gemspec file is required to process Ruby gem")
-	} else if(len(gemspecFiles) == 0){
+	} else if len(gemspecFiles) == 0 {
 		return errors.EngineBuildPackageInvalid("*.gemspec file is required to process Ruby gem")
 	}
 
 	g.GemspecPath = gemspecFiles[0]
 
-	gemspecJsonFile, _ := ioutil.TempFile("","gemspec.json")
+	gemspecJsonFile, _ := ioutil.TempFile("", "gemspec.json")
 	defer os.Remove(gemspecJsonFile.Name())
 
 	//generate a JSON file containing the Gemspec data.
@@ -229,7 +227,7 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 		gemspecJsonFile.Name(),
 		g.GemspecPath,
 	)
-	if cerr := utils.BashCmdExec(gemspecJsonCmd,"",""); cerr != nil{
+	if cerr := utils.BashCmdExec(gemspecJsonCmd, "", ""); cerr != nil {
 		return cerr
 	}
 
@@ -248,10 +246,10 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 	g.CurrentMetadata.Version = gemspecObj.Version.Version
 
 	//ensure that there is a lib/GEMNAME/version.rb file.
-	versionrbPath := path.Join("lib",gemspecObj.Name, "version.rb")
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, versionrbPath)){
+	versionrbPath := path.Join("lib", gemspecObj.Name, "version.rb")
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, versionrbPath)) {
 		return errors.EngineBuildPackageInvalid(
-			fmt.Sprintf("version.rb file (%s) is required to process Ruby gem", versionrbPath ))
+			fmt.Sprintf("version.rb file (%s) is required to process Ruby gem", versionrbPath))
 	}
 	return nil
 }
@@ -270,7 +268,7 @@ func (g *engineRuby) populateNextMetadata() error {
 
 func (g *engineRuby) writeNextMetadata(gitLocalPath string) error {
 
-	versionrbPath := path.Join(g.PipelineData.GitLocalPath, "lib",g.CurrentMetadata.Name, "version.rb")
+	versionrbPath := path.Join(g.PipelineData.GitLocalPath, "lib", g.CurrentMetadata.Name, "version.rb")
 	versionrbContent, rerr := ioutil.ReadFile(versionrbPath)
 	if rerr != nil {
 		return rerr

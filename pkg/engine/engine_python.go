@@ -174,13 +174,12 @@ func (g *enginePython) DistStep() error {
 		return errors.EngineDistCredentialsMissing("Cannot deploy python package to pypi/warehouse, credentials missing")
 	}
 
-
-	pypircFile, _ := ioutil.TempFile("",".pypirc")
+	pypircFile, _ := ioutil.TempFile("", ".pypirc")
 	defer os.Remove(pypircFile.Name())
 
 	// write the .pypirc config jfile.
 	var repository string
-	if(config.IsSet("pypi_repository")){
+	if config.IsSet("pypi_repository") {
 		repository = config.GetString("pypi_repository")
 	} else {
 		repository = "https://upload.pypi.org/legacy/"
@@ -199,7 +198,7 @@ func (g *enginePython) DistStep() error {
 		config.GetString("pypi_password"),
 	)
 
-	if _, perr := pypircFile.Write([]byte(pypircContent)); perr != nil{
+	if _, perr := pypircFile.Write([]byte(pypircContent)); perr != nil {
 		return perr
 	}
 
