@@ -292,3 +292,8 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://github.com/weaveworks/mesh/blob/master/lint
 - https://github.com/alecthomas/gometalinter
 - https://golang.org/cmd/vet/
+- https://medium.com/statuscode/the-9-most-popular-golang-links-from-2016-c49287d99448
+- https://medium.com/@sebdah/go-best-practices-testing-3448165a0e18
+- https://buildroot.org/
+- https://github.com/multiarch/crossbuild
+- https://github.com/Cimpress-MCP/go-git2consul/tree/crossbuild/build-multi

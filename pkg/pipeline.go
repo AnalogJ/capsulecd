@@ -129,6 +129,7 @@ func (p *Pipeline) Start() {
 	p.NotifyStep("test", func() error {
 		//skip the test command if disabled
 		if config.GetBool("engine_disable_test") {
+			log.Println("skipping pre_test_step, test_step, post_test_step")
 			return nil
 		}
 
@@ -159,6 +160,11 @@ func (p *Pipeline) Start() {
 	if p.Data.IsPullRequest {
 		// this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
 		p.NotifyStep("dist", func() error {
+			if config.GetBool("engine_disable_dist") {
+				log.Println("skipping pre_dist_step, dist_step, post_dist_step")
+				return nil
+			}
+
 			log.Println("pre_dist_step")
 			p.PreDistStep()
 			log.Println("dist_step")
@@ -173,6 +179,11 @@ func (p *Pipeline) Start() {
 		// this step should push the merged, tested and version updated code up to the source code repository
 		// this step should also do any source specific releases (github release, asset uploading, etc)
 		p.NotifyStep("scm publish", func() error {
+			if config.GetBool("engine_disable_scm_publish") {
+				log.Println("skipping pre_scm_publish_step, scm_publish_step, post_scm_publish_step")
+				return nil
+			}
+
 			log.Println("pre_scm_publish_step")
 			p.PreScmPublish()
 			log.Println("scm_publish_step")

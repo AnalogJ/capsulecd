@@ -5,19 +5,19 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker pull analogj/capsulecd
-    #- docker pull analogj/capsulecd:chef
-    - docker pull analogj/capsulecd:javascript
-    - docker pull analogj/capsulecd:node
-    - docker pull analogj/capsulecd:python
-    - docker pull analogj/capsulecd:ruby
+    - docker build . --tag analogj/capsulecd
+#    - docker pull analogj/capsulecd:chef
+#    - docker pull analogj/capsulecd:javascript
+#    - docker pull analogj/capsulecd:node
+#    - docker pull analogj/capsulecd:python
+#    - docker pull analogj/capsulecd:ruby
 
 test:
   override:
-    #- docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:chef sh -c "bundle install --with test && rake 'spec:chef'"
-    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:javascript sh -c "bundle install --with test && rake 'spec:javascript'"
-    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:node sh -c "bundle install --with test && rake 'spec:node'"
-    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:python sh -c "bundle install --with test && rake 'spec:python'"
-    #- docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:ruby sh -c "bundle install --with test && rake 'spec:ruby'"
+#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:chef sh -c "bundle install --with test && rake 'spec:chef'"
+#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:javascript sh -c "bundle install --with test && rake 'spec:javascript'"
+#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:node sh -c "bundle install --with test && rake 'spec:node'"
+#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:python sh -c "bundle install --with test && rake 'spec:python'"
+#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:ruby sh -c "bundle install --with test && rake 'spec:ruby'"
 
-    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd sh -c "bundle install --with test && rake 'coveralls:push'"
+    - docker run -e "CI=true" analogj/capsulecd sh -c "go test \$(glide novendor)"
