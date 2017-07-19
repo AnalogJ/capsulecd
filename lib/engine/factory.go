@@ -24,14 +24,12 @@ func Create() (Engine, error) {
 		return new(engineChef), nil
 	case "golang":
 		return new(engineChef), nil
-	case "javascript":
-		return new(engineChef), nil
 	case "node":
-		return new(engineChef), nil
+		return new(engineNode), nil
 	case "python":
-		return new(engineChef), nil
+		return new(enginePython), nil
 	case "ruby":
-		return new(engineChef), nil
+		return new(engineRuby), nil
 	default:
 		return nil, errors.EngineUnspecifiedError(fmt.Sprintf("Unknown Engine Type: %s", engineType))
 	}

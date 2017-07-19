@@ -145,8 +145,8 @@ func (g *enginePython) TestStep() error {
 		testCmd = "tox"
 	}
 	//running tox will install all dependencies in a virtual env, and then run unit tests.
-	terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, "")
-	if terr != nil {
+
+	if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 	}
 	return nil
