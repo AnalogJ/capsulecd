@@ -1,6 +1,6 @@
 package pipeline
 
-import "capsulecd/lib/errors"
+import "capsulecd/pkg/errors"
 
 type ScmRepoInfo struct {
 	CloneUrl string

@@ -1,11 +1,11 @@
-package lib
+package pkg
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/engine"
-	"capsulecd/lib/errors"
-	"capsulecd/lib/pipeline"
-	"capsulecd/lib/scm"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/engine"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm"
 	"fmt"
 	"log"
 	"path"

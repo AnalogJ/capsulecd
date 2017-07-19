@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

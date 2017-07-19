@@ -1,10 +1,10 @@
 package scm
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/errors"
-	"capsulecd/lib/pipeline"
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/utils"
 	"context"
 	"fmt"
 	"github.com/google/go-github/github"
@@ -231,7 +231,7 @@ func (g *scmGithub) Publish() error {
 
 	// set the pull request status (we do this before the merge, because we cant update status on a merged
 	//PR anways. If the push fails, the status will be set to error correctly.
-	return g.Notify(
+	g.Notify(
 		g.PipelineData.GitBaseInfo.Repo.FullName,
 		"success",
 		"Pull-request was successfully merged, new release created.",

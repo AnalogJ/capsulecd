@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/errors"
-	"capsulecd/lib/pipeline"
-	"capsulecd/lib/scm"
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm"
+	"capsulecd/pkg/utils"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"

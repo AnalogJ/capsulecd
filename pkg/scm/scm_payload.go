@@ -1,6 +1,6 @@
 package scm
 
-import "capsulecd/lib/pipeline"
+import "capsulecd/pkg/pipeline"
 
 type Payload struct {
 	Head *pipeline.ScmCommitInfo

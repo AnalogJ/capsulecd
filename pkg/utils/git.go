@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"capsulecd/lib/errors"
+	"capsulecd/pkg/errors"
 	"fmt"
 	"gopkg.in/libgit2/git2go.v25"
 	"log"

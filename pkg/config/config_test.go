@@ -1,7 +1,7 @@
 package config_test
 
 import (
-	"capsulecd/lib/config"
+	"capsulecd/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"testing"
 

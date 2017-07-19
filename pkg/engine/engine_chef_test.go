@@ -1,11 +1,11 @@
 package engine_test
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/engine"
-	"capsulecd/lib/pipeline"
-	"capsulecd/lib/scm"
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/engine"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm"
+	"capsulecd/pkg/utils"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"

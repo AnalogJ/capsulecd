@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/errors"
-	"capsulecd/lib/pipeline"
-	"capsulecd/lib/scm"
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm"
+	"capsulecd/pkg/utils"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -250,7 +250,8 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 	//ensure that there is a lib/GEMNAME/version.rb file.
 	versionrbPath := path.Join("lib",gemspecObj.Name, "version.rb")
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, versionrbPath)){
-		return errors.EngineBuildPackageInvalid(fmt.Sprintf("version.rb file (%) is required to process Ruby gem", versionrbPath ))
+		return errors.EngineBuildPackageInvalid(
+			fmt.Sprintf("version.rb file (%s) is required to process Ruby gem", versionrbPath ))
 	}
 	return nil
 }
@@ -275,6 +276,6 @@ func (g *engineRuby) writeNextMetadata(gitLocalPath string) error {
 		return rerr
 	}
 	re := regexp.MustCompile(`(\d+)\.(\d+)\.(\d+)`)
-	updatedContent := re.ReplaceAllLiteralString(versionrbContent, g.NextMetadata.Version)
+	updatedContent := re.ReplaceAllLiteralString(string(versionrbContent), g.NextMetadata.Version)
 	return ioutil.WriteFile(versionrbPath, []byte(updatedContent), 0644)
 }

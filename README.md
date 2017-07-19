@@ -283,3 +283,6 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://github.com/sithembiso/git2go-build
 - https://gist.github.com/Ehekatl/93b4ac1621771f2889cd99c7b7cfc2ec
 - https://github.com/danielfbm/docker-go-libgit2/blob/master/Dockerfile
+
+- https://github.com/thockin/go-build-template
+- https://peter.bourgon.org/go-best-practices-2016/

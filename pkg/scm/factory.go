@@ -1,9 +1,9 @@
 package scm
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/errors"
-	"capsulecd/lib/pipeline"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
 	"fmt"
 	"net/http"
 )

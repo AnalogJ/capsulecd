@@ -1,7 +1,7 @@
 package scm
 
 import (
-	"capsulecd/lib/pipeline"
+	"capsulecd/pkg/pipeline"
 	"context"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"

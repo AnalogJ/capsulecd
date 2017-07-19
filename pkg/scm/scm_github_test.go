@@ -1,12 +1,12 @@
 package scm_test
 
 import (
-	"capsulecd/lib/scm"
+	"capsulecd/pkg/scm"
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"capsulecd/lib/config"
-	"capsulecd/lib/pipeline"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/pipeline"
 	"context"
 	"crypto/tls"
 	"github.com/seborama/govcr"

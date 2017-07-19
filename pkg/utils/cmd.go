@@ -2,7 +2,7 @@ package utils
 
 import (
 	"bufio"
-	"capsulecd/lib/errors"
+	"capsulecd/pkg/errors"
 	"fmt"
 	"os"
 	"os/exec"

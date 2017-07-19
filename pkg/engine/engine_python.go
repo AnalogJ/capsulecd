@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/errors"
-	"capsulecd/lib/pipeline"
-	"capsulecd/lib/scm"
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm"
+	"capsulecd/pkg/utils"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -209,7 +209,7 @@ func (g *enginePython) DistStep() error {
 	}
 
 	// using twine instead of setup.py (it supports HTTPS.)https://python-packaging-user-guide.readthedocs.org/en/latest/distributing/#uploading-your-project-to-pypi
-	pypiUploadCmd := fmt.Sprint("twine upload --config-file %s  dist/*",
+	pypiUploadCmd := fmt.Sprintf("twine upload --config-file %s  dist/*",
 		pypircFile.Name(),
 	)
 
@@ -227,7 +227,7 @@ func (g *enginePython) retrieveCurrentMetadata(gitLocalPath string) error {
 	if rerr != nil {
 		return rerr
 	}
-	g.CurrentMetadata.Version = strings.TrimSpace(versionContent)
+	g.CurrentMetadata.Version = strings.TrimSpace(string(versionContent))
 	return nil
 }
 

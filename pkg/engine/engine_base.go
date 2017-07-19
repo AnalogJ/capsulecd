@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"capsulecd/lib/config"
-	"capsulecd/lib/errors"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
 	"fmt"
 	"github.com/Masterminds/semver"
 )

@@ -6,15 +6,16 @@ import (
 	"time"
 
 	"gopkg.in/urfave/cli.v2"
-	"capsulecd/lib/config"
+	"capsulecd/pkg/config"
 	"path/filepath"
-	"capsulecd/lib"
+	"capsulecd/pkg"
+	"capsulecd/pkg/version"
 )
 func main() {
 	app := &cli.App{
 		Name: "capsulecd",
 		Usage: "Continuous Delivery scripts for automating package releases",
-		Version: "v19.99.0",
+		Version: version.VERSION,
 		Compiled: time.Now(),
 		Authors: []*cli.Author{
 			&cli.Author{
@@ -49,7 +50,7 @@ func main() {
 					fmt.Println("repository:", config.GetString("scm_repo_full_name"))
 					fmt.Println("dry run:", config.GetString("dry_run"))
 
-					pipeline := lib.Pipeline{}
+					pipeline := pkg.Pipeline{}
 					pipeline.Start()
 
 					return nil

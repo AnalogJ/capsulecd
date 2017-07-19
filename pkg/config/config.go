@@ -1,7 +1,7 @@
 package config
 
 import (
-	"capsulecd/lib/utils"
+	"capsulecd/pkg/utils"
 	"encoding/base64"
 	"github.com/spf13/viper"
 	"log"
