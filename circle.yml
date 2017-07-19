@@ -5,19 +5,25 @@ machine:
 dependencies:
   override:
     - docker info
-    - docker build . --tag analogj/capsulecd
-#    - docker pull analogj/capsulecd:chef
-#    - docker pull analogj/capsulecd:javascript
-#    - docker pull analogj/capsulecd:node
-#    - docker pull analogj/capsulecd:python
-#    - docker pull analogj/capsulecd:ruby
+    - go get github.com/mattn/goveralls
+    - go get github.com/wadey/gocovmerge
+    - docker pull analogj/libgit2-crossbuild:linux-amd64
+    - cd ci && docker build . -f Dockerfile.base --tag analogj/capsulecd-build:base
+    - cd ci && docker build . -f Dockerfile.chef --tag analogj/capsulecd-build:chef
+    - cd ci && docker build . -f Dockerfile.golang --tag analogj/capsulecd-build:golang
+    - cd ci && docker build . -f Dockerfile.node --tag analogj/capsulecd-build:node
+    - cd ci && docker build . -f Dockerfile.python --tag analogj/capsulecd-build:python
+    - cd ci && docker build . -f Dockerfile.ruby --tag analogj/capsulecd-build:ruby
 
 test:
   override:
-#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:chef sh -c "bundle install --with test && rake 'spec:chef'"
-#    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:javascript sh -c "bundle install --with test && rake 'spec:javascript'"
+    - mkdir -p coverage
+    - docker run -e "CI=true" -v $PWD/coverage:/tmp/coverage analogj/capsulecd-build:base
+    - docker run -e "CI=true" -v $PWD/coverage:/tmp/coverage analogj/capsulecd-build:chef
 #    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:node sh -c "bundle install --with test && rake 'spec:node'"
 #    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:python sh -c "bundle install --with test && rake 'spec:python'"
 #    - docker run -e "CI=true" -v $PWD:/srv/capsulecd analogj/capsulecd:ruby sh -c "bundle install --with test && rake 'spec:ruby'"
+  post:
+    - /home/ubuntu/.go_workspace/bin/gocovmerge coverage/*-coverage.out > coverage/merged-coverage.out
+    - /home/ubuntu/.go_workspace/bin/goveralls -coverprofile=coverage/merged-coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
 
-    - docker run -e "CI=true" analogj/capsulecd sh -c "go test \$(glide novendor)"
