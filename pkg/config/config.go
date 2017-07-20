@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"capsulecd/pkg/errors"
+	"fmt"
 )
 
 // When initializing this class the following methods must be called:
@@ -69,13 +70,14 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 	return nil
 }
 
-func (c *configuration) GetBase64Decoded(key string) string {
+func (c *configuration) GetBase64Decoded(key string) (string, error) {
 	if len(c.GetString(key)) > 0 {
 		key, err := base64.StdEncoding.DecodeString(c.GetString(key))
 		if err != nil {
-			log.Print("Could not decode chef_supermarket_key")
+			return "", errors.ScmUnspecifiedError(fmt.Sprintf("Could not decode base64 key (%s): %s", key, err))
 		}
-		return string(key)
+		return string(key), nil
+	} else {
+		return "", nil
 	}
-	return ""
 }

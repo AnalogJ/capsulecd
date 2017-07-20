@@ -3,12 +3,11 @@ package errors
 import (
 	"errors"
 	"fmt"
-	"log"
 )
 
 func CheckErr(err error) {
 	if err != nil {
-		log.Fatal("ERROR:", err)
+		panic(fmt.Sprintf("ERROR: %s", err))
 	}
 }
 

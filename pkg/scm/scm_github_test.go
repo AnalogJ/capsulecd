@@ -55,7 +55,25 @@ func TestScmGithub_Create_WithNoAuthToken(t *testing.T) {
 
 	//assert
 	assert.Nil(t, testScm)
-	assert.Error(t, err)
+	assert.Error(t, err, "should raise an auth error")
+}
+
+func TestScmGithub_Create(t *testing.T) {
+
+	//setup
+	testConfig, err := config.Create()
+	assert.NoError(t, err)
+	testConfig.Set("scm", "github")
+	testConfig.Set("scm_github_access_token", "placeholder")
+	pipelineData := new(pipeline.Data)
+	client := vcrSetup(t)
+
+	//test
+	testScm, err := scm.Create("github", pipelineData, testConfig, client)
+
+	//assert
+	assert.NotNil(t, testScm)
+	assert.NoError(t, err)
 	assert.NotEmpty(t, pipelineData.GitParentPath, "GitParentPath must be set after source Init")
 
 }

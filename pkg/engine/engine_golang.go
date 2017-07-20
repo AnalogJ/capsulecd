@@ -28,9 +28,8 @@ type engineGolang struct {
 }
 
 func (g *engineGolang) ValidateTools() error {
-	//a chefdk like environment needs to be available for this Engine
 	if _, kerr := exec.LookPath("go"); kerr != nil {
-		return errors.EngineValidateToolError("knife binary is missing")
+		return errors.EngineValidateToolError("go binary is missing")
 	}
 
 	return nil
@@ -52,7 +51,7 @@ func (g *engineGolang) BuildStep() error {
 		return errors.EngineBuildPackageInvalid("metadata.rb file is required to process Chef cookbook")
 	}
 
-	// bump up the chef cookbook version
+	// bump up the go package version
 	if merr := g.retrieveCurrentMetadata(g.PipelineData.GitLocalPath); merr != nil {
 		return merr
 	}
@@ -172,10 +171,6 @@ func (g *engineGolang) DistStep() error {
 		return kerr
 	}
 
-	_, perr := pemFile.Write([]byte(g.Config.GetBase64Decoded("chef_supermarket_key")))
-	if perr != nil {
-		return perr
-	}
 
 	cookbookDistCmd := fmt.Sprintf("knife cookbook site share %s %s -c %s",
 		g.NextMetadata.Name,

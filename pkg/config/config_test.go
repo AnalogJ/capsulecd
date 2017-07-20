@@ -8,7 +8,6 @@ import (
 	"path"
 )
 
-
 func TestConfiguration_init_ShouldCorrectlyInitializeConfiguration(t *testing.T) {
 	t.Parallel()
 
@@ -61,12 +60,12 @@ func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
 
 	//test
 	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
-
+	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key");
 	//assert
 	assert.Equal(t, "sample_test_token", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token")
 	assert.Equal(t, "sample_auth_token", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token")
 	assert.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
-	assert.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", testConfig.GetBase64Decoded("chef_supermarket_key"), "should correctly base64 decode chef supermarket key")
+	assert.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
 }
 
 func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
@@ -78,12 +77,13 @@ func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	//test
 	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
 	testConfig.ReadConfig(path.Join("testdata", "sample_configuration_overrides.yml"))
+	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 
 	//assert
 	assert.Equal(t, "sample_test_token_override", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token from overrides file")
 	assert.Equal(t, "sample_auth_token_override", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token from overrides file")
 	assert.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
-	assert.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", testConfig.GetBase64Decoded("chef_supermarket_key"), "should correctly base64 decode chef supermarket key")
+	assert.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
 }
 
 func TestConfiguration_GetBool(t *testing.T){
@@ -111,13 +111,22 @@ func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T){
 	//setup
 	testConfig, _ := config.Create()
 	testConfig.Set("test_key", "invalidBase64_encoding")
-	testConfig.Set("test_key_2", "ZW5jb2RlIHRoaXMgc3RyaW5nLiA=") //"encode this string."
+	testConfig.Set("test_key_2", "ZW5jb2RlIHRoaXMgc3RyaW5nLiA=") //"encode this string. "
 	testConfig.Set("test_key_3", "dGhpcw0KaXMNCmEgbXVsdGlsaW5lDQpzdHJpbmc=") //multiline string "this\nis\na multiline\nstring"
+
 	//test
+	testKey, terr1 := testConfig.GetBase64Decoded("test_key")
+	testKey2, terr2 := testConfig.GetBase64Decoded("test_key_2")
+	testKey3, terr3 := testConfig.GetBase64Decoded("test_key_3")
 
 	//assert
-	assert.Error(t, testConfig.GetBase64Decoded("test_key"), "should return an error when invalid base64")
-	assert.Equal(t, "encode this string.", testConfig.GetBase64Decoded("test_key_2"), "should correctly decode base64 string")
-	assert.Equal(t, "this\nis\na multiline\nstring", testConfig.GetBase64Decoded("test_key_3"), "should correctly decode base64 into multiline string")
+	assert.Empty(t, testKey)
+	assert.Error(t, terr1, "should return an error when invalid base64")
+
+	assert.Equal(t, "encode this string. ", testKey2, "should correctly decode base64 string")
+	assert.Nil(t, terr2)
+
+	assert.Equal(t, "this\r\nis\r\na multiline\r\nstring", testKey3, "should correctly decode base64 into multiline string")
+	assert.Nil(t, terr3)
 
 }

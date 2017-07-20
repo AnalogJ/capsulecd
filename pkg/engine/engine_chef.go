@@ -180,7 +180,11 @@ func (g *engineChef) DistStep() error {
 		return kerr
 	}
 
-	_, perr := pemFile.Write([]byte(g.Config.GetBase64Decoded("chef_supermarket_key")))
+	chefKey, berr := g.Config.GetBase64Decoded("chef_supermarket_key");
+	if berr != nil{
+		return berr
+	}
+	_, perr := pemFile.Write([]byte(chefKey))
 	if perr != nil {
 		return perr
 	}
