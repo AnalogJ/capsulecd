@@ -45,7 +45,7 @@ jobs:
               -e "CIRCLE_PR_NUMBER" \
               -e "CI_PULL_REQUEST" \
               analogj/capsulecd-build:base \
-              goveralls -ignore="cmd,vendor" -v -debug -flags="-tags='static'"
+              goveralls -ignore="cmd,vendor" -v -debug -flags="-tags='static'" -service=circle-ci -repotoken=$COVERALLS_TOKEN
 
             docker run -e "CI=true" \
               -e "COVERALLS_TOKEN" \
