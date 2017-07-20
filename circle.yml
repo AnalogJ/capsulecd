@@ -12,7 +12,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-        name: Install dependencies
+          name: Install dependencies
           command: |
             docker info
             apk --update-cache --allow-untrusted \
@@ -28,27 +28,27 @@ jobs:
 # Use docker image caching if this is slow.
 # https://circleci.com/blog/how-to-build-a-docker-image-on-circleci-2-0/
       - run:
-        name: Build application Docker image
-        command: |
-          docker build -f ci/Dockerfile.base --tag analogj/capsulecd-build:base .
-          docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-build:chef .
-#          docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
-#          docker build -f ci/Dockerfile.node --tag analogj/capsulecd-build:node .
-#          docker build -f ci/Dockerfile.python --tag analogj/capsulecd-build:python .
-#          docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-build:ruby .
+          name: Build application Docker image
+          command: |
+            docker build -f ci/Dockerfile.base --tag analogj/capsulecd-build:base .
+            docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-build:chef .
+#           docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
+#           docker build -f ci/Dockerfile.node --tag analogj/capsulecd-build:node .
+#           docker build -f ci/Dockerfile.python --tag analogj/capsulecd-build:python .
+#           docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-build:ruby .
       - run:
-        name: Run Docker containers with coverage
-        command: |
-          mkdir -p /coverage
-          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:base
-          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:chef
+          name: Run Docker containers with coverage
+          command: |
+            mkdir -p /coverage
+            docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:base
+            docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:chef
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:python
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:ruby
 
       - run:
-        name: Merge generated coverage reports
-        command: |
-          gocovmerge /coverage/*-coverage.out > /coverage/merged-coverage.out
-          goveralls -coverprofile=/coverage/merged-coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
+          name: Merge generated coverage reports
+          command: |
+            gocovmerge /coverage/*-coverage.out > /coverage/merged-coverage.out
+            goveralls -coverprofile=/coverage/merged-coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
