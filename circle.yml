@@ -7,7 +7,7 @@ jobs:
         environment:
           GOROOT: /usr/lib/go
           GOPATH: /go
-          PATH: /go/bin:$PATH
+          PATH: "/go/bin:$PATH"
     steps:
       - checkout
       - setup_remote_docker
