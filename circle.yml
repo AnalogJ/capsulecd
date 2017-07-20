@@ -16,7 +16,7 @@ jobs:
             env
             docker info
             apk --update-cache --allow-untrusted \
-                add go \
+                add go build-base \
                 && rm -rf /var/cache/apk/*
 
             # Configure Go
