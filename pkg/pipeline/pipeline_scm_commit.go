@@ -21,6 +21,8 @@ func (i *ScmCommitInfo) Validate() error {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'sha' key")
 	} else if i.Ref == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Ref' key")
+	} else if i.Repo == nil {
+		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo' key")
 	} else if i.Repo.CloneUrl == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo.CloneUrl' key")
 	} else if i.Repo.Name == "" {

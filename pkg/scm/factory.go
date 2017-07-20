@@ -1,29 +1,28 @@
 package scm
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
 	"fmt"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/pipeline"
 	"net/http"
+	"capsulecd/pkg/errors"
 )
 
-type Scm interface {
-	Init(pipelineData *pipeline.Data, client *http.Client) error
-	RetrievePayload() (*Payload, error)
-	ProcessPushPayload(payload *Payload) error
-	ProcessPullRequestPayload(payload *Payload) error
-	Publish() error //create release.
-	Notify(ref string, state string, message string) error
-}
+func Create(scmType string, pipelineData *pipeline.Data, config config.Interface, client *http.Client) (Interface, error) {
 
-func Create() (Scm, error) {
-
-	switch scmType := config.Get("scm"); scmType {
+	switch scmType {
 	case "bitbucket":
-		return new(scmBitbucket), nil
+		scm := new(scmBitbucket)
+		if err := scm.init(pipelineData, config, client); err != nil {
+			return nil, err
+		}
+		return scm, nil
 	case "github":
-		return new(scmGithub), nil
+		scm := new(scmGithub)
+		if err := scm.init(pipelineData, config, client); err != nil {
+			return nil, err
+		}
+		return scm, nil
 	default:
 		return nil, errors.ScmUnspecifiedError(fmt.Sprintf("Unknown Scm Type: %s", scmType))
 	}

@@ -17,10 +17,10 @@ type nodeMetadata struct {
 	Version string
 }
 type engineNode struct {
-	*EngineBase
+	*engineBase
 
 	PipelineData *pipeline.Data
-	Scm          scm.Scm //Interface
+	Scm          scm.Interface //Interface
 }
 
 func (n *engineNode) ValidateTools() error {
@@ -31,8 +31,9 @@ func (n *engineNode) ValidateTools() error {
 	return nil
 }
 
-func (n *engineNode) Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error {
+func (n *engineNode) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	n.Scm = sourceScm
+	n.Config = config
 	n.PipelineData = pipelineData
 	return nil
 }
@@ -77,8 +78,8 @@ func (n *engineNode) TestStep() error {
 
 	//run test command
 	var testCmd string
-	if config.IsSet("engine_cmd_test") {
-		testCmd = config.GetString("engine_cmd_test")
+	if n.Config.IsSet("engine_cmd_test") {
+		testCmd = n.Config.GetString("engine_cmd_test")
 	} else {
 		testCmd = "npm test"
 	}
@@ -98,7 +99,7 @@ func (n *engineNode) PackageStep() error {
 
 	// run npm publish
 	versionCmd := fmt.Sprintf("npm version %s -m '(v%%s) Automated packaging of release by CapsuleCD'",
-		config.GetString("engine_version_bump_type"),
+		n.Config.GetString("engine_version_bump_type"),
 	)
 	if verr := utils.BashCmdExec(versionCmd, n.PipelineData.GitLocalPath, ""); verr != nil {
 		return errors.EngineTestRunnerError("npm version bump failed")
@@ -115,7 +116,7 @@ func (n *engineNode) PackageStep() error {
 }
 
 func (n *engineNode) DistStep() error {
-	if !config.IsSet("npm_auth_token") {
+	if !n.Config.IsSet("npm_auth_token") {
 		return errors.EngineDistCredentialsMissing("cannot deploy page to npm, credentials missing")
 	}
 
@@ -125,7 +126,7 @@ func (n *engineNode) DistStep() error {
 	// write the .npmrc config jfile.
 	npmrcContent := fmt.Sprintf(
 		"//registry.npmjs.org/:_authToken=%s",
-		config.GetString("npm_auth_token"),
+		n.Config.GetString("npm_auth_token"),
 	)
 
 	if _, werr := npmrcFile.Write([]byte(npmrcContent)); werr != nil {

@@ -19,10 +19,10 @@ type chefMetadata struct {
 	Name    string `json:"name"`
 }
 type engineChef struct {
-	*EngineBase
+	*engineBase
 
 	PipelineData    *pipeline.Data
-	Scm             scm.Scm //Interface
+	Scm             scm.Interface //Interface
 	CurrentMetadata *chefMetadata
 	NextMetadata    *chefMetadata
 }
@@ -44,7 +44,8 @@ func (g *engineChef) ValidateTools() error {
 	return nil
 }
 
-func (g *engineChef) Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error {
+func (g *engineChef) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+	g.Config = config
 	g.Scm = sourceScm
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(chefMetadata)
@@ -111,8 +112,8 @@ func (g *engineChef) TestStep() error {
 
 	//run test command
 	var testCmd string
-	if config.IsSet("engine_cmd_test") {
-		testCmd = config.GetString("engine_cmd_test")
+	if g.Config.IsSet("engine_cmd_test") {
+		testCmd = g.Config.GetString("engine_cmd_test")
 	} else {
 		testCmd = "rake test"
 	}
@@ -140,7 +141,7 @@ func (g *engineChef) PackageStep() error {
 }
 
 func (g *engineChef) DistStep() error {
-	if !config.IsSet("chef_supermarket_username") || !config.IsSet("chef_supermarket_key") {
+	if !g.Config.IsSet("chef_supermarket_username") || !g.Config.IsSet("chef_supermarket_key") {
 		return errors.EngineDistCredentialsMissing("Cannot deploy cookbook to supermarket, credentials missing")
 	}
 
@@ -169,7 +170,7 @@ func (g *engineChef) DistStep() error {
     		client_key "%s" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
         	cookbook_path [ '%s' ] # Directory where the cookbook you're uploading resides.
 		`,
-		config.GetString("chef_supermarket_username"),
+		g.Config.GetString("chef_supermarket_username"),
 		pemFile.Name(),
 		tmpParentPath,
 	)
@@ -179,14 +180,14 @@ func (g *engineChef) DistStep() error {
 		return kerr
 	}
 
-	_, perr := pemFile.Write([]byte(config.GetBase64Decoded("chef_supermarket_key")))
+	_, perr := pemFile.Write([]byte(g.Config.GetBase64Decoded("chef_supermarket_key")))
 	if perr != nil {
 		return perr
 	}
 
 	cookbookDistCmd := fmt.Sprintf("knife cookbook site share %s %s -c %s",
 		g.NextMetadata.Name,
-		config.GetString("chef_supermarket_type"),
+		g.Config.GetString("chef_supermarket_type"),
 		knifeFile.Name(),
 	)
 

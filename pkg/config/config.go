@@ -6,8 +6,16 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"os"
-	"time"
+	"capsulecd/pkg/errors"
 )
+
+// When initializing this class the following methods must be called:
+// Config.New
+// Config.Init
+// This is done automatically when created via the Factory.
+type configuration struct {
+	*viper.Viper
+}
 
 //Viper uses the following precedence order. Each item takes precedence over the item below it:
 // explicit call to Set
@@ -16,43 +24,38 @@ import (
 // config
 // key/value store
 // default
-var v = viper.New()
-var initialized = false
 
-func Init() {
-	v = viper.New()
+
+func (c *configuration) init() error {
+	c.Viper = viper.New();
 	//set defaults
-	v.SetDefault("package_type", "default")
-	v.SetDefault("scm", "default")
-	v.SetDefault("runner", "default")
-	v.SetDefault("engine_version_bump_type", "patch")
-	v.SetDefault("chef_supermarket_type", "Other")
+	c.SetDefault("package_type", "default")
+	c.SetDefault("scm", "default")
+	c.SetDefault("runner", "default")
+	c.SetDefault("engine_version_bump_type", "patch")
+	c.SetDefault("chef_supermarket_type", "Other")
 
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
 	//if you want to load a repo specific config file, use ReadConfig
-	v.SetConfigType("yaml")
-	v.SetConfigName("capsule")
-	v.AddConfigPath("$HOME/")
+	c.SetConfigType("yaml")
+	c.SetConfigName("capsule")
+	c.AddConfigPath("$HOME/")
 
 	//configure env variable parsing.
-	v.SetEnvPrefix("CAPSULE")
-	v.AutomaticEnv()
+	c.SetEnvPrefix("CAPSULE")
+	c.AutomaticEnv()
 
 	//CLI options will be added via the `Set()` function
 
-	initialized = true
+	return nil
 }
 
-func IsInitialized() bool {
-	return initialized
-}
-
-func ReadConfig(configFilePath string) {
+func (c *configuration) ReadConfig(configFilePath string) error {
 
 	if !utils.FileExists(configFilePath) {
 		log.Print("The configuration file could not be found. Skipping")
-		return
+		return errors.Custom("The configuration file could not be found. Skipping")
 	}
 
 	log.Printf("Loading configuration file: %s", configFilePath)
@@ -60,70 +63,15 @@ func ReadConfig(configFilePath string) {
 	config_data, err := os.Open(configFilePath)
 	if err != nil {
 		log.Printf("Error reading configuration file: %s", err)
-		return
+		return err
 	}
-	v.MergeConfig(config_data)
+	c.MergeConfig(config_data)
+	return nil
 }
 
-func Set(key string, value interface{}) {
-	v.Set(key, value)
-}
-
-func AllSettings() map[string]interface{} {
-	return v.AllSettings()
-}
-
-func IsSet(key string) bool {
-	return v.IsSet(key)
-}
-
-func Get(key string) interface{} {
-	return v.Get(key)
-}
-
-func GetBool(key string) bool {
-	return v.GetBool(key)
-}
-
-func GetDuration(key string) time.Duration {
-	return v.GetDuration(key)
-}
-
-func GetFloat64(key string) float64 {
-	return v.GetFloat64(key)
-}
-
-func GetInt(key string) int {
-	return v.GetInt(key)
-}
-
-func GetString(key string) string {
-	return v.GetString(key)
-}
-
-func GetStringMap(key string) map[string]interface{} {
-	return v.GetStringMap(key)
-}
-
-func GetStringMapString(key string) map[string]string {
-	return v.GetStringMapString(key)
-}
-
-func GetStringMapStringSlice(key string) map[string][]string {
-	return v.GetStringMapStringSlice(key)
-}
-
-func GetStringSlice(key string) []string {
-	return v.GetStringSlice(key)
-}
-
-func GetTime(key string) time.Time {
-	return v.GetTime(key)
-}
-
-func GetBase64Decoded(key string) string {
-	if len(v.GetString(key)) > 0 {
-		key, err := base64.StdEncoding.DecodeString(v.GetString(key))
+func (c *configuration) GetBase64Decoded(key string) string {
+	if len(c.GetString(key)) > 0 {
+		key, err := base64.StdEncoding.DecodeString(c.GetString(key))
 		if err != nil {
 			log.Print("Could not decode chef_supermarket_key")
 		}

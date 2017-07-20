@@ -20,6 +20,7 @@ import (
 )
 
 type scmGithub struct {
+	Config config.Interface
 	PipelineData *pipeline.Data
 	Client       *github.Client
 }
@@ -27,14 +28,15 @@ type scmGithub struct {
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set options.GitParentPath
 // MUST set client
-func (g *scmGithub) Init(pipelineData *pipeline.Data, client *http.Client) error {
+func (g *scmGithub) init(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) error {
 	g.PipelineData = pipelineData
+	g.Config = myconfig
 
-	if !config.IsSet("scm_github_access_token") {
+	if !g.Config.IsSet("scm_github_access_token") {
 		return errors.ScmAuthenticationFailed("Missing github access token")
 	}
-	if config.IsSet("scm_git_parent_path") {
-		g.PipelineData.GitParentPath = config.GetString("scm_git_parent_path")
+	if g.Config.IsSet("scm_git_parent_path") {
+		g.PipelineData.GitParentPath = g.Config.GetString("scm_git_parent_path")
 		os.MkdirAll(g.PipelineData.GitParentPath, os.ModePerm)
 	} else {
 		dirPath, err := ioutil.TempDir("", "")
@@ -50,7 +52,7 @@ func (g *scmGithub) Init(pipelineData *pipeline.Data, client *http.Client) error
 	} else {
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: config.GetString("scm_github_access_token")},
+			&oauth2.Token{AccessToken: g.Config.GetString("scm_github_access_token")},
 		)
 		tc := oauth2.NewClient(ctx, ts)
 
@@ -66,18 +68,18 @@ func (g *scmGithub) Init(pipelineData *pipeline.Data, client *http.Client) error
 // MUST set options.IsPullRequest
 // RETURNS ScmPayload
 func (g *scmGithub) RetrievePayload() (*Payload, error) {
-	if !config.IsSet("scm_pull_request") {
+	if !g.Config.IsSet("scm_pull_request") {
 		log.Print("This is not a pull request. No automatic continuous deployment processing required. Continuous Integration testing will continue.")
 		g.PipelineData.IsPullRequest = false
 
 		return &Payload{
 			Head: &pipeline.ScmCommitInfo{
-				Sha: config.GetString("scm_sha"),
-				Ref: config.GetString("scm_branch"),
+				Sha: g.Config.GetString("scm_sha"),
+				Ref: g.Config.GetString("scm_branch"),
 				Repo: &pipeline.ScmRepoInfo{
-					CloneUrl: config.GetString("scm_clone_url"),
-					Name:     config.GetString("scm_repo_name"),
-					FullName: config.GetString("scm_repo_full_name"),
+					CloneUrl: g.Config.GetString("scm_clone_url"),
+					Name:     g.Config.GetString("scm_repo_name"),
+					FullName: g.Config.GetString("scm_repo_full_name"),
 				},
 			},
 		}, nil
@@ -85,8 +87,8 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 	} else {
 		g.PipelineData.IsPullRequest = true
 		ctx := context.Background()
-		parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
-		pr, _, err := g.Client.PullRequests.Get(ctx, parts[0], parts[1], config.GetInt("scm_pull_request"))
+		parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
+		pr, _, err := g.Client.PullRequests.Get(ctx, parts[0], parts[1], g.Config.GetInt("scm_pull_request"))
 
 		if err != nil {
 			return nil, errors.ScmAuthenticationFailed(fmt.Sprintf("Could not retrieve pull request from Github: %s", err))
@@ -148,7 +150,7 @@ func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
 		return err
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
 	if aerr != nil {
 		return aerr
 	}
@@ -190,7 +192,7 @@ func (g *scmGithub) ProcessPullRequestPayload(payload *Payload) error {
 		return berr
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
 	if aerr != nil {
 		return aerr
 	}
@@ -261,7 +263,7 @@ func (g *scmGithub) Publish() error {
 
 	//create release.
 	ctx := context.Background()
-	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
+	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
 	version := fmt.Sprintf("v%s", g.PipelineData.ReleaseVersion)
 	g.Client.Repositories.CreateRelease(
 		ctx,
@@ -295,7 +297,7 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 	contextApp := "CapsuleCD"
 
 	ctx := context.Background()
-	parts := strings.Split(config.GetString("scm_repo_full_name"), "/")
+	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
 	_, _, serr := g.Client.Repositories.CreateStatus(ctx, parts[0], parts[1], ref, &github.RepoStatus{
 		State:       &state,
 		TargetURL:   &targetURL,

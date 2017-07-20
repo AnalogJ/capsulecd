@@ -1,5 +1,5 @@
 package version
 
-// VERSION is the app-global version string, which will be substituted with a
-// real value during build.
-var VERSION = "v2.0.0"
+// VERSION is the app-global version string, which will be replaced with a
+// new value during packaging
+var VERSION = "2.0.0"

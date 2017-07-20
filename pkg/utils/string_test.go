@@ -18,8 +18,10 @@ var snakeCaseTests = []struct {
 func TestSnakeCaseToCamelCase(t *testing.T) {
 	t.Parallel()
 	for _, tt := range snakeCaseTests {
+		//test
 		actual := utils.SnakeCaseToCamelCase(tt.n)
 
+		//assert
 		assert.Equal(t, tt.expected, actual, "should convert to camel case correctly")
 	}
 }

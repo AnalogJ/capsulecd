@@ -29,10 +29,10 @@ type rubyGemspec struct {
 }
 
 type engineRuby struct {
-	*EngineBase
+	*engineBase
 
 	PipelineData    *pipeline.Data
-	Scm             scm.Scm //Interface
+	Scm             scm.Interface //Interface
 	CurrentMetadata *rubyMetadata
 	NextMetadata    *rubyMetadata
 	GemspecPath     string
@@ -58,8 +58,9 @@ func (g *engineRuby) ValidateTools() error {
 	return nil
 }
 
-func (g *engineRuby) Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error {
+func (g *engineRuby) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
+	g.Config = config
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(rubyMetadata)
 	g.NextMetadata = new(rubyMetadata)
@@ -148,8 +149,8 @@ func (g *engineRuby) TestStep() error {
 
 	//run test command
 	var testCmd string
-	if config.IsSet("engine_cmd_test") {
-		testCmd = config.GetString("engine_cmd_test")
+	if g.Config.IsSet("engine_cmd_test") {
+		testCmd = g.Config.GetString("engine_cmd_test")
 	} else {
 		testCmd = "rake spec"
 	}
@@ -177,7 +178,7 @@ func (g *engineRuby) PackageStep() error {
 }
 
 func (g *engineRuby) DistStep() error {
-	if !config.IsSet("rubygems_api_key") {
+	if !g.Config.IsSet("rubygems_api_key") {
 		return errors.EngineDistCredentialsMissing("Cannot deploy package to rubygems, credentials missing")
 	}
 
@@ -189,7 +190,7 @@ func (g *engineRuby) DistStep() error {
 		`---
 		:rubygems_api_key: %s
 		`,
-		config.GetString("rubygems_api_key"),
+		g.Config.GetString("rubygems_api_key"),
 	)
 
 	if _, perr := credFile.Write([]byte(credContent)); perr != nil {

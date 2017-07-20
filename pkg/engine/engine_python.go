@@ -18,10 +18,10 @@ type pythonMetadata struct {
 	Version string
 }
 type enginePython struct {
-	*EngineBase
+	*engineBase
 
 	PipelineData    *pipeline.Data
-	Scm             scm.Scm //Interface
+	Scm             scm.Interface //Interface
 	CurrentMetadata *pythonMetadata
 	NextMetadata    *pythonMetadata
 }
@@ -42,8 +42,9 @@ func (g *enginePython) ValidateTools() error {
 	return nil
 }
 
-func (g *enginePython) Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error {
+func (g *enginePython) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
+	g.Config = config
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(pythonMetadata)
 	g.NextMetadata = new(pythonMetadata)
@@ -139,8 +140,8 @@ func (g *enginePython) BuildStep() error {
 func (g *enginePython) TestStep() error {
 	//run test command
 	var testCmd string
-	if config.IsSet("engine_cmd_test") {
-		testCmd = config.GetString("engine_cmd_test")
+	if g.Config.IsSet("engine_cmd_test") {
+		testCmd = g.Config.GetString("engine_cmd_test")
 	} else {
 		testCmd = "tox"
 	}
@@ -170,7 +171,7 @@ func (g *enginePython) PackageStep() error {
 }
 
 func (g *enginePython) DistStep() error {
-	if !config.IsSet("pypi_username") || !config.IsSet("pypi_password") {
+	if !g.Config.IsSet("pypi_username") || !g.Config.IsSet("pypi_password") {
 		return errors.EngineDistCredentialsMissing("Cannot deploy python package to pypi/warehouse, credentials missing")
 	}
 
@@ -179,8 +180,8 @@ func (g *enginePython) DistStep() error {
 
 	// write the .pypirc config jfile.
 	var repository string
-	if config.IsSet("pypi_repository") {
-		repository = config.GetString("pypi_repository")
+	if g.Config.IsSet("pypi_repository") {
+		repository = g.Config.GetString("pypi_repository")
 	} else {
 		repository = "https://upload.pypi.org/legacy/"
 	}
@@ -194,8 +195,8 @@ func (g *enginePython) DistStep() error {
 		password = %s
 		`,
 		repository,
-		config.GetString("pypi_username"),
-		config.GetString("pypi_password"),
+		g.Config.GetString("pypi_username"),
+		g.Config.GetString("pypi_password"),
 	)
 
 	if _, perr := pypircFile.Write([]byte(pypircContent)); perr != nil {

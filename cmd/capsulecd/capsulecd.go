@@ -30,7 +30,7 @@ func main() {
 				Usage:   "Start a new CapsuleCD package pipeline",
 				Action:  func(c *cli.Context) error {
 
-					config.Init()
+					config, _ := config.Create()
 					config.Set("scm", c.String("scm"))
 					config.Set("package_type", c.String("package_type"))
 					config.Set("dry_run", c.String("dry_run"))
@@ -51,7 +51,7 @@ func main() {
 					fmt.Println("dry run:", config.GetString("dry_run"))
 
 					pipeline := pkg.Pipeline{}
-					pipeline.Start()
+					pipeline.Start(config)
 
 					return nil
 				},

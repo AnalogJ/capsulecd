@@ -1,35 +1,46 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
 	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
 	"fmt"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/config"
+	"capsulecd/pkg/scm"
 )
 
-type Engine interface {
-	ValidateTools() error
-	Init(pipelineData *pipeline.Data, sourceScm scm.Scm) error
-	BuildStep() error
-	TestStep() error
-	PackageStep() error
-	DistStep() error
-}
+func Create(engineType string, pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) (Interface, error) {
 
-func Create() (Engine, error) {
-
-	switch engineType := config.Get("package_type"); engineType {
+	switch engineType {
 	case "chef":
-		return new(engineChef), nil
+		eng := new(engineChef)
+		if err := eng.init(pipelineData, config, sourceScm); err != nil {
+			return nil, err
+		}
+		return eng, nil
 	case "golang":
-		return new(engineChef), nil
+		eng := new(engineGolang)
+		if err := eng.init(pipelineData, config, sourceScm); err != nil {
+			return nil, err
+		}
+		return eng, nil
 	case "node":
-		return new(engineNode), nil
+		eng := new(engineNode)
+		if err := eng.init(pipelineData, config, sourceScm); err != nil {
+			return nil, err
+		}
+		return eng, nil
 	case "python":
-		return new(enginePython), nil
+		eng := new(enginePython)
+		if err := eng.init(pipelineData, config, sourceScm);  err != nil {
+			return nil, err
+		}
+		return eng, nil
 	case "ruby":
-		return new(engineRuby), nil
+		eng := new(engineRuby)
+		if err := eng.init(pipelineData, config, sourceScm);  err != nil {
+			return nil, err
+		}
+		return eng, nil
 	default:
 		return nil, errors.EngineUnspecifiedError(fmt.Sprintf("Unknown Engine Type: %s", engineType))
 	}

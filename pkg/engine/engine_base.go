@@ -7,16 +7,17 @@ import (
 	"github.com/Masterminds/semver"
 )
 
-type EngineBase struct {
+type engineBase struct {
+	Config config.Interface
 }
 
-func (e *EngineBase) BumpVersion(currentVersion string) (string, error) {
+func (e *engineBase) BumpVersion(currentVersion string) (string, error) {
 	v, nerr := semver.NewVersion(currentVersion)
 	if nerr != nil {
 		return "", nerr
 	}
 
-	switch bumpType := config.GetString("engine_version_bump_type"); bumpType {
+	switch bumpType := e.Config.GetString("engine_version_bump_type"); bumpType {
 	case "major":
 		return fmt.Sprintf("%d.%d.%d", v.Major()+1, 0, 0), nil
 	case "minor":

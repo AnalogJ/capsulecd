@@ -14,30 +14,16 @@ import (
 
 type Pipeline struct {
 	Data   *pipeline.Data
-	Scm    scm.Scm
-	Engine engine.Engine
+	Config config.Interface
+	Scm    scm.Interface
+	Engine engine.Interface
 }
 
-func (p *Pipeline) Start() {
+func (p *Pipeline) Start(config config.Interface) {
 	defer p.Cleanup()
-	//Initialize Configuration not already initialized.
-	if !config.IsInitialized() {
-		log.Printf("Configuration is not initialized, doing it now.")
-		config.Init()
-	}
 
+	p.Config = config
 	p.Data = new(pipeline.Data)
-
-	//Generate a new instance of the sourceScm
-	scmImpl, serr := scm.Create()
-	errors.CheckErr(serr)
-	p.Scm = scmImpl
-
-	//Generate a new instance of the engine
-	engineImpl, eerr := engine.Create()
-	errors.CheckErr(eerr)
-	p.Engine = engineImpl
-	errors.CheckErr(engineImpl.Init(p.Data, scmImpl))
 
 	// start the source, and whatever work needs to be done there.
 	// MUST set options.GitParentPath
@@ -45,9 +31,16 @@ func (p *Pipeline) Start() {
 	log.Println("pre_scm_init_step")
 	p.PreScmInit()
 	log.Println("scm_init_step")
-	errors.CheckErr(scmImpl.Init(p.Data, nil))
+	scmImpl, serr := scm.Create(p.Config.GetString("scm"), p.Data, config, nil)
+	errors.CheckErr(serr)
+	p.Scm = scmImpl
 	log.Println("post_scm_init_step")
 	p.PostScmInit()
+
+	//Generate a new instance of the engine
+	engineImpl, eerr := engine.Create(p.Config.GetString("package_type"), p.Data, config, scmImpl)
+	errors.CheckErr(eerr)
+	p.Engine = engineImpl
 
 	// runner must determine if this is a pull request or a push.
 	// if it's a pull request the runner must retrieve the pull request payload and return it
@@ -94,7 +87,7 @@ func (p *Pipeline) Start() {
 	}
 
 	// update the config with repo config file options
-	config.ReadConfig(path.Join(p.Data.GitLocalPath, "capsule.yml"))
+	p.Config.ReadConfig(path.Join(p.Data.GitLocalPath, "capsule.yml"))
 
 	//validate that required executables are available for the following build/test/package/etc steps
 	p.NotifyStep("validate tools", func() error {
@@ -128,7 +121,7 @@ func (p *Pipeline) Start() {
 	// REQUIRES @config.engine_disable_test
 	p.NotifyStep("test", func() error {
 		//skip the test command if disabled
-		if config.GetBool("engine_disable_test") {
+		if p.Config.GetBool("engine_disable_test") {
 			log.Println("skipping pre_test_step, test_step, post_test_step")
 			return nil
 		}
@@ -160,7 +153,7 @@ func (p *Pipeline) Start() {
 	if p.Data.IsPullRequest {
 		// this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
 		p.NotifyStep("dist", func() error {
-			if config.GetBool("engine_disable_dist") {
+			if p.Config.GetBool("engine_disable_dist") {
 				log.Println("skipping pre_dist_step, dist_step, post_dist_step")
 				return nil
 			}
@@ -179,7 +172,7 @@ func (p *Pipeline) Start() {
 		// this step should push the merged, tested and version updated code up to the source code repository
 		// this step should also do any source specific releases (github release, asset uploading, etc)
 		p.NotifyStep("scm publish", func() error {
-			if config.GetBool("engine_disable_scm_publish") {
+			if p.Config.GetBool("engine_disable_scm_publish") {
 				log.Println("skipping pre_scm_publish_step, scm_publish_step, post_scm_publish_step")
 				return nil
 			}
