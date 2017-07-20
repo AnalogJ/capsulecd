@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  	apt-transport-https \
     ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& go get github.com/Masterminds/glide
+	&& go get github.com/Masterminds/glide \
+	&& go get github.com/mattn/goveralls
 
 COPY . .
 
@@ -27,4 +28,5 @@ RUN glide install \
 	&& cp -r /usr/local/lib/libgit2/lib/pkgconfig/. /go/src/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
-CMD go test $(glide novendor) -tags 'static' -v -cover -race -coverprofile=/tmp/coverage/base-coverage.out
+
+#CMD goveralls -ignore="cmd,vendor" -v -debug -flags="-tags='static'"

@@ -25,7 +25,8 @@ ENV PATH="/go/bin:/usr/local/go/bin:${PATH}" \
 	GOPATH="/go"
 
 ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig/:/usr/local/lib/pkgconfig/:/usr/local/lib/libgit2/lib/pkgconfig:/usr/local/lib/openssl/lib/pkgconfig:/usr/local/lib/libssh2"
-RUN go get github.com/Masterminds/glide
+RUN go get github.com/Masterminds/glide \
+	&& go get github.com/mattn/goveralls
 COPY --from=base /usr/local/lib/libgit2/ /usr/local/lib/libgit2/
 COPY --from=base /usr/local/lib/libssh2/ /usr/local/lib/libssh2/
 COPY --from=base /usr/local/lib/openssl/ /usr/local/lib/openssl/
@@ -40,4 +41,5 @@ RUN glide install \
 	&& cp -r /usr/local/lib/libgit2/lib/pkgconfig/. /go/src/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
-CMD go test $(glide novendor) -tags 'static chef' -coverprofile=/tmp/chef-coverage.out
+
+#CMD goveralls -ignore="cmd,vendor" -v -debug -flags="-tags='static chef'"
