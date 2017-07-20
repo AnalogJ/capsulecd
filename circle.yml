@@ -7,7 +7,7 @@ jobs:
         environment:
           GOROOT: /usr/lib/go
           GOPATH: /go
-          PATH: /go/bin:$PATH:
+          PATH: /go/bin:$PATH
     steps:
       - checkout
       - setup_remote_docker
@@ -21,7 +21,7 @@ jobs:
 
             # Configure Go
             mkdir -p ${GOPATH}/src ${GOPATH}/bin
-            
+
             go get github.com/mattn/goveralls
             go get github.com/wadey/gocovmerge
             docker pull analogj/libgit2-crossbuild:linux-amd64
