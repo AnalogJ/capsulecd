@@ -31,7 +31,7 @@ func TestEngineChef(t *testing.T) {
 }
 
 func TestEngineChef_BuildStep(t *testing.T) {
-	parentPath, err := ioutil.TempDir("testdata", "")
+	parentPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer os.RemoveAll(parentPath)
 	dirPath := path.Join(parentPath, "cookbook_analogj_test")
@@ -68,7 +68,7 @@ func TestEngineChef_BuildStep(t *testing.T) {
 }
 
 func TestEngineChef_TestStep(t *testing.T) {
-	parentPath, err := ioutil.TempDir("testdata", "")
+	parentPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer os.RemoveAll(parentPath)
 	dirPath := path.Join(parentPath, "cookbook_analogj_test")

@@ -10,7 +10,7 @@ import (
 
 func TestGitClone(t *testing.T) {
 	t.Parallel()
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -22,7 +22,7 @@ func TestGitClone(t *testing.T) {
 func TestGitFetch(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -36,7 +36,7 @@ func TestGitFetch(t *testing.T) {
 func TestGitCheckout(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -50,7 +50,7 @@ func TestGitCheckout(t *testing.T) {
 func TestGitCommit(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -72,7 +72,7 @@ func TestGitCommit(t *testing.T) {
 func TestGitTag(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -97,7 +97,7 @@ func TestGitTag(t *testing.T) {
 
 func TestGitPush(t *testing.T) {
 	t.Skip() //Skipping because access_token not available during remote testing.
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -122,7 +122,7 @@ func TestGitPush(t *testing.T) {
 
 func TestGitPush_PullRequest(t *testing.T) {
 	t.Skip() //Skipping because access_token not available during remote testing.
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -148,7 +148,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 func TestGitLatestTaggedCommit(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
@@ -165,7 +165,7 @@ func TestGitLatestTaggedCommit(t *testing.T) {
 func TestGitGenerateChangelog(t *testing.T) {
 	t.Parallel()
 
-	dirPath, err := ioutil.TempDir("testdata", "")
+	dirPath, err := ioutil.TempDir("", "")
 	assert.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
