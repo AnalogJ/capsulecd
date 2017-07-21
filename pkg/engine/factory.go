@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"capsulecd/pkg/errors"
-	"fmt"
-	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
+	"fmt"
 )
 
 func Create(engineType string, pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) (Interface, error) {
@@ -31,13 +31,13 @@ func Create(engineType string, pipelineData *pipeline.Data, config config.Interf
 		return eng, nil
 	case "python":
 		eng := new(enginePython)
-		if err := eng.init(pipelineData, config, sourceScm);  err != nil {
+		if err := eng.init(pipelineData, config, sourceScm); err != nil {
 			return nil, err
 		}
 		return eng, nil
 	case "ruby":
 		eng := new(engineRuby)
-		if err := eng.init(pipelineData, config, sourceScm);  err != nil {
+		if err := eng.init(pipelineData, config, sourceScm); err != nil {
 			return nil, err
 		}
 		return eng, nil

@@ -1,13 +1,13 @@
 package config
 
 import (
+	"capsulecd/pkg/errors"
 	"capsulecd/pkg/utils"
 	"encoding/base64"
+	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"os"
-	"capsulecd/pkg/errors"
-	"fmt"
 )
 
 // When initializing this class the following methods must be called:
@@ -26,9 +26,8 @@ type configuration struct {
 // key/value store
 // default
 
-
 func (c *configuration) init() error {
-	c.Viper = viper.New();
+	c.Viper = viper.New()
 	//set defaults
 	c.SetDefault("package_type", "default")
 	c.SetDefault("scm", "default")

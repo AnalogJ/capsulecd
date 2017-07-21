@@ -1,11 +1,11 @@
 package scm
 
 import (
-	"fmt"
 	"capsulecd/pkg/config"
-	"capsulecd/pkg/pipeline"
-	"net/http"
 	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"fmt"
+	"net/http"
 )
 
 func Create(scmType string, pipelineData *pipeline.Data, config config.Interface, client *http.Client) (Interface, error) {

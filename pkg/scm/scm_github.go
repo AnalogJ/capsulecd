@@ -20,7 +20,7 @@ import (
 )
 
 type scmGithub struct {
-	Config config.Interface
+	Config       config.Interface
 	PipelineData *pipeline.Data
 	Client       *github.Client
 }

@@ -1,16 +1,16 @@
 package errors_test
 
-import(
-	"testing"
+import (
 	"capsulecd/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestCheckErr_WithoutError(t *testing.T) {
 	t.Parallel()
 
 	//assert
-	assert.NotPanics(t, func(){
+	assert.NotPanics(t, func() {
 		errors.CheckErr(nil)
 	})
 }
@@ -19,19 +19,19 @@ func TestCheckErr_Error(t *testing.T) {
 	t.Parallel()
 
 	//assert
-	assert.Panics(t, func(){
+	assert.Panics(t, func() {
 		errors.CheckErr(errors.Custom("This is an error"))
 	})
 }
 
-func TestCustom(t *testing.T){
+func TestCustom(t *testing.T) {
 	t.Parallel()
 
 	//assert
 	assert.Implements(t, (*error)(nil), errors.Custom("my error"), "should implement the error interface")
 }
 
-func TestErrors(t *testing.T){
+func TestErrors(t *testing.T) {
 	t.Parallel()
 
 	//assert

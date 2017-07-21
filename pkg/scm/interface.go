@@ -1,9 +1,9 @@
 package scm
 
-import(
+import (
+	"capsulecd/pkg/config"
 	"capsulecd/pkg/pipeline"
 	"net/http"
-	"capsulecd/pkg/config"
 )
 
 type Interface interface {

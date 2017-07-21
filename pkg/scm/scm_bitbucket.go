@@ -1,16 +1,16 @@
 package scm
 
 import (
+	"capsulecd/pkg/config"
 	"capsulecd/pkg/pipeline"
 	"context"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 	"net/http"
-	"capsulecd/pkg/config"
 )
 
 type scmBitbucket struct {
-	Config config.Interface
+	Config       config.Interface
 	Client       *github.Client
 	PipelineData *pipeline.Data
 }

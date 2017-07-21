@@ -3,9 +3,9 @@ package config_test
 import (
 	"capsulecd/pkg/config"
 	"github.com/stretchr/testify/assert"
-	"testing"
 	"os"
 	"path"
+	"testing"
 )
 
 func TestConfiguration_init_ShouldCorrectlyInitializeConfiguration(t *testing.T) {
@@ -43,13 +43,13 @@ func TestConfiguration_init_EnvVariablesShouldLoadProperly(t *testing.T) {
 	os.Unsetenv("CAPSULE_ENGINE_VERSION_BUMP_TYPE")
 }
 
-func TestConfiguration_ReadConfig_InvalidFilePath(t *testing.T){
+func TestConfiguration_ReadConfig_InvalidFilePath(t *testing.T) {
 	t.Parallel()
 	//setup
 	testConfig, _ := config.Create()
 
 	//assert
-	assert.Error(t, testConfig.ReadConfig(path.Join("does","not","exist.yml")), "should raise an error")
+	assert.Error(t, testConfig.ReadConfig(path.Join("does", "not", "exist.yml")), "should raise an error")
 }
 
 func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
@@ -60,7 +60,7 @@ func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
 
 	//test
 	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
-	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key");
+	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 	//assert
 	assert.Equal(t, "sample_test_token", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token")
 	assert.Equal(t, "sample_auth_token", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token")
@@ -86,7 +86,7 @@ func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	assert.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
 }
 
-func TestConfiguration_GetBool(t *testing.T){
+func TestConfiguration_GetBool(t *testing.T) {
 
 	//setup
 	os.Setenv("CAPSULE_BOOL_TEST_1", "true")
@@ -105,13 +105,13 @@ func TestConfiguration_GetBool(t *testing.T){
 	os.Unsetenv("CAPSULE_BOOL_TEST_2")
 }
 
-func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T){
+func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T) {
 	t.Parallel()
 
 	//setup
 	testConfig, _ := config.Create()
 	testConfig.Set("test_key", "invalidBase64_encoding")
-	testConfig.Set("test_key_2", "ZW5jb2RlIHRoaXMgc3RyaW5nLiA=") //"encode this string. "
+	testConfig.Set("test_key_2", "ZW5jb2RlIHRoaXMgc3RyaW5nLiA=")             //"encode this string. "
 	testConfig.Set("test_key_3", "dGhpcw0KaXMNCmEgbXVsdGlsaW5lDQpzdHJpbmc=") //multiline string "this\nis\na multiline\nstring"
 
 	//test

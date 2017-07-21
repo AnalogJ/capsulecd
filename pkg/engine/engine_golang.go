@@ -1,21 +1,21 @@
 package engine
 
 import (
+	"bytes"
 	"capsulecd/pkg/config"
 	"capsulecd/pkg/errors"
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
 	"fmt"
+	"go/ast"
+	"go/format"
+	"go/parser"
+	"go/token"
 	"io/ioutil"
 	"os/exec"
 	"path"
-	"go/ast"
-	"go/parser"
-	"go/token"
 	"strings"
-	"bytes"
-	"go/format"
 )
 
 type golangMetadata struct {
@@ -54,7 +54,7 @@ func (g *engineGolang) ValidateTools() error {
 func (g *engineGolang) AssembleStep() error {
 	//validate that the chef metadata.rb file exists
 
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "pkg","version","version.go")) {
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go")) {
 		return errors.EngineBuildPackageInvalid("pkg/version/version.go file is required to process Go library")
 	}
 
@@ -108,10 +108,9 @@ func (g *engineGolang) TestStep() error {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 
-
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			//code formatter
-			fmtCmd := "go fmt -n $(go list ./... | grep -v /vendor/)"
+			fmtCmd := "go fmt $(go list ./... | grep -v /vendor/)"
 
 			if terr := utils.BashCmdExec(fmtCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 				return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", lintCmd))
@@ -169,7 +168,7 @@ func (g *engineGolang) DistStep() error {
 
 func (g *engineGolang) retrieveCurrentMetadata(gitLocalPath string) error {
 
-	versionContent, rerr := ioutil.ReadFile(path.Join(g.PipelineData.GitLocalPath, "pkg","version","version.go"))
+	versionContent, rerr := ioutil.ReadFile(path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go"))
 	if rerr != nil {
 		return rerr
 	}
@@ -184,7 +183,7 @@ func (g *engineGolang) retrieveCurrentMetadata(gitLocalPath string) error {
 	}
 
 	version, verr := g.parseGoVersion(f.Decls)
-	if(verr != nil){
+	if verr != nil {
 		return verr
 	}
 
@@ -204,7 +203,7 @@ func (g *engineGolang) populateNextMetadata() error {
 }
 
 func (g *engineGolang) writeNextMetadata(gitLocalPath string) error {
-	versionPath := path.Join(g.PipelineData.GitLocalPath, "pkg","version","version.go")
+	versionPath := path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go")
 	versionContent, rerr := ioutil.ReadFile(versionPath)
 	if rerr != nil {
 		return rerr
@@ -220,7 +219,7 @@ func (g *engineGolang) writeNextMetadata(gitLocalPath string) error {
 	}
 
 	decls, serr := g.setGoVersion(f.Decls, g.NextMetadata.Version)
-	if(serr != nil){
+	if serr != nil {
 		return serr
 	}
 	f.Decls = decls

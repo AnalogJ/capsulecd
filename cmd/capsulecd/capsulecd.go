@@ -5,17 +5,18 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/urfave/cli.v2"
-	"capsulecd/pkg/config"
-	"path/filepath"
 	"capsulecd/pkg"
+	"capsulecd/pkg/config"
 	"capsulecd/pkg/version"
+	"gopkg.in/urfave/cli.v2"
+	"path/filepath"
 )
+
 func main() {
 	app := &cli.App{
-		Name: "capsulecd",
-		Usage: "Continuous Delivery scripts for automating package releases",
-		Version: version.VERSION,
+		Name:     "capsulecd",
+		Usage:    "Continuous Delivery scripts for automating package releases",
+		Version:  version.VERSION,
 		Compiled: time.Now(),
 		Authors: []*cli.Author{
 			&cli.Author{
@@ -26,9 +27,9 @@ func main() {
 
 		Commands: []*cli.Command{
 			{
-				Name:    "start",
-				Usage:   "Start a new CapsuleCD package pipeline",
-				Action:  func(c *cli.Context) error {
+				Name:  "start",
+				Usage: "Start a new CapsuleCD package pipeline",
+				Action: func(c *cli.Context) error {
 
 					config, _ := config.Create()
 					config.Set("scm", c.String("scm"))
@@ -36,7 +37,7 @@ func main() {
 					config.Set("dry_run", c.String("dry_run"))
 
 					//load configuration file.
-					if(c.String("config_file") != ""){
+					if c.String("config_file") != "" {
 						if absConfigPath, aerr := filepath.Abs(c.String("config_file")); aerr != nil {
 							config.ReadConfig(absConfigPath)
 						} else {
@@ -56,37 +57,37 @@ func main() {
 					return nil
 				},
 
-				Flags: []cli.Flag {
+				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name: "runner",
+						Name:  "runner",
 						Value: "default", // can be :none, :circleci or :shippable (check the readme for why other hosted providers arn't supported.)
 						Usage: "The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)",
 					},
 
 					&cli.StringFlag{
-						Name: "scm",
+						Name:  "scm",
 						Value: "default",
 						Usage: "The scm for the code, used to determine which git endpoint to clone from, and create releases on",
 					},
 
 					&cli.StringFlag{
-						Name: "package_type",
+						Name:    "package_type",
 						Aliases: []string{"package-type"},
-						Value: "default",
-						Usage: "The type of package being built.",
+						Value:   "default",
+						Usage:   "The type of package being built.",
 					},
 
 					&cli.BoolFlag{
-						Name: "dry_run",
+						Name:    "dry_run",
 						Aliases: []string{"dry-run"},
-						Value: false,
-						Usage: "Specifies that no changes should be pushed to source and no package will be released",
+						Value:   false,
+						Usage:   "Specifies that no changes should be pushed to source and no package will be released",
 					},
 
 					&cli.StringFlag{
-						Name: "config_file",
+						Name:    "config_file",
 						Aliases: []string{"config-file"},
-						Usage: "Specifies the location of the config file",
+						Usage:   "Specifies the location of the config file",
 					},
 				},
 			},

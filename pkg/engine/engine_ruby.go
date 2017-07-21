@@ -64,7 +64,7 @@ func (g *engineRuby) ValidateTools() error {
 		return errors.EngineValidateToolError("rake binary is missing")
 	}
 
-	if _, berr := exec.LookPath("rubocop"); berr != nil && !g.Config.GetBool("engine_disable_lint"){
+	if _, berr := exec.LookPath("rubocop"); berr != nil && !g.Config.GetBool("engine_disable_lint") {
 		return errors.EngineValidateToolError("rubocop binary is missing")
 	}
 

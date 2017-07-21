@@ -8,8 +8,8 @@ import (
 	"capsulecd/pkg/scm"
 	"fmt"
 	"log"
-	"path"
 	"os"
+	"path"
 )
 
 type Pipeline struct {
@@ -72,7 +72,7 @@ func (p *Pipeline) Start(config config.Interface) {
 	//validate that required executables are available for the following build/test/package/etc steps
 	p.NotifyStep("validate tools", func() error {
 		log.Println("validate_tools_step")
-		if verr := engineImpl.ValidateTools(); verr != nil{
+		if verr := engineImpl.ValidateTools(); verr != nil {
 			return verr
 		}
 		return nil
@@ -84,7 +84,7 @@ func (p *Pipeline) Start(config config.Interface) {
 		log.Println("pre_assemble_step")
 		p.PreAssembleStep()
 		log.Println("assemble_step")
-		if berr := engineImpl.AssembleStep(); berr!= nil{
+		if berr := engineImpl.AssembleStep(); berr != nil {
 			return berr
 		}
 		log.Println("post_assemble_step")
@@ -97,7 +97,7 @@ func (p *Pipeline) Start(config config.Interface) {
 		log.Println("pre_dependencies_step")
 		p.PreAssembleStep()
 		log.Println("dependencies_step")
-		if berr := engineImpl.AssembleStep(); berr!= nil{
+		if berr := engineImpl.AssembleStep(); berr != nil {
 			return berr
 		}
 		log.Println("post_dependencies_step")
@@ -111,7 +111,7 @@ func (p *Pipeline) Start(config config.Interface) {
 		p.PreTestStep()
 		log.Println("test_step")
 		if terr := engineImpl.TestStep(); terr != nil {
-			return terr;
+			return terr
 		}
 		log.Println("post_test_step")
 		p.PostTestStep()
@@ -159,7 +159,7 @@ func (p *Pipeline) Start(config config.Interface) {
 			log.Println("pre_scm_publish_step")
 			p.PreScmPublish()
 			log.Println("scm_publish_step")
-			if serr := scmImpl.Publish(); serr != nil{
+			if serr := scmImpl.Publish(); serr != nil {
 				return serr
 			}
 			log.Println("post_scm_publish_step")
@@ -170,24 +170,24 @@ func (p *Pipeline) Start(config config.Interface) {
 }
 
 // Hook methods
-func (p *Pipeline) PreScmInit()                       {}
-func (p *Pipeline) PostScmInit()                      {}
+func (p *Pipeline) PreScmInit()                        {}
+func (p *Pipeline) PostScmInit()                       {}
 func (p *Pipeline) PreScmCheckoutPullRequestPayload()  {}
 func (p *Pipeline) PostScmCheckoutPullRequestPayload() {}
 func (p *Pipeline) PreScmCheckoutPushPayload()         {}
 func (p *Pipeline) PostScmCheckoutPushPayload()        {}
-func (p *Pipeline) PreScmPublish()                    {}
-func (p *Pipeline) PostScmPublish()                   {}
-func (p *Pipeline) PreScmRetrievePayload()            {}
-func (p *Pipeline) PostScmRetrievePayload()           {}
-func (p *Pipeline) PreAssembleStep()                     {}
-func (p *Pipeline) PostAssembleStep()                    {}
-func (p *Pipeline) PreTestStep()                      {}
-func (p *Pipeline) PostTestStep()                     {}
-func (p *Pipeline) PrePackageStep()                   {}
-func (p *Pipeline) PostPackageStep()                  {}
-func (p *Pipeline) PreDistStep()                      {}
-func (p *Pipeline) PostDistStep()                     {}
+func (p *Pipeline) PreScmPublish()                     {}
+func (p *Pipeline) PostScmPublish()                    {}
+func (p *Pipeline) PreScmRetrievePayload()             {}
+func (p *Pipeline) PostScmRetrievePayload()            {}
+func (p *Pipeline) PreAssembleStep()                   {}
+func (p *Pipeline) PostAssembleStep()                  {}
+func (p *Pipeline) PreTestStep()                       {}
+func (p *Pipeline) PostTestStep()                      {}
+func (p *Pipeline) PrePackageStep()                    {}
+func (p *Pipeline) PostPackageStep()                   {}
+func (p *Pipeline) PreDistStep()                       {}
+func (p *Pipeline) PostDistStep()                      {}
 
 func (p *Pipeline) NotifyStep(step string, callback func() error) {
 	p.Scm.Notify(p.Data.GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
@@ -200,7 +200,7 @@ func (p *Pipeline) NotifyStep(step string, callback func() error) {
 	}
 }
 
-func (p *Pipeline) Cleanup(){
+func (p *Pipeline) Cleanup() {
 	log.Println("Running Cleanup...")
 	if p.Data != nil && p.Data.GitParentPath != "" {
 		os.RemoveAll(p.Data.GitParentPath)

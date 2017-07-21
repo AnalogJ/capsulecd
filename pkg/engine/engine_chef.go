@@ -50,7 +50,7 @@ func (g *engineChef) ValidateTools() error {
 		return errors.EngineValidateToolError("bundler binary is missing")
 	}
 
-	if _, berr := exec.LookPath("foodcritic"); berr != nil && !g.Config.GetBool("engine_disable_lint"){
+	if _, berr := exec.LookPath("foodcritic"); berr != nil && !g.Config.GetBool("engine_disable_lint") {
 		return errors.EngineValidateToolError("foodcritic binary is missing")
 	}
 
@@ -221,8 +221,8 @@ func (g *engineChef) DistStep() error {
 		return kerr
 	}
 
-	chefKey, berr := g.Config.GetBase64Decoded("chef_supermarket_key");
-	if berr != nil{
+	chefKey, berr := g.Config.GetBase64Decoded("chef_supermarket_key")
+	if berr != nil {
 		return berr
 	}
 	_, perr := pemFile.Write([]byte(chefKey))

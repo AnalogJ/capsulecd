@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"testing"
 	"capsulecd/pkg/config"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestEngineBase_BumpVersion(t *testing.T) {
@@ -15,9 +15,9 @@ func TestEngineBase_BumpVersion(t *testing.T) {
 	}
 
 	//test
-	ver, err := eng.BumpVersion("1.2.2");
+	ver, err := eng.BumpVersion("1.2.2")
 	assert.Nil(t, err)
 
 	//assert
-	assert.Equal(t,  ver, "1.2.3", "should correctly do a patch bump")
+	assert.Equal(t, ver, "1.2.3", "should correctly do a patch bump")
 }

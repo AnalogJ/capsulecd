@@ -1,10 +1,10 @@
 package version_test
 
 import (
-	"testing"
-	"github.com/Masterminds/semver"
 	"capsulecd/pkg/version"
+	"github.com/Masterminds/semver"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestVersion(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
-	"testing"
 	"path"
+	"testing"
 )
 
 func TestGitClone(t *testing.T) {
@@ -64,7 +64,7 @@ func TestGitFetch_InvalidDirectory(t *testing.T) {
 	t.Parallel()
 
 	//setup
-	dirPath := path.Join("this","path","does","not","exist")
+	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
 	ferr := utils.GitFetch(dirPath, "refs/pull/12/merge", "localBranchName")
@@ -94,7 +94,7 @@ func TestGitCheckout_InvalidDirectory(t *testing.T) {
 	t.Parallel()
 
 	//setup
-	dirPath := path.Join("this","path","does","not","exist")
+	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
 	ferr := utils.GitCheckout(dirPath, "localBranchName")
@@ -129,7 +129,7 @@ func TestGitCommit_InvalidDirectory(t *testing.T) {
 	t.Parallel()
 
 	//setup
-	dirPath := path.Join("this","path","does","not","exist")
+	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
 	ferr := utils.GitCommit(dirPath, "message")
@@ -167,7 +167,7 @@ func TestGitTag_InvalidDirectory(t *testing.T) {
 	t.Parallel()
 
 	//setup
-	dirPath := path.Join("this","path","does","not","exist")
+	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
 	tag, ferr := utils.GitTag(dirPath, "version")
@@ -277,7 +277,7 @@ func TestGitGenerateChangelog_InvalidDirectory(t *testing.T) {
 	t.Parallel()
 
 	//setup
-	dirPath := path.Join("this","path","does","not","exist")
+	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
 	changelog, ferr := utils.GitGenerateChangelog(dirPath, "basheSha", "headSha", "fullName")

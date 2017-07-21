@@ -1,9 +1,9 @@
 package pipeline_test
 
 import (
-	"testing"
 	"capsulecd/pkg/pipeline"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestScmCommitInfo_Validate_Empty(t *testing.T) {
@@ -22,7 +22,7 @@ func TestScmCommitInfo_Validate_MissingRef(t *testing.T) {
 	commit := pipeline.ScmCommitInfo{
 		Sha: "1234",
 		Repo: &pipeline.ScmRepoInfo{
-			Name: "reponame",
+			Name:     "reponame",
 			CloneUrl: "clone_url",
 		},
 	}
@@ -39,10 +39,9 @@ func TestScmCommitInfo_Validate_MissingSha(t *testing.T) {
 	commit := pipeline.ScmCommitInfo{
 		Ref: "1234",
 		Repo: &pipeline.ScmRepoInfo{
-			Name: "reponame",
+			Name:     "reponame",
 			CloneUrl: "clone_url",
 		},
-
 	}
 
 	//test
@@ -106,7 +105,7 @@ func TestScmCommitInfo_Validate(t *testing.T) {
 		Ref: "1234",
 		Sha: "1234",
 		Repo: &pipeline.ScmRepoInfo{
-			Name: "reponame",
+			Name:     "reponame",
 			CloneUrl: "clone_url",
 		},
 	}

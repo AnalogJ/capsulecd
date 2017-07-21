@@ -1,8 +1,8 @@
 package scm
 
 import (
-"testing"
-"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestScmGithub(t *testing.T) {

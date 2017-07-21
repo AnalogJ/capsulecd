@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/config"
+	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 )
 
@@ -64,4 +64,3 @@ type Interface interface {
 	// USES rubygems_api_key
 	DistStep() error
 }
-

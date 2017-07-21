@@ -40,7 +40,7 @@ func (g *enginePython) ValidateTools() error {
 		return errors.EngineValidateToolError("tox binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("pylint"); kerr != nil && !g.Config.GetBool("engine_disable_lint"){
+	if _, kerr := exec.LookPath("pylint"); kerr != nil && !g.Config.GetBool("engine_disable_lint") {
 		return errors.EngineValidateToolError("pylint binary is missing")
 	}
 
@@ -52,7 +52,7 @@ func (g *enginePython) ValidateTools() error {
 		return errors.EngineValidateToolError("twine binary is missing")
 	}
 
-	if _, berr := exec.LookPath("safety"); berr != nil && !g.Config.GetBool("engine_disable_security_check"){
+	if _, berr := exec.LookPath("safety"); berr != nil && !g.Config.GetBool("engine_disable_security_check") {
 		return errors.EngineValidateToolError("safety binary is missing")
 	}
 

@@ -39,11 +39,11 @@ func (n *engineNode) ValidateTools() error {
 		return errors.EngineValidateToolError("node binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("eslint"); kerr != nil && !n.Config.GetBool("engine_disable_lint"){
+	if _, kerr := exec.LookPath("eslint"); kerr != nil && !n.Config.GetBool("engine_disable_lint") {
 		return errors.EngineValidateToolError("eslint binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("nsp"); kerr != nil && !n.Config.GetBool("engine_disable_security_check"){
+	if _, kerr := exec.LookPath("nsp"); kerr != nil && !n.Config.GetBool("engine_disable_security_check") {
 		return errors.EngineValidateToolError("nsp binary is missing")
 	}
 
