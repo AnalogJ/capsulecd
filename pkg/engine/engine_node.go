@@ -35,8 +35,16 @@ func (n *engineNode) ValidateTools() error {
 		return errors.EngineValidateToolError("npm binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("eslint"); kerr != nil {
+	if _, kerr := exec.LookPath("node"); kerr != nil {
+		return errors.EngineValidateToolError("node binary is missing")
+	}
+
+	if _, kerr := exec.LookPath("eslint"); kerr != nil && !n.Config.GetBool("engine_disable_lint"){
 		return errors.EngineValidateToolError("eslint binary is missing")
+	}
+
+	if _, kerr := exec.LookPath("nsp"); kerr != nil && !n.Config.GetBool("engine_disable_security_check"){
+		return errors.EngineValidateToolError("nsp binary is missing")
 	}
 
 	return nil
@@ -111,6 +119,20 @@ func (n *engineNode) TestStep() error {
 		}
 		if derr := utils.BashCmdExec(testCmd, n.PipelineData.GitLocalPath, ""); derr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
+	}
+
+	//skip the security test commands if disabled
+	if !n.Config.GetBool("engine_disable_security_check") {
+		//run security check command
+		var testCmd string
+		if n.Config.IsSet("engine_disable_security_check") {
+			testCmd = n.Config.GetString("engine_cmd_security_check")
+		} else {
+			testCmd = "nsp check"
+		}
+		if terr := utils.BashCmdExec(testCmd, n.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
 

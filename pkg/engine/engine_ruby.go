@@ -64,7 +64,7 @@ func (g *engineRuby) ValidateTools() error {
 		return errors.EngineValidateToolError("rake binary is missing")
 	}
 
-	if _, berr := exec.LookPath("rubocop"); berr != nil {
+	if _, berr := exec.LookPath("rubocop"); berr != nil && !g.Config.GetBool("engine_disable_lint"){
 		return errors.EngineValidateToolError("rubocop binary is missing")
 	}
 
@@ -182,6 +182,20 @@ func (g *engineRuby) TestStep() error {
 		}
 		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
+	}
+
+	//skip the security test commands if disabled
+	if !g.Config.GetBool("engine_disable_security_check") {
+		//run security check command
+		var testCmd string
+		if g.Config.IsSet("engine_disable_security_check") {
+			testCmd = g.Config.GetString("engine_cmd_security_check")
+		} else {
+			testCmd = "bundle audit check --update"
+		}
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
 	return nil

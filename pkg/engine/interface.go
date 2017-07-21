@@ -34,13 +34,14 @@ type Interface interface {
 	// Generate coverage reports
 	// USES engine_disable_test
 	// USES engine_disable_lint
+	// USES engine_disable_security_check
 	// USES engine_enable_code_mutation - allows CapsuleCD to modify code using linting tools (only available on some systems)
 	// USES engine_cmd_lint
 	// USES engine_cmd_test
+	// USES engine_cmd_security_check
 	TestStep() error
 
 	// Commit any local changes and create a git tag. Nothing should be pushed to remote repository yet.
-	// Once the commit is done, push the package to the package repository.
 	// Make sure you remove any unnecessary files from the repo before making the commit
 	// MUST set ReleaseCommit
 	// MUST set ReleaseVersion
@@ -49,7 +50,18 @@ type Interface interface {
 	// USES engine_package_keep_lock_file
 	PackageStep() error
 
+	// Push the release to the package repository (ie. npm, chef supermarket, rubygems)
+	// Should validate any required credentials are specified.
+	// REQUIRES pipelineData.GitLocalPath
+	// REQUIRES NextMetadata
 
+	// USES chef_supermarket_username
+	// USES chef_supermarket_key
+	// USES npm_auth_token
+	// USES pypi_repository
+	// USES pypi_username
+	// USES pypi_password
+	// USES rubygems_api_key
 	DistStep() error
 
 	DocumentationStep() error

@@ -40,7 +40,7 @@ func (g *enginePython) ValidateTools() error {
 		return errors.EngineValidateToolError("tox binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("pylint"); kerr != nil {
+	if _, kerr := exec.LookPath("pylint"); kerr != nil && !g.Config.GetBool("engine_disable_lint"){
 		return errors.EngineValidateToolError("pylint binary is missing")
 	}
 
@@ -50,6 +50,10 @@ func (g *enginePython) ValidateTools() error {
 
 	if _, berr := exec.LookPath("twine"); berr != nil {
 		return errors.EngineValidateToolError("twine binary is missing")
+	}
+
+	if _, berr := exec.LookPath("safety"); berr != nil && !g.Config.GetBool("engine_disable_security_check"){
+		return errors.EngineValidateToolError("safety binary is missing")
 	}
 
 	return nil
@@ -177,6 +181,20 @@ func (g *enginePython) TestStep() error {
 		}
 	}
 
+	//skip the security test commands if disabled
+	if !g.Config.GetBool("engine_disable_security_check") {
+		//run security check command
+		var testCmd string
+		if g.Config.IsSet("engine_disable_security_check") {
+			testCmd = g.Config.GetString("engine_cmd_security_check")
+		} else {
+			testCmd = "safety check -r requirements.txt"
+		}
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", testCmd))
+		}
+	}
+
 	return nil
 }
 
@@ -207,12 +225,6 @@ func (g *enginePython) DistStep() error {
 	defer os.Remove(pypircFile.Name())
 
 	// write the .pypirc config jfile.
-	var repository string
-	if g.Config.IsSet("pypi_repository") {
-		repository = g.Config.GetString("pypi_repository")
-	} else {
-		repository = "https://upload.pypi.org/legacy/"
-	}
 	pypircContent := fmt.Sprintf(
 		`[distutils]
 		index-servers=pypi
@@ -222,7 +234,7 @@ func (g *enginePython) DistStep() error {
 		username = %s
 		password = %s
 		`,
-		repository,
+		g.Config.GetString("pypi_repository"),
 		g.Config.GetString("pypi_username"),
 		g.Config.GetString("pypi_password"),
 	)
