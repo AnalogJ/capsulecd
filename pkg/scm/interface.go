@@ -7,7 +7,7 @@ import (
 )
 
 // Create mock using:
-// mockgen -source=pkg/scm/interface.go -destination=pkg/scm/interface_mock_test.go -package=scm_test
+// mockgen -source=pkg/scm/interface.go -destination=pkg/scm/mock/scm_mock_test.go -package=mock_test
 type Interface interface {
 
 	// init method will generate an authenticated client that can be used to comunicate with Scm

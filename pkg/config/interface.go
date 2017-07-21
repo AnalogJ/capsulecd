@@ -1,7 +1,7 @@
 package config
 
 // Create mock using:
-// mockgen -source=pkg/config/interface.go -destination=pkg/config/interface_mock_test.go -package=config_test
+// mockgen -source=pkg/config/interface.go -destination=pkg/config/mock/config_mock_test.go -package=mock_test
 type Interface interface {
 	init() error
 	ReadConfig(configFilePath string) error

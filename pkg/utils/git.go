@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	"image/color"
 	"io/ioutil"
 	"net/http"
 )

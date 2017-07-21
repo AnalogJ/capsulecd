@@ -12,14 +12,13 @@ import (
 	"github.com/seborama/govcr"
 	"golang.org/x/oauth2"
 	"net/http"
-	"os"
 	"path"
 )
 
 func vcrSetup(t *testing.T) *http.Client {
 
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_ACCESS_TOKEN")},
+		&oauth2.Token{AccessToken: "access_token_placeholder"},
 	)
 
 	tr := http.DefaultTransport.(*http.Transport)
@@ -138,7 +137,7 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	testConfig.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
 	testConfig.Set("scm_repo_name", "capsulecd")
 	testConfig.Set("scm_repo_full_name", "AnalogJ/capsulecd")
-	testConfig.Set("scm_github_access_token", "")
+	testConfig.Set("scm_github_access_token", "placeholder")
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
@@ -162,7 +161,7 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_pull_request", "12")
 	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
-	testConfig.Set("scm_github_access_token", "")
+	testConfig.Set("scm_github_access_token", "placeholder")
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
