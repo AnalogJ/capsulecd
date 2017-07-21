@@ -113,11 +113,13 @@ func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T) {
 	testConfig.Set("test_key", "invalidBase64_encoding")
 	testConfig.Set("test_key_2", "ZW5jb2RlIHRoaXMgc3RyaW5nLiA=")             //"encode this string. "
 	testConfig.Set("test_key_3", "dGhpcw0KaXMNCmEgbXVsdGlsaW5lDQpzdHJpbmc=") //multiline string "this\nis\na multiline\nstring"
+	testConfig.Set("test_key_4", "") //multiline string "this\nis\na multiline\nstring"
 
 	//test
 	testKey, terr1 := testConfig.GetBase64Decoded("test_key")
 	testKey2, terr2 := testConfig.GetBase64Decoded("test_key_2")
 	testKey3, terr3 := testConfig.GetBase64Decoded("test_key_3")
+	testKey4, terr4 := testConfig.GetBase64Decoded("test_key_4")
 
 	//assert
 	assert.Empty(t, testKey)
@@ -129,4 +131,6 @@ func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T) {
 	assert.Equal(t, "this\r\nis\r\na multiline\r\nstring", testKey3, "should correctly decode base64 into multiline string")
 	assert.Nil(t, terr3)
 
+	assert.Equal(t, "", testKey4, "should correctly return empty string, if empty string is passed in.")
+	assert.Nil(t, terr4)
 }

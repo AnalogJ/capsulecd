@@ -121,13 +121,12 @@ func (g *engineRuby) AssembleStep() error {
 
 	os.MkdirAll(path.Join(g.PipelineData.GitLocalPath, "spec"), 0644)
 
-	//TODO: add gitignore content.
-	//if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, ".gitignore")) {
-	//	ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, ".gitignore"),
-	//		[]byte(""),
-	//		0644,
-	//	)
-	//}
+	gitignorePath := path.Join(g.PipelineData.GitLocalPath, ".gitignore")
+	if !utils.FileExists(gitignorePath) {
+		if err := utils.GitGenerateGitIgnore(g.PipelineData.GitLocalPath, "Ruby"); err != nil {
+			return err
+		}
+	}
 
 	// package the gem, make sure it builds correctly
 

@@ -105,9 +105,13 @@ func (g *engineChef) AssembleStep() error {
 		os.MkdirAll(specPath, 0777)
 	}
 
-	//unless File.exist?(@source_git_local_path + '/.gitignore')
-	//TODO: CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['ChefCookbook'])
-	//end
+	gitignorePath := path.Join(g.PipelineData.GitLocalPath, ".gitignore")
+	if !utils.FileExists(gitignorePath) {
+		if err := utils.GitGenerateGitIgnore(g.PipelineData.GitLocalPath, "ChefCookbook"); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

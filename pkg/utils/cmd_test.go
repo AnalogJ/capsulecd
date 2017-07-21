@@ -17,6 +17,16 @@ func TestBashCmdExec(t *testing.T) {
 	assert.NoError(t, cerr)
 }
 
+func TestBashCmdExec_Prefix(t *testing.T) {
+	t.Parallel()
+
+	//test
+	cerr := utils.BashCmdExec("echo 'hello world'", "", "cust_prefix")
+
+	//assert
+	assert.NoError(t, cerr)
+}
+
 func TestCmdExec_Date(t *testing.T) {
 	t.Parallel()
 

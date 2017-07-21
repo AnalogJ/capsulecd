@@ -72,13 +72,12 @@ func (n *engineNode) AssembleStep() error {
 		return derr
 	}
 
-	//TODO: add gitignore content.
-	//if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, ".gitignore")) {
-	//	ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, ".gitignore"),
-	//		[]byte(""),
-	//		0644,
-	//	)
-	//}
+	gitignorePath := path.Join(n.PipelineData.GitLocalPath, ".gitignore")
+	if !utils.FileExists(gitignorePath) {
+		if err := utils.GitGenerateGitIgnore(n.PipelineData.GitLocalPath, "Node"); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

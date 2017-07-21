@@ -16,7 +16,7 @@ func BashCmdExec(cmd string, workingDir string, logPrefix string) error {
 func CmdExec(cmdName string, cmdArgs []string, workingDir string, logPrefix string) error {
 
 	if logPrefix == "" {
-		logPrefix = logPrefix + " >> "
+		logPrefix = " >> "
 	} else {
 		logPrefix = logPrefix + " | "
 	}

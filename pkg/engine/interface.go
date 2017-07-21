@@ -6,6 +6,8 @@ import (
 	"capsulecd/pkg/scm"
 )
 
+// Create mock using:
+// mockgen -source=pkg/engine/interface.go -destination=pkg/engine/interface_mock_test.go -package=engine_test
 type Interface interface {
 	init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error
 

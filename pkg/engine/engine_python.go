@@ -141,13 +141,12 @@ func (g *enginePython) AssembleStep() error {
 		)
 	}
 
-	//TODO: add gitignore content.
-	//if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, ".gitignore")) {
-	//	ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, ".gitignore"),
-	//		[]byte(""),
-	//		0644,
-	//	)
-	//}
+	gitignorePath := path.Join(g.PipelineData.GitLocalPath, ".gitignore")
+	if !utils.FileExists(gitignorePath) {
+		if err := utils.GitGenerateGitIgnore(g.PipelineData.GitLocalPath, "Python"); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 

@@ -10,6 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"image/color"
+	"io/ioutil"
+	"net/http"
 )
 
 type GitTagDetails struct {
@@ -345,9 +348,21 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullN
 	return markdown, nil
 }
 
-func GitGenerateGitIgnore(repoPath string, ignoreTypes string) (string, error) {
+func GitGenerateGitIgnore(repoPath string, ignoreType string) error {
 	//https://github.com/GlenDC/go-gitignore/blob/master/gitignore/provider/github.go
-	return "", nil
+
+	gitIgnoreBytes, err := getGitIgnore(ignoreType)
+	if(err != nil){
+		return err
+	}
+
+	gitIgnorePath := filepath.Join(repoPath, ".gitignore")
+
+	if err := ioutil.WriteFile(gitIgnorePath, gitIgnoreBytes, 0644); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 //private methods
@@ -370,6 +385,23 @@ func cleanCommitMessage(commitMessage string) string {
 	commitMessage = strings.Replace(commitMessage, "\n", " ", -1)
 
 	return commitMessage
+}
+
+func getGitIgnore(l string) ([]byte, error) {
+	gitURL := "https://raw.githubusercontent.com/github/gitignore/master/" + l
+
+	resp, err := http.Get(gitURL)
+	defer resp.Body.Close()
+
+	if(err != nil){
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, errors.Custom(fmt.Sprintf("Could not find .gitignore for '%s'", l))
+	}
+
+	return ioutil.ReadAll(resp.Body)
 }
 
 //func gitRemoteCallbacks() *git.RemoteCallbacks {
