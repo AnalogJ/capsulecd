@@ -27,6 +27,12 @@ func (n *engineNode) init(pipelineData *pipeline.Data, config config.Interface, 
 	n.Scm = sourceScm
 	n.Config = config
 	n.PipelineData = pipelineData
+
+	//set command defaults (can be overridden by repo/system configuration)
+	n.Config.SetDefault("engine_cmd_lint", "eslint --fix .")
+	n.Config.SetDefault("engine_cmd_fmt", "eslint --fix .")
+	n.Config.SetDefault("engine_cmd_test", "npm test")
+	n.Config.SetDefault("engine_cmd_security_check", "nsp check")
 	return nil
 }
 
@@ -94,14 +100,9 @@ func (n *engineNode) TestStep() error {
 	//skip the lint commands if disabled
 	if !n.Config.GetBool("engine_disable_lint") {
 		//run test command
-		var lintCmd string
-		if n.Config.IsSet("engine_cmd_lint") {
-			lintCmd = n.Config.GetString("engine_cmd_lint")
-		} else {
-			lintCmd = "eslint ."
-			if n.Config.GetBool("engine_enable_code_mutation") {
-				lintCmd = "eslint --fix ."
-			}
+		lintCmd := n.Config.GetString("engine_cmd_lint")
+		if n.Config.GetBool("engine_enable_code_mutation") {
+			lintCmd = n.Config.GetString("engine_cmd_fmt")
 		}
 		if terr := utils.BashCmdExec(lintCmd, n.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
@@ -111,12 +112,7 @@ func (n *engineNode) TestStep() error {
 	//skip the test commands if disabled
 	if !n.Config.GetBool("engine_disable_test") {
 		//run test command
-		var testCmd string
-		if n.Config.IsSet("engine_cmd_test") {
-			testCmd = n.Config.GetString("engine_cmd_test")
-		} else {
-			testCmd = "npm test"
-		}
+		testCmd := n.Config.GetString("engine_cmd_test")
 		if derr := utils.BashCmdExec(testCmd, n.PipelineData.GitLocalPath, ""); derr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
@@ -125,14 +121,9 @@ func (n *engineNode) TestStep() error {
 	//skip the security test commands if disabled
 	if !n.Config.GetBool("engine_disable_security_check") {
 		//run security check command
-		var testCmd string
-		if n.Config.IsSet("engine_disable_security_check") {
-			testCmd = n.Config.GetString("engine_cmd_security_check")
-		} else {
-			testCmd = "nsp check"
-		}
-		if terr := utils.BashCmdExec(testCmd, n.PipelineData.GitLocalPath, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", testCmd))
+		vulCmd := n.Config.GetString("engine_cmd_security_check")
+		if terr := utils.BashCmdExec(vulCmd, n.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
 

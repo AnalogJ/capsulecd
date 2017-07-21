@@ -16,6 +16,7 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"os"
 )
 
 type golangMetadata struct {
@@ -36,6 +37,13 @@ func (g *engineGolang) init(pipelineData *pipeline.Data, config config.Interface
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(golangMetadata)
 	g.NextMetadata = new(golangMetadata)
+
+	//set command defaults (can be overridden by repo/system configuration)
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter ./...")
+	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
+	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
+	g.Config.SetDefault("engine_cmd_security_check", "")
+
 	return nil
 }
 
@@ -98,22 +106,16 @@ func (g *engineGolang) TestStep() error {
 	//skip the lint commands if disabled
 	if !g.Config.GetBool("engine_disable_lint") {
 		//run test command
-		var lintCmd string
-		if g.Config.IsSet("engine_cmd_lint") {
-			lintCmd = g.Config.GetString("engine_cmd_lint")
-		} else {
-			lintCmd = "gometalinter ./..."
-		}
+		lintCmd := g.Config.GetString("engine_cmd_lint")
 		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			//code formatter
-			fmtCmd := "go fmt $(go list ./... | grep -v /vendor/)"
-
+			fmtCmd := g.Config.GetString("engine_cmd_fmt")
 			if terr := utils.BashCmdExec(fmtCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
-				return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", lintCmd))
+				return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", fmtCmd))
 			}
 		}
 	}
@@ -121,12 +123,7 @@ func (g *engineGolang) TestStep() error {
 	//skip the test commands if disabled
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
-		var testCmd string
-		if g.Config.IsSet("engine_cmd_test") {
-			testCmd = g.Config.GetString("engine_cmd_test")
-		} else {
-			testCmd = "go test $(glide novendor)"
-		}
+		testCmd := "go test $(glide novendor)"
 		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
@@ -136,13 +133,19 @@ func (g *engineGolang) TestStep() error {
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
 		// no Golang security check known for dependencies.
+		//code formatter
+		vulCmd := g.Config.GetString("engine_cmd_security_check")
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", vulCmd))
+		}
 	}
 	return nil
 }
 
 func (g *engineGolang) PackageStep() error {
-	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
-	// as they will be included in the commmit and any release artifacts)
+	if !g.Config.GetBool("engine_package_keep_lock_file") {
+		os.Remove(path.Join(g.PipelineData.GitLocalPath, "glide.lock"))
+	}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr

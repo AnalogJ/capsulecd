@@ -44,6 +44,12 @@ func (g *engineRuby) init(pipelineData *pipeline.Data, config config.Interface, 
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(rubyMetadata)
 	g.NextMetadata = new(rubyMetadata)
+
+	//set command defaults (can be overridden by repo/system configuration)
+	g.Config.SetDefault("engine_cmd_lint", "rubocop")
+	g.Config.SetDefault("engine_cmd_fmt", "rubocop --auto-correct")
+	g.Config.SetDefault("engine_cmd_test", "rake spec")
+	g.Config.SetDefault("engine_cmd_security_check", "bundle audit check --update")
 	return nil
 }
 
@@ -158,14 +164,9 @@ func (g *engineRuby) TestStep() error {
 	//skip the lint commands if disabled
 	if !g.Config.GetBool("engine_disable_lint") {
 		//run test command
-		var lintCmd string
-		if g.Config.IsSet("engine_cmd_lint") {
-			lintCmd = g.Config.GetString("engine_cmd_lint")
-		} else {
-			lintCmd = "rubocop"
-			if g.Config.GetBool("engine_enable_code_mutation") {
-				lintCmd = "rubocop --auto-correct"
-			}
+		lintCmd := g.Config.GetString("engine_cmd_lint")
+		if g.Config.GetBool("engine_enable_code_mutation") {
+			lintCmd = g.Config.GetString("engine_cmd_fmt")
 		}
 		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
@@ -174,12 +175,7 @@ func (g *engineRuby) TestStep() error {
 	//skip the lint commands if disabled
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
-		var testCmd string
-		if g.Config.IsSet("engine_cmd_test") {
-			testCmd = g.Config.GetString("engine_cmd_test")
-		} else {
-			testCmd = "rake spec"
-		}
+		testCmd := g.Config.GetString("engine_cmd_test")
 		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
@@ -188,14 +184,9 @@ func (g *engineRuby) TestStep() error {
 	//skip the security test commands if disabled
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
-		var testCmd string
-		if g.Config.IsSet("engine_disable_security_check") {
-			testCmd = g.Config.GetString("engine_cmd_security_check")
-		} else {
-			testCmd = "bundle audit check --update"
-		}
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", testCmd))
+		vulCmd := g.Config.GetString("engine_cmd_security_check")
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
 	return nil

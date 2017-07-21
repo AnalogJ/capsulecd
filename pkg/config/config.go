@@ -35,10 +35,6 @@ func (c *configuration) init() error {
 	c.SetDefault("engine_version_bump_type", "patch")
 	c.SetDefault("engine_package_keep_lock_file", "false") //delete *.lock files by default.
 
-	//dist defaults
-	c.SetDefault("chef_supermarket_type", "Other")
-	c.SetDefault("pypi_repository", "https://upload.pypi.org/legacy/")
-
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
 	//if you want to load a repo specific config file, use ReadConfig
