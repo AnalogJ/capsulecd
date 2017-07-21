@@ -36,11 +36,11 @@ func (b *scmBitbucket) RetrievePayload() (*Payload, error) {
 	return new(Payload), nil
 }
 
-func (b *scmBitbucket) ProcessPushPayload(payload *Payload) error {
+func (b *scmBitbucket) CheckoutPushPayload(payload *Payload) error {
 	return nil
 }
 
-func (b *scmBitbucket) ProcessPullRequestPayload(payload *Payload) error {
+func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 	return nil
 }
 

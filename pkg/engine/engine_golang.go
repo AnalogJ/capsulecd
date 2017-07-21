@@ -6,17 +6,20 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"os/exec"
 	"path"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"strings"
+	"bytes"
+	"go/format"
 )
 
 type golangMetadata struct {
-	Version string `json:"version"`
-	Name    string `json:"name"`
+	Version string
 }
 type engineGolang struct {
 	*engineBase
@@ -41,14 +44,23 @@ func (g *engineGolang) ValidateTools() error {
 		return errors.EngineValidateToolError("go binary is missing")
 	}
 
+	if _, kerr := exec.LookPath("gometalinter.v1"); kerr != nil {
+		return errors.EngineValidateToolError("gometalinter.v1 binary is missing")
+	}
+
 	return nil
 }
 
 func (g *engineGolang) AssembleStep() error {
 	//validate that the chef metadata.rb file exists
 
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "metadata.rb")) {
-		return errors.EngineBuildPackageInvalid("metadata.rb file is required to process Chef cookbook")
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "pkg","version","version.go")) {
+		return errors.EngineBuildPackageInvalid("pkg/version/version.go file is required to process Go library")
+	}
+
+	//we only support glide as a Go dependency manager right now. Should be easy to add additional ones though.
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "glide.yaml")) {
+		return errors.EngineBuildPackageInvalid("glide.yml file is required to process Go library")
 	}
 
 	// bump up the go package version
@@ -64,26 +76,6 @@ func (g *engineGolang) AssembleStep() error {
 		return nerr
 	}
 
-	// TODO: check if this cookbook name and version already exist.
-	// check for/create any required missing folders/files
-	// Berksfile.lock and Gemfile.lock are not required to be commited, but they should be.
-	rakefilePath := path.Join(g.PipelineData.GitLocalPath, "Rakefile")
-	if !utils.FileExists(rakefilePath) {
-		ioutil.WriteFile(rakefilePath, []byte("task :test"), 0644)
-	}
-	berksfilePath := path.Join(g.PipelineData.GitLocalPath, "Berksfile")
-	if !utils.FileExists(berksfilePath) {
-		ioutil.WriteFile(berksfilePath, []byte("site \"https://supermarket.chef.io\""), 0644)
-	}
-	gemfilePath := path.Join(g.PipelineData.GitLocalPath, "Gemfile")
-	if !utils.FileExists(gemfilePath) {
-		ioutil.WriteFile(gemfilePath, []byte("source \"https://rubygems.org\""), 0644)
-	}
-	specPath := path.Join(g.PipelineData.GitLocalPath, "spec")
-	if !utils.FileExists(specPath) {
-		os.MkdirAll(specPath, 0777)
-	}
-
 	//unless File.exist?(@source_git_local_path + '/.gitignore')
 	//TODO: CapsuleCD::GitUtils.create_gitignore(@source_git_local_path, ['ChefCookbook'])
 	//end
@@ -91,28 +83,60 @@ func (g *engineGolang) AssembleStep() error {
 }
 
 func (g *engineGolang) DependenciesStep() error {
-	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
-	if cerr := utils.CmdExec("berks", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
-		return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")
+	// the library has already been downloaded. lets make sure all its dependencies are available.
+	if cerr := utils.CmdExec("glide", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
+		return errors.EngineTestDependenciesError("glide install failed. Check dependencies")
 	}
 
-	//download all its gem dependencies
-	if berr := utils.CmdExec("bundle", []string{"install"}, g.PipelineData.GitLocalPath, ""); berr != nil {
-		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
-	}
 	return nil
 }
 
 func (g *engineGolang) TestStep() error {
-	//run test command
-	var testCmd string
-	if g.Config.IsSet("engine_cmd_test") {
-		testCmd = g.Config.GetString("engine_cmd_test")
-	} else {
-		testCmd = "rake test"
+	// go test -v $(go list ./... | grep -v /vendor/)
+	// gofmt -s -l $(bash find . -name "*.go" | grep -v vendor | uniq)
+
+	//skip the lint commands if disabled
+	if !g.Config.GetBool("engine_disable_lint") {
+		//run test command
+		var lintCmd string
+		if g.Config.IsSet("engine_cmd_lint") {
+			lintCmd = g.Config.GetString("engine_cmd_lint")
+		} else {
+			lintCmd = "gometalinter ./..."
+		}
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
+		}
+
+
+		if g.Config.GetBool("engine_enable_code_mutation") {
+			//code formatter
+			fmtCmd := "go fmt -n $(go list ./... | grep -v /vendor/)"
+
+			if terr := utils.BashCmdExec(fmtCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+				return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", lintCmd))
+			}
+		}
 	}
-	if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
-		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+
+	//skip the test commands if disabled
+	if !g.Config.GetBool("engine_disable_test") {
+		//run test command
+		var testCmd string
+		if g.Config.IsSet("engine_cmd_test") {
+			testCmd = g.Config.GetString("engine_cmd_test")
+		} else {
+			testCmd = "go test $(glide novendor)"
+		}
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
+	}
+
+	//skip the security test commands if disabled
+	if !g.Config.GetBool("engine_disable_security_check") {
+		//run security check command
+		// no Golang security check known for dependencies.
 	}
 	return nil
 }
@@ -135,78 +159,36 @@ func (g *engineGolang) PackageStep() error {
 }
 
 func (g *engineGolang) DistStep() error {
-	if !g.Config.IsSet("chef_supermarket_username") || !g.Config.IsSet("chef_supermarket_key") {
-		return errors.EngineDistCredentialsMissing("Cannot deploy cookbook to supermarket, credentials missing")
-	}
 
-	// knife is really sensitive to folder names. The cookbook name MUST match the folder name otherwise knife throws up
-	// when doing a knife cookbook share. So we're going to make a new tmp directory, create a subdirectory with the EXACT
-	// cookbook name, and then copy the cookbook contents into it. Yeah yeah, its pretty nasty, but blame Chef.
-	tmpParentPath, terr := ioutil.TempDir("", "")
-	if terr != nil {
-		return terr
-	}
-	defer os.RemoveAll(tmpParentPath)
-
-	tmpLocalPath := path.Join(tmpParentPath, g.NextMetadata.Name)
-	if cerr := utils.CopyDir(g.PipelineData.GitLocalPath, tmpLocalPath); cerr != nil {
-		return cerr
-	}
-
-	pemFile, _ := ioutil.TempFile("", "client.pem")
-	defer os.Remove(pemFile.Name())
-	knifeFile, _ := ioutil.TempFile("", "knife.rb")
-	defer os.Remove(knifeFile.Name())
-
-	// write the knife.rb config jfile.
-	knifeContent := fmt.Sprintf(
-		`node_name "%s" # Replace with the login name you use to login to the Supermarket.
-    		client_key "%s" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
-        	cookbook_path [ '%s' ] # Directory where the cookbook you're uploading resides.
-		`,
-		g.Config.GetString("chef_supermarket_username"),
-		pemFile.Name(),
-		tmpParentPath,
-	)
-
-	_, kerr := knifeFile.Write([]byte(knifeContent))
-	if kerr != nil {
-		return kerr
-	}
-
-
-	cookbookDistCmd := fmt.Sprintf("knife cookbook site share %s %s -c %s",
-		g.NextMetadata.Name,
-		g.Config.GetString("chef_supermarket_type"),
-		knifeFile.Name(),
-	)
-
-	if derr := utils.BashCmdExec(cookbookDistCmd, "", ""); derr != nil {
-		return errors.EngineDistPackageError("knife cookbook upload to supermarket failed")
-	}
+	// no real packaging for golang.
+	// libraries are stored in version control.
 	return nil
 }
 
 //private Helpers
 
 func (g *engineGolang) retrieveCurrentMetadata(gitLocalPath string) error {
-	//dat, err := ioutil.ReadFile(path.Join(gitLocalPath, "metadata.rb"))
-	//knife cookbook metadata -o ../ chef-mycookbook -- will generate a metadata.json file.
-	if cerr := utils.CmdExec("knife", []string{"cookbook", "metadata", "-o", "../", path.Base(gitLocalPath)}, gitLocalPath, ""); cerr != nil {
-		return cerr
-	}
-	defer os.Remove(path.Join(gitLocalPath, "metadata.json"))
 
-	//read metadata.json file.
-	metadataContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, "metadata.json"))
+	versionContent, rerr := ioutil.ReadFile(path.Join(g.PipelineData.GitLocalPath, "pkg","version","version.go"))
 	if rerr != nil {
 		return rerr
 	}
 
-	if uerr := json.Unmarshal(metadataContent, g.CurrentMetadata); uerr != nil {
-		return uerr
+	//Oh.My.God.
+
+	// Create the AST by parsing src.
+	fset := token.NewFileSet() // positions are relative to fset
+	f, err := parser.ParseFile(fset, "", string(versionContent), 0)
+	if err != nil {
+		return err
 	}
 
+	version, verr := g.parseGoVersion(f.Decls)
+	if(verr != nil){
+		return verr
+	}
+
+	g.CurrentMetadata.Version = version
 	return nil
 }
 
@@ -218,10 +200,71 @@ func (g *engineGolang) populateNextMetadata() error {
 	}
 
 	g.NextMetadata.Version = nextVersion
-	g.NextMetadata.Name = g.CurrentMetadata.Name
 	return nil
 }
 
 func (g *engineGolang) writeNextMetadata(gitLocalPath string) error {
-	return utils.CmdExec("knife", []string{"spork", "bump", path.Base(gitLocalPath), "manual", g.NextMetadata.Version, "-o", "../"}, gitLocalPath, "")
+	versionPath := path.Join(g.PipelineData.GitLocalPath, "pkg","version","version.go")
+	versionContent, rerr := ioutil.ReadFile(versionPath)
+	if rerr != nil {
+		return rerr
+	}
+
+	//Oh.My.God.
+
+	// Create the AST by parsing src.
+	fset := token.NewFileSet() // positions are relative to fset
+	f, err := parser.ParseFile(fset, "", string(versionContent), 0)
+	if err != nil {
+		return err
+	}
+
+	decls, serr := g.setGoVersion(f.Decls, g.NextMetadata.Version)
+	if(serr != nil){
+		return serr
+	}
+	f.Decls = decls
+
+	//write the version file again.
+	var buf bytes.Buffer
+	if err := format.Node(&buf, fset, f); err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(versionPath, buf.Bytes(), 0644)
+}
+
+func (g *engineGolang) parseGoVersion(list []ast.Decl) (string, error) {
+	//find version declaration (uppercase or lowercase)
+	for _, decl := range list {
+		gen := decl.(*ast.GenDecl)
+		if gen.Tok == token.VAR {
+			for _, spec := range gen.Specs {
+				valSpec := spec.(*ast.ValueSpec)
+				if strings.ToLower(valSpec.Names[0].Name) == "version" {
+					//found the version variable.
+					return valSpec.Values[0].(*ast.BasicLit).Value, nil
+				}
+			}
+		}
+	}
+	return "", errors.EngineBuildPackageFailed("Could not retrieve the version from pkg/version/version.go")
+}
+
+func (g *engineGolang) setGoVersion(list []ast.Decl, version string) ([]ast.Decl, error) {
+	//find version declaration (uppercase or lowercase)
+	for _, decl := range list {
+		gen := decl.(*ast.GenDecl)
+		if gen.Tok == token.VAR {
+			for _, spec := range gen.Specs {
+				valSpec := spec.(*ast.ValueSpec)
+				if strings.ToLower(valSpec.Names[0].Name) == "version" {
+					//found the version variable.
+					valSpec.Values[0].(*ast.BasicLit).Value = version
+					return list, nil
+				}
+			}
+		}
+	}
+	return nil, errors.EngineBuildPackageFailed("Could not set the version in pkg/version/version.go")
 }

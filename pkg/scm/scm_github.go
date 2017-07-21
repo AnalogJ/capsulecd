@@ -129,7 +129,7 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 	}
 }
 
-func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
+func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
 	err := g.PipelineData.GitHeadInfo.Validate()
@@ -157,7 +157,7 @@ func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
 	return utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref)
 }
 
-func (g *scmGithub) ProcessPullRequestPayload(payload *Payload) error {
+func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 	log.Printf("%v", payload)
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head

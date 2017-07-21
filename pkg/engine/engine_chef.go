@@ -12,7 +12,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"golang.org/x/tools/go/gcimporter15/testdata"
 )
 
 type chefMetadata struct {

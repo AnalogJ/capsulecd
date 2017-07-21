@@ -63,7 +63,5 @@ type Interface interface {
 	// USES pypi_password
 	// USES rubygems_api_key
 	DistStep() error
-
-	DocumentationStep() error
 }
 
