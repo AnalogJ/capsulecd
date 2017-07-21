@@ -23,14 +23,6 @@ type engineNode struct {
 	Scm          scm.Interface //Interface
 }
 
-func (n *engineNode) ValidateTools() error {
-	if _, kerr := exec.LookPath("npm"); kerr != nil {
-		return errors.EngineValidateToolError("npm binary is missing")
-	}
-
-	return nil
-}
-
 func (n *engineNode) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	n.Scm = sourceScm
 	n.Config = config
@@ -38,7 +30,19 @@ func (n *engineNode) init(pipelineData *pipeline.Data, config config.Interface, 
 	return nil
 }
 
-func (n *engineNode) BuildStep() error {
+func (n *engineNode) ValidateTools() error {
+	if _, kerr := exec.LookPath("npm"); kerr != nil {
+		return errors.EngineValidateToolError("npm binary is missing")
+	}
+
+	if _, kerr := exec.LookPath("eslint"); kerr != nil {
+		return errors.EngineValidateToolError("eslint binary is missing")
+	}
+
+	return nil
+}
+
+func (n *engineNode) AssembleStep() error {
 	//validate that the npm package.json file exists
 	if !utils.FileExists(path.Join(n.PipelineData.GitLocalPath, "package.json")) {
 		return errors.EngineBuildPackageInvalid("package.json file is required to process Node package")
@@ -64,8 +68,7 @@ func (n *engineNode) BuildStep() error {
 	return nil
 }
 
-func (n *engineNode) TestStep() error {
-
+func (n *engineNode) DependenciesStep() error {
 	// the module has already been downloaded. lets make sure all its dependencies are available.
 	if derr := utils.BashCmdExec("npm install", n.PipelineData.GitLocalPath, ""); derr != nil {
 		return errors.EngineTestRunnerError("npm install failed. Check module dependencies")
@@ -75,24 +78,50 @@ func (n *engineNode) TestStep() error {
 	if derr := utils.BashCmdExec("npm shrinkwrap", n.PipelineData.GitLocalPath, ""); derr != nil {
 		return errors.EngineTestRunnerError("npm shrinkwrap failed. Check log for exact error")
 	}
+	return nil
+}
 
-	//run test command
-	var testCmd string
-	if n.Config.IsSet("engine_cmd_test") {
-		testCmd = n.Config.GetString("engine_cmd_test")
-	} else {
-		testCmd = "npm test"
+func (n *engineNode) TestStep() error {
+
+	//skip the lint commands if disabled
+	if !n.Config.GetBool("engine_disable_lint") {
+		//run test command
+		var lintCmd string
+		if n.Config.IsSet("engine_cmd_lint") {
+			lintCmd = n.Config.GetString("engine_cmd_lint")
+		} else {
+			lintCmd = "eslint ."
+			if n.Config.GetBool("engine_enable_code_mutation") {
+				lintCmd = "eslint --fix ."
+			}
+		}
+		if terr := utils.BashCmdExec(lintCmd, n.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
+		}
 	}
-	//running tox will install all dependencies in a virtual env, and then run unit tests.
-	if derr := utils.BashCmdExec(testCmd, n.PipelineData.GitLocalPath, ""); derr != nil {
-		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+
+	//skip the test commands if disabled
+	if !n.Config.GetBool("engine_disable_test") {
+		//run test command
+		var testCmd string
+		if n.Config.IsSet("engine_cmd_test") {
+			testCmd = n.Config.GetString("engine_cmd_test")
+		} else {
+			testCmd = "npm test"
+		}
+		if derr := utils.BashCmdExec(testCmd, n.PipelineData.GitLocalPath, ""); derr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
 	}
+
 	return nil
 }
 
 func (n *engineNode) PackageStep() error {
-	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
-	// as they will be included in the commmit and any release artifacts)
+	if !n.Config.GetBool("engine_package_keep_lock_file") {
+		os.Remove(path.Join(n.PipelineData.GitLocalPath, "npm-shrinkwrap.json"))
+	}
+
 	if cerr := utils.GitCommit(n.PipelineData.GitLocalPath, "Committing automated changes before packaging."); cerr != nil {
 		return cerr
 	}

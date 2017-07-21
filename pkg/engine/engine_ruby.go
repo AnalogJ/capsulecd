@@ -38,6 +38,15 @@ type engineRuby struct {
 	GemspecPath     string
 }
 
+func (g *engineRuby) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+	g.Scm = sourceScm
+	g.Config = config
+	g.PipelineData = pipelineData
+	g.CurrentMetadata = new(rubyMetadata)
+	g.NextMetadata = new(rubyMetadata)
+	return nil
+}
+
 func (g *engineRuby) ValidateTools() error {
 	if _, kerr := exec.LookPath("ruby"); kerr != nil {
 		return errors.EngineValidateToolError("ruby binary is missing")
@@ -55,19 +64,14 @@ func (g *engineRuby) ValidateTools() error {
 		return errors.EngineValidateToolError("rake binary is missing")
 	}
 
+	if _, berr := exec.LookPath("rubocop"); berr != nil {
+		return errors.EngineValidateToolError("rubocop binary is missing")
+	}
+
 	return nil
 }
 
-func (g *engineRuby) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
-	g.Scm = sourceScm
-	g.Config = config
-	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(rubyMetadata)
-	g.NextMetadata = new(rubyMetadata)
-	return nil
-}
-
-func (g *engineRuby) BuildStep() error {
+func (g *engineRuby) AssembleStep() error {
 
 	// bump up the version here.
 	// since there's no standardized way to bump up the version in the *.gemspec file, we're going to assume that the version
@@ -132,7 +136,7 @@ func (g *engineRuby) BuildStep() error {
 	return nil
 }
 
-func (g *engineRuby) TestStep() error {
+func (g *engineRuby) DependenciesStep() error {
 	// lets install the gem, and any dependencies
 	// http://guides.rubygems.org/make-your-own-gem/
 
@@ -146,23 +150,47 @@ func (g *engineRuby) TestStep() error {
 	if terr := utils.BashCmdExec("bundle install", g.PipelineData.GitLocalPath, ""); terr != nil {
 		return errors.EngineBuildPackageFailed("bundle install failed. Check Gemfile")
 	}
+	return nil
+}
 
-	//run test command
-	var testCmd string
-	if g.Config.IsSet("engine_cmd_test") {
-		testCmd = g.Config.GetString("engine_cmd_test")
-	} else {
-		testCmd = "rake spec"
+func (g *engineRuby) TestStep() error {
+
+	//skip the lint commands if disabled
+	if !g.Config.GetBool("engine_disable_lint") {
+		//run test command
+		var lintCmd string
+		if g.Config.IsSet("engine_cmd_lint") {
+			lintCmd = g.Config.GetString("engine_cmd_lint")
+		} else {
+			lintCmd = "rubocop"
+			if g.Config.GetBool("engine_enable_code_mutation") {
+				lintCmd = "rubocop --auto-correct"
+			}
+		}
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
+		}
 	}
-	if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
-		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+	//skip the lint commands if disabled
+	if !g.Config.GetBool("engine_disable_test") {
+		//run test command
+		var testCmd string
+		if g.Config.IsSet("engine_cmd_test") {
+			testCmd = g.Config.GetString("engine_cmd_test")
+		} else {
+			testCmd = "rake spec"
+		}
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
 	}
 	return nil
 }
 
 func (g *engineRuby) PackageStep() error {
-	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
-	// as they will be included in the commmit and any release artifacts)
+	if !g.Config.GetBool("engine_package_keep_lock_file") {
+		os.Remove(path.Join(g.PipelineData.GitLocalPath, "Gemfile.lock"))
+	}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr

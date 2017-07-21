@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"golang.org/x/tools/go/gcimporter15/testdata"
 )
 
 type chefMetadata struct {
@@ -25,6 +26,15 @@ type engineChef struct {
 	Scm             scm.Interface //Interface
 	CurrentMetadata *chefMetadata
 	NextMetadata    *chefMetadata
+}
+
+func (g *engineChef) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+	g.Config = config
+	g.Scm = sourceScm
+	g.PipelineData = pipelineData
+	g.CurrentMetadata = new(chefMetadata)
+	g.NextMetadata = new(chefMetadata)
+	return nil
 }
 
 func (g *engineChef) ValidateTools() error {
@@ -44,16 +54,7 @@ func (g *engineChef) ValidateTools() error {
 	return nil
 }
 
-func (g *engineChef) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
-	g.Config = config
-	g.Scm = sourceScm
-	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(chefMetadata)
-	g.NextMetadata = new(chefMetadata)
-	return nil
-}
-
-func (g *engineChef) BuildStep() error {
+func (g *engineChef) AssembleStep() error {
 	//validate that the chef metadata.rb file exists
 
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "metadata.rb")) {
@@ -99,7 +100,7 @@ func (g *engineChef) BuildStep() error {
 	return nil
 }
 
-func (g *engineChef) TestStep() error {
+func (g *engineChef) DependenciesStep() error {
 	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
 	if cerr := utils.CmdExec("berks", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")
@@ -109,23 +110,46 @@ func (g *engineChef) TestStep() error {
 	if berr := utils.CmdExec("bundle", []string{"install"}, g.PipelineData.GitLocalPath, ""); berr != nil {
 		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
 	}
+	return nil
+}
 
-	//run test command
-	var testCmd string
-	if g.Config.IsSet("engine_cmd_test") {
-		testCmd = g.Config.GetString("engine_cmd_test")
-	} else {
-		testCmd = "rake test"
+func (g *engineChef) TestStep() error {
+
+	//skip the lint commands if disabled
+	if !g.Config.GetBool("engine_disable_lint") {
+		//run test command
+		var lintCmd string
+		if g.Config.IsSet("engine_cmd_lint") {
+			lintCmd = g.Config.GetString("engine_cmd_lint")
+		} else {
+			lintCmd = "foodcritic ."
+		}
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
+		}
 	}
-	if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
-		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+
+	//skip the test commands if disabled
+	if !g.Config.GetBool("engine_disable_test") {
+		//run test command
+		var testCmd string
+		if g.Config.IsSet("engine_cmd_test") {
+			testCmd = g.Config.GetString("engine_cmd_test")
+		} else {
+			testCmd = "rake test"
+		}
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
 	}
 	return nil
 }
 
 func (g *engineChef) PackageStep() error {
-	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
-	// as they will be included in the commmit and any release artifacts)
+	if !g.Config.GetBool("engine_package_keep_lock_file") {
+		os.Remove(path.Join(g.PipelineData.GitLocalPath, "Berksfile.lock"))
+		os.Remove(path.Join(g.PipelineData.GitLocalPath, "Gemfile.lock"))
+	}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr

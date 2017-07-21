@@ -25,9 +25,6 @@ type scmGithub struct {
 	Client       *github.Client
 }
 
-// configure method will generate an authenticated client that can be used to comunicate with Github
-// MUST set options.GitParentPath
-// MUST set client
 func (g *scmGithub) init(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) error {
 	g.PipelineData = pipelineData
 	g.Config = myconfig
@@ -64,9 +61,6 @@ func (g *scmGithub) init(pipelineData *pipeline.Data, myconfig config.Interface,
 	return nil
 }
 
-// configure method will retrieve payload data from Scm using authenticated client.
-// MUST set options.IsPullRequest
-// RETURNS ScmPayload
 func (g *scmGithub) RetrievePayload() (*Payload, error) {
 	if !g.Config.IsSet("scm_pull_request") {
 		log.Print("This is not a pull request. No automatic continuous deployment processing required. Continuous Integration testing will continue.")
@@ -135,13 +129,6 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 	}
 }
 
-// all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the webhook data.
-// should check if the pull request opener even has permissions to create a release.
-// all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
-// MUST set options.GitLocalPath
-// MUST set options.GitLocalBranch
-// MUST set options.GitHeadInfo
-// REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
@@ -170,15 +157,6 @@ func (g *scmGithub) ProcessPushPayload(payload *Payload) error {
 	return utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref)
 }
 
-// all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the pull request data.
-// should check if the pull request opener even has permissions to create a release.
-// all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
-// MUST set options.GitLocalPath
-// MUST set options.GitLocalBranch
-// MUST set options.GitBaseInfo
-// MUST set options.GitHeadInfo
-// REQUIRES client
-// REQUIRES options.GitParentPath
 func (g *scmGithub) ProcessPullRequestPayload(payload *Payload) error {
 	log.Printf("%v", payload)
 	//set the processed head info
@@ -221,14 +199,6 @@ func (g *scmGithub) ProcessPullRequestPayload(payload *Payload) error {
 	return nil
 }
 
-// REQUIRES client
-// REQUIRES options.ScmReleaseCommit
-// REQUIRES options.GitLocalPath
-// REQUIRES options.GitLocalBranch
-// REQUIRES options.GitBaseInfo
-// REQUIRES options.GitHeadInfo
-// REQUIRES options.ReleaseArtifacts
-// REQUIRES options.GitParentPath
 func (g *scmGithub) Publish() error {
 
 	// set the pull request status (we do this before the merge, because we cant update status on a merged
@@ -287,11 +257,6 @@ func (g *scmGithub) Publish() error {
 
 }
 
-// requires @source_client
-// requires @source_git_parent_path
-// requires @source_git_base_info
-// requires @source_git_head_info
-// requires @config.engine_disable_cleanup
 func (g *scmGithub) Notify(ref string, state string, message string) error {
 	targetURL := "https://www.capsulecd.com"
 	contextApp := "CapsuleCD"

@@ -27,7 +27,6 @@ func (p *Pipeline) Start(config config.Interface) {
 
 	// start the source, and whatever work needs to be done there.
 	// MUST set options.GitParentPath
-	// MUST set options.Client
 	log.Println("pre_scm_init_step")
 	p.PreScmInit()
 	log.Println("scm_init_step")
@@ -42,12 +41,7 @@ func (p *Pipeline) Start(config config.Interface) {
 	errors.CheckErr(eerr)
 	p.Engine = engineImpl
 
-	// runner must determine if this is a pull request or a push.
-	// if it's a pull request the runner must retrieve the pull request payload and return it
-	// if its a push, the runner must retrieve the push payload and return it
-	// the variable @runner_is_pullrequest will be true if a pull request was created.
-	// MUST set runner_is_pullrequest
-	// REQUIRES source_client
+	//retreive payload
 	log.Println("pre_scm_retrieve_payload_step")
 	p.PreScmRetrievePayload()
 	log.Println("scm_retrieve_payload_step")
@@ -57,33 +51,19 @@ func (p *Pipeline) Start(config config.Interface) {
 	p.PostScmRetrievePayload()
 
 	if p.Data.IsPullRequest {
-		// all capsule CD processing will be kicked off via a payload. In this case the payload is the pull request data.
-		// should check if the pull request opener even has permissions to create a release.
-		// all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
-		// MUST set source_git_local_path
-		// MUST set source_git_local_branch
-		// MUST set source_git_base_info
-		// MUST set source_git_head_info
-		// REQUIRES source_client
-		log.Println("pre_scm_process_pull_request_step")
-		p.PreScmProcessPullRequestPayload()
-		log.Println("scm_process_pull_request_step")
-		errors.CheckErr(scmImpl.ProcessPullRequestPayload(payload))
-		log.Println("post_scm_process_pull_request_step")
-		p.PostScmProcessPullRequestPayload()
+		log.Println("pre_scm_checkout_pull_request_step")
+		p.PreScmCheckoutPullRequestPayload()
+		log.Println("scm_checkout_pull_request_step")
+		errors.CheckErr(scmImpl.CheckoutPullRequestPayload(payload))
+		log.Println("post_scm_checkout_pull_request_step")
+		p.PostScmCheckoutPullRequestPayload()
 	} else {
-		// start processing the payload, which should result in a local git repository that we
-		// can begin to test. Since this is a push, no packaging is required
-		// MUST set source_git_local_path
-		// MUST set source_git_local_branch
-		// MUST set source_git_head_info
-		// REQUIRES source_client
-		log.Println("pre_scm_process_push_payload_step")
-		p.PreScmProcessPushPayload()
-		log.Println("scm_process_push_payload_step")
-		errors.CheckErr(scmImpl.ProcessPushPayload(payload))
-		log.Println("post_scm_process_push_payload_step")
-		p.PostScmProcessPushPayload()
+		log.Println("pre_scm_checkout_push_payload_step")
+		p.PreScmCheckoutPushPayload()
+		log.Println("scm_checkout_push_payload_step")
+		errors.CheckErr(scmImpl.CheckoutPushPayload(payload))
+		log.Println("post_scm_checkout_push_payload_step")
+		p.PostScmCheckoutPushPayload()
 	}
 
 	// update the config with repo config file options
@@ -91,41 +71,42 @@ func (p *Pipeline) Start(config config.Interface) {
 
 	//validate that required executables are available for the following build/test/package/etc steps
 	p.NotifyStep("validate tools", func() error {
-		log.Println("pre_validate_tools_step")
-		p.PreValidateTools()
 		log.Println("validate_tools_step")
 		if verr := engineImpl.ValidateTools(); verr != nil{
 			return verr
 		}
-		log.Println("post_validate_tools_step")
-		p.PostValidateTools()
 		return nil
 	})
 
 	// now that the payload has been processed we can begin by building the code.
 	// this may be creating missing files/default structure, compilation, version bumping, etc.
-	p.NotifyStep("build", func() error {
-		log.Println("pre_build_step")
-		p.PreBuildStep()
-		log.Println("build_step")
-		if berr := engineImpl.BuildStep(); berr!= nil{
+	p.NotifyStep("assemble", func() error {
+		log.Println("pre_assemble_step")
+		p.PreAssembleStep()
+		log.Println("assemble_step")
+		if berr := engineImpl.AssembleStep(); berr!= nil{
 			return berr
 		}
-		log.Println("post_build_step")
-		p.PostBuildStep()
+		log.Println("post_assemble_step")
+		p.PostAssembleStep()
 		return nil
 	})
 
-	// this step should download dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test)
-	// REQUIRES @config.engine_cmd_test
-	// REQUIRES @config.engine_disable_test
-	p.NotifyStep("test", func() error {
-		//skip the test command if disabled
-		if p.Config.GetBool("engine_disable_test") {
-			log.Println("skipping pre_test_step, test_step, post_test_step")
-			return nil
+	// this step should download dependencies
+	p.NotifyStep("dependencies", func() error {
+		log.Println("pre_dependencies_step")
+		p.PreAssembleStep()
+		log.Println("dependencies_step")
+		if berr := engineImpl.AssembleStep(); berr!= nil{
+			return berr
 		}
+		log.Println("post_dependencies_step")
+		p.PostAssembleStep()
+		return nil
+	})
 
+	// run the package test runner(s) (eg. npm test, rake test, kitchen test) and linters/formatters
+	p.NotifyStep("test", func() error {
 		log.Println("pre_test_step")
 		p.PreTestStep()
 		log.Println("test_step")
@@ -169,8 +150,6 @@ func (p *Pipeline) Start(config config.Interface) {
 			return nil
 		})
 
-		// this step should push the merged, tested and version updated code up to the source code repository
-		// this step should also do any source specific releases (github release, asset uploading, etc)
 		p.NotifyStep("scm publish", func() error {
 			if p.Config.GetBool("engine_disable_scm_publish") {
 				log.Println("skipping pre_scm_publish_step, scm_publish_step, post_scm_publish_step")
@@ -191,20 +170,18 @@ func (p *Pipeline) Start(config config.Interface) {
 }
 
 // Hook methods
-func (p *Pipeline) PreValidateTools()                 {}
-func (p *Pipeline) PostValidateTools()                {}
 func (p *Pipeline) PreScmInit()                       {}
 func (p *Pipeline) PostScmInit()                      {}
-func (p *Pipeline) PreScmProcessPullRequestPayload()  {}
-func (p *Pipeline) PostScmProcessPullRequestPayload() {}
-func (p *Pipeline) PreScmProcessPushPayload()         {}
-func (p *Pipeline) PostScmProcessPushPayload()        {}
+func (p *Pipeline) PreScmCheckoutPullRequestPayload()  {}
+func (p *Pipeline) PostScmCheckoutPullRequestPayload() {}
+func (p *Pipeline) PreScmCheckoutPushPayload()         {}
+func (p *Pipeline) PostScmCheckoutPushPayload()        {}
 func (p *Pipeline) PreScmPublish()                    {}
 func (p *Pipeline) PostScmPublish()                   {}
 func (p *Pipeline) PreScmRetrievePayload()            {}
 func (p *Pipeline) PostScmRetrievePayload()           {}
-func (p *Pipeline) PreBuildStep()                     {}
-func (p *Pipeline) PostBuildStep()                    {}
+func (p *Pipeline) PreAssembleStep()                     {}
+func (p *Pipeline) PostAssembleStep()                    {}
 func (p *Pipeline) PreTestStep()                      {}
 func (p *Pipeline) PostTestStep()                     {}
 func (p *Pipeline) PrePackageStep()                   {}

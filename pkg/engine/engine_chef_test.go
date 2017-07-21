@@ -42,7 +42,7 @@ func TestEngineChef_BuildStep(t *testing.T) {
 	assert.NoError(t, err)
 
 	//test
-	berr := chefEngine.BuildStep()
+	berr := chefEngine.AssembleStep()
 	assert.NoError(t, berr)
 
 	//assert
@@ -78,7 +78,7 @@ func TestEngineChef_TestStep(t *testing.T) {
 	assert.NoError(t, err)
 
 	//test
-	berr := chefEngine.BuildStep()
+	berr := chefEngine.AssembleStep()
 	assert.NoError(t, berr)
 
 	terr := chefEngine.TestStep()

@@ -27,14 +27,6 @@ type engineGolang struct {
 	NextMetadata    *golangMetadata
 }
 
-func (g *engineGolang) ValidateTools() error {
-	if _, kerr := exec.LookPath("go"); kerr != nil {
-		return errors.EngineValidateToolError("go binary is missing")
-	}
-
-	return nil
-}
-
 func (g *engineGolang) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
@@ -44,7 +36,15 @@ func (g *engineGolang) init(pipelineData *pipeline.Data, config config.Interface
 	return nil
 }
 
-func (g *engineGolang) BuildStep() error {
+func (g *engineGolang) ValidateTools() error {
+	if _, kerr := exec.LookPath("go"); kerr != nil {
+		return errors.EngineValidateToolError("go binary is missing")
+	}
+
+	return nil
+}
+
+func (g *engineGolang) AssembleStep() error {
 	//validate that the chef metadata.rb file exists
 
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "metadata.rb")) {
@@ -90,7 +90,7 @@ func (g *engineGolang) BuildStep() error {
 	return nil
 }
 
-func (g *engineGolang) TestStep() error {
+func (g *engineGolang) DependenciesStep() error {
 	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
 	if cerr := utils.CmdExec("berks", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")
@@ -100,7 +100,10 @@ func (g *engineGolang) TestStep() error {
 	if berr := utils.CmdExec("bundle", []string{"install"}, g.PipelineData.GitLocalPath, ""); berr != nil {
 		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
 	}
+	return nil
+}
 
+func (g *engineGolang) TestStep() error {
 	//run test command
 	var testCmd string
 	if g.Config.IsSet("engine_cmd_test") {

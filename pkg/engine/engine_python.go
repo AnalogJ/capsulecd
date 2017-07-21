@@ -26,9 +26,22 @@ type enginePython struct {
 	NextMetadata    *pythonMetadata
 }
 
+func (g *enginePython) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+	g.Scm = sourceScm
+	g.Config = config
+	g.PipelineData = pipelineData
+	g.CurrentMetadata = new(pythonMetadata)
+	g.NextMetadata = new(pythonMetadata)
+	return nil
+}
+
 func (g *enginePython) ValidateTools() error {
 	if _, kerr := exec.LookPath("tox"); kerr != nil {
 		return errors.EngineValidateToolError("tox binary is missing")
+	}
+
+	if _, kerr := exec.LookPath("pylint"); kerr != nil {
+		return errors.EngineValidateToolError("pylint binary is missing")
 	}
 
 	if _, berr := exec.LookPath("python"); berr != nil {
@@ -42,16 +55,7 @@ func (g *enginePython) ValidateTools() error {
 	return nil
 }
 
-func (g *enginePython) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
-	g.Scm = sourceScm
-	g.Config = config
-	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(pythonMetadata)
-	g.NextMetadata = new(pythonMetadata)
-	return nil
-}
-
-func (g *enginePython) BuildStep() error {
+func (g *enginePython) AssembleStep() error {
 	//validate that the python setup.py file exists
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "setup.py")) {
 		return errors.EngineBuildPackageInvalid("setup.py file is required to process Python package")
@@ -137,25 +141,49 @@ func (g *enginePython) BuildStep() error {
 	return nil
 }
 
-func (g *enginePython) TestStep() error {
-	//run test command
-	var testCmd string
-	if g.Config.IsSet("engine_cmd_test") {
-		testCmd = g.Config.GetString("engine_cmd_test")
-	} else {
-		testCmd = "tox"
-	}
-	//running tox will install all dependencies in a virtual env, and then run unit tests.
+func (n *enginePython) DependenciesStep() error {
+	return nil //dependencies are installed as part of Tox.
+}
 
-	if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
-		return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+func (g *enginePython) TestStep() error {
+
+	//skip the lint commands if disabled
+	if !g.Config.GetBool("engine_disable_lint") {
+		//run test command
+		var lintCmd string
+		if g.Config.IsSet("engine_cmd_lint") {
+			lintCmd = g.Config.GetString("engine_cmd_lint")
+		} else {
+			lintCmd = "find . -name '*.py' -exec pylint -E '{}' +"
+		}
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
+		}
 	}
+
+	//skip the test commands if disabled
+	if !g.Config.GetBool("engine_disable_test") {
+		//run test command
+		var testCmd string
+		if g.Config.IsSet("engine_cmd_test") {
+			testCmd = g.Config.GetString("engine_cmd_test")
+		} else {
+			testCmd = "tox"
+		}
+		//running tox will install all dependencies in a virtual env, and then run unit tests.
+
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		}
+	}
+
 	return nil
 }
 
 func (g *enginePython) PackageStep() error {
-	// commit changes to the cookbook. (test run occurs before this, and it should clean up any instrumentation files, created,
-	// as they will be included in the commmit and any release artifacts)
+	//if !g.Config.GetBool("engine_package_keep_lock_file") { //TODO figure out if theres a good pattern here.
+	//	os.Remove(path.Join(g.PipelineData.GitLocalPath, "npm-shrinkwrap.json"))
+	//}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr

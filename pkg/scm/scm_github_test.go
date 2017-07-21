@@ -147,7 +147,7 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	assert.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
-	pperr := githubScm.ProcessPushPayload(payload)
+	pperr := githubScm.CheckoutPushPayload(payload)
 	assert.NoError(t, pperr)
 
 	//assert
@@ -171,7 +171,7 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	assert.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
-	pperr := githubScm.ProcessPullRequestPayload(payload)
+	pperr := githubScm.CheckoutPullRequestPayload(payload)
 	assert.NoError(t, pperr)
 
 	//assert
