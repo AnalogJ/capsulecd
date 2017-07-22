@@ -287,6 +287,39 @@ func TestGitGenerateChangelog_InvalidDirectory(t *testing.T) {
 	require.Empty(t, changelog)
 }
 
+func TestGitGenerateGitIgnore(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	dirPath, err := ioutil.TempDir("", "")
+	require.NoError(t, err)
+
+
+	//test
+	ferr := utils.GitGenerateGitIgnore(dirPath, "Ruby")
+
+	//assert
+	require.NoError(t, ferr)
+	require.True(t, utils.FileExists(path.Join(dirPath, ".gitignore")), "should be generated")
+}
+
+
+func TestGitGenerateGitIgnore_WithInvalidLanguage(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	dirPath, err := ioutil.TempDir("", "")
+	require.NoError(t, err)
+
+
+	//test
+	ferr := utils.GitGenerateGitIgnore(dirPath, "ThisDoesntExist")
+
+	//assert
+	require.Error(t, ferr, "should return an error")
+	require.False(t, utils.FileExists(path.Join(dirPath, ".gitignore")), "should not generate gitignore")
+}
+
 func deleteTestRepo(testRepoDirectory string) {
 	os.RemoveAll(testRepoDirectory)
 }

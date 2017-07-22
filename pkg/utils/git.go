@@ -386,8 +386,8 @@ func cleanCommitMessage(commitMessage string) string {
 	return commitMessage
 }
 
-func getGitIgnore(l string) ([]byte, error) {
-	gitURL := "https://raw.githubusercontent.com/github/gitignore/master/" + l
+func getGitIgnore(languageName string) ([]byte, error) {
+	gitURL := fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", languageName)
 
 	resp, err := http.Get(gitURL)
 	if(err != nil){
@@ -396,7 +396,7 @@ func getGitIgnore(l string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, errors.Custom(fmt.Sprintf("Could not find .gitignore for '%s'", l))
+		return nil, errors.Custom(fmt.Sprintf("Could not find .gitignore for '%s'", languageName))
 	}
 
 	return ioutil.ReadAll(resp.Body)

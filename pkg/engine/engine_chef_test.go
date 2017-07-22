@@ -82,14 +82,8 @@ func TestEngineChef_AssembleStep_WithMinimalCookbook(t *testing.T) {
 	defer os.RemoveAll(parentPath)
 	dirPath := path.Join(parentPath, "cookbook_analogj_test")
 
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), dirPath)
+	cerr := utils.CopyDir(path.Join("testdata", "chef", "minimal_cookbook_analogj_test"), dirPath)
 	require.NoError(t, cerr)
-
-	os.Remove(path.Join(dirPath, "Gemfile"))
-	os.Remove(path.Join(dirPath, "Berksfile"))
-	os.Remove(path.Join(dirPath, ".gitignore"))
-	os.Remove(path.Join(dirPath, ".Rakefile"))
-
 
 	pipelineData := new(pipeline.Data)
 	absPath, aerr := filepath.Abs(dirPath)

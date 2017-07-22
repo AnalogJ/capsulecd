@@ -93,7 +93,9 @@ func (g *engineChef) AssembleStep() error {
 	}
 	berksfilePath := path.Join(g.PipelineData.GitLocalPath, "Berksfile")
 	if !utils.FileExists(berksfilePath) {
-		ioutil.WriteFile(berksfilePath, []byte("site \"https://supermarket.chef.io\""), 0644)
+		ioutil.WriteFile(berksfilePath, []byte(`source "https://supermarket.chef.io"
+		metadata
+		`), 0644)
 	}
 	gemfilePath := path.Join(g.PipelineData.GitLocalPath, "Gemfile")
 	if !utils.FileExists(gemfilePath) {
