@@ -53,6 +53,7 @@ func (g *engineChef) ValidateTools() error {
 		return errors.EngineValidateToolError("berkshelf binary is missing")
 	}
 
+	//TODO: figure out how to validate that "bundle audit" command exists.
 	if _, berr := exec.LookPath("bundle"); berr != nil {
 		return errors.EngineValidateToolError("bundler binary is missing")
 	}

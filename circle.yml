@@ -39,6 +39,8 @@ jobs:
           name: Run Docker containers with coverage
           command: |
             mkdir -p /coverage
+
+            echo "#################################################### BASE"
             docker run -e "CI=true" \
               -e "COVERALLS_TOKEN" \
               -e "CIRCLE_BUILD_NUM" \
@@ -47,6 +49,7 @@ jobs:
               analogj/capsulecd-build:base \
               goveralls -ignore="cmd,vendor" -v -flags="-tags='static'" -service=circle-ci -repotoken=$COVERALLS_TOKEN
 
+            echo "#################################################### CHEF"
             docker run -e "CI=true" \
               -e "COVERALLS_TOKEN" \
               -e "CIRCLE_BUILD_NUM" \
