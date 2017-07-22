@@ -49,10 +49,9 @@ func TestEngineChef_AssembleStep(t *testing.T) {
 	require.NoError(t, cerr)
 
 	pipelineData := new(pipeline.Data)
-	absPath, aerr := filepath.Abs(dirPath)
-	require.NoError(t, aerr)
 
-	pipelineData.GitLocalPath = absPath
+	pipelineData.GitParentPath = parentPath
+	pipelineData.GitLocalPath = dirPath
 	testConfig, _ := config.Create()
 	testConfig.Set("scm", "github")
 	testConfig.Set("package_type", "chef")
@@ -86,10 +85,8 @@ func TestEngineChef_AssembleStep_WithMinimalCookbook(t *testing.T) {
 	require.NoError(t, cerr)
 
 	pipelineData := new(pipeline.Data)
-	absPath, aerr := filepath.Abs(dirPath)
-	require.NoError(t, aerr)
-
-	pipelineData.GitLocalPath = absPath
+	pipelineData.GitParentPath = parentPath
+	pipelineData.GitLocalPath = dirPath
 	testConfig, _ := config.Create()
 	testConfig.Set("scm", "github")
 	testConfig.Set("package_type", "chef")
