@@ -246,6 +246,20 @@ func TestGitLatestTaggedCommit(t *testing.T) {
 
 }
 
+func TestGitLatestTaggedCommit_InvalidDirectory(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	dirPath := path.Join("this", "path", "does", "not", "exist")
+
+	//test
+	tag, ferr := utils.GitLatestTaggedCommit(dirPath)
+
+	//assert
+	require.Error(t, ferr)
+	require.Empty(t, tag)
+}
+
 func TestGitGenerateChangelog(t *testing.T) {
 	t.Parallel()
 

@@ -20,8 +20,10 @@ type GitTagDetails struct {
 	CommitDate   time.Time
 }
 
+// Clone a git repo into a local directory.
+// Credentials need to be specified by embedding in gitRemote url.
+// TODO: this pattern may not work on Bitbucket/GitLab
 func GitClone(parentPath string, repositoryName string, gitRemote string) (string, error) {
-	//TODO: credentials may need to be specified
 	absPath, aerr := filepath.Abs(path.Join(parentPath, repositoryName))
 	if aerr != nil {
 		return "", aerr
