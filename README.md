@@ -297,3 +297,6 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://buildroot.org/
 - https://github.com/multiarch/crossbuild
 - https://github.com/Cimpress-MCP/go-git2consul/tree/crossbuild/build-multi
+- https://docs.codecov.io/docs/testing-with-docker
+- https://github.com/codecov/example-go
+- https://github.com/codecov/support/wiki/Codecov-Yaml#how-to-disable-a-single-ci-provider

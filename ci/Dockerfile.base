@@ -29,4 +29,4 @@ RUN glide install \
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
-#CMD goveralls -ignore="cmd,vendor" -v -debug -flags="-tags='static'"
+CMD ci/coverage.sh

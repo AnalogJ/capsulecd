@@ -39,24 +39,19 @@ jobs:
           name: Run Docker containers with coverage
           command: |
             mkdir -p /coverage
+            ci_env=`bash <(curl -s https://codecov.io/env)`
 
             echo "#################################################### BASE"
             docker run -e "CI=true" \
-              -e "COVERALLS_TOKEN" \
-              -e "CIRCLE_BUILD_NUM" \
-              -e "CIRCLE_PR_NUMBER" \
-              -e "CI_PULL_REQUEST" \
+              $ci_env \
               analogj/capsulecd-build:base \
-              goveralls -ignore="cmd,vendor" -v -flags="-tags='static'" -service=circle-ci -repotoken=$COVERALLS_TOKEN
+              ./ci/coverage.sh -tags='static'
 
             echo "#################################################### CHEF"
             docker run -e "CI=true" \
-              -e "COVERALLS_TOKEN" \
-              -e "CIRCLE_BUILD_NUM" \
-              -e "CIRCLE_PR_NUMBER" \
-              -e "CI_PULL_REQUEST" \
-            analogj/capsulecd-build:chef \
-            go test -v --tags='static chef' ./pkg/...
+              $ci_env \
+              analogj/capsulecd-build:chef \
+              ./ci/coverage.sh -tags='static chef'
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node

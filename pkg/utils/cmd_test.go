@@ -11,7 +11,7 @@ func TestBashCmdExec(t *testing.T) {
 	t.Parallel()
 
 	//test
-	cerr := utils.BashCmdExec("echo 'hello world'", "", "")
+	cerr := utils.BashCmdExec("echo 'hello from bash'", "", "")
 
 	//assert
 	require.NoError(t, cerr)
@@ -21,7 +21,7 @@ func TestBashCmdExec_Prefix(t *testing.T) {
 	t.Parallel()
 
 	//test
-	cerr := utils.BashCmdExec("echo 'hello world'", "", "cust_prefix")
+	cerr := utils.BashCmdExec("echo 'hello from bash with custom prefix'", "", "cust_prefix")
 
 	//assert
 	require.NoError(t, cerr)
