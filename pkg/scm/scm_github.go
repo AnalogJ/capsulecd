@@ -43,7 +43,7 @@ func (g *scmGithub) init(pipelineData *pipeline.Data, myconfig config.Interface,
 		g.PipelineData.GitParentPath = dirPath
 	}
 
-	if client != nil {
+	if myconfig != nil {
 		//primarily used for testing.
 		g.Client = github.NewClient(client)
 	} else {
@@ -74,8 +74,7 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 					CloneUrl: g.Config.GetString("scm_clone_url"),
 					Name:     g.Config.GetString("scm_repo_name"),
 					FullName: g.Config.GetString("scm_repo_full_name"),
-				},
-			},
+				}, },
 		}, nil
 		//make this as similar to a pull request as possible
 	} else {
@@ -132,8 +131,7 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
-	err := g.PipelineData.GitHeadInfo.Validate()
-	if err != nil {
+	if err := g.PipelineData.GitHeadInfo.Validate(); err != nil {
 		return err
 	}
 
@@ -179,6 +177,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 	// clone the merged branch
 	// https://sethvargo.com/checkout-a-github-pull-request/
 	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
+	// https://help.github.com/articles/checking-out-pull-requests-locally/
 
 	gitLocalPath, cerr := utils.GitClone(g.PipelineData.GitParentPath, g.PipelineData.GitHeadInfo.Repo.Name, g.PipelineData.GitRemote)
 	if cerr != nil {

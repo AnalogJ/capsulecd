@@ -13,12 +13,15 @@ import (
 	"golang.org/x/oauth2"
 	"net/http"
 	"path"
+	"io/ioutil"
+	"os"
 )
 
 func vcrSetup(t *testing.T) *http.Client {
 
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: "access_token_placeholder"},
+		//setting a real access token here will allow API calls to connect successfully
+		&oauth2.Token{AccessToken: "PLACEHOLDER"},
 	)
 
 	tr := http.DefaultTransport.(*http.Transport)
@@ -40,7 +43,8 @@ func vcrSetup(t *testing.T) *http.Client {
 	return vcr.Client
 }
 
-func TestScmGithub_Create_WithNoAuthToken(t *testing.T) {
+
+func TestScmGithub_init_WithoutAccessToken(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
@@ -57,7 +61,30 @@ func TestScmGithub_Create_WithNoAuthToken(t *testing.T) {
 	assert.Error(t, err, "should raise an auth error")
 }
 
-func TestScmGithub_Create(t *testing.T) {
+func TestScmGithub_init_WithGitParentPath(t *testing.T) {
+
+	//setup
+	testConfig, err := config.Create()
+	assert.NoError(t, err)
+	testConfig.Set("scm", "github")
+	testConfig.Set("scm_github_access_token", "placeholder")
+
+	dirPath, err := ioutil.TempDir("", "")
+	defer os.RemoveAll(dirPath)
+	testConfig.Set("scm_git_parent_path", dirPath)
+	pipelineData := new(pipeline.Data)
+	client := vcrSetup(t)
+
+	//test
+	testScm, err := scm.Create("github", pipelineData, testConfig, client)
+	assert.Equal(t, pipelineData.GitParentPath, dirPath, "should correctly set parent path to existing")
+
+	//assert
+	assert.NotNil(t, testScm)
+	assert.Nil(t, err, "should not have an error")
+}
+
+func TestScmGithub_init_WithDefaults(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
@@ -65,17 +92,16 @@ func TestScmGithub_Create(t *testing.T) {
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_github_access_token", "placeholder")
 	pipelineData := new(pipeline.Data)
-	client := vcrSetup(t)
 
 	//test
-	testScm, err := scm.Create("github", pipelineData, testConfig, client)
+	testScm, err := scm.Create("github", pipelineData, testConfig, nil)
+	assert.NotEmpty(t, pipelineData.GitParentPath, "should correctly generate a temporary parent path")
 
 	//assert
 	assert.NotNil(t, testScm)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, pipelineData.GitParentPath, "GitParentPath must be set after source Init")
-
+	assert.Nil(t, err, "should not have an error")
 }
+
 
 func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 	//setup
@@ -96,6 +122,26 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 	//assert
 	assert.NotEmpty(t, payload, "payload must be set after source Init")
 	assert.True(t, pipelineData.IsPullRequest)
+}
+
+func TestScmGithub_RetrievePayload_PullRequest_InvalidState(t *testing.T) {
+	//setup
+	testConfig, err := config.Create()
+	testConfig.Set("scm", "github")
+	testConfig.Set("scm_pull_request", "11")
+	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
+	testConfig.Set("scm_github_access_token", "placeholder")
+	pipelineData := new(pipeline.Data)
+	client := vcrSetup(t)
+
+	//test
+	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	assert.NoError(t, err)
+	payload, perr := githubScm.RetrievePayload()
+
+	//assert
+	assert.Error(t, perr, "should return an error when PR is closed")
+	assert.Nil(t, payload)
 }
 
 func TestScmGithub_RetrievePayload_Push(t *testing.T) {
@@ -146,18 +192,47 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	assert.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
+	testConfig.Set("scm_github_access_token", "") //set the Access Token to empty string before doing checkout
+	// (so that git doesnt fail on placeholder token)
 	pperr := githubScm.CheckoutPushPayload(payload)
 	assert.NoError(t, pperr)
 
 	//assert
-	assert.NotEmpty(t, pipelineData.GitLocalPath)
-	assert.NotEmpty(t, pipelineData.GitLocalBranch)
+	assert.NotEmpty(t, pipelineData.GitLocalPath, "should set checkout path")
+	assert.Equal(t, "master",pipelineData.GitLocalBranch, "should set local branch correctly")
 	assert.NotNil(t, pipelineData.GitHeadInfo)
+}
+
+func TestScmGithub_ProcessPushPayload_WithInvalidPayload(t *testing.T) {
+	//setup
+	testConfig, err := config.Create()
+	testConfig.Set("scm", "github")
+	testConfig.Set("scm_sha", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
+	testConfig.Set("scm_branch", "master")
+	testConfig.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
+	testConfig.Set("scm_repo_name", "capsulecd")
+	testConfig.Set("scm_repo_full_name", "AnalogJ/capsulecd")
+	testConfig.Set("scm_github_access_token", "placeholder")
+	pipelineData := new(pipeline.Data)
+	client := vcrSetup(t)
+
+	//test
+	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	assert.NoError(t, err)
+	payload := &scm.Payload{
+		Head: new(pipeline.ScmCommitInfo),
+	}
+	pperr := githubScm.CheckoutPushPayload(payload)
+
+	//assert
+	assert.Error(t, pperr, "should return an error")
+
 }
 
 func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	//setup
 	testConfig, err := config.Create()
+	assert.NoError(t, err)
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_pull_request", "12")
 	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
@@ -170,6 +245,8 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	assert.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	assert.NoError(t, perr)
+	testConfig.Set("scm_github_access_token", "") //set the Access Token to empty string before doing checkout
+	// (so that git doesnt fail on placeholder token)
 	pperr := githubScm.CheckoutPullRequestPayload(payload)
 	assert.NoError(t, pperr)
 
@@ -178,4 +255,26 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	assert.NotEmpty(t, pipelineData.GitLocalBranch)
 	assert.NotNil(t, pipelineData.GitHeadInfo)
 	assert.NotNil(t, pipelineData.GitBaseInfo)
+}
+
+//cant test publish becasue it'll continuously push to github repo.
+//func TestScmGithub_Publish(t *testing.T) {
+//
+//}
+
+func TestScmGithub_Notify(t *testing.T) {
+	//setup
+	testConfig, err := config.Create()
+	assert.NoError(t, err)
+	testConfig.Set("scm", "github")
+	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
+	testConfig.Set("scm_github_access_token", "placeholder")
+	pipelineData := new(pipeline.Data)
+	client := vcrSetup(t)
+
+	//test
+	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	assert.NoError(t, err)
+	pperr := githubScm.Notify("49f5bfbf4610f0c2a54d33945521051ba92b2eac","success", "test message")
+	assert.NoError(t, pperr)
 }

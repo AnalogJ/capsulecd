@@ -7,7 +7,7 @@ import (
 )
 
 // Create mock using:
-// mockgen -source=pkg/scm/interface.go -destination=pkg/scm/mock/scm_mock_test.go -package=mock_test
+// mockgen -source=pkg/scm/interface.go -destination=pkg/scm/mock/scm_mock.go
 type Interface interface {
 
 	// init method will generate an authenticated client that can be used to comunicate with Scm
@@ -25,6 +25,7 @@ type Interface interface {
 	// can begin to test. Since this is a push, no packaging is required
 	// MUST set pipelineData.GitLocalPath
 	// MUST set pipelineData.GitLocalBranch
+	// MUST set pipelienData.GitRemote
 	// MUST set pipelineData.GitHeadInfo
 	// REQUIRES pipelineData.GitParentPath
 	CheckoutPushPayload(payload *Payload) error
@@ -34,6 +35,7 @@ type Interface interface {
 	// all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
 	// MUST set pipelineData.GitLocalPath
 	// MUST set pipelineData.GitLocalBranch
+	// MUST set pipelienData.GitRemote
 	// MUST set pipelineData.GitBaseInfo
 	// MUST set pipelineData.GitHeadInfo
 	// REQUIRES pipelineData.GitParentPath
@@ -54,6 +56,9 @@ type Interface interface {
 	// REQUIRES pipelineData.GitParentPath
 	Publish() error //create release.
 
+	// Notify should update the scm with the build status at each stage.
+	// If the scm does not support notifications this should be a no-op
+	// In general, if the Notify method returns an error, we'll ignore it, and continue the pipeline.
 	// REQUIRES config.scm_repo_full_name
 	Notify(ref string, state string, message string) error
 }

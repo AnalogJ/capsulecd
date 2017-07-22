@@ -7,7 +7,7 @@ import (
 )
 
 // Create mock using:
-// mockgen -source=pkg/engine/interface.go -destination=pkg/engine/mock/engine_mock_test.go -package=mock_test
+// mockgen -source=pkg/engine/interface.go -destination=pkg/engine/mock/engine_mock.go
 type Interface interface {
 	init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error
 
