@@ -37,6 +37,7 @@ jobs:
 #           docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-build:ruby .
       - run:
           name: Run Docker containers with coverage
+          shell: /bin/bash
           command: |
             mkdir -p /coverage
             ci_env=`bash <(curl -s https://codecov.io/env)`

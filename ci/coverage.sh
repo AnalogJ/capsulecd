@@ -11,5 +11,5 @@ for d in $(go list ./... | grep -v vendor); do
     fi
 done
 
-# upload to codecov. 
+# upload to codecov.
 bash <(curl -s https://codecov.io/bash)
