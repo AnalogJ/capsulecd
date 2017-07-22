@@ -18,7 +18,7 @@ type scmBitbucket struct {
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set @git_parent_path
 // MUST set @client field
-func (b *scmBitbucket) init(pipelineData *pipeline.Data, config config.Interface, client *http.Client) error {
+func (b *scmBitbucket) Init(pipelineData *pipeline.Data, config config.Interface, client *http.Client) error {
 	b.PipelineData = pipelineData
 	b.Config = config
 

@@ -23,7 +23,7 @@ type golangMetadata struct {
 	Version string
 }
 type engineGolang struct {
-	*engineBase
+	engineBase
 
 	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
@@ -31,7 +31,7 @@ type engineGolang struct {
 	NextMetadata    *golangMetadata
 }
 
-func (g *engineGolang) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData

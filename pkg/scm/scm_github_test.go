@@ -44,7 +44,7 @@ func vcrSetup(t *testing.T) *http.Client {
 }
 
 
-func TestScmGithub_init_WithoutAccessToken(t *testing.T) {
+func TestScmGithub_Init_WithoutAccessToken(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
@@ -61,7 +61,7 @@ func TestScmGithub_init_WithoutAccessToken(t *testing.T) {
 	require.Error(t, err, "should raise an auth error")
 }
 
-func TestScmGithub_init_WithGitParentPath(t *testing.T) {
+func TestScmGithub_Init_WithGitParentPath(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
@@ -84,7 +84,7 @@ func TestScmGithub_init_WithGitParentPath(t *testing.T) {
 	require.Nil(t, err, "should not have an error")
 }
 
-func TestScmGithub_init_WithDefaults(t *testing.T) {
+func TestScmGithub_Init_WithDefaults(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()

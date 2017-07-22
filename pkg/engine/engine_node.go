@@ -17,13 +17,13 @@ type nodeMetadata struct {
 	Version string
 }
 type engineNode struct {
-	*engineBase
+	engineBase
 
 	PipelineData *pipeline.Data
 	Scm          scm.Interface //Interface
 }
 
-func (n *engineNode) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+func (n *engineNode) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	n.Scm = sourceScm
 	n.Config = config
 	n.PipelineData = pipelineData

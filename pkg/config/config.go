@@ -26,7 +26,7 @@ type configuration struct {
 // key/value store
 // default
 
-func (c *configuration) init() error {
+func (c *configuration) Init() error {
 	c.Viper = viper.New()
 	//set defaults
 	c.SetDefault("package_type", "default")

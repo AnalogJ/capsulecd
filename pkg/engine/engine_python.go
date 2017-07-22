@@ -18,7 +18,7 @@ type pythonMetadata struct {
 	Version string
 }
 type enginePython struct {
-	*engineBase
+	engineBase
 
 	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
@@ -26,7 +26,7 @@ type enginePython struct {
 	NextMetadata    *pythonMetadata
 }
 
-func (g *enginePython) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+func (g *enginePython) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData

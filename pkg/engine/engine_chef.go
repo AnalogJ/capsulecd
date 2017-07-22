@@ -26,7 +26,7 @@ type engineChef struct {
 	NextMetadata    *chefMetadata
 }
 
-func (g *engineChef) init(pipelineData *pipeline.Data, configData config.Interface, sourceScm scm.Interface) error {
+func (g *engineChef) Init(pipelineData *pipeline.Data, configData config.Interface, sourceScm scm.Interface) error {
 	g.Config = configData
 	g.Scm = sourceScm
 	g.PipelineData = pipelineData

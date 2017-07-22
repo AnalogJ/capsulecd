@@ -7,9 +7,9 @@ import (
 )
 
 // Create mock using:
-// mockgen -source=pkg/engine/interface.go -destination=pkg/engine/mock/engine_mock.go
+// mockgen -source=pkg/engine/interface.go -destination=pkg/engine/mock/mock_engine.go
 type Interface interface {
-	init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error
+	Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error
 
 	// Validate that required executables are available for the following build/test/package/etc steps
 	ValidateTools() error

@@ -25,7 +25,7 @@ type scmGithub struct {
 	Client       *github.Client
 }
 
-func (g *scmGithub) init(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) error {
+func (g *scmGithub) Init(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) error {
 	g.PipelineData = pipelineData
 	g.Config = myconfig
 
@@ -43,7 +43,7 @@ func (g *scmGithub) init(pipelineData *pipeline.Data, myconfig config.Interface,
 		g.PipelineData.GitParentPath = dirPath
 	}
 
-	if myconfig != nil {
+	if client != nil {
 		//primarily used for testing.
 		g.Client = github.NewClient(client)
 	} else {

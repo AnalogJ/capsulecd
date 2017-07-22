@@ -13,31 +13,31 @@ func Create(engineType string, pipelineData *pipeline.Data, configImpl config.In
 	switch engineType {
 	case "chef":
 		eng := new(engineChef)
-		if err := eng.init(pipelineData, configImpl, sourceImpl); err != nil {
+		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
 			return nil, err
 		}
 		return eng, nil
 	case "golang":
 		eng := new(engineGolang)
-		if err := eng.init(pipelineData, configImpl, sourceImpl); err != nil {
+		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
 			return nil, err
 		}
 		return eng, nil
 	case "node":
 		eng := new(engineNode)
-		if err := eng.init(pipelineData, configImpl, sourceImpl); err != nil {
+		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
 			return nil, err
 		}
 		return eng, nil
 	case "python":
 		eng := new(enginePython)
-		if err := eng.init(pipelineData, configImpl, sourceImpl); err != nil {
+		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
 			return nil, err
 		}
 		return eng, nil
 	case "ruby":
 		eng := new(engineRuby)
-		if err := eng.init(pipelineData, configImpl, sourceImpl); err != nil {
+		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
 			return nil, err
 		}
 		return eng, nil

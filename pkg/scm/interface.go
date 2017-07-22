@@ -1,18 +1,18 @@
 package scm
 
 import (
-	"capsulecd/pkg/config"
 	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/config"
 	"net/http"
 )
 
 // Create mock using:
-// mockgen -source=pkg/scm/interface.go -destination=pkg/scm/mock/scm_mock.go
+// mockgen -source=pkg/scm/interface.go -destination=pkg/scm/mock/mock_scm.go
 type Interface interface {
 
 	// init method will generate an authenticated client that can be used to comunicate with Scm
 	// MUST set pipelineData.GitParentPath
-	init(pipelineData *pipeline.Data, config config.Interface, client *http.Client) error
+	Init(pipelineData *pipeline.Data, config config.Interface, client *http.Client) error
 
 	// Determine if this is a pull request or a push.
 	// if it's a pull request the scm must retrieve the pull request payload and return it

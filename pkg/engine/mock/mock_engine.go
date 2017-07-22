@@ -33,16 +33,16 @@ func (_m *MockInterface) EXPECT() *MockInterfaceMockRecorder {
 	return _m.recorder
 }
 
-// init mocks base method
-func (_m *MockInterface) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
-	ret := _m.ctrl.Call(_m, "init", pipelineData, config, sourceScm)
+// Init mocks base method
+func (_m *MockInterface) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+	ret := _m.ctrl.Call(_m, "Init", pipelineData, config, sourceScm)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// init indicates an expected call of init
-func (_mr *MockInterfaceMockRecorder) init(arg0, arg1, arg2 interface{}) *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "init", arg0, arg1, arg2)
+// Init indicates an expected call of Init
+func (_mr *MockInterfaceMockRecorder) Init(arg0, arg1, arg2 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Init", arg0, arg1, arg2)
 }
 
 // ValidateTools mocks base method

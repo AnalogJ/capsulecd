@@ -29,7 +29,7 @@ type rubyGemspec struct {
 }
 
 type engineRuby struct {
-	*engineBase
+	engineBase
 
 	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
@@ -38,7 +38,7 @@ type engineRuby struct {
 	GemspecPath     string
 }
 
-func (g *engineRuby) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
+func (g *engineRuby) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData

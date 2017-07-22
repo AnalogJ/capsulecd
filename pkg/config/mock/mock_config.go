@@ -30,16 +30,16 @@ func (_m *MockInterface) EXPECT() *MockInterfaceMockRecorder {
 	return _m.recorder
 }
 
-// init mocks base method
-func (_m *MockInterface) init() error {
-	ret := _m.ctrl.Call(_m, "init")
+// Init mocks base method
+func (_m *MockInterface) Init() error {
+	ret := _m.ctrl.Call(_m, "Init")
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// init indicates an expected call of init
-func (_mr *MockInterfaceMockRecorder) init() *gomock.Call {
-	return _mr.mock.ctrl.RecordCall(_mr.mock, "init")
+// Init indicates an expected call of Init
+func (_mr *MockInterfaceMockRecorder) Init() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Init")
 }
 
 // ReadConfig mocks base method
