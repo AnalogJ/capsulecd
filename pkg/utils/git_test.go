@@ -2,7 +2,7 @@ package utils_test
 
 import (
 	"capsulecd/pkg/utils"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
 	"path"
@@ -14,15 +14,15 @@ func TestGitClone(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
 	//test
 	clonePath, cerr := utils.GitClone(dirPath, "test", "https://github.com/AnalogJ/test.git")
 
 	//assert
-	assert.NoError(t, cerr)
-	assert.NotEmpty(t, clonePath)
+	require.NoError(t, cerr)
+	require.NotEmpty(t, clonePath)
 }
 
 func TestGitClone_ExistingPath(t *testing.T) {
@@ -30,17 +30,17 @@ func TestGitClone_ExistingPath(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	merr := os.MkdirAll(path.Join(dirPath, "test"), os.ModePerm)
-	assert.NoError(t, merr)
+	require.NoError(t, merr)
 	defer deleteTestRepo(dirPath)
 
 	//test
 	clonePath, cerr := utils.GitClone(dirPath, "test", "https://github.com/AnalogJ/test.git")
 
 	//assert
-	assert.Error(t, cerr, "should raise an error if cloning to an existing path")
-	assert.Empty(t, clonePath)
+	require.Error(t, cerr, "should raise an error if cloning to an existing path")
+	require.Empty(t, clonePath)
 }
 
 func TestGitFetch(t *testing.T) {
@@ -48,16 +48,16 @@ func TestGitFetch(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
 	//test
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 	ferr := utils.GitFetch(clonePath, "refs/pull/12/merge", "localBranchName")
 
 	//assert
-	assert.NoError(t, ferr)
+	require.NoError(t, ferr)
 }
 
 func TestGitFetch_InvalidDirectory(t *testing.T) {
@@ -70,7 +70,7 @@ func TestGitFetch_InvalidDirectory(t *testing.T) {
 	ferr := utils.GitFetch(dirPath, "refs/pull/12/merge", "localBranchName")
 
 	//assert
-	assert.Error(t, ferr)
+	require.Error(t, ferr)
 }
 
 func TestGitCheckout(t *testing.T) {
@@ -78,16 +78,16 @@ func TestGitCheckout(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "npm_analogj_test", "https://github.com/AnalogJ/npm_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 
 	//test
 	ferr := utils.GitCheckout(clonePath, "branch_test")
 
 	//assert
-	assert.NoError(t, ferr)
+	require.NoError(t, ferr)
 }
 
 func TestGitCheckout_InvalidDirectory(t *testing.T) {
@@ -100,7 +100,7 @@ func TestGitCheckout_InvalidDirectory(t *testing.T) {
 	ferr := utils.GitCheckout(dirPath, "localBranchName")
 
 	//assert
-	assert.Error(t, ferr)
+	require.Error(t, ferr)
 }
 
 func TestGitCommit(t *testing.T) {
@@ -108,21 +108,21 @@ func TestGitCommit(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "commit_to_npm_analogj_test", "https://github.com/AnalogJ/npm_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 	ferr := utils.GitCheckout(clonePath, "branch_test")
-	assert.NoError(t, ferr)
+	require.NoError(t, ferr)
 
 	//test
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/commit_testfile.txt", d1, 0644)
-	assert.NoError(t, werr)
+	require.NoError(t, werr)
 	gcerr := utils.GitCommit(clonePath, "Added New File")
 
 	//assert
-	assert.NoError(t, gcerr)
+	require.NoError(t, gcerr)
 }
 
 func TestGitCommit_InvalidDirectory(t *testing.T) {
@@ -135,7 +135,7 @@ func TestGitCommit_InvalidDirectory(t *testing.T) {
 	ferr := utils.GitCommit(dirPath, "message")
 
 	//assert
-	assert.Error(t, ferr)
+	require.Error(t, ferr)
 }
 
 func TestGitTag(t *testing.T) {
@@ -143,24 +143,24 @@ func TestGitTag(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "add_tag_npm_analogj_test", "https://github.com/AnalogJ/npm_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 	ferr := utils.GitCheckout(clonePath, "branch_test")
-	assert.NoError(t, ferr)
+	require.NoError(t, ferr)
 
 	//test
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/tag_testfile.txt", d1, 0644)
-	assert.NoError(t, werr)
+	require.NoError(t, werr)
 	gcerr := utils.GitCommit(clonePath, "Added New File")
-	assert.NoError(t, gcerr)
+	require.NoError(t, gcerr)
 	tid, terr := utils.GitTag(clonePath, "v9.9.9")
 
 	//assert
-	assert.NoError(t, terr)
-	assert.NotEmpty(t, tid)
+	require.NoError(t, terr)
+	require.NotEmpty(t, tid)
 }
 
 func TestGitTag_InvalidDirectory(t *testing.T) {
@@ -173,32 +173,32 @@ func TestGitTag_InvalidDirectory(t *testing.T) {
 	tag, ferr := utils.GitTag(dirPath, "version")
 
 	//assert
-	assert.Error(t, ferr)
-	assert.Empty(t, tag)
+	require.Error(t, ferr)
+	require.Empty(t, tag)
 }
 
 func TestGitPush(t *testing.T) {
 	t.Skip() //Skipping because access_token not available during remote testing.
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 
 	clonePath, cerr := utils.GitClone(dirPath, "push_npm_analogj_test", "https://access_token_here:@github.com/AnalogJ/npm_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 
 	ferr := utils.GitCheckout(clonePath, "branch_test")
-	assert.NoError(t, ferr)
+	require.NoError(t, ferr)
 
 	//create a new file
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
-	assert.NoError(t, werr)
+	require.NoError(t, werr)
 
 	gcerr := utils.GitCommit(clonePath, "Added New File")
-	assert.NoError(t, gcerr)
+	require.NoError(t, gcerr)
 
 	perr := utils.GitPush(clonePath, "branch_test", "branch_test")
-	assert.NoError(t, perr)
+	require.NoError(t, perr)
 
 }
 
@@ -207,23 +207,23 @@ func TestGitPush_PullRequest(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://access_token_here:@github.com/AnalogJ/cookbook_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 
 	//test
 	ferr := utils.GitFetch(clonePath, "refs/pull/13/merge", "localBranchName")
-	assert.NoError(t, ferr)
+	require.NoError(t, ferr)
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
-	assert.NoError(t, werr)
+	require.NoError(t, werr)
 	gcerr := utils.GitCommit(clonePath, "Added New File")
-	assert.NoError(t, gcerr)
+	require.NoError(t, gcerr)
 	perr := utils.GitPush(clonePath, "localBranchName", "master")
 
 	//test
-	assert.NoError(t, perr)
+	require.NoError(t, perr)
 
 }
 
@@ -232,17 +232,17 @@ func TestGitLatestTaggedCommit(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 
 	//test
 	tag, ferr := utils.GitLatestTaggedCommit(clonePath)
 
 	//assert
-	assert.NoError(t, ferr)
-	assert.Equal(t, "v0.1.11", tag.TagShortName)
+	require.NoError(t, ferr)
+	require.Equal(t, "v0.1.11", tag.TagShortName)
 
 }
 
@@ -251,17 +251,17 @@ func TestGitGenerateChangelog(t *testing.T) {
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 
 	//test
 	changelog, ferr := utils.GitGenerateChangelog(clonePath, "43adaa328f74fd44abb33d33d8b149ab3780f209", "f3d573aacc59f2a6e2318dd140f3091c16b4b8fe", "")
 
 	//assert
-	assert.NoError(t, ferr)
-	assert.Equal(t,
+	require.NoError(t, ferr)
+	require.Equal(t,
 		`Timestamp |  SHA | Message | Author
 	------------- | ------------- | ------------- | -------------
 	2017-07-16T01:41Z | f3d573aa | Added New File | CapsuleCD
@@ -283,8 +283,8 @@ func TestGitGenerateChangelog_InvalidDirectory(t *testing.T) {
 	changelog, ferr := utils.GitGenerateChangelog(dirPath, "basheSha", "headSha", "fullName")
 
 	//assert
-	assert.Error(t, ferr)
-	assert.Empty(t, changelog)
+	require.Error(t, ferr)
+	require.Empty(t, changelog)
 }
 
 func deleteTestRepo(testRepoDirectory string) {

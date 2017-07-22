@@ -19,16 +19,15 @@ type chefMetadata struct {
 	Name    string `json:"name"`
 }
 type engineChef struct {
-	*engineBase
-
+	engineBase
 	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
 	CurrentMetadata *chefMetadata
 	NextMetadata    *chefMetadata
 }
 
-func (g *engineChef) init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
-	g.Config = config
+func (g *engineChef) init(pipelineData *pipeline.Data, configData config.Interface, sourceScm scm.Interface) error {
+	g.Config = configData
 	g.Scm = sourceScm
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(chefMetadata)

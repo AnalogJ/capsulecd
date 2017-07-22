@@ -2,7 +2,7 @@ package pipeline_test
 
 import (
 	"capsulecd/pkg/pipeline"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -14,7 +14,7 @@ func TestScmCommitInfo_Validate_Empty(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.Error(t, err, "Should raise error if anything/everything is missing")
+	require.Error(t, err, "Should raise error if anything/everything is missing")
 }
 
 func TestScmCommitInfo_Validate_MissingRef(t *testing.T) {
@@ -31,7 +31,7 @@ func TestScmCommitInfo_Validate_MissingRef(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.Error(t, err, "Should raise error if missing Ref")
+	require.Error(t, err, "Should raise error if missing Ref")
 }
 
 func TestScmCommitInfo_Validate_MissingSha(t *testing.T) {
@@ -48,7 +48,7 @@ func TestScmCommitInfo_Validate_MissingSha(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.Error(t, err, "Should raise error if missing Sha")
+	require.Error(t, err, "Should raise error if missing Sha")
 }
 
 func TestScmCommitInfo_Validate_MissingRepo(t *testing.T) {
@@ -62,7 +62,7 @@ func TestScmCommitInfo_Validate_MissingRepo(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.Error(t, err, "Should raise error if missing Repo Info")
+	require.Error(t, err, "Should raise error if missing Repo Info")
 }
 
 func TestScmCommitInfo_Validate_MissingRepoCloneUrl(t *testing.T) {
@@ -79,7 +79,7 @@ func TestScmCommitInfo_Validate_MissingRepoCloneUrl(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.Error(t, err, "Should raise error if missing Repo Clone Url")
+	require.Error(t, err, "Should raise error if missing Repo Clone Url")
 }
 
 func TestScmCommitInfo_Validate_MissingRepoName(t *testing.T) {
@@ -96,7 +96,7 @@ func TestScmCommitInfo_Validate_MissingRepoName(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.Error(t, err, "Should raise error if missing Repo Name")
+	require.Error(t, err, "Should raise error if missing Repo Name")
 }
 
 func TestScmCommitInfo_Validate(t *testing.T) {
@@ -114,5 +114,5 @@ func TestScmCommitInfo_Validate(t *testing.T) {
 	err := commit.Validate()
 
 	//assert
-	assert.NoError(t, err, "Should validate object successfully")
+	require.NoError(t, err, "Should validate object successfully")
 }

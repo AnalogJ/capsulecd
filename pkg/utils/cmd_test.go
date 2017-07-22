@@ -2,7 +2,7 @@ package utils_test
 
 import (
 	"capsulecd/pkg/utils"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"path/filepath"
 	"testing"
 )
@@ -14,7 +14,7 @@ func TestBashCmdExec(t *testing.T) {
 	cerr := utils.BashCmdExec("echo 'hello world'", "", "")
 
 	//assert
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestBashCmdExec_Prefix(t *testing.T) {
@@ -24,7 +24,7 @@ func TestBashCmdExec_Prefix(t *testing.T) {
 	cerr := utils.BashCmdExec("echo 'hello world'", "", "cust_prefix")
 
 	//assert
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestCmdExec_Date(t *testing.T) {
@@ -34,7 +34,7 @@ func TestCmdExec_Date(t *testing.T) {
 	cerr := utils.CmdExec("date", []string{}, "", "")
 
 	//assert
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestCmdExec_Echo(t *testing.T) {
@@ -44,7 +44,7 @@ func TestCmdExec_Echo(t *testing.T) {
 	cerr := utils.CmdExec("echo", []string{"hello", "world"}, "", "")
 
 	//assert
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestCmdExec_Error(t *testing.T) {
@@ -54,7 +54,7 @@ func TestCmdExec_Error(t *testing.T) {
 	cerr := utils.CmdExec("/bin/bash", []string{"exit", "1"}, "", "")
 
 	//assert
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestCmdExec_WorkingDirRelative(t *testing.T) {
@@ -64,7 +64,7 @@ func TestCmdExec_WorkingDirRelative(t *testing.T) {
 	cerr := utils.CmdExec("ls", []string{}, "testdata", "")
 
 	//assert
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestCmdExec_WorkingDirAbsolute(t *testing.T) {
@@ -75,6 +75,6 @@ func TestCmdExec_WorkingDirAbsolute(t *testing.T) {
 	cerr := utils.CmdExec("ls", []string{}, absPath, "")
 
 	//assert
-	assert.NoError(t, aerr)
-	assert.NoError(t, cerr)
+	require.NoError(t, aerr)
+	require.NoError(t, cerr)
 }

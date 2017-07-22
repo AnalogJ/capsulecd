@@ -2,7 +2,7 @@ package scm_test
 
 import (
 	"capsulecd/pkg/scm"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"capsulecd/pkg/config"
@@ -48,7 +48,7 @@ func TestScmGithub_init_WithoutAccessToken(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	testConfig.Set("scm", "github")
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
@@ -57,15 +57,15 @@ func TestScmGithub_init_WithoutAccessToken(t *testing.T) {
 	testScm, err := scm.Create("github", pipelineData, testConfig, client)
 
 	//assert
-	assert.Nil(t, testScm)
-	assert.Error(t, err, "should raise an auth error")
+	require.Nil(t, testScm)
+	require.Error(t, err, "should raise an auth error")
 }
 
 func TestScmGithub_init_WithGitParentPath(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_github_access_token", "placeholder")
 
@@ -77,29 +77,29 @@ func TestScmGithub_init_WithGitParentPath(t *testing.T) {
 
 	//test
 	testScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.Equal(t, pipelineData.GitParentPath, dirPath, "should correctly set parent path to existing")
+	require.Equal(t, pipelineData.GitParentPath, dirPath, "should correctly set parent path to existing")
 
 	//assert
-	assert.NotNil(t, testScm)
-	assert.Nil(t, err, "should not have an error")
+	require.NotNil(t, testScm)
+	require.Nil(t, err, "should not have an error")
 }
 
 func TestScmGithub_init_WithDefaults(t *testing.T) {
 
 	//setup
 	testConfig, err := config.Create()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_github_access_token", "placeholder")
 	pipelineData := new(pipeline.Data)
 
 	//test
 	testScm, err := scm.Create("github", pipelineData, testConfig, nil)
-	assert.NotEmpty(t, pipelineData.GitParentPath, "should correctly generate a temporary parent path")
+	require.NotEmpty(t, pipelineData.GitParentPath, "should correctly generate a temporary parent path")
 
 	//assert
-	assert.NotNil(t, testScm)
-	assert.Nil(t, err, "should not have an error")
+	require.NotNil(t, testScm)
+	require.Nil(t, err, "should not have an error")
 }
 
 
@@ -115,13 +115,13 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
-	assert.NoError(t, perr)
+	require.NoError(t, perr)
 
 	//assert
-	assert.NotEmpty(t, payload, "payload must be set after source Init")
-	assert.True(t, pipelineData.IsPullRequest)
+	require.NotEmpty(t, payload, "payload must be set after source Init")
+	require.True(t, pipelineData.IsPullRequest)
 }
 
 func TestScmGithub_RetrievePayload_PullRequest_InvalidState(t *testing.T) {
@@ -136,12 +136,12 @@ func TestScmGithub_RetrievePayload_PullRequest_InvalidState(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 
 	//assert
-	assert.Error(t, perr, "should return an error when PR is closed")
-	assert.Nil(t, payload)
+	require.Error(t, perr, "should return an error when PR is closed")
+	require.Nil(t, payload)
 }
 
 func TestScmGithub_RetrievePayload_Push(t *testing.T) {
@@ -160,18 +160,18 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
-	assert.NoError(t, perr)
+	require.NoError(t, perr)
 
 	//assert
-	assert.Equal(t, payload.Head.Sha, "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
-	assert.Equal(t, payload.Head.Ref, "master")
-	assert.Equal(t, payload.Head.Repo.CloneUrl, "https://github.com/analogj/capsulecd.git")
-	assert.Equal(t, payload.Head.Repo.Name, "capsulecd")
-	assert.Equal(t, payload.Head.Repo.FullName, "AnalogJ/capsulecd")
-	assert.NotEmpty(t, payload, "payload must be set after source Init")
-	assert.False(t, pipelineData.IsPullRequest)
+	require.Equal(t, payload.Head.Sha, "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
+	require.Equal(t, payload.Head.Ref, "master")
+	require.Equal(t, payload.Head.Repo.CloneUrl, "https://github.com/analogj/capsulecd.git")
+	require.Equal(t, payload.Head.Repo.Name, "capsulecd")
+	require.Equal(t, payload.Head.Repo.FullName, "AnalogJ/capsulecd")
+	require.NotEmpty(t, payload, "payload must be set after source Init")
+	require.False(t, pipelineData.IsPullRequest)
 }
 
 func TestScmGithub_ProcessPushPayload(t *testing.T) {
@@ -189,18 +189,18 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
-	assert.NoError(t, perr)
+	require.NoError(t, perr)
 	testConfig.Set("scm_github_access_token", "") //set the Access Token to empty string before doing checkout
 	// (so that git doesnt fail on placeholder token)
 	pperr := githubScm.CheckoutPushPayload(payload)
-	assert.NoError(t, pperr)
+	require.NoError(t, pperr)
 
 	//assert
-	assert.NotEmpty(t, pipelineData.GitLocalPath, "should set checkout path")
-	assert.Equal(t, "master",pipelineData.GitLocalBranch, "should set local branch correctly")
-	assert.NotNil(t, pipelineData.GitHeadInfo)
+	require.NotEmpty(t, pipelineData.GitLocalPath, "should set checkout path")
+	require.Equal(t, "master",pipelineData.GitLocalBranch, "should set local branch correctly")
+	require.NotNil(t, pipelineData.GitHeadInfo)
 }
 
 func TestScmGithub_ProcessPushPayload_WithInvalidPayload(t *testing.T) {
@@ -218,21 +218,21 @@ func TestScmGithub_ProcessPushPayload_WithInvalidPayload(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	payload := &scm.Payload{
 		Head: new(pipeline.ScmCommitInfo),
 	}
 	pperr := githubScm.CheckoutPushPayload(payload)
 
 	//assert
-	assert.Error(t, pperr, "should return an error")
+	require.Error(t, pperr, "should return an error")
 
 }
 
 func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	//setup
 	testConfig, err := config.Create()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_pull_request", "12")
 	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
@@ -242,19 +242,19 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
-	assert.NoError(t, perr)
+	require.NoError(t, perr)
 	testConfig.Set("scm_github_access_token", "") //set the Access Token to empty string before doing checkout
 	// (so that git doesnt fail on placeholder token)
 	pperr := githubScm.CheckoutPullRequestPayload(payload)
-	assert.NoError(t, pperr)
+	require.NoError(t, pperr)
 
 	//assert
-	assert.NotEmpty(t, pipelineData.GitLocalPath)
-	assert.NotEmpty(t, pipelineData.GitLocalBranch)
-	assert.NotNil(t, pipelineData.GitHeadInfo)
-	assert.NotNil(t, pipelineData.GitBaseInfo)
+	require.NotEmpty(t, pipelineData.GitLocalPath)
+	require.NotEmpty(t, pipelineData.GitLocalBranch)
+	require.NotNil(t, pipelineData.GitHeadInfo)
+	require.NotNil(t, pipelineData.GitBaseInfo)
 }
 
 //cant test publish becasue it'll continuously push to github repo.
@@ -265,7 +265,7 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 func TestScmGithub_Notify(t *testing.T) {
 	//setup
 	testConfig, err := config.Create()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	testConfig.Set("scm", "github")
 	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
 	testConfig.Set("scm_github_access_token", "placeholder")
@@ -274,7 +274,7 @@ func TestScmGithub_Notify(t *testing.T) {
 
 	//test
 	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	pperr := githubScm.Notify("49f5bfbf4610f0c2a54d33945521051ba92b2eac","success", "test message")
-	assert.NoError(t, pperr)
+	require.NoError(t, pperr)
 }

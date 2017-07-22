@@ -390,11 +390,10 @@ func getGitIgnore(l string) ([]byte, error) {
 	gitURL := "https://raw.githubusercontent.com/github/gitignore/master/" + l
 
 	resp, err := http.Get(gitURL)
-	defer resp.Body.Close()
-
 	if(err != nil){
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
 		return nil, errors.Custom(fmt.Sprintf("Could not find .gitignore for '%s'", l))

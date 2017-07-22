@@ -2,7 +2,7 @@ package utils_test
 
 import (
 	"capsulecd/pkg/utils"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -22,6 +22,6 @@ func TestSnakeCaseToCamelCase(t *testing.T) {
 		actual := utils.SnakeCaseToCamelCase(tt.n)
 
 		//assert
-		assert.Equal(t, tt.expected, actual, "should convert to camel case correctly")
+		require.Equal(t, tt.expected, actual, "should convert to camel case correctly")
 	}
 }

@@ -1,31 +1,31 @@
 package engine
 
 import (
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestEngineChef(t *testing.T) {
 	eng := new(engineChef)
-	assert.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
+	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
 }
 
 func TestEngineGolang(t *testing.T) {
 	eng := new(engineGolang)
-	assert.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
+	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
 }
 
 func TestEngineNode(t *testing.T) {
 	eng := new(engineNode)
-	assert.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
+	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
 }
 
 func TestEnginePython(t *testing.T) {
 	eng := new(enginePython)
-	assert.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
+	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
 }
 
 func TestEngineRuby(t *testing.T) {
 	eng := new(engineRuby)
-	assert.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
+	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
 }

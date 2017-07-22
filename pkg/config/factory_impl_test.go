@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -11,5 +11,5 @@ func TestConfiguration(t *testing.T) {
 	config := new(configuration)
 
 	//assert
-	assert.Implements(t, (*Interface)(nil), config, "should implement the config interface")
+	require.Implements(t, (*Interface)(nil), config, "should implement the config interface")
 }

@@ -3,7 +3,7 @@ package version_test
 import (
 	"capsulecd/pkg/version"
 	"github.com/Masterminds/semver"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -14,6 +14,6 @@ func TestVersion(t *testing.T) {
 	v, nerr := semver.NewVersion(version.VERSION)
 
 	//assert
-	assert.NoError(t, nerr, "should be a valid semver")
-	assert.Equal(t, version.VERSION, v.String())
+	require.NoError(t, nerr, "should be a valid semver")
+	require.Equal(t, version.VERSION, v.String())
 }
