@@ -50,7 +50,7 @@ jobs:
 
             echo "#################################################### CHEF"
             docker run -e "CI=true" \
-              -v /coverage:/coverage
+              -v /coverage:/coverage \
               analogj/capsulecd-build:chef \
               ./ci/coverage.sh chef
 
