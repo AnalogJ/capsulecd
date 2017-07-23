@@ -43,22 +43,25 @@ jobs:
 
             echo "#################################################### BASE"
             docker run -e "CI=true" \
-              -v /coverage:/coverage \
+              --name base \
               analogj/capsulecd-build:base \
               ./ci/coverage.sh base
 
+            docker cp base:/coverage/coverage-*.txt /coverage
+
             echo "#################################################### CHEF"
             docker run -e "CI=true" \
-              -v /coverage:/coverage \
+              --name chef \
               analogj/capsulecd-build:chef \
               ./ci/coverage.sh chef
+
+            docker cp chef:/coverage/coverage-*.txt /coverage
 
             ls -alt /coverage
 
             # upload to codecov.
-            bash <(curl -s https://codecov.io/bash) -f "/coverage/*.txt"
+            bash <(curl -s https://codecov.io/bash) -f "*.txt" -s /coverage
 
-            cat /coverage/coverage-chef.txt
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
