@@ -31,6 +31,13 @@ func main() {
 				Usage: "Start a new CapsuleCD package pipeline",
 				Action: func(c *cli.Context) error {
 
+					fmt.Println(`
+  ___   __   ____  ____  _  _  __    ____  ___  ____
+ / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
+( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
+ \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/`)
+
+
 					config, _ := config.Create()
 					config.Set("scm", c.String("scm"))
 					config.Set("package_type", c.String("package_type"))

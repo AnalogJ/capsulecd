@@ -20,6 +20,8 @@ jobs:
                 add go build-base bash curl \
                 && rm -rf /var/cache/apk/*
 
+            mkdir -p /coverage
+
             # Configure Go
             mkdir -p ${GOPATH}/src ${GOPATH}/bin
 
@@ -32,31 +34,50 @@ jobs:
             docker build -f ci/Dockerfile.base --tag analogj/capsulecd-build:base .
             docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-build:chef .
 #           docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
-#           docker build -f ci/Dockerfile.node --tag analogj/capsulecd-build:node .
+           docker build -f ci/Dockerfile.node --tag analogj/capsulecd-build:node .
 #           docker build -f ci/Dockerfile.python --tag analogj/capsulecd-build:python .
 #           docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-build:ruby .
       - run:
-          name: Run Docker containers with coverage
+          name: Run Base Docker containers with coverage
           shell: bash
           command: |
-            mkdir -p /coverage
-
-            echo "#################################################### BASE"
+            CAPSULECD_ENV=base
+            echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name base \
-              analogj/capsulecd-build:base \
-              ./ci/coverage.sh base
+              analogj/capsulecd-build:$CAPSULECD_ENV \
+              ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp base:/coverage/coverage-base.txt /coverage
-
-            echo "#################################################### CHEF"
+            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+      - run:
+          name: Run Chef Docker containers with coverage
+          shell: bash
+          command: |
+            CAPSULECD_ENV=chef
+            echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
-              --name chef \
-              analogj/capsulecd-build:chef \
-              ./ci/coverage.sh chef
+              --name base \
+              analogj/capsulecd-build:$CAPSULECD_ENV \
+              ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp chef:/coverage/coverage-chef.txt /coverage
+            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+      - run:
+          name: Run Node Docker containers with coverage
+          shell: bash
+          command: |
+            CAPSULECD_ENV=node
+            echo "#################################################### $CAPSULECD_ENV"
+            docker run -e "CI=true" \
+              --name base \
+              analogj/capsulecd-build:$CAPSULECD_ENV \
+              ./ci/coverage.sh $CAPSULECD_ENV
 
+            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+
+      - run:
+          name: Merge coverage reports and submit
+          shell: bash
+          command: |
             ls -alt /coverage
 
             # upload to codecov.
@@ -64,7 +85,6 @@ jobs:
 
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
-#          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:python
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:ruby
 
