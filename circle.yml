@@ -22,7 +22,6 @@ jobs:
 
             # Configure Go
             mkdir -p ${GOPATH}/src ${GOPATH}/bin
-            go get github.com/wadey/gocovmerge
 
             docker pull analogj/libgit2-crossbuild:linux-amd64
 # Use docker image caching if this is slow.
@@ -40,7 +39,6 @@ jobs:
           name: Run Docker containers with coverage
           shell: bash
           command: |
-            PATH=${GOPATH}/bin:$PATH
             mkdir -p /coverage
 
             echo "#################################################### BASE"
@@ -55,10 +53,10 @@ jobs:
               analogj/capsulecd-build:chef \
               ./ci/coverage.sh chef
 
-            ls /coverage
-            gocovmerge /coverage/coverage-base.txt /coverage/coverage-chef.txt >coverage.txt
+            ls -alt /coverage
+
             # upload to codecov.
-            bash <(curl -s https://codecov.io/bash)
+            bash <(curl -s https://codecov.io/bash) -f '*.txt' -s /coverage
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
