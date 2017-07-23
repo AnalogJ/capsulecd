@@ -35,7 +35,7 @@ func TestEngineBase_BumpVersion_InvalidCurrentVersion(t *testing.T) {
 
 	//assert
 	require.Error(t, err, "should return an error if unparsable version")
-	require.Nil(t, nextV, "should be nil next version")
+	require.Empty(t, nextV, "should be empty next version")
 }
 
 func TestEngineBase_BumpVersion_WithVPrefix(t *testing.T) {
