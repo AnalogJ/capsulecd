@@ -48,7 +48,7 @@ jobs:
               analogj/capsulecd-build:$CAPSULECD_ENV \
               ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Chef Docker containers with coverage
           shell: bash
@@ -60,7 +60,7 @@ jobs:
               analogj/capsulecd-build:$CAPSULECD_ENV \
               ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Node Docker containers with coverage
           shell: bash
@@ -72,7 +72,7 @@ jobs:
               analogj/capsulecd-build:$CAPSULECD_ENV \
               ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Python Docker containers with coverage
           shell: bash
@@ -84,7 +84,7 @@ jobs:
               analogj/capsulecd-build:$CAPSULECD_ENV \
               ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Ruby Docker containers with coverage
           shell: bash
@@ -96,7 +96,7 @@ jobs:
               analogj/capsulecd-build:$CAPSULECD_ENV \
               ./ci/coverage.sh $CAPSULECD_ENV
 
-            docker cp base:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
 
       - run:
           name: Merge coverage reports and submit
