@@ -33,8 +33,8 @@ jobs:
           command: |
             docker build -f ci/Dockerfile.base --tag analogj/capsulecd-build:base .
             docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-build:chef .
-#           docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
             docker build -f ci/Dockerfile.node --tag analogj/capsulecd-build:node .
+#           docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
 #           docker build -f ci/Dockerfile.python --tag analogj/capsulecd-build:python .
 #           docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-build:ruby .
       - run:
