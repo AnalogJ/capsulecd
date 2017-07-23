@@ -40,6 +40,7 @@ jobs:
           name: Run Docker containers with coverage
           shell: bash
           command: |
+            PATH=${GOPATH}/bin:$PATH
             mkdir -p /coverage
 
             echo "#################################################### BASE"
@@ -55,19 +56,19 @@ jobs:
               ./ci/coverage.sh chef
 
             ls /coverage
+            gocovmerge /coverage/coverage-*.txt > ./coverage.txt
+            # upload to codecov.
+            bash <(curl -s https://codecov.io/bash)
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:python
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:ruby
 
-      - run:
-          name: Merge generated coverage reports using webhook.
-          command: |
-            PATH=${GOPATH}/bin:$PATH
+#      - run:
+#          name: Merge generated coverage reports using webhook.
+#          command: |
 
-            ls /coverage
-            gocovmerge /coverage/coverage-*.txt > ./coverage.txt
-            # upload to codecov.
-            bash <(curl -s https://codecov.io/bash)
+
+
 #
