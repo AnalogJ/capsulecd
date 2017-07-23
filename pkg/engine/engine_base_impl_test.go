@@ -18,8 +18,12 @@ func TestEngineBase_BumpVersion_Patch(t *testing.T) {
 	ver, err := eng.BumpVersion("1.2.2")
 	require.Nil(t, err)
 
+	ver2, err := eng.BumpVersion("1.0.0")
+	require.Nil(t, err)
+
 	//assert
 	require.Equal(t, ver, "1.2.3", "should correctly do a patch bump")
+	require.Equal(t, ver2, "1.0.1", "should correctly do a patch bump")
 }
 
 func TestEngineBase_BumpVersion_Minor(t *testing.T) {

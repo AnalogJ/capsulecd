@@ -40,10 +40,10 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter ./...")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
-	g.Config.SetDefault("engine_cmd_security_check", "")
+	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
 
 	return nil
 }
@@ -144,7 +144,7 @@ func (g *engineGolang) TestStep() error {
 	//skip the test commands if disabled
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
-		testCmd := "go test $(glide novendor)"
+		testCmd :=  g.Config.GetString("engine_cmd_test")
 		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
@@ -266,7 +266,7 @@ func (g *engineGolang) parseGoVersion(list []ast.Decl) (string, error) {
 				valSpec := spec.(*ast.ValueSpec)
 				if strings.ToLower(valSpec.Names[0].Name) == "version" {
 					//found the version variable.
-					return valSpec.Values[0].(*ast.BasicLit).Value, nil
+					return strings.Trim(valSpec.Values[0].(*ast.BasicLit).Value, "\"'"), nil
 				}
 			}
 		}
