@@ -1,4 +1,4 @@
-// +build chef
+// +build ruby
 
 package engine_test
 
@@ -21,13 +21,13 @@ import (
 )
 
 
-func TestEngineChef_Create(t *testing.T) {
+func TestEngineRuby_Create(t *testing.T) {
 	//setup
 	testConfig, err := config.Create()
 	require.NoError(t, err)
 
 	testConfig.Set("scm", "github")
-	testConfig.Set("package_type", "chef")
+	testConfig.Set("package_type", "ruby")
 	testConfig.Set("scm_github_access_token","placeholder")
 	pipelineData := new(pipeline.Data)
 	githubScm, err := scm.Create("github", pipelineData, testConfig, nil)
@@ -35,19 +35,18 @@ func TestEngineChef_Create(t *testing.T) {
 
 
 	//test
-	chefEngine, err := engine.Create("chef", pipelineData, testConfig, githubScm)
+	rubyEngine, err := engine.Create("ruby", pipelineData, testConfig, githubScm)
 
 	//assert
 	require.NoError(t, err)
-	require.NotNil(t, chefEngine)
-	require.Equal(t, "Other", testConfig.GetString("chef_supermarket_type"), "should load engine defaults")
+	require.NotNil(t, rubyEngine)
 }
 
 
 // Define the suite, and absorb the built-in basic suite
 // functionality from testify - including a T() method which
 // returns the current testing context
-type EngineChefTestSuite struct {
+type EngineRubyTestSuite struct {
 	suite.Suite
 	MockCtrl *gomock.Controller
 	Scm *mock_scm.MockInterface
@@ -58,7 +57,7 @@ type EngineChefTestSuite struct {
 
 // Make sure that VariableThatShouldStartAtFive is set to five
 // before each test
-func (suite *EngineChefTestSuite) SetupTest() {
+func (suite *EngineRubyTestSuite) SetupTest() {
 	suite.MockCtrl = gomock.NewController(suite.T())
 
 	suite.PipelineData = new(pipeline.Data)
@@ -68,17 +67,17 @@ func (suite *EngineChefTestSuite) SetupTest() {
 
 }
 
-func  (suite *EngineChefTestSuite) TearDownTest() {
+func  (suite *EngineRubyTestSuite) TearDownTest() {
 	suite.MockCtrl.Finish()
 }
 
 // In order for 'go test' to run this suite, we need to create
 // a normal test function and pass our suite to suite.Run
-func TestEngineChef_TestSuite(t *testing.T) {
-	suite.Run(t, new(EngineChefTestSuite))
+func TestEngineRuby_TestSuite(t *testing.T) {
+	suite.Run(t, new(EngineRubyTestSuite))
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
@@ -87,25 +86,26 @@ func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep() {
 	parentPath, err := ioutil.TempDir("", "")
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.AssembleStep()
+	berr := rubyEngine.AssembleStep()
 	require.NoError(suite.T(), berr)
 
 	//assert
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Rakefile")))
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile")))
+	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "spec")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile")))
+	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test-0.1.4.gem")))
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep_WithMinimalCookbook() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithMinimalGem() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
@@ -115,25 +115,26 @@ func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep_WithMinimalCookbook
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "minimal_cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "minimal_gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.AssembleStep()
+	berr := rubyEngine.AssembleStep()
 	require.NoError(suite.T(), berr)
 
 	//assert
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Rakefile")))
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile")))
+	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "spec")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile")))
+	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test-0.1.4.gem")))
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep_WithoutMetadata() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithoutGemspec() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 
@@ -142,22 +143,22 @@ func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep_WithoutMetadata() {
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "minimal_cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "minimal_gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
-	os.Remove(path.Join(suite.PipelineData.GitLocalPath, "metadata.rb"))
+	os.Remove(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test.gemspec"))
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.AssembleStep()
+	berr := rubyEngine.AssembleStep()
 
 	//assert
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_DependenciesStep() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_DependenciesStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 
@@ -166,23 +167,24 @@ func (suite *EngineChefTestSuite)TestEngineChef_DependenciesStep() {
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
+	cperr := utils.CopyFile(path.Join("testdata", "ruby", "gem_analogj_test-0.1.4.gem"), path.Join(suite.PipelineData.GitLocalPath, "-.gem"))
+	require.NoError(suite.T(), cperr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.DependenciesStep()
+	berr := rubyEngine.DependenciesStep()
 
 	//assert
 	require.NoError(suite.T(), berr)
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile.lock")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_TestStep_AllDisabled() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
@@ -192,21 +194,21 @@ func (suite *EngineChefTestSuite)TestEngineChef_TestStep_AllDisabled() {
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.TestStep()
+	berr := rubyEngine.TestStep()
 
 	//assert
 	require.NoError(suite.T(), berr)
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_TestStep_LintFailure() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_LintFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
@@ -217,21 +219,21 @@ func (suite *EngineChefTestSuite)TestEngineChef_TestStep_LintFailure() {
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.TestStep()
+	berr := rubyEngine.TestStep()
 
 	//assert
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_TestStep_TestFailure() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_TestFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
@@ -243,21 +245,21 @@ func (suite *EngineChefTestSuite)TestEngineChef_TestStep_TestFailure() {
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.TestStep()
+	berr := rubyEngine.TestStep()
 
 	//assert
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_TestStep_SecurityCheckFailure() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_SecurityCheckFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
@@ -270,21 +272,21 @@ func (suite *EngineChefTestSuite)TestEngineChef_TestStep_SecurityCheckFailure() 
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "cookbook_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "chef", "cookbook_analogj_test"), suite.PipelineData.GitLocalPath )
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
 	require.NoError(suite.T(), cerr)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.TestStep()
+	berr := rubyEngine.TestStep()
 
 	//assert
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_PackageStep_WithoutLockFiles() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_PackageStep_WithoutLockFiles() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool("engine_package_keep_lock_file").MinTimes(1).Return(false)
@@ -294,32 +296,31 @@ func (suite *EngineChefTestSuite)TestEngineChef_PackageStep_WithoutLockFiles() {
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	cpath, cerr := utils.GitClone(parentPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
+	cpath, cerr := utils.GitClone(parentPath, "gem_analogj_test", "https://github.com/AnalogJ/gem_analogj_test.git")
 	require.NoError(suite.T(), cerr)
 	suite.PipelineData.GitLocalPath = cpath
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.PackageStep()
+	berr := rubyEngine.PackageStep()
 
 	//assert
 	require.NoError(suite.T(), berr)
-	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile.lock")))
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
 }
 
-func (suite *EngineChefTestSuite)TestEngineChef_DistStep_WithoutCredentials() {
+func (suite *EngineRubyTestSuite)TestEngineRuby_DistStep_WithoutCredentials() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().IsSet("chef_supermarket_username").MinTimes(1).Return(false)
+	suite.Config.EXPECT().IsSet("rubygems_api_key").MinTimes(1).Return(false)
 
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.DistStep()
+	berr := rubyEngine.DistStep()
 
 	//assert
 	require.Error(suite.T(), berr)

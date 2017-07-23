@@ -6,7 +6,6 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -14,6 +13,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"gopkg.in/yaml.v2"
 )
 
 type rubyMetadata struct {
@@ -255,13 +255,14 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 	gemspecJsonFile, _ := ioutil.TempFile("", "gemspec.json")
 	defer os.Remove(gemspecJsonFile.Name())
 
-	//generate a JSON file containing the Gemspec data.
-	gemspecJsonCmd := fmt.Sprintf("require('yaml'); File.write('%s', YAML::to_json(Gem::Specification::load('%s')))",
+	//generate a JSON-style YAML file containing the Gemspec data. (still not straight valid JSON).
+	//
+	gemspecJsonCmd := fmt.Sprintf("ruby -e \"require('yaml'); File.write('%s', YAML::to_json(Gem::Specification::load('%s')))\"",
 		gemspecJsonFile.Name(),
 		g.GemspecPath,
 	)
 	if cerr := utils.BashCmdExec(gemspecJsonCmd, "", ""); cerr != nil {
-		return cerr
+		return errors.EngineBuildPackageFailed(fmt.Sprintf("Command (%s) failed. Check log for more details.", gemspecJsonCmd))
 	}
 
 	//Load gemspec JSON file and parse it.
@@ -271,7 +272,8 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 	}
 
 	gemspecObj := new(rubyGemspec)
-	if uerr := json.Unmarshal(gemspecJsonContent, gemspecObj); uerr != nil {
+	if uerr := yaml.Unmarshal(gemspecJsonContent, gemspecObj); uerr != nil {
+		fmt.Println(string(gemspecJsonContent))
 		return uerr
 	}
 

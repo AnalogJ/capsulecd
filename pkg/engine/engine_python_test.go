@@ -1,4 +1,4 @@
-// +build chef
+// +build python
 
 package engine_test
 
