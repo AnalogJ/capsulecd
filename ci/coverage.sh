@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+mkdir -p /coverage
 echo "" > /coverage/coverage-$1.txt
 
 for d in $(go list ./... | grep -v vendor); do
