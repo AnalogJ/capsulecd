@@ -1,7 +1,7 @@
 # CapsuleCD
 
 [![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
-[![Coverage Status](https://coveralls.io/repos/github/AnalogJ/capsulecd/badge.svg)](https://coveralls.io/github/AnalogJ/capsulecd)
+[![Coverage Status](https://codecov.io/gh/analogj/capsulecd/branch/master/graph/badge.svg)](https://codecov.io/gh/AnalogJ/capsulecd)
 [![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
 [![Gem](https://img.shields.io/gem/dt/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
 [![Gem](https://img.shields.io/gem/v/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
