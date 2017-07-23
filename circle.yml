@@ -47,7 +47,7 @@ jobs:
               analogj/capsulecd-build:base \
               ./ci/coverage.sh base
 
-            docker cp base:/coverage/coverage-*.txt /coverage
+            docker cp base:/coverage/coverage-base.txt /coverage
 
             echo "#################################################### CHEF"
             docker run -e "CI=true" \
@@ -55,7 +55,7 @@ jobs:
               analogj/capsulecd-build:chef \
               ./ci/coverage.sh chef
 
-            docker cp chef:/coverage/coverage-*.txt /coverage
+            docker cp chef:/coverage/coverage-chef.txt /coverage
 
             ls -alt /coverage
 
