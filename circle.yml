@@ -56,7 +56,7 @@ jobs:
               ./ci/coverage.sh chef
 
             ls /coverage
-            gocovmerge /coverage/coverage-*.txt > ./coverage.txt
+            gocovmerge /coverage/coverage-base.txt /coverage/coverage-chef.txt >coverage.txt
             # upload to codecov.
             bash <(curl -s https://codecov.io/bash)
 
