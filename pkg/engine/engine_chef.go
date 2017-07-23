@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"log"
 )
 
 type chefMetadata struct {
@@ -110,6 +111,7 @@ func (g *engineChef) AssembleStep() error {
 	gitignorePath := path.Join(g.PipelineData.GitLocalPath, ".gitignore")
 	if !utils.FileExists(gitignorePath) {
 		if err := utils.GitGenerateGitIgnore(g.PipelineData.GitLocalPath, "ChefCookbook"); err != nil {
+			log.Print("Generate error")
 			return err
 		}
 	}
