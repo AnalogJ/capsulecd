@@ -24,19 +24,22 @@ func main() {
 				Email: "jason@thesparktree.com",
 			},
 		},
+		Before: func(c *cli.Context) error {
+			fmt.Fprintf(c.App.Writer, `
+  ___   __   ____  ____  _  _  __    ____  ___  ____
+ / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
+( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
+ \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/
+
+ `)
+			return nil
+		},
 
 		Commands: []*cli.Command{
 			{
 				Name:  "start",
 				Usage: "Start a new CapsuleCD package pipeline",
 				Action: func(c *cli.Context) error {
-
-					fmt.Println(`
-  ___   __   ____  ____  _  _  __    ____  ___  ____
- / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
-( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
- \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/`)
-
 
 					config, _ := config.Create()
 					config.Set("scm", c.String("scm"))

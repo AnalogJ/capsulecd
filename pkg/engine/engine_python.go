@@ -104,7 +104,7 @@ func (g *enginePython) AssembleStep() error {
 	// there is a standardized way to test packages (python setup.py tests), however for automation tox is preferred
 	// because of virtualenv and its support for multiple interpreters.
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "tox.ini")) {
-		toxIniContent := `# Tox (http://tox.testrun.org/) is a tool for running tests
+		toxIniContent := utils.StripIndent(`# Tox (http://tox.testrun.org/) is a tool for running tests
 			# in multiple virtualenvs. This configuration file will run the
 			# test suite on all supported python versions. To use it, "pip install tox"
 			# and then run "tox" from this directory.
@@ -119,7 +119,7 @@ func (g *enginePython) AssembleStep() error {
 			deps =
 			  -rrequirements.txt
 			TOX
-			`
+			`)
 
 		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "tox.ini"),
 			[]byte(toxIniContent),
@@ -222,7 +222,7 @@ func (g *enginePython) DistStep() error {
 	defer os.Remove(pypircFile.Name())
 
 	// write the .pypirc config jfile.
-	pypircContent := fmt.Sprintf(
+	pypircContent := fmt.Sprintf(utils.StripIndent(
 		`[distutils]
 		index-servers=pypi
 
@@ -230,7 +230,7 @@ func (g *enginePython) DistStep() error {
 		repository = %s
 		username = %s
 		password = %s
-		`,
+		`),
 		g.Config.GetString("pypi_repository"),
 		g.Config.GetString("pypi_username"),
 		g.Config.GetString("pypi_password"),

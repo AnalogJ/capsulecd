@@ -54,6 +54,7 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 	if lerr != nil {
 		return lerr
 	}
+	time.Sleep(time.Second)
 	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git.FetchOptions), "")
 	if ferr != nil {
 		return ferr
@@ -312,9 +313,9 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullN
 		return "", oerr
 	}
 
-	markdown := `Timestamp |  SHA | Message | Author
+	markdown := StripIndent(`Timestamp |  SHA | Message | Author
 	------------- | ------------- | ------------- | -------------
-	`
+	`)
 
 	revWalk, werr := repo.Walk()
 	if werr != nil {
@@ -329,7 +330,7 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullN
 	revWalk.Iterate(func(commit *git.Commit) bool {
 		log.Print(commit.Id().String())
 
-		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n\t", //TODO: this should ahve a link for the SHA.
+		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n", //TODO: this should ahve a link for the SHA.
 			commit.Author().When.UTC().Format("2006-01-02T15:04Z"),
 			commit.Id().String(),
 			cleanCommitMessage(commit.Message()),

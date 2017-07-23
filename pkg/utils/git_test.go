@@ -275,8 +275,8 @@ func TestGitGenerateChangelog(t *testing.T) {
 
 	//assert
 	require.NoError(t, ferr)
-	require.Equal(t,
-		`Timestamp |  SHA | Message | Author
+	require.Equal(t,utils.StripIndent(
+	`Timestamp |  SHA | Message | Author
 	------------- | ------------- | ------------- | -------------
 	2017-07-16T01:41Z | f3d573aa | Added New File | CapsuleCD
 	2017-07-16T01:26Z | 842436c9 | Merge 39e720e37a19716c098757cb5c78ea90b18111d3 into 97cae66b077de3798995342da781c270b1786820 | Jason Kulatunga
@@ -284,7 +284,7 @@ func TestGitGenerateChangelog(t *testing.T) {
 	2016-02-28T06:59Z | 97cae66b | (v0.1.11) Automated packaging of release by CapsuleCD | CapsuleCD
 	2016-02-28T06:52Z | d4b8c3b5 | Update README.md | Jason Kulatunga
 	2016-02-28T00:01Z | d0d3fc8f | (v0.1.10) Automated packaging of release by CapsuleCD | CapsuleCD
-	`, changelog)
+	`), changelog)
 }
 
 func TestGitGenerateChangelog_InvalidDirectory(t *testing.T) {

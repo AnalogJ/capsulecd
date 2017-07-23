@@ -95,13 +95,14 @@ func (g *engineChef) AssembleStep() error {
 	}
 	berksfilePath := path.Join(g.PipelineData.GitLocalPath, "Berksfile")
 	if !utils.FileExists(berksfilePath) {
-		ioutil.WriteFile(berksfilePath, []byte(`source "https://supermarket.chef.io"
+		ioutil.WriteFile(berksfilePath, []byte(utils.StripIndent(
+		`source "https://supermarket.chef.io"
 		metadata
-		`), 0644)
+		`)), 0644)
 	}
 	gemfilePath := path.Join(g.PipelineData.GitLocalPath, "Gemfile")
 	if !utils.FileExists(gemfilePath) {
-		ioutil.WriteFile(gemfilePath, []byte("source \"https://rubygems.org\""), 0644)
+		ioutil.WriteFile(gemfilePath, []byte(`source "https://rubygems.org"`), 0644)
 	}
 	specPath := path.Join(g.PipelineData.GitLocalPath, "spec")
 	if !utils.FileExists(specPath) {
@@ -211,11 +212,11 @@ func (g *engineChef) DistStep() error {
 	defer os.Remove(knifeFile.Name())
 
 	// write the knife.rb config jfile.
-	knifeContent := fmt.Sprintf(
+	knifeContent := fmt.Sprintf(utils.StripIndent(
 		`node_name "%s" # Replace with the login name you use to login to the Supermarket.
     		client_key "%s" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
         	cookbook_path [ '%s' ] # Directory where the cookbook you're uploading resides.
-		`,
+		`),
 		g.Config.GetString("chef_supermarket_username"),
 		pemFile.Name(),
 		tmpParentPath,

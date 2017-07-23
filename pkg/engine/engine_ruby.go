@@ -46,8 +46,8 @@ func (g *engineRuby) Init(pipelineData *pipeline.Data, config config.Interface, 
 	g.NextMetadata = new(rubyMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
-	g.Config.SetDefault("engine_cmd_lint", "rubocop")
-	g.Config.SetDefault("engine_cmd_fmt", "rubocop --auto-correct")
+	g.Config.SetDefault("engine_cmd_lint", "rubocop --fail-level error")
+	g.Config.SetDefault("engine_cmd_fmt", "rubocop --fail-level error --auto-correct")
 	g.Config.SetDefault("engine_cmd_test", "rake spec")
 	g.Config.SetDefault("engine_cmd_security_check", "bundle audit check --update")
 	return nil
@@ -106,8 +106,8 @@ func (g *engineRuby) AssembleStep() error {
 	// check for/create any required missing folders/files
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "Gemfile")) {
 		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "Gemfile"),
-			[]byte(`source 'https://rubygems.org'
-			gemspec`),
+			[]byte(utils.StripIndent(`source 'https://rubygems.org'
+			gemspec`)),
 			0644,
 		)
 	}
@@ -222,10 +222,11 @@ func (g *engineRuby) DistStep() error {
 	defer os.Remove(credFile.Name())
 
 	// write the .gem/credentials config jfile.
-	credContent := fmt.Sprintf(
+
+	credContent := fmt.Sprintf(utils.StripIndent(
 		`---
 		:rubygems_api_key: %s
-		`,
+		`),
 		g.Config.GetString("rubygems_api_key"),
 	)
 

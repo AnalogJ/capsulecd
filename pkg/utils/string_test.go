@@ -25,3 +25,15 @@ func TestSnakeCaseToCamelCase(t *testing.T) {
 		require.Equal(t, tt.expected, actual, "should convert to camel case correctly")
 	}
 }
+
+
+func TestStripIndent(t *testing.T) {
+	t.Parallel()
+
+	testString := `
+	this is my multi line string
+	line2
+	line 3`
+
+	require.Equal(t,"\nthis is my multi line string\nline2\nline 3", utils.StripIndent(testString))
+}
