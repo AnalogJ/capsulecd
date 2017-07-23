@@ -111,6 +111,9 @@ func (g *enginePython) AssembleStep() error {
 			[tox]
 			envlist = py27
 			usedevelop = True
+
+			# you may want to change this default test command
+			# http://tox.readthedocs.io/en/latest/example/basic.html#integration-with-setup-py-test-command
 			[testenv]
 			commands = python setup.py test
 			deps =
@@ -252,7 +255,7 @@ func (g *enginePython) DistStep() error {
 
 func (g *enginePython) retrieveCurrentMetadata(gitLocalPath string) error {
 	//read metadata.json file.
-	versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, "VERSION"))
+		versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, "VERSION"))
 	if rerr != nil {
 		return rerr
 	}
