@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestEngineBase_BumpVersion(t *testing.T) {
+func TestEngineBase_BumpVersion_Patch(t *testing.T) {
 
 	//setup
 	testConfig, _ := config.Create()
@@ -20,6 +20,40 @@ func TestEngineBase_BumpVersion(t *testing.T) {
 
 	//assert
 	require.Equal(t, ver, "1.2.3", "should correctly do a patch bump")
+}
+
+func TestEngineBase_BumpVersion_Minor(t *testing.T) {
+
+	//setup
+	testConfig, _ := config.Create()
+	testConfig.Set("engine_version_bump_type", "minor")
+	eng := engineBase{
+		Config: testConfig,
+	}
+
+	//test
+	ver, err := eng.BumpVersion("1.2.2")
+	require.Nil(t, err)
+
+	//assert
+	require.Equal(t, ver, "1.3.0", "should correctly do a patch bump")
+}
+
+func TestEngineBase_BumpVersion_Major(t *testing.T) {
+
+	//setup
+	testConfig, _ := config.Create()
+	testConfig.Set("engine_version_bump_type", "major")
+	eng := engineBase{
+		Config: testConfig,
+	}
+
+	//test
+	ver, err := eng.BumpVersion("1.2.2")
+	require.Nil(t, err)
+
+	//assert
+	require.Equal(t, ver, "2.0.0", "should correctly do a patch bump")
 }
 
 func TestEngineBase_BumpVersion_InvalidCurrentVersion(t *testing.T) {
