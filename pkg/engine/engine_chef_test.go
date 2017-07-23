@@ -99,7 +99,8 @@ func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep() {
 	require.NoError(suite.T(), berr)
 
 	//assert
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "RakeFile")))
+	utils.BashCmdExec("ls", suite.PipelineData.GitLocalPath, "assemble_step")
+	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Rakefile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile")))
@@ -127,7 +128,7 @@ func (suite *EngineChefTestSuite)TestEngineChef_AssembleStep_WithMinimalCookbook
 	require.NoError(suite.T(), berr)
 
 	//assert
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "RakeFile")))
+	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Rakefile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile")))

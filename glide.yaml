@@ -12,6 +12,7 @@ import:
   version: ^0.2.1
 testImport:
 - package: github.com/matryer/moq
+- package: github.com/golang/mock/gomock
 - package: github.com/seborama/govcr
   version: ^2.3.0
 - package: github.com/stretchr/testify

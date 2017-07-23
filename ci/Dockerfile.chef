@@ -25,8 +25,7 @@ ENV PATH="/go/bin:/usr/local/go/bin:${PATH}" \
 	GOPATH="/go"
 
 ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig/:/usr/local/lib/pkgconfig/:/usr/local/lib/libgit2/lib/pkgconfig:/usr/local/lib/openssl/lib/pkgconfig:/usr/local/lib/libssh2"
-RUN go get github.com/Masterminds/glide \
-	&& go get github.com/mattn/goveralls
+RUN go get github.com/Masterminds/glide
 COPY --from=base /usr/local/lib/libgit2/ /usr/local/lib/libgit2/
 COPY --from=base /usr/local/lib/libssh2/ /usr/local/lib/libssh2/
 COPY --from=base /usr/local/lib/openssl/ /usr/local/lib/openssl/

@@ -17,8 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  	apt-transport-https \
     ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& go get github.com/Masterminds/glide \
-	&& go get github.com/mattn/goveralls
+	&& go get github.com/Masterminds/glide
 
 COPY . .
 
