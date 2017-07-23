@@ -158,3 +158,15 @@ func (_m *MockInterface) GetBase64Decoded(key string) (string, error) {
 func (_mr *MockInterfaceMockRecorder) GetBase64Decoded(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetBase64Decoded", arg0)
 }
+
+// UnmarshalKey mocks base method
+func (_m *MockInterface) UnmarshalKey(key string, rawVal interface{}) error {
+	ret := _m.ctrl.Call(_m, "UnmarshalKey", key, rawVal)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UnmarshalKey indicates an expected call of UnmarshalKey
+func (_mr *MockInterfaceMockRecorder) UnmarshalKey(arg0, arg1 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "UnmarshalKey", arg0, arg1)
+}

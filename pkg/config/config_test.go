@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"testing"
+	"capsulecd/pkg/pipeline"
 )
 
 func TestConfiguration_init_ShouldCorrectlyInitializeConfiguration(t *testing.T) {
@@ -67,6 +68,29 @@ func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
 	require.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
 	require.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
 }
+
+func TestConfiguration_ReadConfig_WithAssetConfigurationFile(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	testConfig, _ := config.Create()
+
+	//test
+	testConfig.ReadConfig(path.Join("testdata", "asset_configuration.yml"))
+
+	parsedAssets := new([]pipeline.ScmReleaseAsset)
+	err := testConfig.UnmarshalKey("scm_release_assets", parsedAssets)
+
+
+	//assert
+	require.NoError(t, err)
+	require.Equal(t, 2, len(*parsedAssets), "should parse scm_release_assets")
+	require.Equal(t, "test/path/artifactname.gem", (*parsedAssets)[0].LocalPath, "should parse scm_release_assets")
+	require.Equal(t, "artifactname2.gem", (*parsedAssets)[1].ArtifactName, "should parse scm_release_assets")
+	require.Equal(t, "", (*parsedAssets)[1].ContentType, "should parse scm_release_assets")
+
+}
+
 
 func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	t.Parallel()

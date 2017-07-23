@@ -158,6 +158,10 @@ func (g *engineRuby) DependenciesStep() error {
 	return nil
 }
 
+func (g *engineRuby) CompileStep() error {
+	return nil
+}
+
 func (g *engineRuby) TestStep() error {
 
 	//skip the lint commands if disabled

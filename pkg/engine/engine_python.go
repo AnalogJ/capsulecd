@@ -153,6 +153,11 @@ func (g *enginePython) AssembleStep() error {
 	return nil
 }
 
+
+func (g *enginePython) CompileStep() error {
+	return nil
+}
+
 func (n *enginePython) DependenciesStep() error {
 	return nil //dependencies are installed as part of Tox.
 }

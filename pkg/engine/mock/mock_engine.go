@@ -81,6 +81,18 @@ func (_mr *MockInterfaceMockRecorder) DependenciesStep() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "DependenciesStep")
 }
 
+// CompileStep mocks base method
+func (_m *MockInterface) CompileStep() error {
+	ret := _m.ctrl.Call(_m, "CompileStep")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CompileStep indicates an expected call of CompileStep
+func (_mr *MockInterfaceMockRecorder) CompileStep() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "CompileStep")
+}
+
 // TestStep mocks base method
 func (_m *MockInterface) TestStep() error {
 	ret := _m.ctrl.Call(_m, "TestStep")

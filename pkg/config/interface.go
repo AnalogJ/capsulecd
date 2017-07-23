@@ -14,4 +14,5 @@ type Interface interface {
 	GetInt(key string) int
 	GetString(key string) string
 	GetBase64Decoded(key string) (string, error)
+	UnmarshalKey(key string, rawVal interface{}) error
 }

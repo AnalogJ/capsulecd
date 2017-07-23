@@ -132,6 +132,10 @@ func (g *engineChef) DependenciesStep() error {
 	return nil
 }
 
+func (g *engineChef) CompileStep() error {
+	return nil
+}
+
 func (g *engineChef) TestStep() error {
 
 	//skip the lint commands if disabled

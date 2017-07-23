@@ -27,7 +27,7 @@ func TestEngineNode_Create(t *testing.T) {
 	require.NoError(t, err)
 
 	testConfig.Set("scm", "github")
-	testConfig.Set("package_type", "chef")
+	testConfig.Set("package_type", "node")
 	testConfig.Set("scm_github_access_token","placeholder")
 	pipelineData := new(pipeline.Data)
 	githubScm, err := scm.Create("github", pipelineData, testConfig, nil)
@@ -35,7 +35,7 @@ func TestEngineNode_Create(t *testing.T) {
 
 
 	//test
-	nodeEngine, err := engine.Create("chef", pipelineData, testConfig, githubScm)
+	nodeEngine, err := engine.Create("node", pipelineData, testConfig, githubScm)
 
 	//assert
 	require.NoError(t, err)
@@ -266,11 +266,11 @@ func (suite *EngineNodeTestSuite)TestEngineNode_PackageStep_WithoutLockFiles() {
 	require.NoError(suite.T(), cerr)
 	suite.PipelineData.GitLocalPath = cpath
 
-	chefEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
+	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.PackageStep()
+	berr := nodeEngine.PackageStep()
 
 	//assert
 	require.NoError(suite.T(), berr)
@@ -282,11 +282,11 @@ func (suite *EngineNodeTestSuite)TestEngineNode_DistStep_WithoutCredentials() {
 	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("npm_auth_token").MinTimes(1).Return(false)
 
-	chefEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
+	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
 	//test
-	berr := chefEngine.DistStep()
+	berr := nodeEngine.DistStep()
 
 	//assert
 	require.Error(suite.T(), berr)

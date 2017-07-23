@@ -1,0 +1,6 @@
+---
+  scm_release_assets:
+  - local_path: test/path/artifactname.gem
+    artifact_name: artifactname.gem
+  - local_path: test/path2/artifactname2.gem
+    artifact_name: artifactname2.gem

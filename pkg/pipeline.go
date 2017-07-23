@@ -69,6 +69,16 @@ func (p *Pipeline) Start(config config.Interface) {
 	// update the config with repo config file options
 	p.Config.ReadConfig(path.Join(p.Data.GitLocalPath, "capsule.yml"))
 
+	if p.Config.IsSet("scm_release_assets") {
+		//unmarshall config data.
+		parsedAssets := new([]pipeline.ScmReleaseAsset)
+		err := p.Config.UnmarshalKey("scm_release_assets", parsedAssets)
+		errors.CheckErr(err)
+
+		//append the parsed Assets to the current ReleaseAssets storage (incase assets were defined in system yml)
+		p.Data.ReleaseAssets = append(p.Data.ReleaseAssets, (*parsedAssets)...)
+	}
+
 	//validate that required executables are available for the following build/test/package/etc steps
 	p.NotifyStep("validate tools", func() error {
 		log.Println("validate_tools_step")
@@ -95,13 +105,26 @@ func (p *Pipeline) Start(config config.Interface) {
 	// this step should download dependencies
 	p.NotifyStep("dependencies", func() error {
 		log.Println("pre_dependencies_step")
-		p.PreAssembleStep()
+		p.PreDependenciesStep()
 		log.Println("dependencies_step")
-		if berr := engineImpl.AssembleStep(); berr != nil {
+		if berr := engineImpl.DependenciesStep(); berr != nil {
 			return berr
 		}
 		log.Println("post_dependencies_step")
-		p.PostAssembleStep()
+		p.PostDependenciesStep()
+		return nil
+	})
+
+	// this step should compile source
+	p.NotifyStep("compile", func() error {
+		log.Println("pre_compile_step")
+		p.PreCompileStep()
+		log.Println("compile_step")
+		if berr := engineImpl.CompileStep(); berr != nil {
+			return berr
+		}
+		log.Println("post_compile_step")
+		p.PostCompileStep()
 		return nil
 	})
 
@@ -182,6 +205,10 @@ func (p *Pipeline) PreScmRetrievePayload()             {}
 func (p *Pipeline) PostScmRetrievePayload()            {}
 func (p *Pipeline) PreAssembleStep()                   {}
 func (p *Pipeline) PostAssembleStep()                  {}
+func (p *Pipeline) PreDependenciesStep()               {}
+func (p *Pipeline) PostDependenciesStep()              {}
+func (p *Pipeline) PreCompileStep()                    {}
+func (p *Pipeline) PostCompileStep()                   {}
 func (p *Pipeline) PreTestStep()                       {}
 func (p *Pipeline) PostTestStep()                      {}
 func (p *Pipeline) PrePackageStep()                    {}

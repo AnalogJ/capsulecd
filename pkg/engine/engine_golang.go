@@ -39,6 +39,7 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.NextMetadata = new(golangMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
+	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
 	g.Config.SetDefault("engine_cmd_lint", "gometalinter ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
@@ -100,6 +101,22 @@ func (g *engineGolang) DependenciesStep() error {
 		return errors.EngineTestDependenciesError("glide install failed. Check dependencies")
 	}
 
+	return nil
+}
+
+func (g *engineGolang) CompileStep() error {
+	if g.Config.GetBool("engine_disable_compile") {
+		//cmd directory is optional. check if it exists first.
+		if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "cmd")) {
+			return nil
+		}
+
+		//code formatter
+		compileCmd := g.Config.GetString("engine_cmd_compile")
+		if terr := utils.BashCmdExec(compileCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf("Compile command (%s) failed. Check log for more details.", compileCmd))
+		}
+	}
 	return nil
 }
 

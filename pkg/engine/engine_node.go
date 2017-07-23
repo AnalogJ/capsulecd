@@ -94,6 +94,10 @@ func (n *engineNode) DependenciesStep() error {
 	return nil
 }
 
+func (g *engineNode) CompileStep() error {
+	return nil
+}
+
 func (n *engineNode) TestStep() error {
 
 	//skip the lint commands if disabled

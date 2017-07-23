@@ -30,6 +30,12 @@ type Interface interface {
 	// REQUIRES NextMetadata
 	DependenciesStep() error
 
+	// Compile the source for this package (if required)
+	// USES engine_disable_compile
+	// USES engine_cmd_compile
+	// REQUIRES pipelineData.GitLocalPath
+	CompileStep() error
+
 	// Validate code syntax & execute test runner
 	// Run linter
 	// Run unit tests
