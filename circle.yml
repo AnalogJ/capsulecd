@@ -58,6 +58,8 @@ jobs:
             # upload to codecov.
             bash <(curl -s https://codecov.io/bash) -f "/coverage/*.txt"
 
+            cat /coverage/coverage-chef.txt
+
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:python
