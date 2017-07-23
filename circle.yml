@@ -54,6 +54,8 @@ jobs:
               analogj/capsulecd-build:chef \
               ./ci/coverage.sh chef
 
+            ls /coverage
+
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:python
@@ -64,6 +66,7 @@ jobs:
           command: |
             PATH=${GOPATH}/bin:$PATH
 
+            ls /coverage
             gocovmerge /coverage/coverage-*.txt > ./coverage.txt
             # upload to codecov.
             bash <(curl -s https://codecov.io/bash)
