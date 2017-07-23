@@ -56,7 +56,7 @@ jobs:
             ls -alt /coverage
 
             # upload to codecov.
-            bash <(curl -s https://codecov.io/bash) -f '*.txt' -s /coverage
+            bash <(curl -s https://codecov.io/bash) -f "/coverage/*.txt"
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
