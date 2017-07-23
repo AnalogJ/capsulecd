@@ -22,6 +22,7 @@ jobs:
 
             # Configure Go
             mkdir -p ${GOPATH}/src ${GOPATH}/bin
+            go get github.com/wadey/gocovmerge
 
             docker pull analogj/libgit2-crossbuild:linux-amd64
 # Use docker image caching if this is slow.
@@ -40,26 +41,30 @@ jobs:
           shell: bash
           command: |
             mkdir -p /coverage
-            ci_env=`bash <(curl -s https://codecov.io/env)`
 
             echo "#################################################### BASE"
             docker run -e "CI=true" \
-              $ci_env \
+              -v /coverage:/coverage \
               analogj/capsulecd-build:base \
-              ./ci/coverage.sh -tags='static'
+              ./ci/coverage.sh base
 
             echo "#################################################### CHEF"
             docker run -e "CI=true" \
-              $ci_env \
+              -v /coverage:/coverage
               analogj/capsulecd-build:chef \
-              ./ci/coverage.sh -tags='static chef'
+              ./ci/coverage.sh chef
 
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:golang
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:node
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:python
 #          docker run -e "CI=true" -v /coverage:/tmp/coverage analogj/capsulecd-build:ruby
 
-#      - run:
-#          name: Merge generated coverage reports using webhook.
-#          command: |
+      - run:
+          name: Merge generated coverage reports using webhook.
+          command: |
+            PATH=${GOPATH}/bin:$PATH
+
+            gocovmerge /coverage/coverage-*.txt > ./coverage.txt
+            # upload to codecov.
+            bash <(curl -s https://codecov.io/bash)
 #
