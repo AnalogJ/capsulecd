@@ -15,13 +15,18 @@ import (
 	"path"
 	"io/ioutil"
 	"os"
+	"capsulecd/pkg/utils"
 )
 
 func vcrSetup(t *testing.T) *http.Client {
+	accessToken := "PLACEHOLDER"
+	if(os.Getenv("CI") != "true"){
+		accessToken = os.Getenv("GITHUB_ACCESS_TOKEN")
+	}
 
 	ts := oauth2.StaticTokenSource(
 		//setting a real access token here will allow API calls to connect successfully
-		&oauth2.Token{AccessToken: "PLACEHOLDER"},
+		&oauth2.Token{AccessToken: accessToken},
 	)
 
 	tr := http.DefaultTransport.(*http.Transport)
@@ -257,10 +262,39 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	require.NotNil(t, pipelineData.GitBaseInfo)
 }
 
-//cant test publish becasue it'll continuously push to github repo.
+//cant test publish because it'll continuously push to github repo.
 //func TestScmGithub_Publish(t *testing.T) {
 //
 //}
+
+func TestScmGithub_PublishAssets(t *testing.T) {
+	//setup
+	testConfig, err := config.Create()
+	require.NoError(t, err)
+	testConfig.Set("scm", "github")
+	testConfig.Set("scm_repo_full_name", "AnalogJ/gem_analogj_test")
+	testConfig.Set("scm_github_access_token", "placeholder")
+	pipelineData := new(pipeline.Data)
+	pipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
+		{
+			LocalPath: path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
+			ArtifactName: "gem_analogj_test.gem",
+		},
+	}
+	client := vcrSetup(t)
+	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	require.NoError(t, err)
+	defer os.Remove(pipelineData.GitParentPath)
+
+	pipelineData.GitLocalPath = path.Join(pipelineData.GitParentPath, "gem_analogj_test")
+
+	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), pipelineData.GitLocalPath )
+	require.NoError(t, cerr)
+	//test
+
+	paerr := githubScm.PublishAssets(3663503)
+	require.NoError(t, paerr)
+}
 
 func TestScmGithub_Notify(t *testing.T) {
 	//setup

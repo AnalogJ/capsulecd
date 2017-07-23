@@ -17,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"path"
 )
 
 type scmGithub struct {
@@ -234,7 +235,7 @@ func (g *scmGithub) Publish() error {
 	ctx := context.Background()
 	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
 	version := fmt.Sprintf("v%s", g.PipelineData.ReleaseVersion)
-	g.Client.Repositories.CreateRelease(
+	releaseData, _, rerr := g.Client.Repositories.CreateRelease(
 		ctx,
 		parts[0],
 		parts[1],
@@ -245,15 +246,36 @@ func (g *scmGithub) Publish() error {
 			Name:            &version,
 		},
 	)
+	if(rerr != nil){
+		return rerr
+	}
 
-	//TODO: upload artifacts
-	//@source_release_artifacts.each do |release_artifact|
-	//	@source_client.upload_asset(release[:url], release_artifact[:path], name: release_artifact[:name])
-	//end
-	//
-	os.RemoveAll(g.PipelineData.GitParentPath)
+	g.PublishAssets(releaseData.GetID())
 	return nil
+}
 
+func (g * scmGithub) PublishAssets(releaseData interface{}) error {
+	//releaseData should be an ID (int)
+	releaseId, ok := releaseData.(int)
+	if(!ok){
+		return fmt.Errorf("Invalid releaseID, cannot upload assets")
+	}
+
+	ctx := context.Background()
+	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
+
+	for _, assetData := range g.PipelineData.ReleaseAssets {
+		publishAsset(
+			g.Client,
+			ctx,
+			parts[0],
+			parts[1],
+			assetData.ArtifactName,
+			path.Join(g.PipelineData.GitLocalPath, assetData.LocalPath),
+			releaseId,
+			5)
+	}
+	return nil
 }
 
 func (g *scmGithub) Notify(ref string, state string, message string) error {
@@ -272,6 +294,28 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 }
 
 //private
+
+func publishAsset(client *github.Client, ctx context.Context, repoOwner, repoName, assetName, filePath string, releaseID, retries int) error {
+
+	f, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+
+	_, _, err = client.Repositories.UploadReleaseAsset(ctx, repoOwner, repoName, releaseID, &github.UploadOptions{
+		Name: assetName,
+	}, f)
+	
+	
+	if err != nil && retries > 0 {
+		fmt.Println("artifact upload errored out, retrying in one second. Err:", err)
+		time.Sleep(time.Second)
+		err = publishAsset(client, ctx, repoOwner, repoName, assetName, filePath, releaseID, retries-1)
+	}
+
+	return err
+}
+
 
 func authGitRemote(cloneUrl string, accessToken string) (string, error) {
 	if accessToken != "" {

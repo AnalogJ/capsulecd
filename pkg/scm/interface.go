@@ -56,9 +56,20 @@ type Interface interface {
 	// REQUIRES pipelineData.GitParentPath
 	Publish() error //create release.
 
+	//Upload assets to SCM, and attach to SCM release if possible.
+	//Failing to upload Assets to SCM will not fail the publish (we'll retry 5 times)
+	//Should not be called directly, will be called via Publish()
+	//ReleaseData will be different for each SCM, but is probably a release ID that we can attach files to.
+	//REQUIRES config.scm_repo_full_name
+	//REQUIRES pipelineData.ReleaseAssets
+	//REQUIRES pipelineData.GitLocalPath
+	PublishAssets(releaseData interface{}) error
+
 	// Notify should update the scm with the build status at each stage.
 	// If the scm does not support notifications this should be a no-op
 	// In general, if the Notify method returns an error, we'll ignore it, and continue the pipeline.
 	// REQUIRES config.scm_repo_full_name
 	Notify(ref string, state string, message string) error
+
+
 }

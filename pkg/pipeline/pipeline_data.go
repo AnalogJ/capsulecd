@@ -11,5 +11,5 @@ type Data struct {
 
 	ReleaseVersion   string
 	ReleaseCommit    string
-	ReleaseArtifacts []string
+	ReleaseAssets []ScmReleaseAsset
 }

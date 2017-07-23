@@ -1,0 +1,666 @@
+{
+  "Name": "TestScmGithub_PublishAssets",
+  "Path": "testdata/govcr-fixtures",
+  "Tracks": [
+    {
+      "Request": {
+        "Method": "POST",
+        "URL": {
+          "Scheme": "https",
+          "Opaque": "",
+          "User": null,
+          "Host": "uploads.github.com",
+          "Path": "/repos/AnalogJ/gem_analogj_test/releases/3663503/assets",
+          "RawPath": "",
+          "ForceQuery": false,
+          "RawQuery": "name=gem_analogj_test.gem",
+          "Fragment": ""
+        },
+        "Header": {
+          "Accept": [
+            "application/vnd.github.v3+json"
+          ],
+          "Content-Type": [
+            "application/octet-stream"
+          ],
+          "User-Agent": [
+            "go-github/8"
+          ]
+        },
+        "Body": "bWV0YWRhdGEuZ3oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAwMDA0NDQAMDAwMDAwMAAwMDAwMDAwADAwMDAwMDAxMjEwADEyNzAxNjA1MTcxADAxMzQzMAAgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB1c3RhcgAwMHdoZWVsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAd2hlZWwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwMDAwMDAwADAwMDAwMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfiwgAeQoHVwID1VZNb9swDL3rV2i59OSPdEU3GFixYg2GbusO7bDDhsGQbcZWog9PktsaxfbbR8lO0jRd0VtQxwdRfBSfnikqURTRV6Yr+kQXCyhd9hFkll21UPI5L5njWhHFJGS0BpkzxYSuF7kD68g1GIvu7JH474OLULoGpfE0npJWMDfXRmbUxxDWuUYbm5GIfmJWK/q5Q0CnauZd2sDvjhvMTQquKm4yCrdASjAuLxvGcdWfv0jFHCIO0+lxlB5F6Vuapll443T10B+kghZUBarkENLtcj5bIXqkPWy56FQlwKA9MpGg3GP7vdy4EbwFx2x+JsLf5O/JJBjefEq04VlLd4DKTQ9w3vUtssoquAah2zFba8CAAGbRNWfCwkb1fIvHvng/U2zDlrB/pbFqXqTSgfdzlbZ4vPcu9euXqXSgXYEtDW9dmHINtxRf2VPfF+k9JwHJuPD9ZrGcvnnfMVFg82JxyQh2srJzrBDYj3wbg1sHyudYm4blptJlPucrzDDC1SZxzR2vFXbISTDDJx2GGHfNbdxL4W3cjY/C0ZfzD7OvV7PY3Tq0LmenZxezWFZ+jCdvBGGfTUrkoNeWBde1OH7Y/mOcCHUUUcGLZMdtiv94klFLj2i0hJbV+JUb59osSW5ubvzWmq6ISy2T0yFuZw0ieIlqDWJcnH8jEhzDi4Bl9O4PabV1OVfWMSFyCdaGDCSIqcN3GeQcKyNvmWvCSkh3NVnlvibyJ+647Tp7WGWhxk7eTcjzKmxTX1hdWxS8zHulMR40rxcG4+Vdo2JGhyUo2aV4GB/jRW+xOrmq8yX0iLL3/09soEfEdlIy0+8eotFBvHHvBPwDqjcURK8IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZGF0YS50YXIuZ3oAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAwMDA0NDQAMDAwMDAwMAAwMDAwMDAwADAwMDAwMDA1MTI3ADEyNzAxNjA1MTcxADAxMzM2MQAgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB1c3RhcgAwMHdoZWVsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAd2hlZWwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwMDAwMDAwADAwMDAwMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfiwgAeQoHVwID7Ft7cxM5EudvfYrG7JaTKmds53nlKvbOxBMyt46dsh04CrhYnpFtkXmdpMljl73Pft2aGccYWPbqDmehrAJSI7W6pVa3+tet4MykkbM4UeLRV2uNZqNxuL//qJG31Z+N5u7RI/zbaB42DppHTaTf22scPYLGozW0TBuucCk3cyHC36H70vjq5r6RVncmWRyEos7qzh1XQeKz+nMRTWUonDDxr1j9Mu9GAj+5ForPiDbvSK9m+K9OhV9XIk2U0fhporTOHm3at9EcRcf3dWV8yf8be6v+v7u/t7/x/3W0nZ1poiJuAD06i0RsuJFJzHZ2/CRM1MaPv3v/N4pfS+3cReHDxf/m/mr839/d+P9aWsjjWYYxvQUqm9wxdR21GMAO7DpN55BNBN4O4lLGqKQwbMFMRFB8QI4bFOxcQ9NpNp3dzWXxDbYC6z1o/G/uHazG/8Nmc+P/62g6yZQvoDo3JtWtep1uAfRy7SRqVmXsCQwRHsrpHdwhIfl/VUMgUhEHIval0HgdUO+lEdo4NBHJWflz415/+tb1jt3e0HXMrXko/99tHO2uxv/m/t7G/9fRRnMBZ94IutIXsRawhR/bjB0n6Z2Ss7mBLX8bdvFo4O9cJzH8nIXcZPGMM3YuVCS1xnQBpIa5UGJyBzPFYyOCGkyVEJBMwZ9zNRM1MAnw+A5SoYhNMjFcxjKeAQcfZTGkNHNko5OpueFKIHEAXOvElxz5fZieAIUsDVsGF18ZFjMq21ZIIHjI8FKisXIIbqSZJ5kBhbeUkj7xqOHN5YdZQGsoh0MZyUICTbcK0AyZZhp3QOusQZQEeB3iT2G3lWaTUOp5DQJJrCeZwU5NnVafNdpHPVGgRRgy5EBXpt3r/eosDS09JYWaQkWaem7mSfThTqRm00zFKFLYOUGCKrMS3wnfUA+RT5MwTG5oa34SB5J2pFuM0WHzSXIt7F7y840Tg0vNl0AHkN6fajGk5xbuiUJhKFfGjLrK7SgSj24UG8lDoDoQyVvdpoPyT10Y9k9GL9sDF7whnA/6L7yO24FKe4jflRq89Ean/YsRIMWg3Ru9gv4JtHuv4Gev16mB+4/zgTscQn/AvLPzrudin9c77l50vN5zeIbzen00ZQ9tGJmO+kACC1aeOyRmZ+7g+BQ/28+8rjd6VWMn3qhHPE/6A2jDeXsw8o4vuu0BnF8MzvtDF8V3kG3P650MUIp75vZGDkrFPnBf4AcMT9vdLoli7Qtc/YDWB8f981cD7/npCE773Y6Lnc9cXFn7WdfNReGmjrtt76wGnfZZ+7lrZ/WRy4ARWb46eHnqUhfJa+Of45HX79E2jvu90QA/a7jLwWgx9aU3dGvQHnhDUsjJoH9WY6ROnNG3THBez825kKrhgxNBEvq+GLoLhtBx213khcfT++D4nE1w/y7awG13zlwnCh4O/+/uHx5+hP8bh5v4v472BDADHGFYZOylCP0kEhRDLNiPxQ1B+8fgxXloCKTCGJMojH5IUMUIMJU2bIgiIGMvzsoD04RCTWi5pdy/4jMBWZozHmCOgbF2ori6w1hCyIAEOXCOMfiewk8CijkL/jDGOfUy2Rg7MEpA3GK8kgQMbBBHWm7sxBqoLIbxRMZ1DIE6CcUYo6LCOEcSheIIAjAOpiqJUkOhqd/pt6AjQmFEvltebM2IW5NHzTxQB0L7GOjFIiPCLOkJ6shWRfLqKWsHRTQNZXyvUJ6mCAssCWZRReaNYXk8HtviC1VXquX+qtSNnPJVxLhT4SO4QHLA9kNRfmGsrxYVGZlrD6HGFKHTgnK5aFNyt2u+0Hgq5dZfKok7z6jLUqvMz8M4ATtL3hHXIkxSUjaua4pKRHAn/CuCGYSeLGQSabKkei1Mlo5JAeUClnNHPEHcWUGu+BVCDcwaLTl15crXBuleoWH5eHQ81Ml/c7C5PdxIFMwJEVkLNctmQ0d/vzp7ZqSvJC4PLUx8BDUR9+d4lOXWrO7tkYBddzE/t0mFRsQRSnPrQdeI5izczNKAW9sSZR/EWTQRdH4wLrocNRnXStOLPyOtEICEN3Ppz/P9+UoQe/QkNAPDZ1YpS8IIquq5HUUvR5xZWDif6VygHaYJY8rjx7nLoRZeL5cE3m59qlCw7VgDOUatWQiMFsHYs2wGxatgwR9XqcS/MjpSsKi8uHBQE8+lOc0mgIdV8seFzrOJgwT114hIBr32mft24f0okCQWWUuObK2dI+drLkN79XDEoGhtUNQ4UI1CFValogU+fb2U/uTbQ+k0L59G+6sXaF7XKTtC2d9R/EeD+toFwC/W/w4/qv8dHW7i/1oaOSSGdagU5fzcw7i+0hW2GLNvxHjdKlGnC8iOVxgbUG2w1TrG/laLDGmE/Q5eelstmrDNGBFCKxBTnoUGnv4ErU1d8M/VluLoV/X/o4ODz/r/we7BR+9/h5v6/3rw/+N6plWdzEDE1/kjIPvoUrA4bulCoEuCxzxMZu9sOK7QS8ECpCH4ncpbkymhy/KXjCUVh+QveXXNQnsClgQwIsI094iMwMOTHM2XCBsQ7kihVnBgZjFWIKdTZBQTrLFmXAM5tTgvlFdUdHoCW17eQRMI4dUgQARuCCHNhK2Z0ZJTTEZK0Fdg88fbOHuxaSSo4Pe5unPIZsySnqSaVJg3eFYMfGP+b0/3K8f/3/P/3cbeR/X/g8bG/x/A/ydczxnaA+yIDBN3mWLoliHzToZPf6i+id9gWmpHr28ZK/KSIvchR+vkNf4EYTUmZJlJIlu7t/aVp2LLFYIgyXPLTRB+wLZ6k5dvuGvE/82jxur732Fzg//XVf/DWIwhtwWZme78hYVyAk/hhH79F0MyRu/LlJv5VtVxMAmeVGtweXnidd3Ly232Q7ff7lyet0enThbruZyaLSTZxjw7FFrD0nDxcPRXO76ImtVV26sXpYoqYxiAW638Vw+KihnlFXRlvCfrfM/A1oqcmEcCFu3pp5BJQVnWXErKouzZar1wB0Ov3yvp8NqaJ0ov6F5XVh4+K29LUhHh3bgk/HXl3VXz6G8ZDydCGe74RFsS6yyKqN5ZEldtrQn/RHe2ygUFQbWckNcZU5Mv+hMTlggWk+ZJJFIq4ZX6KOoZNzc3zlJFpZ1rqP5ZbRUFj3u9nnmjymIvebX3fuNjqiqFeifv3/ll7Og0lGar8ua2Udl2lLBvk7/C++l7mDoYFPz51o/q139ukcz8QKeCW8C4Xf9tG34rBWFYCqRaOl5xKxZrzCuiVOnRdvB+ac5MidRKQBpimIu2Vo0RTpDVbE2X5BQmaW1d25NES106PMSHl8F9+fNyUcW8W2DkSg0q//7J/ipc5Y9Mo0S6nNNwGn9sDlEUk/ZoDo78j+GzLKl/EAPUZL31n+bq/X9wtHn/WXP9p6yslpcwenuUBBkCvPKBCMDmeCrP3maJyN8GHMf5P9jhpj1M+5T/1+8fI9bi/4391f//cbSPkHDj/2toH/l4AYco2DYcjGaVjXNv2qZt2qZ9j+0/AAAA//8DACnD8rUAPgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABjaGVja3N1bXMueWFtbC5negAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMDAwMDQ0NAAwMDAwMDAwADAwMDAwMDAAMDAwMDAwMDA0MTUAMTI3MDE2MDUxNzEAMDE0NjA0ACAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHVzdGFyADAwd2hlZWwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3aGVlbAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADAwMDAwMDAAMDAwMDAwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB+LCAB5CgdXAgNlkLmRFEAQBPW1Yh1Yop/pZ05DQ8eCnn6QUIiVsJ7hRDAgI7Pq9Xo9vn/7ih+P5/Nnv6PiHV9+/P54ph6T4xaoClCsiNCN4MoaknVsQfPY5T6Zd/z65ChWsyq6dtp0TSbg0eDyIV3myXkq9K9VkP7ztlTQYW8z0wIH7U2yFksgl3YIiJ/bxGW4pNbZ3tU31ObYWBm7hs6iTKc5hWxpx283UfvChe68BzkQFu8d7MHpA4m0mP/dI1ZrDE1tq+xpSMgYxOZww1Gi4hrCZJrSWyPqeXRQaaC36q2tEeOwewsF7BNHvF1QqAyEtuJVoMzJir3vZcawztqdpPz4Ay1oe8+iAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+      },
+      "Response": {
+        "Status": "201 Created",
+        "StatusCode": 201,
+        "Proto": "HTTP/1.1",
+        "ProtoMajor": 1,
+        "ProtoMinor": 1,
+        "Header": {
+          "Cache-Control": [
+            "no-cache"
+          ],
+          "Content-Security-Policy": [
+            "default-src 'none'"
+          ],
+          "Content-Type": [
+            "application/json; charset=utf-8"
+          ],
+          "Date": [
+            "Sun, 23 Jul 2017 19:14:01 GMT"
+          ],
+          "Etag": [
+            "W/\"522a6a9a6e3c54baba2e22e6d3bfce6b\""
+          ],
+          "Last-Modified": [
+            "Sun, 23 Jul 2017 19:14:01 GMT"
+          ],
+          "Strict-Transport-Security": [
+            "max-age=31557600"
+          ],
+          "Vary": [
+            "Accept, Authorization, Cookie, X-GitHub-OTP",
+            "Accept-Encoding"
+          ],
+          "X-Content-Type-Options": [
+            "nosniff"
+          ],
+          "X-Frame-Options": [
+            "deny"
+          ],
+          "X-Github-Media-Type": [
+            "github.v3; format=json"
+          ],
+          "X-Github-Request-Id": [
+            "9AFC:3915:18CECD0:1AE529F:5974F579"
+          ],
+          "X-Oauth-Scopes": [
+            "repo"
+          ],
+          "X-Xss-Protection": [
+            "1; mode=block"
+          ]
+        },
+        "Body": "eyJ1cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL0FuYWxvZ0ovZ2VtX2FuYWxvZ2pfdGVzdC9yZWxlYXNlcy9hc3NldHMvNDM5NTQ5MSIsImlkIjo0Mzk1NDkxLCJuYW1lIjoiZ2VtX2FuYWxvZ2pfdGVzdC5nZW0iLCJsYWJlbCI6IiIsInVwbG9hZGVyIjp7ImxvZ2luIjoiQW5hbG9nSiIsImlkIjo4OTE4NzUsImF2YXRhcl91cmwiOiJodHRwczovL2F2YXRhcnMxLmdpdGh1YnVzZXJjb250ZW50LmNvbS91Lzg5MTg3NT92PTQiLCJncmF2YXRhcl9pZCI6IiIsInVybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQW5hbG9nSiIsImh0bWxfdXJsIjoiaHR0cHM6Ly9naXRodWIuY29tL0FuYWxvZ0oiLCJmb2xsb3dlcnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9BbmFsb2dKL2ZvbGxvd2VycyIsImZvbGxvd2luZ191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0FuYWxvZ0ovZm9sbG93aW5ney9vdGhlcl91c2VyfSIsImdpc3RzX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQW5hbG9nSi9naXN0c3svZ2lzdF9pZH0iLCJzdGFycmVkX3VybCI6Imh0dHBzOi8vYXBpLmdpdGh1Yi5jb20vdXNlcnMvQW5hbG9nSi9zdGFycmVkey9vd25lcn17L3JlcG99Iiwic3Vic2NyaXB0aW9uc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0FuYWxvZ0ovc3Vic2NyaXB0aW9ucyIsIm9yZ2FuaXphdGlvbnNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9BbmFsb2dKL29yZ3MiLCJyZXBvc191cmwiOiJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL0FuYWxvZ0ovcmVwb3MiLCJldmVudHNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9BbmFsb2dKL2V2ZW50c3svcHJpdmFjeX0iLCJyZWNlaXZlZF9ldmVudHNfdXJsIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS91c2Vycy9BbmFsb2dKL3JlY2VpdmVkX2V2ZW50cyIsInR5cGUiOiJVc2VyIiwic2l0ZV9hZG1pbiI6ZmFsc2V9LCJjb250ZW50X3R5cGUiOiJhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0iLCJzdGF0ZSI6InVwbG9hZGVkIiwic2l6ZSI6NzE2OCwiZG93bmxvYWRfY291bnQiOjAsImNyZWF0ZWRfYXQiOiIyMDE3LTA3LTIzVDE5OjE0OjAxWiIsInVwZGF0ZWRfYXQiOiIyMDE3LTA3LTIzVDE5OjE0OjAxWiIsImJyb3dzZXJfZG93bmxvYWRfdXJsIjoiaHR0cHM6Ly9naXRodWIuY29tL0FuYWxvZ0ovZ2VtX2FuYWxvZ2pfdGVzdC9yZWxlYXNlcy9kb3dubG9hZC92MC4xLjEwL2dlbV9hbmFsb2dqX3Rlc3QuZ2VtIn0=",
+        "ContentLength": -1,
+        "TransferEncoding": [
+          "chunked"
+        ],
+        "Trailer": null,
+        "TLS": {
+          "Version": 771,
+          "HandshakeComplete": true,
+          "DidResume": false,
+          "CipherSuite": 49199,
+          "NegotiatedProtocol": "",
+          "NegotiatedProtocolIsMutual": true,
+          "ServerName": "",
+          "PeerCertificates": [
+            {
+              "Raw": "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",
+              "RawTBSCertificate": "MIIGNaADAgECAhANnd3nz6xhmsOGb641RYqUMA0GCSqGSIb3DQEBCwUAMHAxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xLzAtBgNVBAMTJkRpZ2lDZXJ0IFNIQTIgSGlnaCBBc3N1cmFuY2UgU2VydmVyIENBMB4XDTE3MDExODAwMDAwMFoXDTIwMDQxNzEyMDAwMFowaDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xFTATBgNVBAoTDEdpdEh1YiwgSW5jLjEVMBMGA1UEAwwMKi5naXRodWIuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqcCPMEktuxLoDAxdHQgI95FweH4Fa6+LslU2qmmUBF+pu4ZOUvpIQxVU5wqdWaxZauxG1nYUTrAWdPb1n0umgLsGE7WYXJnQPJewIK4Qhua0LsrirIdHkcwHQ83NEYj+lswhg0fUQURt06Uta5akLovDdJPLqTuTS/nshOa76hR0ouWnrqucLL1szcvX/obB+Nsbmr58Mrg8prQfRoK6ibzlZysV88qPcCpc57lq6QBKQ2F9WgQMssQigXfTNm8lAAQ+L6gCZngd4KfHYPSJYA07oFWmuSOalgh00Wh8PUjuRGrcNxWpmgfALQHHFYgoDcD+a8+GoJk+GdJd3ongZQIDAQABo4ID6TCCA+UwHwYDVR0jBBgwFoAUUWj/kK8CB3U8zNllZGKiErhZcjswHQYDVR0OBBYEFOphUrL+CkCA5SCKMDckoOqmbGqqMCMGA1UdEQQcMBqCDCouZ2l0aHViLmNvbYIKZ2l0aHViLmNvbTAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMHUGA1UdHwRuMGwwNKAyoDCGLmh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWhhLXNlcnZlci1nNS5jcmwwNKAyoDCGLmh0dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9zaGEyLWhhLXNlcnZlci1nNS5jcmwwTAYDVR0gBEUwQzA3BglghkgBhv1sAQEwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAIBgZngQwBAgIwgYMGCCsGAQUFBwEBBHcwdTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tME0GCCsGAQUFBzAChkFodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEySGlnaEFzc3VyYW5jZVNlcnZlckNBLmNydDAMBgNVHRMBAf8EAjAAMIIB9AYKKwYBBAHWeQIEAgSCAeQEggHgAd4AdQCkuQmQtBhYFIe7E6LMZ3AKPDWYBPkb37jjd80OyA3cEAAAAVmynD5LAAAEAwBGMEQCIB6sDu/RtVNHVuUpPojMQV00BtL0nb6wwjI3oNp3xAZCAiAD3h4qKOfXZxE6GvM0Pr62FVb890iZTNMSh0IYWBoI9QB2AFYUBpov18Ls0/XhvUSyPsdGdrm8mRFcwO+UmFXWidDdAAABWbKcPxwAAAQDAEcwRQIgJKZpksAogsYtfL21sMJFyorHgppdo4UgLFQcsNq+G9MCIQCKJe+5yvVlgdygnWLH79QDJbhLLX5J8jFX/89W4y6YVwB1AO5Lvbd1zmC64UJpH6vhnmajD35fsHLYgwDEe4l6qP3LAAABWbKcQC4AAAQDAEYwRAIgcqvMDkhvM0QYyvY2ZuZwmdy5RNkewdEmpTR4JlyJqfkCIEYYhflp1ZRuO4VaIFvVmcSRiwfzX+jNtgabnFjfoiTHAHYAu9nfvB+KcbWTlCOXqpJ7RzhXlQqrUugakJZkNo4e0YUAAAFZspw+XQAABAMARzBFAiEAkky9CV39zv0C2EUSPTapV1rN/9KaORv6CA38OOtIHbwCIAYSNLDEKPiv4+dSDMW1RFsuh+TeIC8QIuP01k7ZJlt1",
+              "RawSubjectPublicKeyInfo": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqcCPMEktuxLoDAxdHQgI95FweH4Fa6+LslU2qmmUBF+pu4ZOUvpIQxVU5wqdWaxZauxG1nYUTrAWdPb1n0umgLsGE7WYXJnQPJewIK4Qhua0LsrirIdHkcwHQ83NEYj+lswhg0fUQURt06Uta5akLovDdJPLqTuTS/nshOa76hR0ouWnrqucLL1szcvX/obB+Nsbmr58Mrg8prQfRoK6ibzlZysV88qPcCpc57lq6QBKQ2F9WgQMssQigXfTNm8lAAQ+L6gCZngd4KfHYPSJYA07oFWmuSOalgh00Wh8PUjuRGrcNxWpmgfALQHHFYgoDcD+a8+GoJk+GdJd3ongZQIDAQAB",
+              "RawSubject": "MGgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1TYW4gRnJhbmNpc2NvMRUwEwYDVQQKEwxHaXRIdWIsIEluYy4xFTATBgNVBAMMDCouZ2l0aHViLmNvbQ==",
+              "RawIssuer": "MHAxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xLzAtBgNVBAMTJkRpZ2lDZXJ0IFNIQTIgSGlnaCBBc3N1cmFuY2UgU2VydmVyIENB",
+              "Signature": "fIMvSUq9Z4EUniI976aOkXTSPwa8GT+KFzlLpcyPmcU/x8ATptUsARnS96Yzx7BWtchprXsDWKdFLgmQ/YTTdgUfy/Qyy7baJvCyLwBf4cJpsBdYaKxcige2dnAJjgVIvl8jEO4k+lD5BWgqQgRElDXj0SVVQQ1wd0MZTKWlDVbxmKsXzu5I0kWCG6/mfBcJc+6H+ABWc1YIK+pLP1jDYcC8wj9fRkTCpZW/3lZ/Nt+snM1ujTRZ7RTBlRG2uJLpIX15JihSprEr3u39RHUpHOODLNzVAw63zfJqCJvPtaCr+/KXKrqfjk9Z+e7Nmg+IxOf4M/Mxbox4KJvLlX8pwQ==",
+              "SignatureAlgorithm": 4,
+              "PublicKeyAlgorithm": 1,
+              "PublicKey": {
+                "N": "21429228084154408943139570884685142625290500347430795858688900551415906227536679153874399789385842271773517226674999079030803051091126231851036994513420278617079294928916984597651071937771480224292146730146769347421268976671825352026008436794206108406683277935743479777852166737816193041069610655724625122176575658877266092427856358490281180586482968057493121391843635194056949034040742987996151385813703709721259901343583080882309256791235110152071733990018185877979413282320500905063719789054108256594000772614408563350607772451285558663353171701829979037836249636683152899809162027796677351738512252288118534299749",
+                "E": 65537
+              },
+              "Version": 3,
+              "SerialNumber": 18099655330493615298083098587738507924,
+              "Issuer": {
+                "Country": [
+                  "US"
+                ],
+                "Organization": [
+                  "DigiCert Inc"
+                ],
+                "OrganizationalUnit": [
+                  "www.digicert.com"
+                ],
+                "Locality": null,
+                "Province": null,
+                "StreetAddress": null,
+                "PostalCode": null,
+                "SerialNumber": "",
+                "CommonName": "DigiCert SHA2 High Assurance Server CA",
+                "Names": [
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      6
+                    ],
+                    "Value": "US"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      10
+                    ],
+                    "Value": "DigiCert Inc"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      11
+                    ],
+                    "Value": "www.digicert.com"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      3
+                    ],
+                    "Value": "DigiCert SHA2 High Assurance Server CA"
+                  }
+                ],
+                "ExtraNames": null
+              },
+              "Subject": {
+                "Country": [
+                  "US"
+                ],
+                "Organization": [
+                  "GitHub, Inc."
+                ],
+                "OrganizationalUnit": null,
+                "Locality": [
+                  "San Francisco"
+                ],
+                "Province": [
+                  "California"
+                ],
+                "StreetAddress": null,
+                "PostalCode": null,
+                "SerialNumber": "",
+                "CommonName": "*.github.com",
+                "Names": [
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      6
+                    ],
+                    "Value": "US"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      8
+                    ],
+                    "Value": "California"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      7
+                    ],
+                    "Value": "San Francisco"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      10
+                    ],
+                    "Value": "GitHub, Inc."
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      3
+                    ],
+                    "Value": "*.github.com"
+                  }
+                ],
+                "ExtraNames": null
+              },
+              "NotBefore": "2017-01-18T00:00:00Z",
+              "NotAfter": "2020-04-17T12:00:00Z",
+              "KeyUsage": 5,
+              "Extensions": [
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    35
+                  ],
+                  "Critical": false,
+                  "Value": "MBaAFFFo/5CvAgd1PMzZZWRiohK4WXI7"
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    14
+                  ],
+                  "Critical": false,
+                  "Value": "BBTqYVKy/gpAgOUgijA3JKDqpmxqqg=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    17
+                  ],
+                  "Critical": false,
+                  "Value": "MBqCDCouZ2l0aHViLmNvbYIKZ2l0aHViLmNvbQ=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    15
+                  ],
+                  "Critical": true,
+                  "Value": "AwIFoA=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    37
+                  ],
+                  "Critical": false,
+                  "Value": "MBQGCCsGAQUFBwMBBggrBgEFBQcDAg=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    31
+                  ],
+                  "Critical": false,
+                  "Value": "MGwwNKAyoDCGLmh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zaGEyLWhhLXNlcnZlci1nNS5jcmwwNKAyoDCGLmh0dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9zaGEyLWhhLXNlcnZlci1nNS5jcmw="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    32
+                  ],
+                  "Critical": false,
+                  "Value": "MEMwNwYJYIZIAYb9bAEBMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwCAYGZ4EMAQIC"
+                },
+                {
+                  "Id": [
+                    1,
+                    3,
+                    6,
+                    1,
+                    5,
+                    5,
+                    7,
+                    1,
+                    1
+                  ],
+                  "Critical": false,
+                  "Value": "MHUwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBNBggrBgEFBQcwAoZBaHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0U0hBMkhpZ2hBc3N1cmFuY2VTZXJ2ZXJDQS5jcnQ="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    19
+                  ],
+                  "Critical": true,
+                  "Value": "MAA="
+                },
+                {
+                  "Id": [
+                    1,
+                    3,
+                    6,
+                    1,
+                    4,
+                    1,
+                    11129,
+                    2,
+                    4,
+                    2
+                  ],
+                  "Critical": false,
+                  "Value": "BIIB4AHeAHUApLkJkLQYWBSHuxOizGdwCjw1mAT5G9+443fNDsgN3BAAAAFZspw+SwAABAMARjBEAiAerA7v0bVTR1blKT6IzEFdNAbS9J2+sMIyN6Dad8QGQgIgA94eKijn12cROhrzND6+thVW/PdImUzTEodCGFgaCPUAdgBWFAaaL9fC7NP14b1Esj7HRna5vJkRXMDvlJhV1onQ3QAAAVmynD8cAAAEAwBHMEUCICSmaZLAKILGLXy9tbDCRcqKx4KaXaOFICxUHLDavhvTAiEAiiXvucr1ZYHcoJ1ix+/UAyW4Sy1+SfIxV//PVuMumFcAdQDuS723dc5guuFCaR+r4Z5mow9+X7By2IMAxHuJeqj9ywAAAVmynEAuAAAEAwBGMEQCIHKrzA5IbzNEGMr2NmbmcJncuUTZHsHRJqU0eCZcian5AiBGGIX5adWUbjuFWiBb1ZnEkYsH81/ozbYGm5xY36IkxwB2ALvZ37wfinG1k5Qjl6qSe0c4V5UKq1LoGpCWZDaOHtGFAAABWbKcPl0AAAQDAEcwRQIhAJJMvQld/c79AthFEj02qVdazf/Smjkb+ggN/DjrSB28AiAGEjSwxCj4r+PnUgzFtURbLofk3iAvECLj9NZO2SZbdQ=="
+                }
+              ],
+              "ExtraExtensions": null,
+              "UnhandledCriticalExtensions": null,
+              "ExtKeyUsage": [
+                1,
+                2
+              ],
+              "UnknownExtKeyUsage": null,
+              "BasicConstraintsValid": true,
+              "IsCA": false,
+              "MaxPathLen": -1,
+              "MaxPathLenZero": false,
+              "SubjectKeyId": "6mFSsv4KQIDlIIowNySg6qZsaqo=",
+              "AuthorityKeyId": "UWj/kK8CB3U8zNllZGKiErhZcjs=",
+              "OCSPServer": [
+                "http://ocsp.digicert.com"
+              ],
+              "IssuingCertificateURL": [
+                "http://cacerts.digicert.com/DigiCertSHA2HighAssuranceServerCA.crt"
+              ],
+              "DNSNames": [
+                "*.github.com",
+                "github.com"
+              ],
+              "EmailAddresses": null,
+              "IPAddresses": null,
+              "PermittedDNSDomainsCritical": false,
+              "PermittedDNSDomains": null,
+              "CRLDistributionPoints": [
+                "http://crl3.digicert.com/sha2-ha-server-g5.crl",
+                "http://crl4.digicert.com/sha2-ha-server-g5.crl"
+              ],
+              "PolicyIdentifiers": [
+                [
+                  2,
+                  16,
+                  840,
+                  1,
+                  114412,
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  23,
+                  140,
+                  1,
+                  2,
+                  2
+                ]
+              ]
+            },
+            {
+              "Raw": "MIIEsTCCA5mgAwIBAgIQBOHnpNxc8vNtwCtCuF0VnzANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTEzMTAyMjEyMDAwMFoXDTI4MTAyMjEyMDAwMFowcDELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEvMC0GA1UEAxMmRGlnaUNlcnQgU0hBMiBIaWdoIEFzc3VyYW5jZSBTZXJ2ZXIgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC24C/CJAbIbQRf1+8KZAayfSImZRauQkCbztyfn3YHPsMwVYcZuU+UDlqUH1VWtMICKq/QmO4LQNfE0DtyyBSe75CxEamu0si4QzrZCwvV1ZX1QK/IHe1NnF9Xt4ZQaJn1itrSxwUfqJfJ3KSxgoQtxq2lnMcZgqaFD15EWCo3j/018QsIJzJa9buLnqS9UdAn4t07QjOjBSjEuyjMmqwrIw14xnvmXnG3Sj4I+4G3FhahnSMSTeXXkgisdaScus0Xsh5ENWV/UyU50RwKmmMbGZJ0aAo3wsJSSMs5WqK24V3B3aAguCGikyZvFEohQcftbZvySC/zA/WiaJJTL17jAgMBAAGjggFJMIIBRTASBgNVHRMBAf8ECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwNAYIKwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0SGlnaEFzc3VyYW5jZUVWUm9vdENBLmNybDA9BgNVHSAENjA0MDIGBFUdIAAwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAdBgNVHQ4EFgQUUWj/kK8CB3U8zNllZGKiErhZcjswHwYDVR0jBBgwFoAUsT7DaQP4v0cB1JgmGggC72NkK8MwDQYJKoZIhvcNAQELBQADggEBABiKlYkD5m3fXPwdaOpKj4PWUS+Na0QWnqxj9dJubISZi6qBcYRb7TROsLd5kinMLYBq8I4g4Xmk/gNHE+r1hspZcX30BJZr01lYPf7TMSVcGDiEo+afgv2MW5gxTs14nhr9hctJqvIni5ly/D6q1UEL2tU2ob8cbkdJf17ZSHwD2f2LSaCYJkJA69aSEaRkCldUxPUd1gJea6zuxICaEnL6VpPX/78whQYwvwt/Tv9XBZ0k7YXDK/umdaisLRbvfXknsuvCnQsH6qqF0wGjIChBWUMo0oHjqvbsezt3tkBigAVBRQHvFwY+3sAzm2fTYS5yh+Rp/BIAV0AecPUeybQ=",
+              "RawTBSCertificate": "MIIDmaADAgECAhAE4eek3Fzy823AK0K4XRWfMA0GCSqGSIb3DQEBCwUAMGwxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xKzApBgNVBAMTIkRpZ2lDZXJ0IEhpZ2ggQXNzdXJhbmNlIEVWIFJvb3QgQ0EwHhcNMTMxMDIyMTIwMDAwWhcNMjgxMDIyMTIwMDAwWjBwMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMS8wLQYDVQQDEyZEaWdpQ2VydCBTSEEyIEhpZ2ggQXNzdXJhbmNlIFNlcnZlciBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALbgL8IkBshtBF/X7wpkBrJ9IiZlFq5CQJvO3J+fdgc+wzBVhxm5T5QOWpQfVVa0wgIqr9CY7gtA18TQO3LIFJ7vkLERqa7SyLhDOtkLC9XVlfVAr8gd7U2cX1e3hlBomfWK2tLHBR+ol8ncpLGChC3GraWcxxmCpoUPXkRYKjeP/TXxCwgnMlr1u4uepL1R0Cfi3TtCM6MFKMS7KMyarCsjDXjGe+ZecbdKPgj7gbcWFqGdIxJN5deSCKx1pJy6zReyHkQ1ZX9TJTnRHAqaYxsZknRoCjfCwlJIyzlaorbhXcHdoCC4IaKTJm8USiFBx+1tm/JIL/MD9aJoklMvXuMCAwEAAaOCAUkwggFFMBIGA1UdEwEB/wQIMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgGGMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjA0BggrBgEFBQcBAQQoMCYwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBLBgNVHR8ERDBCMECgPqA8hjpodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNlcnRIaWdoQXNzdXJhbmNlRVZSb290Q0EuY3JsMD0GA1UdIAQ2MDQwMgYEVR0gADAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BTMB0GA1UdDgQWBBRRaP+QrwIHdTzM2WVkYqISuFlyOzAfBgNVHSMEGDAWgBSxPsNpA/i/RwHUmCYaCALvY2Qrww==",
+              "RawSubjectPublicKeyInfo": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtuAvwiQGyG0EX9fvCmQGsn0iJmUWrkJAm87cn592Bz7DMFWHGblPlA5alB9VVrTCAiqv0JjuC0DXxNA7csgUnu+QsRGprtLIuEM62QsL1dWV9UCvyB3tTZxfV7eGUGiZ9Yra0scFH6iXydyksYKELcatpZzHGYKmhQ9eRFgqN4/9NfELCCcyWvW7i56kvVHQJ+LdO0IzowUoxLsozJqsKyMNeMZ75l5xt0o+CPuBtxYWoZ0jEk3l15IIrHWknLrNF7IeRDVlf1MlOdEcCppjGxmSdGgKN8LCUkjLOVqituFdwd2gILghopMmbxRKIUHH7W2b8kgv8wP1omiSUy9e4wIDAQAB",
+              "RawSubject": "MHAxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xLzAtBgNVBAMTJkRpZ2lDZXJ0IFNIQTIgSGlnaCBBc3N1cmFuY2UgU2VydmVyIENB",
+              "RawIssuer": "MGwxCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xKzApBgNVBAMTIkRpZ2lDZXJ0IEhpZ2ggQXNzdXJhbmNlIEVWIFJvb3QgQ0E=",
+              "Signature": "GIqViQPmbd9c/B1o6kqPg9ZRL41rRBaerGP10m5shJmLqoFxhFvtNE6wt3mSKcwtgGrwjiDheaT+A0cT6vWGyllxffQElmvTWVg9/tMxJVwYOISj5p+C/YxbmDFOzXieGv2Fy0mq8ieLmXL8PqrVQQva1TahvxxuR0l/XtlIfAPZ/YtJoJgmQkDr1pIRpGQKV1TE9R3WAl5rrO7EgJoScvpWk9f/vzCFBjC/C39O/1cFnSTthcMr+6Z1qKwtFu99eSey68KdCwfqqoXTAaMgKEFZQyjSgeOq9ux7O3e2QGKABUFFAe8XBj7ewDObZ9NhLnKH5Gn8EgBXQB5w9R7JtA==",
+              "SignatureAlgorithm": 4,
+              "PublicKeyAlgorithm": 1,
+              "PublicKey": {
+                "N": "23085922014910748503624791917480115148492919026914207610707020942093828159221184419960399297678177590153378092714640886296044490661625022319263060388275515964365478738040978664516396912933675650257207760237777280773935047177225664304566903694731631728916260237117586511459590661362255543750987738241463266555577715629664656907640120826399947323444556799362651693283202076722872218490347588587929811327918605576169523712767591239193274840826201053308722900104999956283622772648025895714833602740679819670062830777938157004975732087864164660384513848296643542134747514357423990884765641067184766081973460304136714018531",
+                "E": 65537
+              },
+              "Version": 3,
+              "SerialNumber": 6489877074546166222510380951761917343,
+              "Issuer": {
+                "Country": [
+                  "US"
+                ],
+                "Organization": [
+                  "DigiCert Inc"
+                ],
+                "OrganizationalUnit": [
+                  "www.digicert.com"
+                ],
+                "Locality": null,
+                "Province": null,
+                "StreetAddress": null,
+                "PostalCode": null,
+                "SerialNumber": "",
+                "CommonName": "DigiCert High Assurance EV Root CA",
+                "Names": [
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      6
+                    ],
+                    "Value": "US"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      10
+                    ],
+                    "Value": "DigiCert Inc"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      11
+                    ],
+                    "Value": "www.digicert.com"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      3
+                    ],
+                    "Value": "DigiCert High Assurance EV Root CA"
+                  }
+                ],
+                "ExtraNames": null
+              },
+              "Subject": {
+                "Country": [
+                  "US"
+                ],
+                "Organization": [
+                  "DigiCert Inc"
+                ],
+                "OrganizationalUnit": [
+                  "www.digicert.com"
+                ],
+                "Locality": null,
+                "Province": null,
+                "StreetAddress": null,
+                "PostalCode": null,
+                "SerialNumber": "",
+                "CommonName": "DigiCert SHA2 High Assurance Server CA",
+                "Names": [
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      6
+                    ],
+                    "Value": "US"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      10
+                    ],
+                    "Value": "DigiCert Inc"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      11
+                    ],
+                    "Value": "www.digicert.com"
+                  },
+                  {
+                    "Type": [
+                      2,
+                      5,
+                      4,
+                      3
+                    ],
+                    "Value": "DigiCert SHA2 High Assurance Server CA"
+                  }
+                ],
+                "ExtraNames": null
+              },
+              "NotBefore": "2013-10-22T12:00:00Z",
+              "NotAfter": "2028-10-22T12:00:00Z",
+              "KeyUsage": 97,
+              "Extensions": [
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    19
+                  ],
+                  "Critical": true,
+                  "Value": "MAYBAf8CAQA="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    15
+                  ],
+                  "Critical": true,
+                  "Value": "AwIBhg=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    37
+                  ],
+                  "Critical": false,
+                  "Value": "MBQGCCsGAQUFBwMBBggrBgEFBQcDAg=="
+                },
+                {
+                  "Id": [
+                    1,
+                    3,
+                    6,
+                    1,
+                    5,
+                    5,
+                    7,
+                    1,
+                    1
+                  ],
+                  "Critical": false,
+                  "Value": "MCYwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbQ=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    31
+                  ],
+                  "Critical": false,
+                  "Value": "MEIwQKA+oDyGOmh0dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEhpZ2hBc3N1cmFuY2VFVlJvb3RDQS5jcmw="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    32
+                  ],
+                  "Critical": false,
+                  "Value": "MDQwMgYEVR0gADAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BT"
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    14
+                  ],
+                  "Critical": false,
+                  "Value": "BBRRaP+QrwIHdTzM2WVkYqISuFlyOw=="
+                },
+                {
+                  "Id": [
+                    2,
+                    5,
+                    29,
+                    35
+                  ],
+                  "Critical": false,
+                  "Value": "MBaAFLE+w2kD+L9HAdSYJhoIAu9jZCvD"
+                }
+              ],
+              "ExtraExtensions": null,
+              "UnhandledCriticalExtensions": null,
+              "ExtKeyUsage": [
+                1,
+                2
+              ],
+              "UnknownExtKeyUsage": null,
+              "BasicConstraintsValid": true,
+              "IsCA": true,
+              "MaxPathLen": 0,
+              "MaxPathLenZero": true,
+              "SubjectKeyId": "UWj/kK8CB3U8zNllZGKiErhZcjs=",
+              "AuthorityKeyId": "sT7DaQP4v0cB1JgmGggC72NkK8M=",
+              "OCSPServer": [
+                "http://ocsp.digicert.com"
+              ],
+              "IssuingCertificateURL": null,
+              "DNSNames": null,
+              "EmailAddresses": null,
+              "IPAddresses": null,
+              "PermittedDNSDomainsCritical": false,
+              "PermittedDNSDomains": null,
+              "CRLDistributionPoints": [
+                "http://crl4.digicert.com/DigiCertHighAssuranceEVRootCA.crl"
+              ],
+              "PolicyIdentifiers": [
+                [
+                  2,
+                  5,
+                  29,
+                  32,
+                  0
+                ]
+              ]
+            }
+          ],
+          "VerifiedChains": null,
+          "SignedCertificateTimestamps": null,
+          "OCSPResponse": null,
+          "TLSUnique": "aEznrG3WJ1sAdptL"
+        }
+      },
+      "ErrType": "",
+      "ErrMsg": ""
+    }
+  ]
+}

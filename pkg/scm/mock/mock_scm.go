@@ -8,7 +8,7 @@ import (
 	pipeline "capsulecd/pkg/pipeline"
 	gomock "github.com/golang/mock/gomock"
 	http "net/http"
-	"capsulecd/pkg/scm"
+	scm "capsulecd/pkg/scm"
 )
 
 // MockInterface is a mock of Interface interface
@@ -93,6 +93,18 @@ func (_m *MockInterface) Publish() error {
 // Publish indicates an expected call of Publish
 func (_mr *MockInterfaceMockRecorder) Publish() *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "Publish")
+}
+
+// PublishAssets mocks base method
+func (_m *MockInterface) PublishAssets(releaseData interface{}) error {
+	ret := _m.ctrl.Call(_m, "PublishAssets", releaseData)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PublishAssets indicates an expected call of PublishAssets
+func (_mr *MockInterfaceMockRecorder) PublishAssets(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "PublishAssets", arg0)
 }
 
 // Notify mocks base method
