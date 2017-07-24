@@ -1,1 +1,6 @@
 ---
+engine_enable_code_mutation: true
+scm_enable_branch_cleanup: true
+scm_release_assets:
+  - local_path: capsulecd
+    artifact_name: capsulecd

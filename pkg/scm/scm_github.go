@@ -288,7 +288,7 @@ func (g * scmGithub) Cleanup() error {
 	}
 
 	ctx := context.Background()
-	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
+	parts := strings.Split(g.PipelineData.GitBaseInfo.Repo.FullName, "/")
 
 	repoData, _, err := g.Client.Repositories.Get(ctx, parts[0], parts[1])
 	if(err != nil){
