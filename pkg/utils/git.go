@@ -328,8 +328,6 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullN
 	}
 
 	revWalk.Iterate(func(commit *git.Commit) bool {
-		log.Print(commit.Id().String())
-
 		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n", //TODO: this should ahve a link for the SHA.
 			commit.Author().When.UTC().Format("2006-01-02T15:04Z"),
 			commit.Id().String(),

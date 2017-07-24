@@ -156,12 +156,12 @@ func (g *engineNode) PackageStep() error {
 		return cerr
 	}
 
-	tagCommit, terr := utils.GitLatestTaggedCommit(g.PipelineData.GitLocalPath)
+	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
 	if terr != nil {
 		return terr
 	}
 
-	g.PipelineData.ReleaseCommit = tagCommit.CommitSha
+	g.PipelineData.ReleaseCommit = tagCommit
 	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
 	return nil
 }
