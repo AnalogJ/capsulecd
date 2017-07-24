@@ -65,11 +65,23 @@ type Interface interface {
 	//REQUIRES pipelineData.GitLocalPath
 	PublishAssets(releaseData interface{}) error
 
+	// optionally delete the PR branch after the code has been merged into master.
+	// only do so if:
+	// - "scm_enable_branch_cleanup" is true
+	// - HEAD PR branch is in the same repository as the BASE
+	// - branch is not the default branch or "master" for this repository
+	// - branch is not protected (SCM specific feature)
+	// USES scm_enable_branch_cleanup
+	// REQUIRES config.scm_repo_full_name
+	// REQUIRES pipelineData.GitBaseInfo.Repo.FullName
+	// REQUIRES pipelineData.GitHeadInfo.Repo.FullName
+	// REQUIRES pipelineData.GitHeadInfo.Ref
+
+	Cleanup() error
+
 	// Notify should update the scm with the build status at each stage.
 	// If the scm does not support notifications this should be a no-op
 	// In general, if the Notify method returns an error, we'll ignore it, and continue the pipeline.
 	// REQUIRES config.scm_repo_full_name
 	Notify(ref string, state string, message string) error
-
-
 }

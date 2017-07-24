@@ -200,15 +200,6 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 }
 
 func (g *scmGithub) Publish() error {
-
-	// set the pull request status (we do this before the merge, because we cant update status on a merged
-	//PR anways. If the push fails, the status will be set to error correctly.
-	g.Notify(
-		g.PipelineData.GitBaseInfo.Repo.FullName,
-		"success",
-		"Pull-request was successfully merged, new release created.",
-	)
-
 	// push the version bumped metadata file + newly created files to
 	perr := utils.GitPush(g.PipelineData.GitLocalPath, g.PipelineData.GitLocalBranch, g.PipelineData.GitBaseInfo.Ref)
 	if perr != nil {
@@ -251,6 +242,13 @@ func (g *scmGithub) Publish() error {
 	}
 
 	g.PublishAssets(releaseData.GetID())
+
+	g.Notify(
+		g.PipelineData.GitHeadInfo.Sha,
+		"success",
+		"Pull-request was successfully merged, new release created.",
+	)
+
 	return nil
 }
 
@@ -277,6 +275,40 @@ func (g * scmGithub) PublishAssets(releaseData interface{}) error {
 	}
 	return nil
 }
+
+func (g * scmGithub) Cleanup() error {
+
+
+	if !g.Config.GetBool("scm_enable_branch_cleanup"){ //Default is false, so this will just return without doing anything.
+		// - exit if "scm_enable_branch_cleanup" is not true
+		return errors.ScmCleanupFailed("scm_enable_branch_cleanup is false. Skipping cleanup")
+	} else if(g.PipelineData.GitHeadInfo.Repo.FullName != g.PipelineData.GitBaseInfo.Repo.FullName){
+		// exit if the HEAD PR branch is not in the same organization and repository as the BASE
+		return errors.ScmCleanupFailed("HEAD PR branch is not in the same organization & repo as the BASE. Skipping cleanup")
+	}
+
+	ctx := context.Background()
+	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
+
+	repoData, _, err := g.Client.Repositories.Get(ctx, parts[0], parts[1])
+	if(err != nil){
+		return err
+	}
+
+	if g.PipelineData.GitHeadInfo.Ref == repoData.GetDefaultBranch() || g.PipelineData.GitHeadInfo.Ref == "master"{
+		//exit if the HEAD branch is the repo default branch
+		//exit if the HEAD branch is master
+		return errors.ScmCleanupFailed("HEAD PR branch is default repo branch, or master. Skipping cleanup")
+	}
+
+	_, drerr := g.Client.Git.DeleteRef(ctx, parts[0], parts[1], fmt.Sprintf("heads/%s", g.PipelineData.GitHeadInfo.Ref))
+	if(drerr != nil){
+		return drerr
+	}
+
+	return nil
+}
+
 
 func (g *scmGithub) Notify(ref string, state string, message string) error {
 	targetURL := "https://www.capsulecd.com"

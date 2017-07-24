@@ -57,6 +57,13 @@ func (str ScmUnauthorizedUser) Error() string {
 	return fmt.Sprintf("ScmUnauthorizedUser: %q", string(str))
 }
 
+// Raised when the scm cleanup failed
+type ScmCleanupFailed string
+
+func (str ScmCleanupFailed) Error() string {
+	return fmt.Sprintf("ScmCleanupFailed: %q", string(str))
+}
+
 // Raised when the config file specifies a hook/override for a step when the type is :repo
 type EngineTransformUnavailableStep string
 

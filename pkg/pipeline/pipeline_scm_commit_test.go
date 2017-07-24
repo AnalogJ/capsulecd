@@ -24,6 +24,7 @@ func TestScmCommitInfo_Validate_MissingRef(t *testing.T) {
 		Repo: &pipeline.ScmRepoInfo{
 			Name:     "reponame",
 			CloneUrl: "clone_url",
+			FullName: "org/reponame",
 		},
 	}
 
@@ -41,6 +42,7 @@ func TestScmCommitInfo_Validate_MissingSha(t *testing.T) {
 		Repo: &pipeline.ScmRepoInfo{
 			Name:     "reponame",
 			CloneUrl: "clone_url",
+			FullName: "org/reponame",
 		},
 	}
 
@@ -72,6 +74,7 @@ func TestScmCommitInfo_Validate_MissingRepoCloneUrl(t *testing.T) {
 		Sha: "1234",
 		Repo: &pipeline.ScmRepoInfo{
 			Name: "reponame",
+			FullName: "org/reponame",
 		},
 	}
 
@@ -89,6 +92,7 @@ func TestScmCommitInfo_Validate_MissingRepoName(t *testing.T) {
 		Sha: "1234",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "clone_url",
+			FullName: "org/reponame",
 		},
 	}
 
@@ -99,6 +103,24 @@ func TestScmCommitInfo_Validate_MissingRepoName(t *testing.T) {
 	require.Error(t, err, "Should raise error if missing Repo Name")
 }
 
+func TestScmCommitInfo_Validate_MissingRepoFullName(t *testing.T) {
+	//setup
+	commit := pipeline.ScmCommitInfo{
+		Ref: "1234",
+		Sha: "1234",
+		Repo: &pipeline.ScmRepoInfo{
+			CloneUrl: "clone_url",
+			Name: "reponame",
+		},
+	}
+
+	//test
+	err := commit.Validate()
+
+	//assert
+	require.Error(t, err, "Should raise error if missing Repo FullName")
+}
+
 func TestScmCommitInfo_Validate(t *testing.T) {
 	//setup
 	commit := pipeline.ScmCommitInfo{
@@ -107,6 +129,7 @@ func TestScmCommitInfo_Validate(t *testing.T) {
 		Repo: &pipeline.ScmRepoInfo{
 			Name:     "reponame",
 			CloneUrl: "clone_url",
+			FullName: "org/reponame",
 		},
 	}
 

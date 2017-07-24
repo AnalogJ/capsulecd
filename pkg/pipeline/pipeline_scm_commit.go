@@ -27,6 +27,8 @@ func (i *ScmCommitInfo) Validate() error {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo.CloneUrl' key")
 	} else if i.Repo.Name == "" {
 		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo.Name' key")
+	} else if i.Repo.FullName == "" {
+		return errors.ScmPayloadFormatError("Incorrectly formatted payload, missing 'Repo.FullName' key")
 	} else {
 		return nil
 	}

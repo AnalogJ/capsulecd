@@ -50,4 +50,5 @@ func TestErrors(t *testing.T) {
 	require.Implements(t, (*error)(nil), errors.ScmPayloadUnsupported("test"), "should implement the error interface")
 	require.Implements(t, (*error)(nil), errors.ScmUnauthorizedUser("test"), "should implement the error interface")
 	require.Implements(t, (*error)(nil), errors.ScmUnspecifiedError("test"), "should implement the error interface")
+	require.Implements(t, (*error)(nil), errors.ScmCleanupFailed("test"), "should implement the error interface")
 }

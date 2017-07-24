@@ -52,6 +52,10 @@ func (g * scmBitbucket) PublishAssets(releaseData interface{}) error {
 	return nil
 }
 
+func (g * scmBitbucket) Cleanup() error {
+	return nil
+}
+
 func (b *scmBitbucket) Notify(ref string, state string, message string) error {
 	return nil
 }

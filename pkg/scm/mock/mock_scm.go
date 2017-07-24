@@ -107,6 +107,18 @@ func (_mr *MockInterfaceMockRecorder) PublishAssets(arg0 interface{}) *gomock.Ca
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "PublishAssets", arg0)
 }
 
+// Cleanup mocks base method
+func (_m *MockInterface) Cleanup() error {
+	ret := _m.ctrl.Call(_m, "Cleanup")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Cleanup indicates an expected call of Cleanup
+func (_mr *MockInterfaceMockRecorder) Cleanup() *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "Cleanup")
+}
+
 // Notify mocks base method
 func (_m *MockInterface) Notify(ref string, state string, message string) error {
 	ret := _m.ctrl.Call(_m, "Notify", ref, state, message)

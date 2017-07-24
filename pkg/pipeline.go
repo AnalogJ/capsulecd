@@ -174,7 +174,7 @@ func (p *Pipeline) Start(config config.Interface) {
 		})
 
 		p.NotifyStep("scm publish", func() error {
-			if p.Config.GetBool("engine_disable_scm_publish") {
+			if p.Config.GetBool("scm_disable_publish") {
 				log.Println("skipping pre_scm_publish_step, scm_publish_step, post_scm_publish_step")
 				return nil
 			}
@@ -187,6 +187,22 @@ func (p *Pipeline) Start(config config.Interface) {
 			}
 			log.Println("post_scm_publish_step")
 			p.PostScmPublish()
+			return nil
+		})
+
+		p.NotifyStep("scm cleanup", func() error {
+			log.Println("pre_scm_cleanup_step")
+			p.PreScmCleanup()
+			log.Println("scm_cleanup_step")
+			if serr := scmImpl.Cleanup(); serr != nil {
+				//if theres an error, just print it (cleanup will not fail the deployment)
+				// it will stop PostSCM cleanup from running.
+				log.Print(serr)
+				return nil
+			}
+
+			log.Println("post_scm_cleanup_step")
+			p.PostScmCleanup()
 			return nil
 		})
 	}
@@ -203,6 +219,8 @@ func (p *Pipeline) PreScmPublish()                     {}
 func (p *Pipeline) PostScmPublish()                    {}
 func (p *Pipeline) PreScmRetrievePayload()             {}
 func (p *Pipeline) PostScmRetrievePayload()            {}
+func (p *Pipeline) PreScmCleanup()	               {}
+func (p *Pipeline) PostScmCleanup()	               {}
 func (p *Pipeline) PreAssembleStep()                   {}
 func (p *Pipeline) PostAssembleStep()                  {}
 func (p *Pipeline) PreDependenciesStep()               {}
