@@ -205,6 +205,13 @@ func (p *Pipeline) Start(config config.Interface) {
 			p.PostScmCleanup()
 			return nil
 		})
+
+		//if there was an error, it should not have gotten to this point. CheckErr panic's
+		scmImpl.Notify(
+			p.Data.GitHeadInfo.Sha,
+			"success",
+			"Pull-request was successfully merged, new release created.",
+		)
 	}
 }
 
