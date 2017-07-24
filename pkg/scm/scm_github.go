@@ -157,7 +157,6 @@ func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 }
 
 func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
-	log.Printf("%v", payload)
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
 	g.PipelineData.GitBaseInfo = payload.Base

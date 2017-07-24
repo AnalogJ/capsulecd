@@ -96,6 +96,7 @@ func (g *engineGolang) AssembleStep() error {
 }
 
 func (g *engineGolang) DependenciesStep() error {
+	//TODO: check if glide will complain if the checkout directory isnt the same as the GOPATH
 	// the library has already been downloaded. lets make sure all its dependencies are available.
 	if cerr := utils.CmdExec("glide", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("glide install failed. Check dependencies")

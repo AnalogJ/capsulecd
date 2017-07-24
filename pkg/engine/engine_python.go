@@ -118,7 +118,6 @@ func (g *enginePython) AssembleStep() error {
 			commands = python setup.py test
 			deps =
 			  -rrequirements.txt
-			TOX
 			`)
 
 		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "tox.ini"),

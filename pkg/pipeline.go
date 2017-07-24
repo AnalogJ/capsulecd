@@ -240,7 +240,6 @@ func (p *Pipeline) NotifyStep(step string, callback func() error) {
 	if cerr != nil {
 		//TODO: remove the temp folder path.
 		p.Scm.Notify(p.Data.GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
-		p.Cleanup()
 		errors.CheckErr(cerr)
 	}
 }
@@ -249,6 +248,7 @@ func (p *Pipeline) Cleanup() {
 	log.Println("Running Cleanup...")
 	if p.Data != nil && p.Data.GitParentPath != "" {
 		os.RemoveAll(p.Data.GitParentPath)
+		p.Data.GitParentPath = ""
 	}
 }
 

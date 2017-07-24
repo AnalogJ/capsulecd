@@ -10,6 +10,7 @@ import (
 	"capsulecd/pkg/version"
 	"gopkg.in/urfave/cli.v2"
 	"path/filepath"
+	"capsulecd/pkg/utils"
 )
 
 func main() {
@@ -25,14 +26,15 @@ func main() {
 			},
 		},
 		Before: func(c *cli.Context) error {
-			fmt.Fprintf(c.App.Writer, `
-  ___   __   ____  ____  _  _  __    ____  ___  ____
- / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
-( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
- \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/
-https://www.capsulecd.com
+			fmt.Fprintf(c.App.Writer, utils.StripIndent(
+			`
+			  ___   __   ____  ____  _  _  __    ____  ___  ____
+			 / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
+			( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
+			 \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/
+			https://www.capsulecd.com
 
- `)
+			`))
 			return nil
 		},
 
@@ -72,7 +74,7 @@ https://www.capsulecd.com
 					&cli.StringFlag{
 						Name:  "runner",
 						Value: "default", // can be :none, :circleci or :shippable (check the readme for why other hosted providers arn't supported.)
-						Usage: "The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)",
+						Usage: "IGNORED: The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)",
 					},
 
 					&cli.StringFlag{

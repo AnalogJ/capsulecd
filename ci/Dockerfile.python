@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pylint \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& pip install tox \
-	&& pip install safety
+	&& pip install safety \
+	&& pip install twine
 
 # Install GOLANG
 ENV GO_VERSION 1.8.3
