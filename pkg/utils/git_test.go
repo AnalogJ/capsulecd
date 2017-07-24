@@ -242,7 +242,7 @@ func TestGitLatestTaggedCommit(t *testing.T) {
 
 	//assert
 	require.NoError(t, ferr)
-	require.Equal(t, "v0.1.11", tag.TagShortName)
+	require.Equal(t, "v0.1.12", tag.TagShortName)
 
 }
 
