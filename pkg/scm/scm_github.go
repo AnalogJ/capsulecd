@@ -199,6 +199,12 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 }
 
 func (g *scmGithub) Publish() error {
+	g.Notify(
+		g.PipelineData.GitHeadInfo.Sha,
+		"success",
+		"Pull-request was successfully merged, new release created.",
+	)
+
 	// push the version bumped metadata file + newly created files to
 	perr := utils.GitPush(g.PipelineData.GitLocalPath, g.PipelineData.GitLocalBranch, g.PipelineData.GitBaseInfo.Ref)
 	if perr != nil {
@@ -241,12 +247,6 @@ func (g *scmGithub) Publish() error {
 	}
 
 	g.PublishAssets(releaseData.GetID())
-
-	g.Notify(
-		g.PipelineData.GitHeadInfo.Sha,
-		"success",
-		"Pull-request was successfully merged, new release created.",
-	)
 
 	return nil
 }

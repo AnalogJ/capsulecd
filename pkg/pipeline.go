@@ -245,11 +245,15 @@ func (p *Pipeline) NotifyStep(step string, callback func() error) {
 }
 
 func (p *Pipeline) Cleanup() {
-	log.Println("Running Cleanup...")
-	if p.Data != nil && p.Data.GitParentPath != "" {
+	if p.Config.GetBool("engine_disable_cleanup"){
+		log.Println("Skipping Cleanup...")
+		log.Printf("Temporary files at the following locaton should be cleaned manually: '%s'", p.Data.GitParentPath)
+	} else if p.Data != nil && p.Data.GitParentPath != "" {
+		log.Println("Running Cleanup...")
 		os.RemoveAll(p.Data.GitParentPath)
 		p.Data.GitParentPath = ""
 	}
+
 }
 
 //type NotifyStepCallback func() error

@@ -195,7 +195,7 @@ func (g *enginePython) TestStep() error {
 }
 
 func (g *enginePython) PackageStep() error {
-	os.RemoveAll(path.Join(g.PipelineData.GitLocalPath, ".tox")) //remove .tox folder. 
+	os.RemoveAll(path.Join(g.PipelineData.GitLocalPath, ".tox")) //remove .tox folder.
 
 
 	//if !g.Config.GetBool("engine_package_keep_lock_file") { //TODO figure out if theres a good pattern here.
