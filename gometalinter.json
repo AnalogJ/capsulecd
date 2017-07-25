@@ -1,0 +1,19 @@
+{
+  "Enable": [
+    "structcheck",
+    "ineffassign",
+    "golint",
+    "goimports",
+    "errcheck",
+    "varcheck",
+    "interfacer",
+    "goconst",
+    "gosimple",
+    "staticcheck",
+    "unparam",
+    "unused",
+    "misspell",
+    "gas",
+    "safesql"
+  ]
+}
