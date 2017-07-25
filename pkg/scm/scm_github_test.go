@@ -402,7 +402,7 @@ func TestScmGithub_Cleanup(t *testing.T) {
 	pipelineData := new(pipeline.Data)
 	pipelineData.IsPullRequest = true
 	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
-		Ref: "AnalogJ-patch-6",
+		Ref: "AnalogJ-patch-4",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
 			Name: "gem_analogj_test",
