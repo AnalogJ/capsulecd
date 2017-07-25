@@ -3,7 +3,7 @@ package utils
 import (
 	"capsulecd/pkg/errors"
 	"fmt"
-	"gopkg.in/libgit2/git2go.v25"
+	git2go "gopkg.in/libgit2/git2go.v25"
 	"log"
 	"os"
 	"path"
@@ -32,19 +32,19 @@ func GitClone(parentPath string, repositoryName string, gitRemote string) (strin
 		return "", errors.ScmFilesystemError(fmt.Sprintf("The local repository path already exists, this should never happen. %s", absPath))
 	}
 
-	_, err := git.Clone(gitRemote, absPath, new(git.CloneOptions))
+	_, err := git2go.Clone(gitRemote, absPath, new(git2go.CloneOptions))
 	return absPath, err
 }
 
 func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return oerr
 	}
 
-	checkoutOpts := &git.CheckoutOpts{
-		Strategy: git.CheckoutSafe | git.CheckoutRecreateMissing | git.CheckoutAllowConflicts | git.CheckoutUseTheirs,
+	checkoutOpts := &git2go.CheckoutOpts{
+		Strategy: git2go.CheckoutSafe | git2go.CheckoutRecreateMissing | git2go.CheckoutAllowConflicts | git2go.CheckoutUseTheirs,
 	}
 
 	remote, lerr := repo.Remotes.Lookup("origin")
@@ -52,12 +52,12 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 		return lerr
 	}
 	time.Sleep(time.Second)
-	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git.FetchOptions), "")
+	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git2go.FetchOptions), "")
 	if ferr != nil {
 		return ferr
 	}
 
-	localBranch, berr := repo.LookupBranch(localBranchName, git.BranchLocal)
+	localBranch, berr := repo.LookupBranch(localBranchName, git2go.BranchLocal)
 	if berr != nil {
 		return berr
 	}
@@ -88,17 +88,17 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 }
 
 func GitCheckout(repoPath string, branchName string) error {
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return oerr
 	}
 
-	checkoutOpts := &git.CheckoutOpts{
-		Strategy: git.CheckoutSafe | git.CheckoutRecreateMissing | git.CheckoutAllowConflicts | git.CheckoutUseTheirs,
+	checkoutOpts := &git2go.CheckoutOpts{
+		Strategy: git2go.CheckoutSafe | git2go.CheckoutRecreateMissing | git2go.CheckoutAllowConflicts | git2go.CheckoutUseTheirs,
 	}
 	//Getting the reference for the remote branch
 	// remoteBranch, err := repo.References.Lookup("refs/remotes/origin/" + branchName)
-	remoteBranch, err := repo.LookupBranch("origin/"+branchName, git.BranchRemote)
+	remoteBranch, err := repo.LookupBranch("origin/"+branchName, git2go.BranchRemote)
 	if err != nil {
 		log.Print("Failed to find remote branch: " + branchName)
 		return err
@@ -113,7 +113,7 @@ func GitCheckout(repoPath string, branchName string) error {
 	}
 	defer commit.Free()
 
-	localBranch, err := repo.LookupBranch(branchName, git.BranchLocal)
+	localBranch, err := repo.LookupBranch(branchName, git2go.BranchLocal)
 	// No local branch, lets create one
 	if localBranch == nil || err != nil {
 		// Creating local branch
@@ -162,7 +162,7 @@ func GitCheckout(repoPath string, branchName string) error {
 
 //Add all modified files to index, and commit.
 func GitCommit(repoPath string, message string) error {
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return oerr
 	}
@@ -174,7 +174,7 @@ func GitCommit(repoPath string, message string) error {
 	if ierr != nil {
 		return ierr
 	}
-	aerr := idx.AddAll([]string{}, git.IndexAddDefault, nil)
+	aerr := idx.AddAll([]string{}, git2go.IndexAddDefault, nil)
 	if aerr != nil {
 		return aerr
 	}
@@ -209,7 +209,7 @@ func GitCommit(repoPath string, message string) error {
 }
 
 func GitTag(repoPath string, version string) (string, error) {
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
 	}
@@ -231,7 +231,7 @@ func GitTag(repoPath string, version string) (string, error) {
 func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 	//- https://gist.github.com/danielfbm/37b0ca88b745503557b2b3f16865d8c3
 	//- https://stackoverflow.com/questions/37026399/git2go-after-createcommit-all-files-appear-like-being-added-for-deletion
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return oerr
 	}
@@ -244,23 +244,23 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 	//remote.ConnectPush(gitRemoteCallbacks(), &git.ProxyOptions{}, []string{})
 
 	//err = remote.Push([]string{"refs/heads/master"}, nil, signature, message)
-	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, new(git.PushOptions))
+	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, new(git2go.PushOptions))
 }
 
 // Get the nearest tag on branch.
 // tag must be nearest, ie. sorted by their distance from the HEAD of the branch, not the date or tagname.
 // basically `git describe --tags --abbrev=0`
 func GitFindNearestTagName(repoPath string)(string, error){
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
 	}
 
-	descOptions, derr := git.DefaultDescribeOptions()
+	descOptions, derr := git2go.DefaultDescribeOptions()
 	if(derr != nil){return "", derr}
-	descOptions.Strategy = git.DescribeTags
+	descOptions.Strategy = git2go.DescribeTags
 
-	formatOptions, ferr := git.DefaultDescribeFormatOptions()
+	formatOptions, ferr := git2go.DefaultDescribeFormatOptions()
 	if(ferr != nil){return "", ferr}
 	formatOptions.AbbreviatedSize = 0
 
@@ -278,7 +278,7 @@ func GitFindNearestTagName(repoPath string)(string, error){
 }
 
 func GitGenerateChangelog(repoPath string, baseSha string, headSha string) (string, error) {
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
 	}
@@ -297,7 +297,7 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string) (stri
 		return "", rerr
 	}
 
-	revWalk.Iterate(func(commit *git.Commit) bool {
+	revWalk.Iterate(func(commit *git2go.Commit) bool {
 		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n", //TODO: this should ahve a link for the SHA.
 			commit.Author().When.UTC().Format("2006-01-02T15:04Z"),
 			commit.Id().String(),
@@ -336,7 +336,7 @@ func GitGenerateGitIgnore(repoPath string, ignoreType string) error {
 }
 
 func GitGetTagDetails(repoPath string, tagName string) (*pipeline.GitTagDetails, error) {
-	repo, oerr := git.OpenRepository(repoPath)
+	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return nil, oerr
 	}
@@ -381,8 +381,8 @@ func GitGetTagDetails(repoPath string, tagName string) (*pipeline.GitTagDetails,
 
 //private methods
 
-func gitSignature() *git.Signature {
-	return &git.Signature{
+func gitSignature() *git2go.Signature {
+	return &git2go.Signature{
 		Name:  "CapsuleCD",
 		Email: "CapsuleCD@users.noreply.github.com",
 		When:  time.Now(),
