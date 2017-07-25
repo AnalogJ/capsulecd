@@ -97,12 +97,12 @@ func (g *engineNode) AssembleStep() error {
 
 func (g *engineNode) DependenciesStep() error {
 	// the module has already been downloaded. lets make sure all its dependencies are available.
-	if derr := utils.BashCmdExec("npm install", g.PipelineData.GitLocalPath, ""); derr != nil {
+	if derr := utils.BashCmdExec("npm install", g.PipelineData.GitLocalPath, nil, ""); derr != nil {
 		return errors.EngineTestRunnerError("npm install failed. Check module dependencies")
 	}
 
 	// create a shrinkwrap file.
-	if derr := utils.BashCmdExec("npm shrinkwrap", g.PipelineData.GitLocalPath, ""); derr != nil {
+	if derr := utils.BashCmdExec("npm shrinkwrap", g.PipelineData.GitLocalPath, nil, ""); derr != nil {
 		return errors.EngineTestRunnerError("npm shrinkwrap failed. Check log for exact error")
 	}
 	return nil
@@ -121,7 +121,7 @@ func (g *engineNode) TestStep() error {
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			lintCmd = g.Config.GetString("engine_cmd_fmt")
 		}
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 	}
@@ -130,7 +130,7 @@ func (g *engineNode) TestStep() error {
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
 		testCmd := g.Config.GetString("engine_cmd_test")
-		if derr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); derr != nil {
+		if derr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); derr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
@@ -139,7 +139,7 @@ func (g *engineNode) TestStep() error {
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
 		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
@@ -185,7 +185,7 @@ func (g *engineNode) DistStep() error {
 	}
 
 	npmPublishCmd := fmt.Sprintf("npm --userconfig %s publish .", npmrcFile.Name())
-	derr := utils.BashCmdExec(npmPublishCmd, g.PipelineData.GitLocalPath, "")
+	derr := utils.BashCmdExec(npmPublishCmd, g.PipelineData.GitLocalPath, nil, "")
 	if derr != nil {
 		return errors.EngineDistPackageError("npm publish failed. Check log for exact error")
 	}
@@ -227,7 +227,7 @@ func (g *engineNode) writeNextMetadata(gitLocalPath string) error {
 	versionCmd := fmt.Sprintf("npm --no-git-tag-version version %s",
 		g.NextMetadata.Version,
 	)
-	if verr := utils.BashCmdExec(versionCmd, g.PipelineData.GitLocalPath, ""); verr != nil {
+	if verr := utils.BashCmdExec(versionCmd, g.PipelineData.GitLocalPath, nil, ""); verr != nil {
 		return errors.EngineTestRunnerError("npm version bump failed")
 	}
 	return nil

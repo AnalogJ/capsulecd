@@ -122,12 +122,12 @@ func (g *engineChef) AssembleStep() error {
 
 func (g *engineChef) DependenciesStep() error {
 	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
-	if cerr := utils.CmdExec("berks", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
+	if cerr := utils.BashCmdExec("berks install", g.PipelineData.GitLocalPath, nil, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")
 	}
 
 	//download all its gem dependencies
-	if berr := utils.CmdExec("bundle", []string{"install"}, g.PipelineData.GitLocalPath, ""); berr != nil {
+	if berr := utils.BashCmdExec("bundle install", g.PipelineData.GitLocalPath, nil, ""); berr != nil {
 		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
 	}
 	return nil
@@ -143,7 +143,7 @@ func (g *engineChef) TestStep() error {
 	if !g.Config.GetBool("engine_disable_lint") {
 		//run test command
 		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 	}
@@ -152,7 +152,7 @@ func (g *engineChef) TestStep() error {
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
 		testCmd := g.Config.GetString("engine_cmd_test")
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
@@ -161,7 +161,7 @@ func (g *engineChef) TestStep() error {
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
 		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
@@ -242,7 +242,7 @@ func (g *engineChef) DistStep() error {
 		knifeFile.Name(),
 	)
 
-	if derr := utils.BashCmdExec(cookbookDistCmd, "", ""); derr != nil {
+	if derr := utils.BashCmdExec(cookbookDistCmd, "", nil, ""); derr != nil {
 		return errors.EngineDistPackageError("knife cookbook upload to supermarket failed")
 	}
 	return nil
@@ -253,7 +253,7 @@ func (g *engineChef) DistStep() error {
 func (g *engineChef) retrieveCurrentMetadata(gitLocalPath string) error {
 	//dat, err := ioutil.ReadFile(path.Join(gitLocalPath, "metadata.rb"))
 	//knife cookbook metadata -o ../ chef-mycookbook -- will generate a metadata.json file.
-	if cerr := utils.CmdExec("knife", []string{"cookbook", "metadata", "-o", "../", path.Base(gitLocalPath)}, gitLocalPath, ""); cerr != nil {
+	if cerr := utils.BashCmdExec(fmt.Sprintf("knife cookbook metadata -o ../ %s", path.Base(gitLocalPath)), gitLocalPath, nil, ""); cerr != nil {
 		return cerr
 	}
 	defer os.Remove(path.Join(gitLocalPath, "metadata.json"))
@@ -284,5 +284,5 @@ func (g *engineChef) populateNextMetadata() error {
 }
 
 func (g *engineChef) writeNextMetadata(gitLocalPath string) error {
-	return utils.CmdExec("knife", []string{"spork", "bump", path.Base(gitLocalPath), "manual", g.NextMetadata.Version, "-o", "../"}, gitLocalPath, "")
+	return utils.BashCmdExec(fmt.Sprintf("knife spork bump %s manual %s -o ../", path.Base(gitLocalPath), g.NextMetadata.Version), gitLocalPath, nil, "")
 }

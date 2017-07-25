@@ -131,7 +131,7 @@ func (g *engineRuby) AssembleStep() error {
 	// package the gem, make sure it builds correctly
 
 	gemCmd := fmt.Sprintf("gem build %s", g.GemspecPath)
-	if terr := utils.BashCmdExec(gemCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+	if terr := utils.BashCmdExec(gemCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 		return errors.EngineBuildPackageFailed("gem build failed. Check gemspec file and dependencies")
 	}
 
@@ -147,12 +147,12 @@ func (g *engineRuby) DependenciesStep() error {
 
 	gemCmd := fmt.Sprintf("gem install %s --ignore-dependencies",
 		path.Join(g.PipelineData.GitLocalPath, fmt.Sprintf("%s-%s.gem", g.NextMetadata.Name, g.NextMetadata.Version)))
-	if terr := utils.BashCmdExec(gemCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+	if terr := utils.BashCmdExec(gemCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 		return errors.EngineTestDependenciesError("gem install failed. Check gemspec and gem dependencies")
 	}
 
 	// install dependencies
-	if terr := utils.BashCmdExec("bundle install", g.PipelineData.GitLocalPath, ""); terr != nil {
+	if terr := utils.BashCmdExec("bundle install", g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 		return errors.EngineBuildPackageFailed("bundle install failed. Check Gemfile")
 	}
 	return nil
@@ -171,7 +171,7 @@ func (g *engineRuby) TestStep() error {
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			lintCmd = g.Config.GetString("engine_cmd_fmt")
 		}
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 	}
@@ -179,7 +179,7 @@ func (g *engineRuby) TestStep() error {
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
 		testCmd := g.Config.GetString("engine_cmd_test")
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
@@ -188,7 +188,7 @@ func (g *engineRuby) TestStep() error {
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
 		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
@@ -238,7 +238,7 @@ func (g *engineRuby) DistStep() error {
 		fmt.Sprintf("%s-%s.gem", g.NextMetadata.Name, g.NextMetadata.Version),
 		credFile.Name(),
 	)
-	if derr := utils.BashCmdExec(pushCmd, g.PipelineData.GitLocalPath, ""); derr != nil {
+	if derr := utils.BashCmdExec(pushCmd, g.PipelineData.GitLocalPath, nil, ""); derr != nil {
 		return errors.EngineDistPackageError("Pushing gem to RubyGems.org using `gem push` failed. Check log for exact error")
 	}
 
@@ -266,7 +266,7 @@ func (g *engineRuby) retrieveCurrentMetadata(gitLocalPath string) error {
 		gemspecJsonFile.Name(),
 		g.GemspecPath,
 	)
-	if cerr := utils.BashCmdExec(gemspecJsonCmd, "", ""); cerr != nil {
+	if cerr := utils.BashCmdExec(gemspecJsonCmd, "", nil, ""); cerr != nil {
 		return errors.EngineBuildPackageFailed(fmt.Sprintf("Command (%s) failed. Check log for more details.", gemspecJsonCmd))
 	}
 

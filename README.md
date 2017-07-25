@@ -302,6 +302,8 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://github.com/codecov/support/wiki/Codecov-Yaml#how-to-disable-a-single-ci-provider
 - https://github.com/gopheracademy/gopheracademy-web/blob/master/content/advent-2014/git2go-tutorial.md
 - https://stackoverflow.com/questions/2381665/list-tags-contained-by-a-branch
-
+- https://dmitri.shuralyov.com/blog/18
+- http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
+- http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
 
 

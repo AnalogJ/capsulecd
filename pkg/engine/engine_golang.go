@@ -29,6 +29,7 @@ type engineGolang struct {
 	Scm             scm.Interface //Interface
 	CurrentMetadata *golangMetadata
 	NextMetadata    *golangMetadata
+	GoPath		string
 }
 
 func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
@@ -37,6 +38,14 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(golangMetadata)
 	g.NextMetadata = new(golangMetadata)
+
+	//golang requires that the package is in GOPATH.
+	//we can have multiple workspaces in the gopath by separating them with :
+	g.GoPath = g.PipelineData.GitParentPath
+	g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src")
+	os.MkdirAll(g.PipelineData.GitParentPath, 0666)
+	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
+	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath).
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
@@ -98,7 +107,7 @@ func (g *engineGolang) AssembleStep() error {
 func (g *engineGolang) DependenciesStep() error {
 	//TODO: check if glide will complain if the checkout directory isnt the same as the GOPATH
 	// the library has already been downloaded. lets make sure all its dependencies are available.
-	if cerr := utils.CmdExec("glide", []string{"install"}, g.PipelineData.GitLocalPath, ""); cerr != nil {
+	if cerr := utils.BashCmdExec("glide install", g.PipelineData.GitLocalPath, nil, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("glide install failed. Check dependencies")
 	}
 
@@ -114,7 +123,7 @@ func (g *engineGolang) CompileStep() error {
 
 		//code formatter
 		compileCmd := g.Config.GetString("engine_cmd_compile")
-		if terr := utils.BashCmdExec(compileCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(compileCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Compile command (%s) failed. Check log for more details.", compileCmd))
 		}
 	}
@@ -125,18 +134,23 @@ func (g *engineGolang) TestStep() error {
 	// go test -v $(go list ./... | grep -v /vendor/)
 	// gofmt -s -l $(bash find . -name "*.go" | grep -v vendor | uniq)
 
+	//TODO: the package msut be in the GOPATH for this to work correclty.
+	//http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
+	//http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
+	//
+
 	//skip the lint commands if disabled
 	if !g.Config.GetBool("engine_disable_lint") {
 		//run test command
 		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			//code formatter
 			fmtCmd := g.Config.GetString("engine_cmd_fmt")
-			if terr := utils.BashCmdExec(fmtCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+			if terr := utils.BashCmdExec(fmtCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 				return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", fmtCmd))
 			}
 		}
@@ -146,7 +160,7 @@ func (g *engineGolang) TestStep() error {
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
 		testCmd :=  g.Config.GetString("engine_cmd_test")
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
@@ -157,7 +171,7 @@ func (g *engineGolang) TestStep() error {
 		// no Golang security check known for dependencies.
 		//code formatter
 		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
@@ -238,7 +252,7 @@ func (g *engineGolang) writeNextMetadata(gitLocalPath string) error {
 
 	// Create the AST by parsing src.
 	fset := token.NewFileSet() // positions are relative to fset
-	f, err := parser.ParseFile(fset, "", string(versionContent), 0)
+	f, err := parser.ParseFile(fset, "", string(versionContent), parser.ParseComments)
 	if err != nil {
 		return err
 	}
@@ -262,7 +276,7 @@ func (g *engineGolang) parseGoVersion(list []ast.Decl) (string, error) {
 	//find version declaration (uppercase or lowercase)
 	for _, decl := range list {
 		gen := decl.(*ast.GenDecl)
-		if gen.Tok == token.VAR {
+		if gen.Tok == token.CONST || gen.Tok == token.VAR {
 			for _, spec := range gen.Specs {
 				valSpec := spec.(*ast.ValueSpec)
 				if strings.ToLower(valSpec.Names[0].Name) == "version" {
@@ -279,12 +293,12 @@ func (g *engineGolang) setGoVersion(list []ast.Decl, version string) ([]ast.Decl
 	//find version declaration (uppercase or lowercase)
 	for _, decl := range list {
 		gen := decl.(*ast.GenDecl)
-		if gen.Tok == token.VAR {
+		if gen.Tok == token.CONST || gen.Tok == token.VAR {
 			for _, spec := range gen.Specs {
 				valSpec := spec.(*ast.ValueSpec)
 				if strings.ToLower(valSpec.Names[0].Name) == "version" {
 					//found the version variable.
-					valSpec.Values[0].(*ast.BasicLit).Value = version
+					valSpec.Values[0].(*ast.BasicLit).Value = fmt.Sprintf(`"%s"`, version)
 					return list, nil
 				}
 			}

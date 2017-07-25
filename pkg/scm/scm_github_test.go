@@ -20,9 +20,9 @@ import (
 
 func vcrSetup(t *testing.T) *http.Client {
 	accessToken := "PLACEHOLDER"
-	if(os.Getenv("CI") != "true"){
-		accessToken = os.Getenv("GITHUB_ACCESS_TOKEN")
-	}
+	//if(os.Getenv("CI") != "true"){
+	//	accessToken = os.Getenv("GITHUB_ACCESS_TOKEN")
+	//}
 
 	ts := oauth2.StaticTokenSource(
 		//setting a real access token here will allow API calls to connect successfully

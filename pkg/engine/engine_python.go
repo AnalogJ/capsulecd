@@ -167,7 +167,7 @@ func (g *enginePython) TestStep() error {
 	if !g.Config.GetBool("engine_disable_lint") {
 		//run test command
 		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
 		}
 	}
@@ -177,7 +177,7 @@ func (g *enginePython) TestStep() error {
 		//run test command
 		testCmd := g.Config.GetString("engine_cmd_test")
 		//running tox will install all dependencies in a virtual env, and then run unit tests.
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}
 	}
@@ -186,7 +186,7 @@ func (g *enginePython) TestStep() error {
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
 		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, ""); terr != nil {
+		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
 		}
 	}
@@ -243,7 +243,7 @@ func (g *enginePython) DistStep() error {
 	}
 
 	pythonDistCmd := "python setup.py sdist"
-	if derr := utils.BashCmdExec(pythonDistCmd, g.PipelineData.GitLocalPath, ""); derr != nil {
+	if derr := utils.BashCmdExec(pythonDistCmd, g.PipelineData.GitLocalPath, nil, ""); derr != nil {
 		return errors.EngineDistPackageError("python setup.py sdist failed")
 	}
 
@@ -252,7 +252,7 @@ func (g *enginePython) DistStep() error {
 		pypircFile.Name(),
 	)
 
-	if uerr := utils.BashCmdExec(pypiUploadCmd, g.PipelineData.GitLocalPath, ""); uerr != nil {
+	if uerr := utils.BashCmdExec(pypiUploadCmd, g.PipelineData.GitLocalPath, nil, ""); uerr != nil {
 		return errors.EngineDistPackageError("twine package upload failed. Check log for exact error")
 	}
 	return nil

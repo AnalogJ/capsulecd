@@ -9,11 +9,15 @@ import (
 	"path"
 )
 
-func BashCmdExec(cmd string, workingDir string, logPrefix string) error {
-	return CmdExec("sh", []string{"-c", cmd}, workingDir, logPrefix)
+//http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
+//http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
+//
+
+func BashCmdExec(cmd string, workingDir string, environ []string, logPrefix string) error {
+	return CmdExec("sh", []string{"-c", cmd}, workingDir, environ, logPrefix)
 }
 
-func CmdExec(cmdName string, cmdArgs []string, workingDir string, logPrefix string) error {
+func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []string, logPrefix string) error {
 
 	if logPrefix == "" {
 		logPrefix = " >> "
@@ -22,6 +26,9 @@ func CmdExec(cmdName string, cmdArgs []string, workingDir string, logPrefix stri
 	}
 
 	cmd := exec.Command(cmdName, cmdArgs...)
+	if environ != nil{
+		cmd.Env = environ
+	}
 	if workingDir != "" && path.IsAbs(workingDir) {
 		cmd.Dir = workingDir
 	} else if workingDir != "" {
