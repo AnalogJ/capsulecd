@@ -223,7 +223,7 @@ func GitTag(repoPath string, version string) (string, error) {
 		return "", lerr
 	}
 
-	//TODO: this shoudl be a annotated tag.
+	//TODO: this should be a annotated tag.
 	tagId, terr := repo.Tags.CreateLightweight(version, commit, false) //TODO: this should be an annotated tag.
 	return tagId.String(), terr
 }
@@ -298,7 +298,7 @@ func GitGenerateChangelog(repoPath string, baseSha string, headSha string) (stri
 	}
 
 	revWalk.Iterate(func(commit *git2go.Commit) bool {
-		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n", //TODO: this should ahve a link for the SHA.
+		markdown += fmt.Sprintf("%s | %.8s | %s | %s\n", //TODO: this should have a link for the SHA.
 			commit.Author().When.UTC().Format("2006-01-02T15:04Z"),
 			commit.Id().String(),
 			cleanCommitMessage(commit.Message()),
@@ -327,12 +327,7 @@ func GitGenerateGitIgnore(repoPath string, ignoreType string) error {
 	}
 
 	gitIgnorePath := filepath.Join(repoPath, ".gitignore")
-
-	if err := ioutil.WriteFile(gitIgnorePath, gitIgnoreBytes, 0644); err != nil {
-		return err
-	}
-
-	return nil
+	return ioutil.WriteFile(gitIgnorePath, gitIgnoreBytes, 0644);
 }
 
 func GitGetTagDetails(repoPath string, tagName string) (*pipeline.GitTagDetails, error) {

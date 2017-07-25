@@ -134,7 +134,7 @@ func (g *engineGolang) TestStep() error {
 	// go test -v $(go list ./... | grep -v /vendor/)
 	// gofmt -s -l $(bash find . -name "*.go" | grep -v vendor | uniq)
 
-	//TODO: the package msut be in the GOPATH for this to work correclty.
+	//TODO: the package must be in the GOPATH for this to work correctly.
 	//http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
 	//http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
 	//

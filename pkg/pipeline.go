@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"capsulecd/pkg/utils"
 )
 
 type Pipeline struct {
@@ -67,8 +68,12 @@ func (p *Pipeline) Start(config config.Interface) {
 	}
 
 	// update the config with repo config file options
-	p.Config.ReadConfig(path.Join(p.Data.GitLocalPath, "capsule.yml"))
+	repoConfig := path.Join(p.Data.GitLocalPath, "capsule.yml")
+	if utils.FileExists(repoConfig){
+		if err := p.Config.ReadConfig(repoConfig); err != nil{
 
+		}
+	}
 	if p.Config.IsSet("scm_release_assets") {
 		//unmarshall config data.
 		parsedAssets := new([]pipeline.ScmReleaseAsset)
@@ -82,10 +87,7 @@ func (p *Pipeline) Start(config config.Interface) {
 	//validate that required executables are available for the following build/test/package/etc steps
 	p.NotifyStep("validate tools", func() error {
 		log.Println("validate_tools_step")
-		if verr := engineImpl.ValidateTools(); verr != nil {
-			return verr
-		}
-		return nil
+		return engineImpl.ValidateTools();
 	})
 
 	// now that the payload has been processed we can begin by building the code.
