@@ -153,7 +153,23 @@ func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 	}
 	g.PipelineData.GitLocalPath = gitLocalPath
 
-	return utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref)
+	if cerr := utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref); cerr != nil{
+		return cerr
+	}
+
+	//retrieve and store the nearestTag to this commit.
+	nearestTag, err := utils.GitFindNearestTagName(gitLocalPath)
+	if err != nil {
+		return nil // we dont care about failures finding the nearest tag, we'll just have an empty changelog.
+	}
+
+	tagDetails, err := utils.GitGetTagDetails(gitLocalPath, nearestTag)
+	if err != nil {
+		return nil // we dont care about failures finding the nearest tag, we'll just have an empty changelog.
+	}
+	g.PipelineData.GitNearestTag = tagDetails
+
+	return nil
 }
 
 func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
@@ -191,10 +207,22 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 		return ferr
 	}
 
-	//return utils.GitCheckout(g.options.GitLocalPath, g.options.GitLocalBranch)
-	//
+
 	// show a processing message on the github PR.
 	g.Notify(g.PipelineData.GitHeadInfo.Sha, "pending", "Started processing package. Pull request will be merged automatically when complete.")
+
+	//retrieve and store the nearestTag to this commit.
+	nearestTag, err := utils.GitFindNearestTagName(gitLocalPath)
+	if err != nil {
+		return nil // we dont care about failures finding the nearest tag, we'll just have an empty changelog.
+	}
+
+	tagDetails, err := utils.GitGetTagDetails(gitLocalPath, nearestTag)
+	if err != nil {
+		return nil // we dont care about failures finding the nearest tag, we'll just have an empty changelog.
+	}
+	g.PipelineData.GitNearestTag = tagDetails
+
 	return nil
 }
 
@@ -212,14 +240,25 @@ func (g *scmGithub) Publish() error {
 	releaseSha := utils.LeftPad2Len(g.PipelineData.ReleaseCommit, "0", 40)
 
 	//get the release changelog
-	releaseBody, clerr := utils.GitGenerateChangelog(
-		g.PipelineData.GitLocalPath,
-		g.PipelineData.GitBaseInfo.Sha,
-		g.PipelineData.GitHeadInfo.Sha,
-		g.PipelineData.GitBaseInfo.Repo.FullName,
-	)
-	if clerr != nil {
-		return clerr
+	// logic is complicated.
+	// If this is a push we can only do a tag-tag Changelog
+	// If this is a pull request we can do either
+	// if disable_nearest_tag_changelog is true, we must attempt
+	var releaseBody string = ""
+	if g.PipelineData.GitNearestTag != nil && !g.Config.GetBool("scm_disable_nearest_tag_changelog") {
+		releaseBody, _ = utils.GitGenerateChangelog(
+			g.PipelineData.GitLocalPath,
+			g.PipelineData.GitNearestTag.TagShortName,
+			g.PipelineData.GitLocalBranch,
+		)
+	}
+	//fallback to using diff if pullrequest.
+	if g.PipelineData.IsPullRequest && releaseBody == "" {
+		releaseBody, _ = utils.GitGenerateChangelog(
+			g.PipelineData.GitLocalPath,
+			g.PipelineData.GitBaseInfo.Sha,
+			g.PipelineData.GitHeadInfo.Sha,
+		)
 	}
 
 	//create release.
@@ -276,6 +315,8 @@ func (g * scmGithub) Cleanup() error {
 	if !g.Config.GetBool("scm_enable_branch_cleanup"){ //Default is false, so this will just return without doing anything.
 		// - exit if "scm_enable_branch_cleanup" is not true
 		return errors.ScmCleanupFailed("scm_enable_branch_cleanup is false. Skipping cleanup")
+	} else if(!g.PipelineData.IsPullRequest) {
+		return errors.ScmCleanupFailed("scm cleanup unnecessary for push's. Skipping cleanup")
 	} else if(g.PipelineData.GitHeadInfo.Repo.FullName != g.PipelineData.GitBaseInfo.Repo.FullName){
 		// exit if the HEAD PR branch is not in the same organization and repository as the BASE
 		return errors.ScmCleanupFailed("HEAD PR branch is not in the same organization & repo as the BASE. Skipping cleanup")

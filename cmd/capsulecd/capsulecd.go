@@ -47,7 +47,7 @@ func main() {
 					config, _ := config.Create()
 					config.Set("scm", c.String("scm"))
 					config.Set("package_type", c.String("package_type"))
-					config.Set("dry_run", c.String("dry_run"))
+					//config.Set("dry_run", c.String("dry_run"))
 
 					//load configuration file.
 					if c.String("config_file") != "" {
@@ -58,11 +58,11 @@ func main() {
 						}
 					}
 
-					fmt.Println("runner:", config.GetString("runner"))
+					//fmt.Println("runner:", config.GetString("runner"))
 					fmt.Println("package type:", config.GetString("package_type"))
 					fmt.Println("scm:", config.GetString("scm"))
 					fmt.Println("repository:", config.GetString("scm_repo_full_name"))
-					fmt.Println("dry run:", config.GetString("dry_run"))
+					//fmt.Println("dry run:", config.GetString("dry_run"))
 
 					pipeline := pkg.Pipeline{}
 					pipeline.Start(config)
@@ -71,11 +71,12 @@ func main() {
 				},
 
 				Flags: []cli.Flag{
-					&cli.StringFlag{
-						Name:  "runner",
-						Value: "default", // can be :none, :circleci or :shippable (check the readme for why other hosted providers arn't supported.)
-						Usage: "IGNORED: The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)",
-					},
+					//TODO: currently not applicable
+					//&cli.StringFlag{
+					//	Name:  "runner",
+					//	Value: "default", // can be :none, :circleci or :shippable (check the readme for why other hosted providers arn't supported.)
+					//	Usage: "The cloud CI runner that is running this PR. (Used to determine the Environmental Variables to parse)",
+					//},
 
 					&cli.StringFlag{
 						Name:  "scm",
@@ -90,12 +91,13 @@ func main() {
 						Usage:   "The type of package being built.",
 					},
 
-					&cli.BoolFlag{
-						Name:    "dry_run",
-						Aliases: []string{"dry-run"},
-						Value:   false,
-						Usage:   "Specifies that no changes should be pushed to source and no package will be released",
-					},
+					//TODO: currently not applicable.
+					//&cli.BoolFlag{
+					//	Name:    "dry_run",
+					//	Aliases: []string{"dry-run"},
+					//	Value:   false,
+					//	Usage:   "Specifies that no changes should be pushed to source and no package will be released",
+					//},
 
 					&cli.StringFlag{
 						Name:    "config_file",

@@ -400,6 +400,7 @@ func TestScmGithub_Cleanup(t *testing.T) {
 	testConfig.Set("scm_github_access_token", "placeholder")
 	testConfig.Set("scm_enable_branch_cleanup", "true")
 	pipelineData := new(pipeline.Data)
+	pipelineData.IsPullRequest = true
 	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
 		Ref: "AnalogJ-patch-6",
 		Repo: &pipeline.ScmRepoInfo{

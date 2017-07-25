@@ -27,6 +27,7 @@ type Interface interface {
 	// MUST set pipelineData.GitLocalBranch
 	// MUST set pipelienData.GitRemote
 	// MUST set pipelineData.GitHeadInfo
+	// SHOULD set pipelineData.NearestTagDetails
 	// REQUIRES pipelineData.GitParentPath
 	CheckoutPushPayload(payload *Payload) error
 
@@ -38,6 +39,7 @@ type Interface interface {
 	// MUST set pipelienData.GitRemote
 	// MUST set pipelineData.GitBaseInfo
 	// MUST set pipelineData.GitHeadInfo
+	// SHOULD set pipelineData.NearestTagDetails
 	// REQUIRES pipelineData.GitParentPath
 	CheckoutPullRequestPayload(payload *Payload) error
 
@@ -54,6 +56,7 @@ type Interface interface {
 	// REQUIRES pipelineData.ReleaseVersion
 	// REQUIRES pipelineData.ReleaseCommit
 	// REQUIRES pipelineData.GitParentPath
+	// USES set pipelineData.NearestTagDetails
 	Publish() error //create release.
 
 	//Upload assets to SCM, and attach to SCM release if possible.

@@ -300,3 +300,8 @@ CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://githu
 - https://docs.codecov.io/docs/testing-with-docker
 - https://github.com/codecov/example-go
 - https://github.com/codecov/support/wiki/Codecov-Yaml#how-to-disable-a-single-ci-provider
+- https://github.com/gopheracademy/gopheracademy-web/blob/master/content/advent-2014/git2go-tutorial.md
+- https://stackoverflow.com/questions/2381665/list-tags-contained-by-a-branch
+
+
+

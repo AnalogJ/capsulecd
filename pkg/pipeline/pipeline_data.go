@@ -8,6 +8,7 @@ type Data struct {
 	GitLocalPath   string
 	GitLocalBranch string
 	GitRemote      string
+	GitNearestTag 	*GitTagDetails
 
 	ReleaseVersion   string
 	ReleaseCommit    string

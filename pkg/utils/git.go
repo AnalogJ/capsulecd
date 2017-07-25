@@ -12,13 +12,10 @@ import (
 	"time"
 	"io/ioutil"
 	"net/http"
+	"capsulecd/pkg/pipeline"
 )
 
-type GitTagDetails struct {
-	TagShortName string
-	CommitSha    string
-	CommitDate   time.Time
-}
+
 
 // Clone a git repo into a local directory.
 // Credentials need to be specified by embedding in gitRemote url.
@@ -226,6 +223,7 @@ func GitTag(repoPath string, version string) (string, error) {
 		return "", lerr
 	}
 
+	//TODO: this shoudl be a annotated tag.
 	tagId, terr := repo.Tags.CreateLightweight(version, commit, false) //TODO: this should be an annotated tag.
 	return tagId.String(), terr
 }
@@ -249,65 +247,37 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 	return remote.Push([]string{fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch)}, new(git.PushOptions))
 }
 
-func GitLatestTaggedCommit(repoPath string) (*GitTagDetails, error) {
+// Get the nearest tag on branch.
+// tag must be nearest, ie. sorted by their distance from the HEAD of the branch, not the date or tagname.
+// basically `git describe --tags --abbrev=0`
+func GitFindNearestTagName(repoPath string)(string, error){
 	repo, oerr := git.OpenRepository(repoPath)
 	if oerr != nil {
-		return nil, oerr
+		return "", oerr
 	}
 
-	_, terr := repo.Tags.List()
-	if terr != nil {
-		return nil, terr
+	descOptions, derr := git.DefaultDescribeOptions()
+	if(derr != nil){return "", derr}
+	descOptions.Strategy = git.DescribeTags
+
+	formatOptions, ferr := git.DefaultDescribeFormatOptions()
+	if(ferr != nil){return "", ferr}
+	formatOptions.AbbreviatedSize = 0
+
+	descr, derr := repo.DescribeWorkdir(&descOptions)
+	if derr != nil {
+		return "", derr
 	}
 
-	var latestTag *GitTagDetails = nil
+	nearestTag, ferr := descr.Format(&formatOptions)
+	if ferr != nil {
+		return "", ferr
+	}
 
-	repo.Tags.Foreach(func(name string, id *git.Oid) error {
-		tag, lerr := repo.LookupTag(id)
-
-		var currentTag *GitTagDetails
-		//handle lightweight(non-annotated) tags.
-		if lerr != nil {
-			//this is a lightweight tag
-
-			commitRef, rerr := repo.LookupCommit(id)
-			if rerr != nil {
-				log.Print(rerr)
-				return nil
-			}
-
-			author := commitRef.Author()
-
-			log.Printf("Light-weight tag lookup: %s, DATE: %s", commitRef.Id().String(), author.When.String())
-
-			currentTag = &GitTagDetails{
-				TagShortName: strings.TrimPrefix(name, "refs/tags/"),
-				CommitSha:    commitRef.Id().String(),
-				CommitDate:   author.When,
-			}
-
-		} else {
-
-			log.Printf("Tag ID: %s, Commit ID: %s, DATE: %s", tag.Id().String(), tag.TargetId().String(), tag.Tagger().When.String())
-
-			currentTag = &GitTagDetails{
-				TagShortName: strings.TrimPrefix(name, "/refs/tags/"),
-				CommitSha:    tag.TargetId().String(),
-				CommitDate:   tag.Tagger().When,
-			}
-		}
-
-		if (latestTag == nil) || (latestTag != nil && currentTag.CommitDate.After(latestTag.CommitDate)) {
-			latestTag = currentTag
-		}
-
-		return nil
-	})
-
-	return latestTag, nil
+	return nearestTag, nil
 }
 
-func GitGenerateChangelog(repoPath string, baseSha string, headSha string, fullName string) (string, error) {
+func GitGenerateChangelog(repoPath string, baseSha string, headSha string) (string, error) {
 	repo, oerr := git.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
@@ -363,6 +333,50 @@ func GitGenerateGitIgnore(repoPath string, ignoreType string) error {
 	}
 
 	return nil
+}
+
+func GitGetTagDetails(repoPath string, tagName string) (*pipeline.GitTagDetails, error) {
+	repo, oerr := git.OpenRepository(repoPath)
+	if oerr != nil {
+		return nil, oerr
+	}
+
+	id, aerr := repo.References.Dwim(tagName)
+	if aerr != nil {
+		return nil, aerr
+	}
+	tag, lerr := repo.LookupTag(id.Target()) //assume its an annotated tag.
+
+	var currentTag *pipeline.GitTagDetails
+	if lerr != nil {
+		//this is a lightweight tag, not an annotated tag.
+		commitRef, rerr := repo.LookupCommit(id.Target())
+		if rerr != nil {
+			return nil, rerr
+		}
+
+		author := commitRef.Author()
+
+		log.Printf("Light-weight tag (%s) Commit ID: %s, DATE: %s", tagName, commitRef.Id().String(), author.When.String())
+
+		currentTag = &pipeline.GitTagDetails{
+			TagShortName: tagName,
+			CommitSha:    commitRef.Id().String(),
+			CommitDate:   author.When,
+		}
+
+	} else {
+
+		log.Printf("Annotated tag (%s) Tag ID: %s, Commit ID: %s, DATE: %s", tagName, tag.Id().String(), tag.TargetId().String(), tag.Tagger().When.String())
+
+		currentTag = &pipeline.GitTagDetails{
+			TagShortName: tagName,
+			CommitSha:    tag.TargetId().String(),
+			CommitDate:   tag.Tagger().When,
+		}
+	}
+	return currentTag, nil
+
 }
 
 //private methods
