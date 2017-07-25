@@ -49,7 +49,7 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 ./...")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 --vendor --disable=gocyclo  ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
 	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
