@@ -2,7 +2,7 @@
 engine_enable_code_mutation: true
 engine_cmd_compile: 'go build -tags "static" $(go list ./cmd/...)'
 engine_cmd_test: 'go test -tags "static" $(glide novendor)'
-#engine_cmd_lint: 'gometalinter.v1 --vendor --line-length=125 --disable=gocyclo --disable=aligncheck --disable=errcheck ./...'
+engine_cmd_lint: 'gometalinter.v1 --vendor --errors --disable=gotype ./...'
 scm_enable_branch_cleanup: true
 scm_release_assets:
   - local_path: capsulecd
