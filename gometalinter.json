@@ -1,5 +1,6 @@
 {
   "Errors": true,
+  "Debug": true,
   "Enable": [
     "structcheck",
     "ineffassign",
