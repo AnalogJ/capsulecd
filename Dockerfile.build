@@ -4,7 +4,7 @@
 # Should not be used for 3rd party apps
 #
 # Real Docker Images and Dockerfiles are located:
-# - https://github.com/AnalogJ/capsulecd
+# - https://github.com/AnalogJ/capsulecd-docker
 # - https://hub.docker.com/r/analogj/capsulecd
 #
 # Use `docker pull analogj/capsulecd:<language>`
