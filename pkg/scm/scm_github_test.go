@@ -296,7 +296,7 @@ func TestScmGithub_PublishAssets(t *testing.T) {
 	mockConfig := mock_config.NewMockInterface(mockCtrl)
 	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
 	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
-	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test").MinTimes(1)
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/gem_analogj_test").MinTimes(1)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 	pipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
