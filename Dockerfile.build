@@ -16,6 +16,7 @@ MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
+    pkg-config \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& go get github.com/Masterminds/glide
 
