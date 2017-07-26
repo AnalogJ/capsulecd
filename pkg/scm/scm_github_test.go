@@ -16,6 +16,8 @@ import (
 	"io/ioutil"
 	"os"
 	"capsulecd/pkg/utils"
+	"capsulecd/pkg/config/mock"
+	"github.com/golang/mock/gomock"
 )
 
 func vcrSetup(t *testing.T) *http.Client {
@@ -52,74 +54,85 @@ func vcrSetup(t *testing.T) *http.Client {
 func TestScmGithub_Init_WithoutAccessToken(t *testing.T) {
 
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(false)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
+
 	//test
-	testScm, err := scm.Create("github", pipelineData, testConfig, client)
+	testScm, err := scm.Create("github", pipelineData, mockConfig, client)
 
 	//assert
 	require.Nil(t, testScm)
 	require.Error(t, err, "should raise an auth error")
+
 }
 
 func TestScmGithub_Init_WithGitParentPath(t *testing.T) {
 
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_github_access_token", "placeholder")
-
-	dirPath, err := ioutil.TempDir("", "")
-	defer os.RemoveAll(dirPath)
-	testConfig.Set("scm_git_parent_path", dirPath)
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
+	dirPath, err := ioutil.TempDir("", "")
+	defer os.RemoveAll(dirPath)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(true)
+	mockConfig.EXPECT().GetString("scm_git_parent_path").Return(dirPath)
+
 	//test
-	testScm, err := scm.Create("github", pipelineData, testConfig, client)
+	testScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.Equal(t, pipelineData.GitParentPath, dirPath, "should correctly set parent path to existing")
 
 	//assert
 	require.NotNil(t, testScm)
 	require.Nil(t, err, "should not have an error")
+
 }
 
 func TestScmGithub_Init_WithDefaults(t *testing.T) {
 
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().GetString("scm_github_access_token").Return("placeholder")
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	pipelineData := new(pipeline.Data)
 
 	//test
-	testScm, err := scm.Create("github", pipelineData, testConfig, nil)
+	testScm, err := scm.Create("github", pipelineData, mockConfig, nil)
 	require.NotEmpty(t, pipelineData.GitParentPath, "should correctly generate a temporary parent path")
 
 	//assert
 	require.NotNil(t, testScm)
 	require.Nil(t, err, "should not have an error")
+
 }
 
 
 func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_pull_request", "12")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test")
+	mockConfig.EXPECT().GetInt("scm_pull_request").Return(12)
+	mockConfig.EXPECT().IsSet("scm_pull_request").Return(true)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	require.NoError(t, perr)
@@ -127,44 +140,52 @@ func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 	//assert
 	require.NotEmpty(t, payload, "payload must be set after source Init")
 	require.True(t, pipelineData.IsPullRequest)
+
 }
 
 func TestScmGithub_RetrievePayload_PullRequest_InvalidState(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_pull_request", "11")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test")
+	mockConfig.EXPECT().GetInt("scm_pull_request").Return(11)
+	mockConfig.EXPECT().IsSet("scm_pull_request").Return(true)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 
 	//assert
 	require.Error(t, perr, "should return an error when PR is closed")
 	require.Nil(t, payload)
+
 }
 
 func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 	//setup
-	testConfig, err := config.Create()
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_sha", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
-	testConfig.Set("scm_branch", "master")
-	testConfig.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
-	testConfig.Set("scm_repo_name", "capsulecd")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/capsulecd")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().IsSet("scm_pull_request").Return(false)
+	mockConfig.EXPECT().GetString("scm_sha").Return("0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
+	mockConfig.EXPECT().GetString("scm_branch").Return("master")
+	mockConfig.EXPECT().GetString("scm_clone_url").Return("https://github.com/analogj/capsulecd.git")
+	mockConfig.EXPECT().GetString("scm_repo_name").Return("capsulecd")
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/capsulecd")
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	require.NoError(t, perr)
@@ -181,24 +202,27 @@ func TestScmGithub_RetrievePayload_Push(t *testing.T) {
 
 func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_sha", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
-	testConfig.Set("scm_branch", "master")
-	testConfig.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
-	testConfig.Set("scm_repo_name", "capsulecd")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/capsulecd")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
+	mockConfig.EXPECT().GetString("scm_github_access_token").Return("")//set the Access Token to empty string before doing checkout
+	// (so that git doesnt fail on placeholder token)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().IsSet("scm_pull_request").Return(false)
+	mockConfig.EXPECT().GetString("scm_sha").Return("0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
+	mockConfig.EXPECT().GetString("scm_branch").Return("master")
+	mockConfig.EXPECT().GetString("scm_clone_url").Return("https://github.com/analogj/capsulecd.git")
+	mockConfig.EXPECT().GetString("scm_repo_name").Return("capsulecd")
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/capsulecd")
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	require.NoError(t, perr)
-	testConfig.Set("scm_github_access_token", "") //set the Access Token to empty string before doing checkout
-	// (so that git doesnt fail on placeholder token)
 	pperr := githubScm.CheckoutPushPayload(payload)
 	require.NoError(t, pperr)
 
@@ -210,19 +234,16 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 
 func TestScmGithub_ProcessPushPayload_WithInvalidPayload(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_sha", "0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
-	testConfig.Set("scm_branch", "master")
-	testConfig.Set("scm_clone_url", "https://github.com/analogj/capsulecd.git")
-	testConfig.Set("scm_repo_name", "capsulecd")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/capsulecd")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	payload := &scm.Payload{
 		Head: new(pipeline.ScmCommitInfo),
@@ -236,22 +257,23 @@ func TestScmGithub_ProcessPushPayload_WithInvalidPayload(t *testing.T) {
 
 func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_pull_request", "12")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().GetString("scm_github_access_token").Return("")
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test").MinTimes(1)
+	mockConfig.EXPECT().GetInt("scm_pull_request").Return(12)
+	mockConfig.EXPECT().IsSet("scm_pull_request").Return(true)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	payload, perr := githubScm.RetrievePayload()
 	require.NoError(t, perr)
-	testConfig.Set("scm_github_access_token", "") //set the Access Token to empty string before doing checkout
-	// (so that git doesnt fail on placeholder token)
 	pperr := githubScm.CheckoutPullRequestPayload(payload)
 	require.NoError(t, pperr)
 
@@ -269,20 +291,21 @@ func TestScmGithub_ProcessPullRequestPayload(t *testing.T) {
 
 func TestScmGithub_PublishAssets(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/gem_analogj_test")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test").MinTimes(1)
 	pipelineData := new(pipeline.Data)
+	client := vcrSetup(t)
 	pipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
 		{
 			LocalPath: path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
 			ArtifactName: "gem_analogj_test.gem",
 		},
 	}
-	client := vcrSetup(t)
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	defer os.Remove(pipelineData.GitParentPath)
 
@@ -318,11 +341,12 @@ func TestScmGithub_Cleanup_WithoutEnablingBranchCleanup(t *testing.T) {
 
 func TestScmGithub_Cleanup_WithDifferentOrgs(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_github_access_token", "placeholder")
-	testConfig.Set("scm_enable_branch_cleanup", "true")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetBool("scm_enable_branch_cleanup").Return(true)
 	pipelineData := new(pipeline.Data)
 	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
 		Ref: "AnalogJ-patch-6",
@@ -343,7 +367,7 @@ func TestScmGithub_Cleanup_WithDifferentOrgs(t *testing.T) {
 		Sha: "12345",
 	}
 	client := vcrSetup(t)
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	defer os.Remove(pipelineData.GitParentPath)
 	//test
@@ -356,11 +380,12 @@ func TestScmGithub_Cleanup_WithDifferentOrgs(t *testing.T) {
 
 func TestScmGithub_Cleanup_WithHeadBranchMaster(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_github_access_token", "placeholder")
-	testConfig.Set("scm_enable_branch_cleanup", "true")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetBool("scm_enable_branch_cleanup").Return(true)
 	pipelineData := new(pipeline.Data)
 	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
 		Ref: "master",
@@ -381,7 +406,7 @@ func TestScmGithub_Cleanup_WithHeadBranchMaster(t *testing.T) {
 		Sha: "12345",
 	}
 	client := vcrSetup(t)
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	defer os.Remove(pipelineData.GitParentPath)
 	//test
@@ -394,11 +419,12 @@ func TestScmGithub_Cleanup_WithHeadBranchMaster(t *testing.T) {
 
 func TestScmGithub_Cleanup(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_github_access_token", "placeholder")
-	testConfig.Set("scm_enable_branch_cleanup", "true")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetBool("scm_enable_branch_cleanup").Return(true)
 	pipelineData := new(pipeline.Data)
 	pipelineData.IsPullRequest = true
 	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
@@ -420,7 +446,7 @@ func TestScmGithub_Cleanup(t *testing.T) {
 		Sha: "12345",
 	}
 	client := vcrSetup(t)
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	defer os.Remove(pipelineData.GitParentPath)
 	//test
@@ -433,16 +459,17 @@ func TestScmGithub_Cleanup(t *testing.T) {
 
 func TestScmGithub_Notify(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/cookbook_analogj_test")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test")
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
 
 	//test
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	pperr := githubScm.Notify("49f5bfbf4610f0c2a54d33945521051ba92b2eac","success", "test message")
 	require.NoError(t, pperr)
