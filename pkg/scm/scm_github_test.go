@@ -414,45 +414,45 @@ func TestScmGithub_Cleanup_WithHeadBranchMaster(t *testing.T) {
 	require.Error(t, paerr, "should raise an error")
 }
 
-func TestScmGithub_Cleanup(t *testing.T) {
-	//setup
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	mockConfig := mock_config.NewMockInterface(mockCtrl)
-	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
-	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
-	mockConfig.EXPECT().GetBool("scm_enable_branch_cleanup").Return(true)
-	pipelineData := new(pipeline.Data)
-	pipelineData.IsPullRequest = true
-	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
-		Ref: "AnalogJ-patch-3",
-		Repo: &pipeline.ScmRepoInfo{
-			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name:     "gem_analogj_test",
-			FullName: "AnalogJ/gem_analogj_test",
-		},
-		Sha: "12345",
-	}
-	pipelineData.GitBaseInfo = &pipeline.ScmCommitInfo{
-		Ref: "master",
-		Repo: &pipeline.ScmRepoInfo{
-			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name:     "gem_analogj_test",
-			FullName: "AnalogJ/gem_analogj_test",
-		},
-		Sha: "12345",
-	}
-	client := vcrSetup(t)
-	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
-	require.NoError(t, err)
-	defer os.Remove(pipelineData.GitParentPath)
-	//test
-
-	paerr := githubScm.Cleanup()
-
-	//
-	require.NoError(t, paerr, "should finish successfully")
-}
+//func TestScmGithub_Cleanup(t *testing.T) {
+//	//setup
+//	mockCtrl := gomock.NewController(t)
+//	defer mockCtrl.Finish()
+//	mockConfig := mock_config.NewMockInterface(mockCtrl)
+//	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+//	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+//	mockConfig.EXPECT().GetBool("scm_enable_branch_cleanup").Return(true)
+//	pipelineData := new(pipeline.Data)
+//	pipelineData.IsPullRequest = true
+//	pipelineData.GitHeadInfo = &pipeline.ScmCommitInfo{
+//		Ref: "AnalogJ-patch-3",
+//		Repo: &pipeline.ScmRepoInfo{
+//			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
+//			Name:     "gem_analogj_test",
+//			FullName: "AnalogJ/gem_analogj_test",
+//		},
+//		Sha: "12345",
+//	}
+//	pipelineData.GitBaseInfo = &pipeline.ScmCommitInfo{
+//		Ref: "master",
+//		Repo: &pipeline.ScmRepoInfo{
+//			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
+//			Name:     "gem_analogj_test",
+//			FullName: "AnalogJ/gem_analogj_test",
+//		},
+//		Sha: "12345",
+//	}
+//	client := vcrSetup(t)
+//	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
+//	require.NoError(t, err)
+//	defer os.Remove(pipelineData.GitParentPath)
+//	//test
+//
+//	paerr := githubScm.Cleanup()
+//
+//	//
+//	require.NoError(t, paerr, "should finish successfully")
+//}
 
 func TestScmGithub_Notify(t *testing.T) {
 	//setup
