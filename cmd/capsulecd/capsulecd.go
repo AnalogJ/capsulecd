@@ -11,6 +11,7 @@ import (
 	"gopkg.in/urfave/cli.v2"
 	"path/filepath"
 	"capsulecd/pkg/utils"
+	"capsulecd/pkg/errors"
 )
 
 func main() {
@@ -51,10 +52,13 @@ func main() {
 
 					//load configuration file.
 					if c.String("config_file") != "" {
-						if absConfigPath, aerr := filepath.Abs(c.String("config_file")); aerr != nil {
-							config.ReadConfig(absConfigPath)
-						} else {
-							return aerr
+						absConfigPath, err := filepath.Abs(c.String("config_file"));
+						if  err != nil {
+							return err
+						}
+						err = config.ReadConfig(absConfigPath) //ignore failures to read config file.
+						if err != nil {
+							return errors.EngineUnspecifiedError("Could not load repository configuration file. Check syntax.")
 						}
 					}
 

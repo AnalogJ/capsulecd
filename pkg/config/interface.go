@@ -13,6 +13,7 @@ type Interface interface {
 	GetBool(key string) bool
 	GetInt(key string) int
 	GetString(key string) string
+	GetStringSlice(key string) []string
 	GetBase64Decoded(key string) (string, error)
 	UnmarshalKey(key string, rawVal interface{}) error
 }

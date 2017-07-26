@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"capsulecd/pkg/utils"
 )
 
 type Pipeline struct {
@@ -27,13 +28,11 @@ func (p *Pipeline) Start(config config.Interface) {
 
 	// start the source, and whatever work needs to be done there.
 	// MUST set options.GitParentPath
-	log.Println("pre_scm_init_step")
 	p.PreScmInit()
 	log.Println("scm_init_step")
 	scmImpl, serr := scm.Create(p.Config.GetString("scm"), p.Data, config, nil)
 	errors.CheckErr(serr)
 	p.Scm = scmImpl
-	log.Println("post_scm_init_step")
 	p.PostScmInit()
 
 	//Generate a new instance of the engine
@@ -42,33 +41,31 @@ func (p *Pipeline) Start(config config.Interface) {
 	p.Engine = engineImpl
 
 	//retreive payload
-	log.Println("pre_scm_retrieve_payload_step")
 	p.PreScmRetrievePayload()
 	log.Println("scm_retrieve_payload_step")
 	payload, perr := scmImpl.RetrievePayload()
 	errors.CheckErr(perr)
-	log.Println("post_scm_retrieve_payload_step")
 	p.PostScmRetrievePayload()
 
 	if p.Data.IsPullRequest {
-		log.Println("pre_scm_checkout_pull_request_step")
 		p.PreScmCheckoutPullRequestPayload()
 		log.Println("scm_checkout_pull_request_step")
 		errors.CheckErr(scmImpl.CheckoutPullRequestPayload(payload))
-		log.Println("post_scm_checkout_pull_request_step")
 		p.PostScmCheckoutPullRequestPayload()
 	} else {
-		log.Println("pre_scm_checkout_push_payload_step")
 		p.PreScmCheckoutPushPayload()
 		log.Println("scm_checkout_push_payload_step")
 		errors.CheckErr(scmImpl.CheckoutPushPayload(payload))
-		log.Println("post_scm_checkout_push_payload_step")
 		p.PostScmCheckoutPushPayload()
 	}
 
 	// update the config with repo config file options
-	p.Config.ReadConfig(path.Join(p.Data.GitLocalPath, "capsule.yml"))
+	repoConfig := path.Join(p.Data.GitLocalPath, "capsule.yml")
+	if utils.FileExists(repoConfig){
+		if err := p.Config.ReadConfig(repoConfig); err != nil{
 
+		}
+	}
 	if p.Config.IsSet("scm_release_assets") {
 		//unmarshall config data.
 		parsedAssets := new([]pipeline.ScmReleaseAsset)
@@ -82,74 +79,61 @@ func (p *Pipeline) Start(config config.Interface) {
 	//validate that required executables are available for the following build/test/package/etc steps
 	p.NotifyStep("validate tools", func() error {
 		log.Println("validate_tools_step")
-		if verr := engineImpl.ValidateTools(); verr != nil {
-			return verr
-		}
-		return nil
+		return engineImpl.ValidateTools();
 	})
 
 	// now that the payload has been processed we can begin by building the code.
 	// this may be creating missing files/default structure, compilation, version bumping, etc.
 	p.NotifyStep("assemble", func() error {
-		log.Println("pre_assemble_step")
 		p.PreAssembleStep()
 		log.Println("assemble_step")
 		if berr := engineImpl.AssembleStep(); berr != nil {
 			return berr
 		}
-		log.Println("post_assemble_step")
 		p.PostAssembleStep()
 		return nil
 	})
 
 	// this step should download dependencies
 	p.NotifyStep("dependencies", func() error {
-		log.Println("pre_dependencies_step")
 		p.PreDependenciesStep()
 		log.Println("dependencies_step")
 		if berr := engineImpl.DependenciesStep(); berr != nil {
 			return berr
 		}
-		log.Println("post_dependencies_step")
 		p.PostDependenciesStep()
 		return nil
 	})
 
 	// this step should compile source
 	p.NotifyStep("compile", func() error {
-		log.Println("pre_compile_step")
 		p.PreCompileStep()
 		log.Println("compile_step")
 		if berr := engineImpl.CompileStep(); berr != nil {
 			return berr
 		}
-		log.Println("post_compile_step")
 		p.PostCompileStep()
 		return nil
 	})
 
 	// run the package test runner(s) (eg. npm test, rake test, kitchen test) and linters/formatters
 	p.NotifyStep("test", func() error {
-		log.Println("pre_test_step")
 		p.PreTestStep()
 		log.Println("test_step")
 		if terr := engineImpl.TestStep(); terr != nil {
 			return terr
 		}
-		log.Println("post_test_step")
 		p.PostTestStep()
 		return nil
 	})
 
 	// this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
 	p.NotifyStep("package", func() error {
-		log.Println("pre_package_step")
 		p.PrePackageStep()
 		log.Println("package_step")
 		if perr := engineImpl.PackageStep(); perr != nil {
 			return perr
 		}
-		log.Println("post_package_step")
 		p.PostPackageStep()
 		return nil
 	})
@@ -162,13 +146,11 @@ func (p *Pipeline) Start(config config.Interface) {
 				return nil
 			}
 
-			log.Println("pre_dist_step")
 			p.PreDistStep()
 			log.Println("dist_step")
 			if derr := engineImpl.DistStep(); derr != nil {
 				return derr
 			}
-			log.Println("post_dist_step")
 			p.PostDistStep()
 			return nil
 		})
@@ -179,19 +161,16 @@ func (p *Pipeline) Start(config config.Interface) {
 				return nil
 			}
 
-			log.Println("pre_scm_publish_step")
 			p.PreScmPublish()
 			log.Println("scm_publish_step")
 			if serr := scmImpl.Publish(); serr != nil {
 				return serr
 			}
-			log.Println("post_scm_publish_step")
 			p.PostScmPublish()
 			return nil
 		})
 
 		p.NotifyStep("scm cleanup", func() error {
-			log.Println("pre_scm_cleanup_step")
 			p.PreScmCleanup()
 			log.Println("scm_cleanup_step")
 			if serr := scmImpl.Cleanup(); serr != nil {
@@ -200,8 +179,6 @@ func (p *Pipeline) Start(config config.Interface) {
 				log.Print(serr)
 				return nil
 			}
-
-			log.Println("post_scm_cleanup_step")
 			p.PostScmCleanup()
 			return nil
 		})
@@ -216,30 +193,30 @@ func (p *Pipeline) Start(config config.Interface) {
 }
 
 // Hook methods
-func (p *Pipeline) PreScmInit()                        {}
-func (p *Pipeline) PostScmInit()                       {}
-func (p *Pipeline) PreScmCheckoutPullRequestPayload()  {}
-func (p *Pipeline) PostScmCheckoutPullRequestPayload() {}
-func (p *Pipeline) PreScmCheckoutPushPayload()         {}
-func (p *Pipeline) PostScmCheckoutPushPayload()        {}
-func (p *Pipeline) PreScmPublish()                     {}
-func (p *Pipeline) PostScmPublish()                    {}
-func (p *Pipeline) PreScmRetrievePayload()             {}
-func (p *Pipeline) PostScmRetrievePayload()            {}
-func (p *Pipeline) PreScmCleanup()	               {}
-func (p *Pipeline) PostScmCleanup()	               {}
-func (p *Pipeline) PreAssembleStep()                   {}
-func (p *Pipeline) PostAssembleStep()                  {}
-func (p *Pipeline) PreDependenciesStep()               {}
-func (p *Pipeline) PostDependenciesStep()              {}
-func (p *Pipeline) PreCompileStep()                    {}
-func (p *Pipeline) PostCompileStep()                   {}
-func (p *Pipeline) PreTestStep()                       {}
-func (p *Pipeline) PostTestStep()                      {}
-func (p *Pipeline) PrePackageStep()                    {}
-func (p *Pipeline) PostPackageStep()                   {}
-func (p *Pipeline) PreDistStep()                       {}
-func (p *Pipeline) PostDistStep()                      {}
+func (p *Pipeline) PreScmInit()                        {p.RunHook("scm_init_step.pre")}
+func (p *Pipeline) PostScmInit()                       {p.RunHook("scm_init_step.post")}
+func (p *Pipeline) PreScmRetrievePayload()             {p.RunHook("scm_retrieve_payload_step.pre")}
+func (p *Pipeline) PostScmRetrievePayload()            {p.RunHook("scm_retrieve_payload_step.post")}
+func (p *Pipeline) PreScmCheckoutPullRequestPayload()  {p.RunHook("scm_checkout_pull_request_step.pre")}
+func (p *Pipeline) PostScmCheckoutPullRequestPayload() {p.RunHook("scm_checkout_pull_request_step.post")}
+func (p *Pipeline) PreScmCheckoutPushPayload()         {p.RunHook("scm_checkout_push_payload_step.pre")}
+func (p *Pipeline) PostScmCheckoutPushPayload()        {p.RunHook("scm_checkout_push_payload_step.post")}
+func (p *Pipeline) PreScmPublish()                     {p.RunHook("scm_publish_step.pre")}
+func (p *Pipeline) PostScmPublish()                    {p.RunHook("scm_publish_step.post")}
+func (p *Pipeline) PreScmCleanup()	               {p.RunHook("scm_cleanup_step.pre")}
+func (p *Pipeline) PostScmCleanup()	               {p.RunHook("scm_cleanup_step.post")}
+func (p *Pipeline) PreAssembleStep()                   {p.RunHook("assemble_step.pre")}
+func (p *Pipeline) PostAssembleStep()                  {p.RunHook("assemble_step.post")}
+func (p *Pipeline) PreDependenciesStep()               {p.RunHook("dependencies_step.pre")}
+func (p *Pipeline) PostDependenciesStep()              {p.RunHook("dependencies_step.post")}
+func (p *Pipeline) PreCompileStep()                    {p.RunHook("compile_step.pre")}
+func (p *Pipeline) PostCompileStep()                   {p.RunHook("compile_step.post")}
+func (p *Pipeline) PreTestStep()                       {p.RunHook("test_step.pre")}
+func (p *Pipeline) PostTestStep()                      {p.RunHook("test_step.post")}
+func (p *Pipeline) PrePackageStep()                    {p.RunHook("package_step.pre")}
+func (p *Pipeline) PostPackageStep()                   {p.RunHook("package_step.post")}
+func (p *Pipeline) PreDistStep()                       {p.RunHook("dist_step.pre")}
+func (p *Pipeline) PostDistStep()                      {p.RunHook("dist_step.post")}
 
 func (p *Pipeline) NotifyStep(step string, callback func() error) {
 	p.Scm.Notify(p.Data.GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
@@ -260,7 +237,19 @@ func (p *Pipeline) Cleanup() {
 		os.RemoveAll(p.Data.GitParentPath)
 		p.Data.GitParentPath = ""
 	}
-
 }
+
+func (p *Pipeline) RunHook(hookKey string) {
+	log.Println(hookKey)
+
+	hookSteps := p.Config.GetStringSlice(hookKey)
+	if hookSteps == nil {
+		return
+	}
+	for i := range hookSteps {
+		utils.BashCmdExec(hookSteps[i], p.Data.GitLocalPath, nil, fmt.Sprintf("%s.%s", hookKey, i))
+	}
+}
+
 
 //type NotifyStepCallback func() error

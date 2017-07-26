@@ -88,7 +88,7 @@ func (g *engineChef) AssembleStep() error {
 
 	// TODO: check if this cookbook name and version already exist.
 	// check for/create any required missing folders/files
-	// Berksfile.lock and Gemfile.lock are not required to be commited, but they should be.
+	// Berksfile.lock and Gemfile.lock are not required to be committed, but they should be.
 	rakefilePath := path.Join(g.PipelineData.GitLocalPath, "Rakefile")
 	if !utils.FileExists(rakefilePath) {
 		ioutil.WriteFile(rakefilePath, []byte("task :test"), 0644)

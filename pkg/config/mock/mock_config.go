@@ -146,6 +146,18 @@ func (_mr *MockInterfaceMockRecorder) GetString(arg0 interface{}) *gomock.Call {
 	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetString", arg0)
 }
 
+// GetStringSlice mocks base method
+func (_m *MockInterface) GetStringSlice(key string) []string {
+	ret := _m.ctrl.Call(_m, "GetStringSlice", key)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetStringSlice indicates an expected call of GetStringSlice
+func (_mr *MockInterfaceMockRecorder) GetStringSlice(arg0 interface{}) *gomock.Call {
+	return _mr.mock.ctrl.RecordCall(_mr.mock, "GetStringSlice", arg0)
+}
+
 // GetBase64Decoded mocks base method
 func (_m *MockInterface) GetBase64Decoded(key string) (string, error) {
 	ret := _m.ctrl.Call(_m, "GetBase64Decoded", key)

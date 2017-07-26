@@ -39,17 +39,20 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.CurrentMetadata = new(golangMetadata)
 	g.NextMetadata = new(golangMetadata)
 
-	//golang requires that the package is in GOPATH.
-	//we can have multiple workspaces in the gopath by separating them with :
+	//TODO: figure out why setting the GOPATH workspace is causing the tools to timeout.
+	// golang recommends that your in-development packages are in the GOPATH and glide requires it to do glide install.
+	// the problem with this is that for somereason gometalinter (and the underlying linting tools) take alot longer
+	// to run, and hit the default deadline limit ( --deadline=30s).
+	// we can have multiple workspaces in the gopath by separating them with colon (:), but this timeout is nasty if not required.
+	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath), figure out if we can do this automatically.
 	g.GoPath = g.PipelineData.GitParentPath
 	g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src")
 	os.MkdirAll(g.PipelineData.GitParentPath, 0666)
 	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
-	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath).
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 ./...")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 --errors --vendor --deadline=3m ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
 	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
@@ -105,9 +108,9 @@ func (g *engineGolang) AssembleStep() error {
 }
 
 func (g *engineGolang) DependenciesStep() error {
-	//TODO: check if glide will complain if the checkout directory isnt the same as the GOPATH
 	// the library has already been downloaded. lets make sure all its dependencies are available.
-	if cerr := utils.BashCmdExec("glide install", g.PipelineData.GitLocalPath, nil, ""); cerr != nil {
+	//glide will complain if the checkout directory isnt in the GOPATH, so we'll override it.
+	if cerr := utils.BashCmdExec("glide install", g.PipelineData.GitLocalPath, g.customGopathEnv(), ""); cerr != nil {
 		return errors.EngineTestDependenciesError("glide install failed. Check dependencies")
 	}
 
@@ -134,7 +137,7 @@ func (g *engineGolang) TestStep() error {
 	// go test -v $(go list ./... | grep -v /vendor/)
 	// gofmt -s -l $(bash find . -name "*.go" | grep -v vendor | uniq)
 
-	//TODO: the package msut be in the GOPATH for this to work correclty.
+	//TODO: the package must be in the GOPATH for this to work correctly.
 	//http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
 	//http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
 	//
@@ -204,6 +207,18 @@ func (g *engineGolang) DistStep() error {
 }
 
 //private Helpers
+
+func (g *engineGolang) customGopathEnv() []string {
+	currentEnv := os.Environ()
+	updatedEnv := []string{fmt.Sprintf("GOPATH=%s", g.GoPath)}
+
+	for i := range currentEnv {
+		if !strings.HasPrefix(currentEnv[i], "GOPATH=") { //add all environmental variables that are not GOPATH
+			updatedEnv = append(updatedEnv, currentEnv[i])
+		}
+	}
+	return updatedEnv
+}
 
 func (g *engineGolang) retrieveCurrentMetadata(gitLocalPath string) error {
 

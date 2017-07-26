@@ -63,7 +63,6 @@ func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
 	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
 	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 	//assert
-	require.Equal(t, "sample_test_token", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token")
 	require.Equal(t, "sample_auth_token", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token")
 	require.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
 	require.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
@@ -104,7 +103,6 @@ func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 
 	//assert
-	require.Equal(t, "sample_test_token_override", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token from overrides file")
 	require.Equal(t, "sample_auth_token_override", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token from overrides file")
 	require.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
 	require.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
@@ -157,4 +155,27 @@ func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T) {
 
 	require.Equal(t, "", testKey4, "should correctly return empty string, if empty string is passed in.")
 	require.Nil(t, terr4)
+}
+
+func TestConfiguration_GetStringSlice_WithNestedKeys(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	testConfig, _ := config.Create()
+
+	//test
+	testConfig.ReadConfig(path.Join("testdata", "pre_post_step_hook_configuration.yml"))
+
+	pre_scm_init_steps := testConfig.GetStringSlice("scm_init_step.pre")
+	post_scm_init_steps := testConfig.GetStringSlice("scm_init_step.post")
+	invalid_step := testConfig.GetStringSlice("invalid_step.post")
+
+
+	//assert
+	require.Equal(t, 2, len(pre_scm_init_steps), "should have 2 pre hook commands")
+	require.Equal(t, "echo 'pre scm_init_step'", pre_scm_init_steps[0], "should correctly load pre command")
+	require.Equal(t, `echo "sdfdsf"`, pre_scm_init_steps[1], "should correctly load pre command with double quotes")
+	require.Equal(t, 1, len(post_scm_init_steps), "should have 1 post hook commands")
+	require.Nil(t, invalid_step, "invalid step hook should be nil")
+
 }

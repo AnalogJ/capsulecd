@@ -236,7 +236,7 @@ func (g *scmGithub) Publish() error {
 	//sleep because github needs time to process the new tag.
 	time.Sleep(5 * time.Second)
 
-	// calculate teh relaese sha
+	// calculate the release sha
 	releaseSha := utils.LeftPad2Len(g.PipelineData.ReleaseCommit, "0", 40)
 
 	//get the release changelog
