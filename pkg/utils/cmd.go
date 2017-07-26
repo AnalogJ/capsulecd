@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"log"
+	"github.com/kvz/logstreamer"
 )
 
 //http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
@@ -17,16 +19,29 @@ func BashCmdExec(cmd string, workingDir string, environ []string, logPrefix stri
 }
 
 func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []string, logPrefix string) error {
-
 	if logPrefix == "" {
 		logPrefix = " >> "
 	} else {
 		logPrefix = logPrefix + " | "
 	}
 
+	// Create a logger (your app probably already has one)
+	logger := log.New(os.Stdout, logPrefix, log.Ldate|log.Ltime)
+
+	// Setup a streamer that we'll pipe cmd.Stdout to
+	logStreamerOut := logstreamer.NewLogstreamer(logger, "stdout", false)
+	defer logStreamerOut.Close()
+	// Setup a streamer that we'll pipe cmd.Stderr to.
+	// We want to record/buffer anything that's written to this (3rd argument true)
+	logStreamerErr := logstreamer.NewLogstreamer(logger, "stderr", true)
+	defer logStreamerErr.Close()
+
+
+
+
 	cmd := exec.Command(cmdName, cmdArgs...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = logStreamerOut
+	cmd.Stderr = logStreamerErr
 	if environ != nil{
 		cmd.Env = environ
 	}
@@ -51,6 +66,9 @@ func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []str
 	//	done <- struct{}{}
 	//
 	//}()
+
+	// Reset any error we recorded
+	logStreamerErr.FlushRecord()
 
 	err := cmd.Start()
 	if err != nil {

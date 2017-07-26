@@ -68,14 +68,14 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 		log.Print("Failed to lookup for commit in local branch " + localBranchName)
 		return err
 	}
-	defer localCommit.Free()
+	//defer localCommit.Free()
 
 	tree, err := repo.LookupTree(localCommit.TreeId())
 	if err != nil {
 		log.Print("Failed to lookup for tree " + localBranchName)
 		return err
 	}
-	defer tree.Free()
+	//defer tree.Free()
 
 	// Checkout the tree
 	err = repo.CheckoutTree(tree, checkoutOpts)
@@ -103,7 +103,7 @@ func GitCheckout(repoPath string, branchName string) error {
 		log.Print("Failed to find remote branch: " + branchName)
 		return err
 	}
-	defer remoteBranch.Free()
+	//defer remoteBranch.Free()
 
 	// Lookup for commit from remote branch
 	commit, err := repo.LookupCommit(remoteBranch.Target())
@@ -111,7 +111,7 @@ func GitCheckout(repoPath string, branchName string) error {
 		log.Print("Failed to find remote branch commit: " + branchName)
 		return err
 	}
-	defer commit.Free()
+	//defer commit.Free()
 
 	localBranch, err := repo.LookupBranch(branchName, git2go.BranchLocal)
 	// No local branch, lets create one
@@ -133,7 +133,7 @@ func GitCheckout(repoPath string, branchName string) error {
 	if localBranch == nil {
 		return errors.ScmFilesystemError("Error while locating/creating local branch")
 	}
-	defer localBranch.Free()
+	//defer localBranch.Free()
 
 	// Getting the tree for the branch
 	localCommit, err := repo.LookupCommit(localBranch.Target())
@@ -141,14 +141,14 @@ func GitCheckout(repoPath string, branchName string) error {
 		log.Print("Failed to lookup for commit in local branch " + branchName)
 		return err
 	}
-	defer localCommit.Free()
+	//defer localCommit.Free()
 
 	tree, err := repo.LookupTree(localCommit.TreeId())
 	if err != nil {
 		log.Print("Failed to lookup for tree " + branchName)
 		return err
 	}
-	defer tree.Free()
+	//defer tree.Free()
 
 	// Checkout the tree
 	err = repo.CheckoutTree(tree, checkoutOpts)
