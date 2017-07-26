@@ -279,7 +279,7 @@ func (g *scmGithub) Publish() error {
 		return rerr
 	}
 
-	if perr := g.PublishAssets(releaseData.GetID()); perr != nil{
+	if perr := g.PublishAssets(releaseData.GetID()); perr != nil {
 		log.Print("An error occured while publishing assets:")
 		log.Print(perr)
 		log.Print("Continuing...")

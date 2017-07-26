@@ -198,7 +198,9 @@ func (p *Pipeline) PostScmInit()                      { p.RunHook("scm_init_step
 func (p *Pipeline) PreScmRetrievePayload()            { p.RunHook("scm_retrieve_payload_step.pre") }
 func (p *Pipeline) PostScmRetrievePayload()           { p.RunHook("scm_retrieve_payload_step.post") }
 func (p *Pipeline) PreScmCheckoutPullRequestPayload() { p.RunHook("scm_checkout_pull_request_step.pre") }
-func (p *Pipeline) PostScmCheckoutPullRequestPayload() { p.RunHook("scm_checkout_pull_request_step.post") }
+func (p *Pipeline) PostScmCheckoutPullRequestPayload() {
+	p.RunHook("scm_checkout_pull_request_step.post")
+}
 func (p *Pipeline) PreScmCheckoutPushPayload()  { p.RunHook("scm_checkout_push_payload_step.pre") }
 func (p *Pipeline) PostScmCheckoutPushPayload() { p.RunHook("scm_checkout_push_payload_step.post") }
 func (p *Pipeline) PreScmPublish()              { p.RunHook("scm_publish_step.pre") }
