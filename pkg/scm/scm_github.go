@@ -365,7 +365,7 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 
 func publishAsset(client *github.Client, ctx context.Context, repoOwner string, repoName string, assetName, filePath string, releaseID, retries int) error {
 
-	log.Printf("Attempt (%s) to upload release asset %s from %s", retries, assetName, filePath)
+	log.Printf("Attempt (%d) to upload release asset %s from %s", retries, assetName, filePath)
 	f, err := os.Open(filePath)
 	if err != nil {
 		log.Print(err)
