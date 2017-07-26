@@ -118,7 +118,7 @@ func (g *engineGolang) DependenciesStep() error {
 }
 
 func (g *engineGolang) CompileStep() error {
-	if g.Config.GetBool("engine_disable_compile") {
+	if !g.Config.GetBool("engine_disable_compile") {
 		//cmd directory is optional. check if it exists first.
 		if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "cmd")) {
 			return nil
