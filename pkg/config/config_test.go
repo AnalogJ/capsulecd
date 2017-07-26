@@ -63,7 +63,6 @@ func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
 	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
 	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 	//assert
-	require.Equal(t, "sample_test_token", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token")
 	require.Equal(t, "sample_auth_token", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token")
 	require.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
 	require.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")
@@ -104,7 +103,6 @@ func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 
 	//assert
-	require.Equal(t, "sample_test_token_override", testConfig.GetString("scm_github_access_token"), "should populate scm_github_access_token from overrides file")
 	require.Equal(t, "sample_auth_token_override", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token from overrides file")
 	require.Equal(t, "sample_pypi_password", testConfig.GetString("pypi_password"), "should populate pypi_password")
 	require.Equal(t, "-----BEGIN RSA PRIVATE KEY-----\nsample_supermarket_key\n-----END RSA PRIVATE KEY-----\n", str64, "should correctly base64 decode chef supermarket key")

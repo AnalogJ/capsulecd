@@ -45,7 +45,6 @@ func (c *configuration) Init() error {
 	//configure env variable parsing.
 	c.SetEnvPrefix("CAPSULE")
 	c.AutomaticEnv()
-
 	//CLI options will be added via the `Set()` function
 
 	return nil
