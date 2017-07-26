@@ -279,7 +279,11 @@ func (g *scmGithub) Publish() error {
 		return rerr
 	}
 
-	g.PublishAssets(releaseData.GetID())
+	if perr := g.PublishAssets(releaseData.GetID()); perr != nil{
+		log.Print("An error occured while publishing assets:")
+		log.Print(perr)
+		log.Print("Continuing...")
+	}
 
 	return nil
 }
@@ -359,10 +363,12 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 
 //private
 
-func publishAsset(client *github.Client, ctx context.Context, repoOwner, repoName, assetName, filePath string, releaseID, retries int) error {
+func publishAsset(client *github.Client, ctx context.Context, repoOwner string, repoName string, assetName, filePath string, releaseID, retries int) error {
 
+	log.Printf("Attempt (%s) to upload release asset %s from %s", retries, assetName, filePath)
 	f, err := os.Open(filePath)
 	if err != nil {
+		log.Print(err)
 		return err
 	}
 
