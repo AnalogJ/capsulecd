@@ -1,5 +1,10 @@
 # CapsuleCD
 
+<p align="center">
+  <img width="300" alt="portfolio_view" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/logo.svg">
+</p>
+
+
 [![Circle CI](https://img.shields.io/circleci/project/github/AnalogJ/capsulecd.svg?style=flat-square)](https://circleci.com/gh/AnalogJ/capsulecd)
 [![Coverage Status](https://img.shields.io/codecov/c/github/AnalogJ/capsulecd.svg?style=flat-square)](https://codecov.io/gh/AnalogJ/capsulecd)
 [![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg?style=flat-square)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
