@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bufio"
 	"capsulecd/pkg/errors"
 	"fmt"
 	"os"
@@ -26,6 +25,8 @@ func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []str
 	}
 
 	cmd := exec.Command(cmdName, cmdArgs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	if environ != nil{
 		cmd.Env = environ
 	}
@@ -34,30 +35,30 @@ func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []str
 	} else if workingDir != "" {
 		return errors.Custom("Working Directory must be an absolute path")
 	}
-	cmdReader, err := cmd.StdoutPipe()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
-		return err
-	}
+	//cmdReader, err := cmd.StdoutPipe()
+	//if err != nil {
+	//	fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
+	//	return err
+	//}
+	//
+	//done := make(chan struct{})
+	//
+	//scanner := bufio.NewScanner(cmdReader)
+	//go func() {
+	//	for scanner.Scan() {
+	//		fmt.Printf("%s%s\n", logPrefix, scanner.Text())
+	//	}
+	//	done <- struct{}{}
+	//
+	//}()
 
-	done := make(chan struct{})
-
-	scanner := bufio.NewScanner(cmdReader)
-	go func() {
-		for scanner.Scan() {
-			fmt.Printf("%s%s\n", logPrefix, scanner.Text())
-		}
-		done <- struct{}{}
-
-	}()
-
-	err = cmd.Start()
+	err := cmd.Start()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
 		return err
 	}
 
-	<-done
+	//<-done
 
 	err = cmd.Wait()
 	if err != nil {

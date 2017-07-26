@@ -17,6 +17,17 @@ func TestBashCmdExec(t *testing.T) {
 	require.NoError(t, cerr)
 }
 
+func TestBashCmdExec_StdErr(t *testing.T) {
+	t.Parallel()
+
+	//test
+	cerr := utils.BashCmdExec("(>&2 echo 'test writing to stderr')", "", nil, "")
+
+	//assert
+	require.NoError(t, cerr)
+}
+
+
 func TestBashCmdExec_Prefix(t *testing.T) {
 	t.Parallel()
 
