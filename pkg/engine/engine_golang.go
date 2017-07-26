@@ -39,13 +39,20 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.CurrentMetadata = new(golangMetadata)
 	g.NextMetadata = new(golangMetadata)
 
-	//golang requires that the package is in GOPATH.
-	//we can have multiple workspaces in the gopath by separating them with :
-	g.GoPath = g.PipelineData.GitParentPath
-	g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src")
-	os.MkdirAll(g.PipelineData.GitParentPath, 0666)
-	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
-	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath).
+	//TODO: figure out why setting the GOPATH workspace is causing the tools to timeout.
+	// golang recommends that your in-development packages are in the GOPATH.
+	// the problem with this is that for somereason gometalinter (and the underlying linting tools) take alot longer
+	// to run, and hit the default deadline limit ( --deadline=30s).
+	// we can have multiple workspaces in the gopath by separating them with colon (:), but it will require you to specify
+	// if you enable adding the workdir to the gopath, then you;ll need to increase the linter command to use --deadline=5m
+	// and handle the deletion of the gopath parent directory manually.
+	if g.Config.GetBool("golang_include_workdir_gopath") {
+		//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath), figure out if we can do this automatically.
+		g.GoPath = g.PipelineData.GitParentPath
+		g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src")
+		os.MkdirAll(g.PipelineData.GitParentPath, 0666)
+		os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
+	}
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
