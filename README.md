@@ -3,8 +3,9 @@
 [![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
 [![Coverage Status](https://codecov.io/gh/analogj/capsulecd/branch/master/graph/badge.svg)](https://codecov.io/gh/AnalogJ/capsulecd)
 [![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
-[![Gem](https://img.shields.io/gem/dt/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
-[![Gem](https://img.shields.io/gem/v/capsulecd.svg)](https://rubygems.org/gems/capsulecd)
+[![Godoc](https://godoc.org/github.com/AnalogJ/capsulecd?status.svg)](https://godoc.org/github.com/analogj/capsulecd)
+[![Go Report Card](https://goreportcard.com/badge/github.com/AnalogJ/capsulecd)](https://goreportcard.com/report/github.com/AnalogJ/capsulecd)
+[![GitHub release](http://img.shields.io/github/release/AnalogJ/capsulecd.svg?style=flat-square)][https://github.com/AnalogJ/capsulecd/releases]
 [![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg)](https://hub.docker.com/r/analogj/capsulecd)
 [![Flattr this git repo](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=analogj&url=https%3A%2F%2Fgithub.com%2FAnalogJ%2Fcapsulecd&title=CapsuleCD&language=Ruby&tags=github&category=software)
 
