@@ -152,7 +152,6 @@ func (g *enginePython) AssembleStep() error {
 	return nil
 }
 
-
 func (g *enginePython) CompileStep() error {
 	return nil
 }
@@ -196,7 +195,6 @@ func (g *enginePython) TestStep() error {
 
 func (g *enginePython) PackageStep() error {
 	os.RemoveAll(path.Join(g.PipelineData.GitLocalPath, ".tox")) //remove .tox folder.
-
 
 	//if !g.Config.GetBool("engine_package_keep_lock_file") { //TODO figure out if theres a good pattern here.
 	//	os.Remove(path.Join(g.PipelineData.GitLocalPath, "npm-shrinkwrap.json"))
@@ -262,7 +260,7 @@ func (g *enginePython) DistStep() error {
 
 func (g *enginePython) retrieveCurrentMetadata(gitLocalPath string) error {
 	//read metadata.json file.
-		versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, "VERSION"))
+	versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, "VERSION"))
 	if rerr != nil {
 		return rerr
 	}

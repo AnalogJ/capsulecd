@@ -1,13 +1,13 @@
 package scm_test
 
 import (
-	"testing"
-	"github.com/stretchr/testify/require"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/suite"
-	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/config/mock"
+	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+	"testing"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -15,8 +15,8 @@ import (
 // returns the current testing context
 type ScmTestSuite struct {
 	suite.Suite
-	MockCtrl *gomock.Controller
-	Config *mock_config.MockInterface
+	MockCtrl     *gomock.Controller
+	Config       *mock_config.MockInterface
 	PipelineData *pipeline.Data
 }
 
@@ -31,7 +31,7 @@ func (suite *ScmTestSuite) SetupTest() {
 
 }
 
-func  (suite *ScmTestSuite) TearDownTest() {
+func (suite *ScmTestSuite) TearDownTest() {
 	suite.MockCtrl.Finish()
 }
 

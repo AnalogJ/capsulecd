@@ -7,13 +7,13 @@ import (
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
-	"gopkg.in/yaml.v2"
 )
 
 type rubyMetadata struct {

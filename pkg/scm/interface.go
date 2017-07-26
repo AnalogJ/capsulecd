@@ -1,8 +1,8 @@
 package scm
 
 import (
-	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/config"
+	"capsulecd/pkg/pipeline"
 	"net/http"
 )
 

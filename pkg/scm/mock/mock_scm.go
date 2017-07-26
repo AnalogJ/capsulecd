@@ -6,9 +6,9 @@ package mock_scm
 import (
 	config "capsulecd/pkg/config"
 	pipeline "capsulecd/pkg/pipeline"
+	scm "capsulecd/pkg/scm"
 	gomock "github.com/golang/mock/gomock"
 	http "net/http"
-	scm "capsulecd/pkg/scm"
 )
 
 // MockInterface is a mock of Interface interface

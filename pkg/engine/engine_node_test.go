@@ -8,18 +8,17 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"github.com/golang/mock/gomock"
 	"io/ioutil"
 	"path"
 	//"path/filepath"
-	"testing"
 	"capsulecd/pkg/config/mock"
 	"capsulecd/pkg/scm/mock"
 	"os"
+	"testing"
 )
-
 
 func TestEngineNode_Create(t *testing.T) {
 	//setup
@@ -28,11 +27,10 @@ func TestEngineNode_Create(t *testing.T) {
 
 	testConfig.Set("scm", "github")
 	testConfig.Set("package_type", "node")
-	testConfig.Set("scm_github_access_token","placeholder")
+	testConfig.Set("scm_github_access_token", "placeholder")
 	pipelineData := new(pipeline.Data)
 	githubScm, err := scm.Create("github", pipelineData, testConfig, nil)
 	require.NoError(t, err)
-
 
 	//test
 	nodeEngine, err := engine.Create("node", pipelineData, testConfig, githubScm)
@@ -42,18 +40,16 @@ func TestEngineNode_Create(t *testing.T) {
 	require.NotNil(t, nodeEngine)
 }
 
-
 // Define the suite, and absorb the built-in basic suite
 // functionality from testify - including a T() method which
 // returns the current testing context
 type EngineNodeTestSuite struct {
 	suite.Suite
-	MockCtrl *gomock.Controller
-	Scm *mock_scm.MockInterface
-	Config *mock_config.MockInterface
+	MockCtrl     *gomock.Controller
+	Scm          *mock_scm.MockInterface
+	Config       *mock_config.MockInterface
 	PipelineData *pipeline.Data
 }
-
 
 // Make sure that VariableThatShouldStartAtFive is set to five
 // before each test
@@ -67,7 +63,7 @@ func (suite *EngineNodeTestSuite) SetupTest() {
 
 }
 
-func  (suite *EngineNodeTestSuite) TearDownTest() {
+func (suite *EngineNodeTestSuite) TearDownTest() {
 	suite.MockCtrl.Finish()
 }
 
@@ -77,9 +73,9 @@ func TestEngineNode_TestSuite(t *testing.T) {
 	suite.Run(t, new(EngineNodeTestSuite))
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_AssembleStep() {
+func (suite *EngineNodeTestSuite) TestEngineNode_AssembleStep() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
 
 	//copy cookbook fixture into a temp directory.
@@ -87,7 +83,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_AssembleStep() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -101,9 +97,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_AssembleStep() {
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_AssembleStep_WithoutPackageJson() {
+func (suite *EngineNodeTestSuite) TestEngineNode_AssembleStep_WithoutPackageJson() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -111,7 +107,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_AssembleStep_WithoutPackageJson(
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 	os.Remove(path.Join(suite.PipelineData.GitLocalPath, "package.json"))
 
@@ -125,9 +121,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_AssembleStep_WithoutPackageJson(
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_DependenciesStep() {
+func (suite *EngineNodeTestSuite) TestEngineNode_DependenciesStep() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -135,7 +131,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_DependenciesStep() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -149,9 +145,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_DependenciesStep() {
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "npm-shrinkwrap.json")))
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_AllDisabled() {
+func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_AllDisabled() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
 
 	//copy cookbook fixture into a temp directory.
@@ -160,7 +156,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_AllDisabled() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -173,9 +169,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_AllDisabled() {
 	require.NoError(suite.T(), berr)
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_LintFailure() {
+func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_LintFailure() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1")
 
@@ -185,7 +181,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_LintFailure() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -198,9 +194,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_LintFailure() {
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_TestFailure() {
+func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_TestFailure() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
 	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 1")
@@ -211,7 +207,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_TestFailure() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -224,9 +220,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_TestFailure() {
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_SecurityCheckFailure() {
+func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_SecurityCheckFailure() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
 	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0")
@@ -238,7 +234,7 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_SecurityCheckFailure() 
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -251,9 +247,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_TestStep_SecurityCheckFailure() 
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_PackageStep_WithoutLockFiles() {
+func (suite *EngineNodeTestSuite) TestEngineNode_PackageStep_WithoutLockFiles() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool("engine_package_keep_lock_file").MinTimes(1).Return(false)
 
 	//copy cookbook fixture into a temp directory.
@@ -276,9 +272,9 @@ func (suite *EngineNodeTestSuite)TestEngineNode_PackageStep_WithoutLockFiles() {
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "npm-shrinkwrap.json")))
 }
 
-func (suite *EngineNodeTestSuite)TestEngineNode_DistStep_WithoutCredentials() {
+func (suite *EngineNodeTestSuite) TestEngineNode_DistStep_WithoutCredentials() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("npm_auth_token").MinTimes(1).Return(false)
 
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)

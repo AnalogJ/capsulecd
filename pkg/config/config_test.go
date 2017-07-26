@@ -2,11 +2,11 @@ package config_test
 
 import (
 	"capsulecd/pkg/config"
+	"capsulecd/pkg/pipeline"
 	"github.com/stretchr/testify/require"
 	"os"
 	"path"
 	"testing"
-	"capsulecd/pkg/pipeline"
 )
 
 func TestConfiguration_init_ShouldCorrectlyInitializeConfiguration(t *testing.T) {
@@ -80,7 +80,6 @@ func TestConfiguration_ReadConfig_WithAssetConfigurationFile(t *testing.T) {
 	parsedAssets := new([]pipeline.ScmReleaseAsset)
 	err := testConfig.UnmarshalKey("scm_release_assets", parsedAssets)
 
-
 	//assert
 	require.NoError(t, err)
 	require.Equal(t, 2, len(*parsedAssets), "should parse scm_release_assets")
@@ -89,7 +88,6 @@ func TestConfiguration_ReadConfig_WithAssetConfigurationFile(t *testing.T) {
 	require.Equal(t, "", (*parsedAssets)[1].ContentType, "should parse scm_release_assets")
 
 }
-
 
 func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	t.Parallel()
@@ -135,7 +133,7 @@ func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T) {
 	testConfig.Set("test_key", "invalidBase64_encoding")
 	testConfig.Set("test_key_2", "ZW5jb2RlIHRoaXMgc3RyaW5nLiA=")             //"encode this string. "
 	testConfig.Set("test_key_3", "dGhpcw0KaXMNCmEgbXVsdGlsaW5lDQpzdHJpbmc=") //multiline string "this\nis\na multiline\nstring"
-	testConfig.Set("test_key_4", "") //multiline string "this\nis\na multiline\nstring"
+	testConfig.Set("test_key_4", "")                                         //multiline string "this\nis\na multiline\nstring"
 
 	//test
 	testKey, terr1 := testConfig.GetBase64Decoded("test_key")
@@ -169,7 +167,6 @@ func TestConfiguration_GetStringSlice_WithNestedKeys(t *testing.T) {
 	pre_scm_init_steps := testConfig.GetStringSlice("scm_init_step.pre")
 	post_scm_init_steps := testConfig.GetStringSlice("scm_init_step.post")
 	invalid_step := testConfig.GetStringSlice("invalid_step.post")
-
 
 	//assert
 	require.Equal(t, 2, len(pre_scm_init_steps), "should have 2 pre hook commands")

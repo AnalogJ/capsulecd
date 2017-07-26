@@ -7,11 +7,11 @@ import (
 
 	"capsulecd/pkg"
 	"capsulecd/pkg/config"
+	"capsulecd/pkg/errors"
+	"capsulecd/pkg/utils"
 	"capsulecd/pkg/version"
 	"gopkg.in/urfave/cli.v2"
 	"path/filepath"
-	"capsulecd/pkg/utils"
-	"capsulecd/pkg/errors"
 )
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 		},
 		Before: func(c *cli.Context) error {
 			fmt.Fprintf(c.App.Writer, utils.StripIndent(
-			`
+				`
 			  ___   __   ____  ____  _  _  __    ____  ___  ____
 			 / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
 			( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
@@ -52,8 +52,8 @@ func main() {
 
 					//load configuration file.
 					if c.String("config_file") != "" {
-						absConfigPath, err := filepath.Abs(c.String("config_file"));
-						if  err != nil {
+						absConfigPath, err := filepath.Abs(c.String("config_file"))
+						if err != nil {
 							return err
 						}
 						err = config.ReadConfig(absConfigPath) //ignore failures to read config file.

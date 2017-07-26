@@ -27,7 +27,6 @@ func TestBashCmdExec_StdErr(t *testing.T) {
 	require.NoError(t, cerr)
 }
 
-
 func TestBashCmdExec_Prefix(t *testing.T) {
 	t.Parallel()
 

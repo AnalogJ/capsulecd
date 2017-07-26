@@ -1,14 +1,14 @@
 package engine_test
 
 import (
-	"testing"
-	"github.com/stretchr/testify/require"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/suite"
-	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/scm/mock"
 	"capsulecd/pkg/engine"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm/mock"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+	"testing"
 )
 
 // Define the suite, and absorb the built-in basic suite
@@ -16,9 +16,9 @@ import (
 // returns the current testing context
 type FactoryTestSuite struct {
 	suite.Suite
-	MockCtrl *gomock.Controller
-	Scm *mock_scm.MockInterface
-	Config *mock_config.MockInterface
+	MockCtrl     *gomock.Controller
+	Scm          *mock_scm.MockInterface
+	Config       *mock_config.MockInterface
 	PipelineData *pipeline.Data
 }
 
@@ -34,7 +34,7 @@ func (suite *FactoryTestSuite) SetupTest() {
 
 }
 
-func  (suite *FactoryTestSuite) TearDownTest() {
+func (suite *FactoryTestSuite) TearDownTest() {
 	suite.MockCtrl.Finish()
 }
 
@@ -49,7 +49,7 @@ func (suite *FactoryTestSuite) TestCreate_Invalid() {
 
 func (suite *FactoryTestSuite) TestCreate_Chef() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//test
 	testEngine, cerr := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
@@ -61,7 +61,7 @@ func (suite *FactoryTestSuite) TestCreate_Chef() {
 
 func (suite *FactoryTestSuite) TestCreate_Golang() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//test
 	testEngine, cerr := engine.Create("golang", suite.PipelineData, suite.Config, suite.Scm)
@@ -73,7 +73,7 @@ func (suite *FactoryTestSuite) TestCreate_Golang() {
 
 func (suite *FactoryTestSuite) TestCreate_Node() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//test
 	testEngine, cerr := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
@@ -85,7 +85,7 @@ func (suite *FactoryTestSuite) TestCreate_Node() {
 
 func (suite *FactoryTestSuite) TestCreate_Python() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//test
 	testEngine, cerr := engine.Create("python", suite.PipelineData, suite.Config, suite.Scm)
@@ -97,7 +97,7 @@ func (suite *FactoryTestSuite) TestCreate_Python() {
 
 func (suite *FactoryTestSuite) TestCreate_Ruby() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//test
 	testEngine, cerr := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)

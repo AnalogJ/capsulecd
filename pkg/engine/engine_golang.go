@@ -13,10 +13,10 @@ import (
 	"go/parser"
 	"go/token"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"path"
 	"strings"
-	"os"
 )
 
 type golangMetadata struct {
@@ -29,7 +29,7 @@ type engineGolang struct {
 	Scm             scm.Interface //Interface
 	CurrentMetadata *golangMetadata
 	NextMetadata    *golangMetadata
-	GoPath		string
+	GoPath          string
 }
 
 func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
@@ -162,7 +162,7 @@ func (g *engineGolang) TestStep() error {
 	//skip the test commands if disabled
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
-		testCmd :=  g.Config.GetString("engine_cmd_test")
+		testCmd := g.Config.GetString("engine_cmd_test")
 		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
 		}

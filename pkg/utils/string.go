@@ -67,7 +67,6 @@ func LeftPad2Len(s string, padStr string, overallLen int) string {
 	return retStr[(len(retStr) - overallLen):]
 }
 
-
 func StripIndent(multilineStr string) string {
-	return strings.Replace(multilineStr,"\t","",-1)
+	return strings.Replace(multilineStr, "\t", "", -1)
 }

@@ -2,20 +2,18 @@ package utils
 
 import (
 	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
 	"fmt"
 	git2go "gopkg.in/libgit2/git2go.v25"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
-	"io/ioutil"
-	"net/http"
-	"capsulecd/pkg/pipeline"
 )
-
-
 
 // Clone a git repo into a local directory.
 // Credentials need to be specified by embedding in gitRemote url.
@@ -250,18 +248,22 @@ func GitPush(repoPath string, localBranch string, remoteBranch string) error {
 // Get the nearest tag on branch.
 // tag must be nearest, ie. sorted by their distance from the HEAD of the branch, not the date or tagname.
 // basically `git describe --tags --abbrev=0`
-func GitFindNearestTagName(repoPath string)(string, error){
+func GitFindNearestTagName(repoPath string) (string, error) {
 	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
 	}
 
 	descOptions, derr := git2go.DefaultDescribeOptions()
-	if(derr != nil){return "", derr}
+	if derr != nil {
+		return "", derr
+	}
 	descOptions.Strategy = git2go.DescribeTags
 
 	formatOptions, ferr := git2go.DefaultDescribeFormatOptions()
-	if(ferr != nil){return "", ferr}
+	if ferr != nil {
+		return "", ferr
+	}
 	formatOptions.AbbreviatedSize = 0
 
 	descr, derr := repo.DescribeWorkdir(&descOptions)
@@ -322,12 +324,12 @@ func GitGenerateGitIgnore(repoPath string, ignoreType string) error {
 	//https://github.com/GlenDC/go-gitignore/blob/master/gitignore/provider/github.go
 
 	gitIgnoreBytes, err := getGitIgnore(ignoreType)
-	if(err != nil){
+	if err != nil {
 		return err
 	}
 
 	gitIgnorePath := filepath.Join(repoPath, ".gitignore")
-	return ioutil.WriteFile(gitIgnorePath, gitIgnoreBytes, 0644);
+	return ioutil.WriteFile(gitIgnorePath, gitIgnoreBytes, 0644)
 }
 
 func GitGetTagDetails(repoPath string, tagName string) (*pipeline.GitTagDetails, error) {
@@ -400,7 +402,7 @@ func getGitIgnore(languageName string) ([]byte, error) {
 	gitURL := fmt.Sprintf("https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore", languageName)
 
 	resp, err := http.Get(gitURL)
-	if(err != nil){
+	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()

@@ -6,18 +6,18 @@ import (
 	"testing"
 
 	"capsulecd/pkg/config"
+	"capsulecd/pkg/config/mock"
 	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/utils"
 	"context"
 	"crypto/tls"
+	"github.com/golang/mock/gomock"
 	"github.com/seborama/govcr"
 	"golang.org/x/oauth2"
-	"net/http"
-	"path"
 	"io/ioutil"
+	"net/http"
 	"os"
-	"capsulecd/pkg/utils"
-	"capsulecd/pkg/config/mock"
-	"github.com/golang/mock/gomock"
+	"path"
 )
 
 func vcrSetup(t *testing.T) *http.Client {
@@ -50,7 +50,6 @@ func vcrSetup(t *testing.T) *http.Client {
 	return vcr.Client
 }
 
-
 func TestScmGithub_Init_WithoutAccessToken(t *testing.T) {
 
 	//setup
@@ -60,7 +59,6 @@ func TestScmGithub_Init_WithoutAccessToken(t *testing.T) {
 	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(false)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
-
 
 	//test
 	testScm, err := scm.Create("github", pipelineData, mockConfig, client)
@@ -116,7 +114,6 @@ func TestScmGithub_Init_WithDefaults(t *testing.T) {
 	require.Nil(t, err, "should not have an error")
 
 }
-
 
 func TestScmGithub_RetrievePayload_PullRequest(t *testing.T) {
 	//setup
@@ -205,8 +202,8 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 	mockConfig := mock_config.NewMockInterface(mockCtrl)
-	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
-	mockConfig.EXPECT().GetString("scm_github_access_token").Return("")//set the Access Token to empty string before doing checkout
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)   //used by the init function
+	mockConfig.EXPECT().GetString("scm_github_access_token").Return("") //set the Access Token to empty string before doing checkout
 	// (so that git doesnt fail on placeholder token)
 	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	mockConfig.EXPECT().IsSet("scm_pull_request").Return(false)
@@ -228,7 +225,7 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 
 	//assert
 	require.NotEmpty(t, pipelineData.GitLocalPath, "should set checkout path")
-	require.Equal(t, "master",pipelineData.GitLocalBranch, "should set local branch correctly")
+	require.Equal(t, "master", pipelineData.GitLocalBranch, "should set local branch correctly")
 	require.NotNil(t, pipelineData.GitHeadInfo)
 }
 
@@ -301,7 +298,7 @@ func TestScmGithub_PublishAssets(t *testing.T) {
 	client := vcrSetup(t)
 	pipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
 		{
-			LocalPath: path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
+			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
 			ArtifactName: "gem_analogj_test.gem",
 		},
 	}
@@ -311,7 +308,7 @@ func TestScmGithub_PublishAssets(t *testing.T) {
 
 	pipelineData.GitLocalPath = path.Join(pipelineData.GitParentPath, "gem_analogj_test")
 
-	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), pipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), pipelineData.GitLocalPath)
 	require.NoError(t, cerr)
 	//test
 
@@ -352,7 +349,7 @@ func TestScmGithub_Cleanup_WithDifferentOrgs(t *testing.T) {
 		Ref: "AnalogJ-patch-6",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name: "gem_analogj_test",
+			Name:     "gem_analogj_test",
 			FullName: "AnalogJ/gem_analogj_test",
 		},
 		Sha: "12345",
@@ -361,7 +358,7 @@ func TestScmGithub_Cleanup_WithDifferentOrgs(t *testing.T) {
 		Ref: "master",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name: "gem_analogj_test",
+			Name:     "gem_analogj_test",
 			FullName: "DifferentOrg/gem_analogj_test",
 		},
 		Sha: "12345",
@@ -391,7 +388,7 @@ func TestScmGithub_Cleanup_WithHeadBranchMaster(t *testing.T) {
 		Ref: "master",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name: "gem_analogj_test",
+			Name:     "gem_analogj_test",
 			FullName: "AnalogJ/gem_analogj_test",
 		},
 		Sha: "12345",
@@ -400,7 +397,7 @@ func TestScmGithub_Cleanup_WithHeadBranchMaster(t *testing.T) {
 		Ref: "master",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name: "gem_analogj_test",
+			Name:     "gem_analogj_test",
 			FullName: "AnalogJ/gem_analogj_test",
 		},
 		Sha: "12345",
@@ -431,7 +428,7 @@ func TestScmGithub_Cleanup(t *testing.T) {
 		Ref: "AnalogJ-patch-4",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name: "gem_analogj_test",
+			Name:     "gem_analogj_test",
 			FullName: "AnalogJ/gem_analogj_test",
 		},
 		Sha: "12345",
@@ -440,7 +437,7 @@ func TestScmGithub_Cleanup(t *testing.T) {
 		Ref: "master",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "https://github.com/AnalogJ/gem_analogj_test.git",
-			Name: "gem_analogj_test",
+			Name:     "gem_analogj_test",
 			FullName: "AnalogJ/gem_analogj_test",
 		},
 		Sha: "12345",
@@ -471,6 +468,6 @@ func TestScmGithub_Notify(t *testing.T) {
 	//test
 	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
-	pperr := githubScm.Notify("49f5bfbf4610f0c2a54d33945521051ba92b2eac","success", "test message")
+	pperr := githubScm.Notify("49f5bfbf4610f0c2a54d33945521051ba92b2eac", "success", "test message")
 	require.NoError(t, pperr)
 }

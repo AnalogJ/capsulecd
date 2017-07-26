@@ -73,7 +73,7 @@ func TestScmCommitInfo_Validate_MissingRepoCloneUrl(t *testing.T) {
 		Ref: "1234",
 		Sha: "1234",
 		Repo: &pipeline.ScmRepoInfo{
-			Name: "reponame",
+			Name:     "reponame",
 			FullName: "org/reponame",
 		},
 	}
@@ -110,7 +110,7 @@ func TestScmCommitInfo_Validate_MissingRepoFullName(t *testing.T) {
 		Sha: "1234",
 		Repo: &pipeline.ScmRepoInfo{
 			CloneUrl: "clone_url",
-			Name: "reponame",
+			Name:     "reponame",
 		},
 	}
 

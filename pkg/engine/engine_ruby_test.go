@@ -8,18 +8,17 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"github.com/golang/mock/gomock"
 	"io/ioutil"
 	"path"
 	//"path/filepath"
-	"testing"
 	"capsulecd/pkg/config/mock"
 	"capsulecd/pkg/scm/mock"
 	"os"
+	"testing"
 )
-
 
 func TestEngineRuby_Create(t *testing.T) {
 	//setup
@@ -28,11 +27,10 @@ func TestEngineRuby_Create(t *testing.T) {
 
 	testConfig.Set("scm", "github")
 	testConfig.Set("package_type", "ruby")
-	testConfig.Set("scm_github_access_token","placeholder")
+	testConfig.Set("scm_github_access_token", "placeholder")
 	pipelineData := new(pipeline.Data)
 	githubScm, err := scm.Create("github", pipelineData, testConfig, nil)
 	require.NoError(t, err)
-
 
 	//test
 	rubyEngine, err := engine.Create("ruby", pipelineData, testConfig, githubScm)
@@ -42,18 +40,16 @@ func TestEngineRuby_Create(t *testing.T) {
 	require.NotNil(t, rubyEngine)
 }
 
-
 // Define the suite, and absorb the built-in basic suite
 // functionality from testify - including a T() method which
 // returns the current testing context
 type EngineRubyTestSuite struct {
 	suite.Suite
-	MockCtrl *gomock.Controller
-	Scm *mock_scm.MockInterface
-	Config *mock_config.MockInterface
+	MockCtrl     *gomock.Controller
+	Scm          *mock_scm.MockInterface
+	Config       *mock_config.MockInterface
 	PipelineData *pipeline.Data
 }
-
 
 // Make sure that VariableThatShouldStartAtFive is set to five
 // before each test
@@ -67,7 +63,7 @@ func (suite *EngineRubyTestSuite) SetupTest() {
 
 }
 
-func  (suite *EngineRubyTestSuite) TearDownTest() {
+func (suite *EngineRubyTestSuite) TearDownTest() {
 	suite.MockCtrl.Finish()
 }
 
@@ -77,9 +73,9 @@ func TestEngineRuby_TestSuite(t *testing.T) {
 	suite.Run(t, new(EngineRubyTestSuite))
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
 
 	//copy cookbook fixture into a temp directory.
@@ -87,7 +83,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
@@ -105,9 +101,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep() {
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test-0.1.4.gem")))
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithMinimalGem() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep_WithMinimalGem() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
 
 	//copy cookbook fixture into a temp directory.
@@ -116,7 +112,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithMinimalGem() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "minimal_gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "minimal_gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
@@ -134,9 +130,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithMinimalGem() {
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test-0.1.4.gem")))
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithoutGemspec() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep_WithoutGemspec() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -144,7 +140,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithoutGemspec() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "minimal_gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "minimal_gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 	os.Remove(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test.gemspec"))
 
@@ -158,9 +154,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_AssembleStep_WithoutGemspec() {
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_DependenciesStep() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_DependenciesStep() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -168,7 +164,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_DependenciesStep() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 	cperr := utils.CopyFile(path.Join("testdata", "ruby", "gem_analogj_test-0.1.4.gem"), path.Join(suite.PipelineData.GitLocalPath, "-.gem"))
 	require.NoError(suite.T(), cperr)
@@ -184,9 +180,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_DependenciesStep() {
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_AllDisabled() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_AllDisabled() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
 
 	//copy cookbook fixture into a temp directory.
@@ -195,7 +191,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_AllDisabled() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
@@ -208,9 +204,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_AllDisabled() {
 	require.NoError(suite.T(), berr)
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_LintFailure() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_LintFailure() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1")
 
@@ -220,7 +216,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_LintFailure() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
@@ -233,9 +229,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_LintFailure() {
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_TestFailure() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_TestFailure() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
 	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 1")
@@ -246,7 +242,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_TestFailure() {
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
@@ -259,9 +255,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_TestFailure() {
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_SecurityCheckFailure() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_SecurityCheckFailure() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
 	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0")
@@ -273,7 +269,7 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_SecurityCheckFailure() 
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath )
+	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
@@ -286,9 +282,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_TestStep_SecurityCheckFailure() 
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_PackageStep_WithoutLockFiles() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_PackageStep_WithoutLockFiles() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool("engine_package_keep_lock_file").MinTimes(1).Return(false)
 
 	//copy cookbook fixture into a temp directory.
@@ -311,9 +307,9 @@ func (suite *EngineRubyTestSuite)TestEngineRuby_PackageStep_WithoutLockFiles() {
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
 }
 
-func (suite *EngineRubyTestSuite)TestEngineRuby_DistStep_WithoutCredentials() {
+func (suite *EngineRubyTestSuite) TestEngineRuby_DistStep_WithoutCredentials() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("rubygems_api_key").MinTimes(1).Return(false)
 
 	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)

@@ -48,11 +48,11 @@ func (b *scmBitbucket) Publish() error {
 	return nil
 }
 
-func (g * scmBitbucket) PublishAssets(releaseData interface{}) error {
+func (g *scmBitbucket) PublishAssets(releaseData interface{}) error {
 	return nil
 }
 
-func (g * scmBitbucket) Cleanup() error {
+func (g *scmBitbucket) Cleanup() error {
 	return nil
 }
 

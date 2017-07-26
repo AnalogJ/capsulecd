@@ -9,10 +9,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
-	"log"
 )
 
 type chefMetadata struct {
@@ -33,7 +33,6 @@ func (g *engineChef) Init(pipelineData *pipeline.Data, configData config.Interfa
 	g.PipelineData = pipelineData
 	g.CurrentMetadata = new(chefMetadata)
 	g.NextMetadata = new(chefMetadata)
-
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("chef_supermarket_type", "Other")
@@ -96,7 +95,7 @@ func (g *engineChef) AssembleStep() error {
 	berksfilePath := path.Join(g.PipelineData.GitLocalPath, "Berksfile")
 	if !utils.FileExists(berksfilePath) {
 		ioutil.WriteFile(berksfilePath, []byte(utils.StripIndent(
-		`source "https://supermarket.chef.io"
+			`source "https://supermarket.chef.io"
 		metadata
 		`)), 0644)
 	}

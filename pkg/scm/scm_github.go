@@ -14,10 +14,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
-	"path"
 )
 
 type scmGithub struct {
@@ -75,7 +75,7 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 					CloneUrl: g.Config.GetString("scm_clone_url"),
 					Name:     g.Config.GetString("scm_repo_name"),
 					FullName: g.Config.GetString("scm_repo_full_name"),
-				}, },
+				}},
 		}, nil
 		//make this as similar to a pull request as possible
 	} else {
@@ -153,7 +153,7 @@ func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 	}
 	g.PipelineData.GitLocalPath = gitLocalPath
 
-	if cerr := utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref); cerr != nil{
+	if cerr := utils.GitCheckout(g.PipelineData.GitLocalPath, g.PipelineData.GitHeadInfo.Ref); cerr != nil {
 		return cerr
 	}
 
@@ -206,7 +206,6 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 	if ferr != nil {
 		return ferr
 	}
-
 
 	// show a processing message on the github PR.
 	g.Notify(g.PipelineData.GitHeadInfo.Sha, "pending", "Started processing package. Pull request will be merged automatically when complete.")
@@ -276,7 +275,7 @@ func (g *scmGithub) Publish() error {
 			Name:            &version,
 		},
 	)
-	if(rerr != nil){
+	if rerr != nil {
 		return rerr
 	}
 
@@ -285,10 +284,10 @@ func (g *scmGithub) Publish() error {
 	return nil
 }
 
-func (g * scmGithub) PublishAssets(releaseData interface{}) error {
+func (g *scmGithub) PublishAssets(releaseData interface{}) error {
 	//releaseData should be an ID (int)
 	releaseId, ok := releaseData.(int)
-	if(!ok){
+	if !ok {
 		return fmt.Errorf("Invalid releaseID, cannot upload assets")
 	}
 
@@ -309,15 +308,14 @@ func (g * scmGithub) PublishAssets(releaseData interface{}) error {
 	return nil
 }
 
-func (g * scmGithub) Cleanup() error {
+func (g *scmGithub) Cleanup() error {
 
-
-	if !g.Config.GetBool("scm_enable_branch_cleanup"){ //Default is false, so this will just return without doing anything.
+	if !g.Config.GetBool("scm_enable_branch_cleanup") { //Default is false, so this will just return without doing anything.
 		// - exit if "scm_enable_branch_cleanup" is not true
 		return errors.ScmCleanupFailed("scm_enable_branch_cleanup is false. Skipping cleanup")
-	} else if(!g.PipelineData.IsPullRequest) {
+	} else if !g.PipelineData.IsPullRequest {
 		return errors.ScmCleanupFailed("scm cleanup unnecessary for push's. Skipping cleanup")
-	} else if(g.PipelineData.GitHeadInfo.Repo.FullName != g.PipelineData.GitBaseInfo.Repo.FullName){
+	} else if g.PipelineData.GitHeadInfo.Repo.FullName != g.PipelineData.GitBaseInfo.Repo.FullName {
 		// exit if the HEAD PR branch is not in the same organization and repository as the BASE
 		return errors.ScmCleanupFailed("HEAD PR branch is not in the same organization & repo as the BASE. Skipping cleanup")
 	}
@@ -326,24 +324,23 @@ func (g * scmGithub) Cleanup() error {
 	parts := strings.Split(g.PipelineData.GitBaseInfo.Repo.FullName, "/")
 
 	repoData, _, err := g.Client.Repositories.Get(ctx, parts[0], parts[1])
-	if(err != nil){
+	if err != nil {
 		return err
 	}
 
-	if g.PipelineData.GitHeadInfo.Ref == repoData.GetDefaultBranch() || g.PipelineData.GitHeadInfo.Ref == "master"{
+	if g.PipelineData.GitHeadInfo.Ref == repoData.GetDefaultBranch() || g.PipelineData.GitHeadInfo.Ref == "master" {
 		//exit if the HEAD branch is the repo default branch
 		//exit if the HEAD branch is master
 		return errors.ScmCleanupFailed("HEAD PR branch is default repo branch, or master. Skipping cleanup")
 	}
 
 	_, drerr := g.Client.Git.DeleteRef(ctx, parts[0], parts[1], fmt.Sprintf("heads/%s", g.PipelineData.GitHeadInfo.Ref))
-	if(drerr != nil){
+	if drerr != nil {
 		return drerr
 	}
 
 	return nil
 }
-
 
 func (g *scmGithub) Notify(ref string, state string, message string) error {
 	targetURL := "https://www.capsulecd.com"
@@ -372,8 +369,7 @@ func publishAsset(client *github.Client, ctx context.Context, repoOwner, repoNam
 	_, _, err = client.Repositories.UploadReleaseAsset(ctx, repoOwner, repoName, releaseID, &github.UploadOptions{
 		Name: assetName,
 	}, f)
-	
-	
+
 	if err != nil && retries > 0 {
 		fmt.Println("artifact upload errored out, retrying in one second. Err:", err)
 		time.Sleep(time.Second)
@@ -382,7 +378,6 @@ func publishAsset(client *github.Client, ctx context.Context, repoOwner, repoNam
 
 	return err
 }
-
 
 func authGitRemote(cloneUrl string, accessToken string) (string, error) {
 	if accessToken != "" {

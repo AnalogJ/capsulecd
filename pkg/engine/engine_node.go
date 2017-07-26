@@ -6,12 +6,12 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
-	"encoding/json"
 )
 
 type nodeMetadata struct {
@@ -21,8 +21,8 @@ type nodeMetadata struct {
 type engineNode struct {
 	engineBase
 
-	PipelineData *pipeline.Data
-	Scm          scm.Interface //Interface
+	PipelineData    *pipeline.Data
+	Scm             scm.Interface //Interface
 	CurrentMetadata *nodeMetadata
 	NextMetadata    *nodeMetadata
 }
@@ -191,7 +191,6 @@ func (g *engineNode) DistStep() error {
 	}
 	return nil
 }
-
 
 //private Helpers
 

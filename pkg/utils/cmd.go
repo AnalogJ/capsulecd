@@ -3,11 +3,11 @@ package utils
 import (
 	"capsulecd/pkg/errors"
 	"fmt"
+	"github.com/kvz/logstreamer"
+	"log"
 	"os"
 	"os/exec"
 	"path"
-	"log"
-	"github.com/kvz/logstreamer"
 )
 
 //http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
@@ -18,7 +18,7 @@ func BashCmdExec(cmd string, workingDir string, environ []string, logPrefix stri
 	return CmdExec("sh", []string{"-c", cmd}, workingDir, environ, logPrefix)
 }
 
-func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []string, logPrefix string) error {
+func CmdExec(cmdName string, cmdArgs []string, workingDir string, environ []string, logPrefix string) error {
 	if logPrefix == "" {
 		logPrefix = " >> "
 	} else {
@@ -36,13 +36,10 @@ func CmdExec(cmdName string, cmdArgs []string, workingDir string,  environ []str
 	logStreamerErr := logstreamer.NewLogstreamer(logger, "stderr", true)
 	defer logStreamerErr.Close()
 
-
-
-
 	cmd := exec.Command(cmdName, cmdArgs...)
 	cmd.Stdout = logStreamerOut
 	cmd.Stderr = logStreamerErr
-	if environ != nil{
+	if environ != nil {
 		cmd.Env = environ
 	}
 	if workingDir != "" && path.IsAbs(workingDir) {

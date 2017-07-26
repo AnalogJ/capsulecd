@@ -226,6 +226,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 	require.NoError(t, perr)
 
 }
+
 //
 //func TestGitLatestTaggedCommit(t *testing.T) {
 //	t.Parallel()
@@ -310,7 +311,7 @@ func TestGitFindNearestTagName_FetchPullRequest(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test2", "https://github.com/AnalogJ/tags_analogj_test2.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetch(clonePath, "refs/pull/1/merge" ,"tagsAnalogJTest2_pr1")
+	cerr = utils.GitFetch(clonePath, "refs/pull/1/merge", "tagsAnalogJTest2_pr1")
 	require.NoError(t, cerr)
 
 	//test
@@ -321,7 +322,6 @@ func TestGitFindNearestTagName_FetchPullRequest(t *testing.T) {
 	require.Equal(t, "v2.0.0", tag, "should actually be v2.0.0") //this should be 1.0.0 because it happened before the pr opened.
 
 }
-
 
 func TestGitGenerateChangelog(t *testing.T) {
 	t.Parallel()
@@ -338,8 +338,8 @@ func TestGitGenerateChangelog(t *testing.T) {
 
 	//assert
 	require.NoError(t, ferr)
-	require.Equal(t,utils.StripIndent(
-	`Timestamp |  SHA | Message | Author
+	require.Equal(t, utils.StripIndent(
+		`Timestamp |  SHA | Message | Author
 	------------- | ------------- | ------------- | -------------
 	2017-07-16T01:41Z | f3d573aa | Added New File | CapsuleCD
 	2017-07-16T01:26Z | 842436c9 | Merge 39e720e37a19716c098757cb5c78ea90b18111d3 into 97cae66b077de3798995342da781c270b1786820 | Jason Kulatunga
@@ -364,7 +364,6 @@ func TestGitGenerateChangelog_InvalidDirectory(t *testing.T) {
 	require.Empty(t, changelog)
 }
 
-
 /*
 
 Support the following case:
@@ -376,7 +375,7 @@ t--o--o--o--o--t--o--o----+   	master
       +--o--o-----o--o----+  	feature-branch
 
 
- */
+*/
 
 func TestGitGenerateChangelog_TagSincePROpened(t *testing.T) {
 	t.Parallel()
@@ -387,7 +386,7 @@ func TestGitGenerateChangelog_TagSincePROpened(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test2", "https://github.com/AnalogJ/tags_analogj_test2.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetch(clonePath, "refs/pull/1/merge" ,"tagsAnalogJTest2_pr1")
+	cerr = utils.GitFetch(clonePath, "refs/pull/1/merge", "tagsAnalogJTest2_pr1")
 	require.NoError(t, cerr)
 	//headSha, err := utils.GitHead(clonePath)
 	//require.NoError(t, err)
@@ -397,7 +396,7 @@ func TestGitGenerateChangelog_TagSincePROpened(t *testing.T) {
 
 	//assert
 	require.NoError(t, ferr)
-	require.Equal(t,utils.StripIndent(
+	require.Equal(t, utils.StripIndent(
 		`Timestamp |  SHA | Message | Author
 		------------- | ------------- | ------------- | -------------
 		2017-07-24T21:08Z | 4abaa1bd | Merge 9ec0a955d2219f278e569ba5349dcc18a76044a4 into 04e64639394a31231b107ac923d594ea1e3cd257 | Jason Kulatunga
@@ -417,7 +416,6 @@ func TestGitGenerateGitIgnore(t *testing.T) {
 	dirPath, err := ioutil.TempDir("", "")
 	require.NoError(t, err)
 
-
 	//test
 	ferr := utils.GitGenerateGitIgnore(dirPath, "Ruby")
 
@@ -426,14 +424,12 @@ func TestGitGenerateGitIgnore(t *testing.T) {
 	require.True(t, utils.FileExists(path.Join(dirPath, ".gitignore")), "should be generated")
 }
 
-
 func TestGitGenerateGitIgnore_WithInvalidLanguage(t *testing.T) {
 	t.Parallel()
 
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
 	require.NoError(t, err)
-
 
 	//test
 	ferr := utils.GitGenerateGitIgnore(dirPath, "ThisDoesntExist")
@@ -443,14 +439,14 @@ func TestGitGenerateGitIgnore_WithInvalidLanguage(t *testing.T) {
 	require.False(t, utils.FileExists(path.Join(dirPath, ".gitignore")), "should not generate gitignore")
 }
 
-func TestGitGetTagDetails(t *testing.T){
+func TestGitGetTagDetails(t *testing.T) {
 	//setup
 	dirPath, err := ioutil.TempDir("", "")
 	require.NoError(t, err)
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test", "https://github.com/AnalogJ/tags_analogj_test.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetch(clonePath, "refs/pull/1/merge" ,"tagsAnalogJTest_pr1")
+	cerr = utils.GitFetch(clonePath, "refs/pull/1/merge", "tagsAnalogJTest_pr1")
 	require.NoError(t, cerr)
 
 	//test
