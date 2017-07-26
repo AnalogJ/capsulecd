@@ -158,3 +158,26 @@ func TestConfiguration_GetBase64Decoded_WithInvalidData(t *testing.T) {
 	require.Equal(t, "", testKey4, "should correctly return empty string, if empty string is passed in.")
 	require.Nil(t, terr4)
 }
+
+func TestConfiguration_GetStringSlice_WithNestedKeys(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	testConfig, _ := config.Create()
+
+	//test
+	testConfig.ReadConfig(path.Join("testdata", "pre_post_step_hook_configuration.yml"))
+
+	pre_scm_init_steps := testConfig.GetStringSlice("scm_init_step.pre")
+	post_scm_init_steps := testConfig.GetStringSlice("scm_init_step.post")
+	invalid_step := testConfig.GetStringSlice("invalid_step.post")
+
+
+	//assert
+	require.Equal(t, 2, len(pre_scm_init_steps), "should have 2 pre hook commands")
+	require.Equal(t, "echo 'pre scm_init_step'", pre_scm_init_steps[0], "should correctly load pre command")
+	require.Equal(t, `echo "sdfdsf"`, pre_scm_init_steps[1], "should correctly load pre command with double quotes")
+	require.Equal(t, 1, len(post_scm_init_steps), "should have 1 post hook commands")
+	require.Nil(t, invalid_step, "invalid step hook should be nil")
+
+}

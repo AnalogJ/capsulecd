@@ -1,0 +1,61 @@
+scm_init_step:
+  pre:
+  - echo 'pre scm_init_step'
+  - echo "sdfdsf"
+  post:
+  - echo 'post scm_init_step'
+scm_retrieve_payload_step:
+  pre:
+  - echo 'pre scm_retrieve_payload_step'
+  post:
+  - echo 'post scm_retrieve_payload_step'
+scm_checkout_pull_request_step:
+  pre:
+  - echo 'pre scm_checkout_pull_request_step'
+  post:
+  - echo 'post scm_checkout_pull_request_step'
+scm_checkout_push_payload_step:
+  pre:
+  - echo 'pre scm_checkout_push_payload_step'
+  post:
+  - echo 'post scm_checkout_push_payload_step'
+assemble_step:
+  pre:
+  - echo 'pre assemble_step'
+  post:
+  - echo 'post assemble_step'
+dependencies_step:
+  pre:
+  - echo 'pre dependencies_step'
+  post:
+  - echo 'post dependencies_step'
+compile_step:
+  pre:
+  - echo 'pre compile_step'
+  post:
+  - echo 'post compile_step'
+test_step:
+  pre:
+  - echo 'pre test_step'
+  post:
+  - echo 'post test_step'
+package_step:
+  pre:
+  - echo 'pre package_step'
+  post:
+  - echo 'post package_step'
+dist_step:
+  pre:
+  - echo 'pre dist_step'
+  post:
+  - echo 'post dist_step'
+scm_publish_step:
+  pre:
+  - echo 'pre scm_publish_step'
+  post:
+  - echo 'post scm_publish_step'
+scm_cleanup_step:
+  pre:
+  - echo 'pre scm_cleanup_step'
+  post:
+  - echo 'post scm_cleanup_step'
