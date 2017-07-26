@@ -5,7 +5,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"testing"
 
-	"capsulecd/pkg/config"
 	"capsulecd/pkg/config/mock"
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/utils"
@@ -318,14 +317,15 @@ func TestScmGithub_PublishAssets(t *testing.T) {
 
 func TestScmGithub_Cleanup_WithoutEnablingBranchCleanup(t *testing.T) {
 	//setup
-	testConfig, err := config.Create()
-	require.NoError(t, err)
-	testConfig.Set("scm", "github")
-	testConfig.Set("scm_repo_full_name", "AnalogJ/gem_analogj_test")
-	testConfig.Set("scm_github_access_token", "placeholder")
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	mockConfig := mock_config.NewMockInterface(mockCtrl)
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	mockConfig.EXPECT().GetBool("scm_enable_branch_cleanup").Return(false)
 	pipelineData := new(pipeline.Data)
 	client := vcrSetup(t)
-	githubScm, err := scm.Create("github", pipelineData, testConfig, client)
+	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
 	require.NoError(t, err)
 	defer os.Remove(pipelineData.GitParentPath)
 	//test
