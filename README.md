@@ -1,13 +1,13 @@
 # CapsuleCD
 
-[![Circle CI](https://circleci.com/gh/AnalogJ/capsulecd.svg?style=shield)](https://circleci.com/gh/AnalogJ/capsulecd)
-[![Coverage Status](https://codecov.io/gh/analogj/capsulecd/branch/master/graph/badge.svg)](https://codecov.io/gh/AnalogJ/capsulecd)
-[![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
-[![Godoc](https://godoc.org/github.com/AnalogJ/capsulecd?status.svg)](https://godoc.org/github.com/analogj/capsulecd)
-[![Go Report Card](https://goreportcard.com/badge/github.com/AnalogJ/capsulecd)](https://goreportcard.com/report/github.com/AnalogJ/capsulecd)
-[![GitHub release](http://img.shields.io/github/release/AnalogJ/capsulecd.svg?style=flat-square)][https://github.com/AnalogJ/capsulecd/releases]
-[![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg)](https://hub.docker.com/r/analogj/capsulecd)
-[![Flattr this git repo](https://button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=analogj&url=https%3A%2F%2Fgithub.com%2FAnalogJ%2Fcapsulecd&title=CapsuleCD&language=Ruby&tags=github&category=software)
+[![Circle CI](https://img.shields.io/circleci/project/github/AnalogJ/capsulecd.svg?style=flat-square)](https://circleci.com/gh/AnalogJ/capsulecd)
+[![Coverage Status](https://img.shields.io/codecov/c/github/AnalogJ/capsulecd.svg?style=flat-square)](https://codecov.io/gh/AnalogJ/capsulecd)
+[![GitHub license](https://img.shields.io/github/license/AnalogJ/capsulecd.svg?style=flat-square)](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE)
+[![Godoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/analogj/capsulecd)
+[![Go Report Card](https://goreportcard.com/badge/github.com/AnalogJ/capsulecd?style=flat-square)](https://goreportcard.com/report/github.com/AnalogJ/capsulecd)
+[![GitHub release](http://img.shields.io/github/release/AnalogJ/capsulecd.svg?style=flat-square)](https://github.com/AnalogJ/capsulecd/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/analogj/capsulecd.svg?style=flat-square)](https://hub.docker.com/r/analogj/capsulecd)
+[![Github All Releases](https://img.shields.io/github/downloads/analogj/capsulecd/total.svg?style=flat-square)](https://github.com/AnalogJ/capsulecd/releases)
 
 <!-- 
 [![Gemnasium](https://img.shields.io/gemnasium/analogj/capsulecd.svg)]()
