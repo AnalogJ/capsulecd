@@ -44,16 +44,15 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	// the problem with this is that for somereason gometalinter (and the underlying linting tools) take alot longer
 	// to run, and hit the default deadline limit ( --deadline=30s).
 	// we can have multiple workspaces in the gopath by separating them with colon (:), but this timeout is nasty if not required.
-	// current solution is to overridese the GOPATH fro the dependencies step, and use the standard gopath for test step
 	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath), figure out if we can do this automatically.
 	g.GoPath = g.PipelineData.GitParentPath
 	g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src")
 	os.MkdirAll(g.PipelineData.GitParentPath, 0666)
-	//os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
+	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 --errors --vendor ./...")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 --errors --vendor --deadline=3m ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
 	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
