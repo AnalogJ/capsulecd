@@ -29,16 +29,17 @@ A short list of the features...
 	* Python Pip
 	* NodeJS Npm Packages
 	* Ruby Gems
-	* Vanilla Javascript Bower/Npm Packages
+	* Golang Packages
 * Highly configurable
 * Follows language/library best practices. Including things like:
 	* automatically bumping the semvar version number
 	* regenerating any `*.lock` files/ shrinkwrap files with new version
 	* creating any recommended files (eg. `.gitignore`) 
 	* validates all dependencies exist (by vendoring locally)
+	* vulnerbility scanning in dependencies
 	* running unit tests
-	* source minification
 	* linting library syntax
+	* source formatting
 	* generating code coverage reports
 	* updating changelog
 	* uploading versioned artifact to community hosting service (rubygems/supermarket/pypi/etc)
@@ -71,8 +72,10 @@ Well, not always:
 - Did you update your changelog?
 
 CapsuleCD handles all of that (and more!) for you. It pretty much guarantees that your library will have proper and consistent releases every time. 
-CapsuleCD is well structured and fully tested, unlike the release scripts you've manually cobbled together for each library and language. It can be customized as needed without rewriting from scratch.
-The best part is that CapsuleCD uses CapsuleCD to automate its releases. We [dogfood](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) it so we're the first ones to find any issues with a new release. 
+CapsuleCD is well structured and fully tested, unlike the release scripts you've manually cobbled together for each library and language.
+It can be customized as needed without rewriting from scratch.
+The best part is that CapsuleCD uses CapsuleCD to automate its releases.
+We [dogfood](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) it so we're the first ones to find any issues with a new release.
 
 ## How do I start?
 You can use CapsuleCD to automate creating a new release from a pull request __or__ from the latest code on your default branch.
@@ -82,14 +85,13 @@ You can use CapsuleCD to automate creating a new release from a pull request __o
 Here's how to use __docker__ to merge a pull request to your Ruby library
 
     CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
-    CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/gem_analogj_test \
-    CAPSULE_RUNNER_PULL_REQUEST=4 \
+    CAPSULE_SCM_REPO_FULL_NAME=AnalogJ/gem_analogj_test \
+    CAPSULE_SCM_PULL_REQUEST=4 \
     CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
     docker run AnalogJ/capsulecd:ruby capsulecd start --scm github --package_type ruby
 
-Or you could __install__ and call CapsuleCD directly to merge a pull request to your Python library:
+Or you could download the latest linux [release](https://github.com/AnalogJ/capsulecd/releases), and call CapsuleCD directly to merge a pull request to your Python library:
 
-	gem install capsulecd
 	CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
 	CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/pip_analogj_test \
 	CAPSULE_RUNNER_PULL_REQUEST=2 \
@@ -103,17 +105,19 @@ Or you could __install__ and call CapsuleCD directly to merge a pull request to 
 	
 # Engine
 Every package type is mapped to an engine class which inherits from a `EngineScm` class, ie `EnginePython`, `EngineNode`, `EngineRuby` etc.
-Every source type is mapped to a source module, ie `ScmGithub`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Scm module.
+Every scm type is mapped to a scm class, ie `ScmGithub`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Scm module.
 Then it begins processing your source code step by step.
 
 Step | Description
 ------------ | ------------ 
-scm_configure | This will initialize the scm client, ensuring that we can authenticate with the git server
-runner_retrieve_payload | If a Pull Request # is specified, the payload is retrieved from Scm api, otherwise the repo default branch HEAD info is retrived.
+scm_init_step | This will initialize the scm client, ensuring that we can authenticate with the git server
+scm_retrieve_payload_step | If a Pull Request # is specified, the payload is retrieved from Scm api, otherwise the repo default branch HEAD info is retrived.
 scm_process_pull_request_payload __or__ scm_process_push_payload | Depending on the retrieve_payload step, the merged pull request is cloned, or the default branch is cloned locally
-build_step | Code is built, which includes adding any missing files/default structure, compilation, version bumping, etc.
-test_step | Download package dependencies, run the package test runner(s) (eg. npm test, rake test, kitchen test, tox)
-package_step | Commit any local changes and create a git tag. Nothing should be pushed to remote repository
+assemble_step | Code is built, which includes adding any missing files/default structure, version bumping, etc.
+dependencies_step | Download package dependencies
+compile_step | Optional compilation of source into binaries
+test_step | Run the package test runner(s) (eg. npm test, rake test, kitchen test, tox), linter, formatter & dependency vulnerbility scanner
+package_step | Clean any unnecessary files, commit any local changes and create a git tag. Nothing should be pushed to remote repository
 dist_step | Push the release to the package repository (ie. npm, chef supermarket, rubygems)
 scm_publish | Push the merged, tested and version updated code up to the source code repository. Also do any source specific releases (github release, asset uploading, etc)
 
@@ -121,7 +125,7 @@ scm_publish | Push the merged, tested and version updated code up to the source 
 Specifying your `GITHUB_ACCESS_TOKEN` and `PYPI_PASSWORD` via an environmental variable might make sense, but do you 
 really want to specify the `PYPI_USERNAME`, `REPO_FULL_NAME` each time? Probably not. 
 
-CapsuleCD has you covered. We support a global YAML configuration file (that can be specified using the `--config-file` flag), and a repo specific YAML configuration file stored as `capsule.yml` inside the repo itself.
+CapsuleCD has you covered. We support a global YAML configuration file (that can be specified using the `--config_file` flag), and a repo specific YAML configuration file stored as `capsule.yml` inside the repo itself.
 
 ## Setting Inheritance/Overrides
 CapsuleCD settings are determined by loading configuration in the following order (where the last value specified is used)
@@ -132,34 +136,7 @@ CapsuleCD settings are determined by loading configuration in the following orde
 
 ## Configuration Settings
 
-Setting | System Config | Repo Config | Notes
------------- | ------------- | ------------- | -------------
-package_type | No | No | Must be set by `--package-type` flag
-scm | No | No | Must be set by `--scm` flag
-runner | No | No | Must be set by `--runner` flag
-dry_run | No | No | Must be set by `--[no]-dry-run` flag
-scm_git_parent_path | Yes | No | Specifies the location where the git repo will be cloned, defaults to tmp directory
-scm_github_api_endpoint | Yes | No | Specifies the Github api endpoint to use (for use with Enterprise Github)
-scm_github_web_endpoint | Yes | No | Specifies the Github web endpoint to use (for use with Enterprise Github)
-scm_github_access_token | Yes | No | Specifies the access token to use when cloning from and committing to Github
-runner_pull_request | Yes | No | Specifies the repo pull request number to clone from  Github
-runner_repo_full_name | Yes | No | Specifies the repo name to clone from Github
-chef_supermarket_username | Yes | Yes | Specifies the Chef Supermarket username to use when creating public release for Chef cookbook
-chef_supermarket_key | Yes | Yes | Specifies the Base64 encoded Chef Supermarket private key to use when creating public release for Chef cookbook
-chef_supermarket_type | Yes | Yes | Specifies the Chef Supermarket cookbook type to use when creating public release for Chef cookbook
-npm_auth_token | Yes | Yes | Specifies the NPM auth to use when creating public release for NPM package
-pypi_username | Yes | Yes | Specifies the PYPI username to use when creating public release for Pypi package
-pypi_password | Yes | Yes | Specifies the PYPI password to use when creating public release for Pypi package
-engine_disable_test | Yes | Yes | Disables test_step before releasing package
-engine_disable_minification | Yes | Yes | Disables source code minification (if applicable) before releasing package
-engine_disable_lint | Yes | Yes | Disables source code linting before releasing package
-engine_cmd_test | Yes | Yes | Specifies the test command to before releasing package
-engine_cmd_minification | Yes | Yes | Specifies the minification command to before releasing package
-engine_cmd_lint | Yes | Yes | Specifies the lint command to before releasing package
-engine_version_bump_type | Yes | Yes | Specifies the Semvar segment (`major`, `minor`, `patch`) to bump before releasing package
-engine_disable_cleanup | Yes | Yes | Specifies if the engine should cleanup the working directory on exit
-
-	TODO: specify the missing `BRANCH` release style settings.
+Check the [`example.capsule.yml`](example.capsule.yml) file for a full list of all the available coniguration options.
 
 As mentioned above, all settings can be specified via Environmental variable. All you need to do is convert the setting to uppercase
 and then prefix it with `CAPSULE_`. So `pypi_password` can be set with `CAPSULE_PYPI_PASSWORD` and `engine_cmd_test` with `CAPSULE_ENGINE_CMD_TEST`
@@ -177,42 +154,28 @@ scm_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 ## Step pre/post hooks and overrides
 
 CapsuleCD is completely customizable, to the extent that you can run your own Ruby code as `pre` and `post` hooks before every step. 
-If that's not enough, you can also completely override the step itself, allowing you to use your own business logic.
-To add a `pre`/`post` hook or override a step, just modify your config `yml` file by adding the step you want to modify, and 
-specify `pre`, `post` or `override` as a subkey. Then specify your multiline ruby script:
+To add a `pre`/`post` hook or override a step, just modify your config `yml` file by adding the step you want to modify, and
+specify `pre` or `post` as a subkey. Then specify your shell commands as a list
 
 	---
-      scm_configure:
-        pre: |
-          # this is my multiline ruby script
-          # the pre hook script runs before the actual step (source_configure) executes
-          # we have access to any of the specified instance variables here.
-          # check the documentation for more information.
-          puts "override pre_scm_configure"
-          `git clone ...`
-        override: |
-          # override scripts can be used to completely replace the built-in step script.
-          # to ensure that you are compatible with the capsulecd runner, please ensure that you
-          # populate all the correct instance variables.
-          # see the documentation for more information
-          puts "override scm_configure"
+      scm_init:
+        pre:
+          - echo "override pre_scm_configure"
+          - `git clone ...`
         post: |
-          # post scripts run after the step (source_configure) executes
-          # you can override any instance variables here, do additional cleanup or anything else you want.
-          puts "override post_scm_configure"
-      build_step:
+          # do additional cleanup or anything else you want.
+          - echo "override post_scm_configure"
+      assemble_step:
         post: |
-          # post build step runs after the build_step runs
-          # within the script you have access to all instance variables and other methods defined in the engine.
-          puts "override post_build_step" + @scm_git_local_path
+          # this post hook runs after the assemble_step runs
+          - echo "override post_build_step"
 
 # Testing
 
 ## Test suite and continuous integration
 
-CapsuleCD provides an extensive test-suite based on rspec and a full integration suite which uses VCR. 
-You can run the unit tests with `rake  test`. The integration tests can be run by `rake 'spec:<package_type>'`. 
-So to run the Python integration tests you would call `rake 'spec:python'`.
+CapsuleCD provides an extensive test-suite based on `go test` and a full integration suite which uses `go-vcr`.
+You can run all the integration & unit tests with `go test $(glide novendor)`
 
 CircleCI is used for continuous integration testing: <https://circleci.com/gh/AnalogJ/capsulecd>
 
@@ -234,7 +197,6 @@ We're actively looking for pull requests in the following areas:
 	- C#
 	- Objective C
 	- Dash
-	- Go
 	- Java
 	- Lua
 	- Rust
