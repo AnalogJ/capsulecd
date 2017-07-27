@@ -43,6 +43,21 @@ func TestGitClone_ExistingPath(t *testing.T) {
 	require.Empty(t, clonePath)
 }
 
+func TestGitClone_InvalidRemote(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	dirPath, err := ioutil.TempDir("", "")
+	require.NoError(t, err)
+	defer deleteTestRepo(dirPath)
+
+	//test
+	_, cerr := utils.GitClone(dirPath, "test", "this-is-an-invalid-url-remote")
+
+	//assert
+	require.Error(t, cerr, "should raise an error if invalid remote")
+}
+
 func TestGitFetch(t *testing.T) {
 	t.Parallel()
 
@@ -98,6 +113,23 @@ func TestGitCheckout_InvalidDirectory(t *testing.T) {
 
 	//test
 	ferr := utils.GitCheckout(dirPath, "localBranchName")
+
+	//assert
+	require.Error(t, ferr)
+}
+
+func TestGitCheckout_InvalidBranch(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	dirPath, err := ioutil.TempDir("", "")
+	require.NoError(t, err)
+	defer deleteTestRepo(dirPath)
+	clonePath, cerr := utils.GitClone(dirPath, "npm_analogj_test", "https://github.com/AnalogJ/npm_analogj_test.git")
+	require.NoError(t, cerr)
+
+	//test
+	ferr := utils.GitCheckout(clonePath, "invalid_branch_test")
 
 	//assert
 	require.Error(t, ferr)

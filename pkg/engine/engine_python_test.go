@@ -74,6 +74,19 @@ func TestEnginePython_TestSuite(t *testing.T) {
 	suite.Run(t, new(EnginePythonTestSuite))
 }
 
+func (suite *EnginePythonTestSuite) TestEnginePython_ValidateTools() {
+	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	pythonEngine, err := engine.Create("python", suite.PipelineData, suite.Config, suite.Scm)
+	require.NoError(suite.T(), err)
+
+	//test
+	berr := pythonEngine.ValidateTools()
+
+	//assert
+	require.NoError(suite.T(), berr)
+}
+
 func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)

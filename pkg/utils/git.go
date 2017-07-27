@@ -19,10 +19,7 @@ import (
 // Credentials need to be specified by embedding in gitRemote url.
 // TODO: this pattern may not work on Bitbucket/GitLab
 func GitClone(parentPath string, repositoryName string, gitRemote string) (string, error) {
-	absPath, aerr := filepath.Abs(path.Join(parentPath, repositoryName))
-	if aerr != nil {
-		return "", aerr
-	}
+	absPath, _ := filepath.Abs(path.Join(parentPath, repositoryName))
 
 	if !FileExists(absPath) {
 		os.MkdirAll(absPath, os.ModePerm)
@@ -55,6 +52,7 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 		return ferr
 	}
 
+	//should not raise an error when looking for branch (we just created it above)
 	localBranch, berr := repo.LookupBranch(localBranchName, git2go.BranchLocal)
 	if berr != nil {
 		return berr

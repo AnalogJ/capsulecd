@@ -74,6 +74,19 @@ func TestEngineChef_TestSuite(t *testing.T) {
 	suite.Run(t, new(EngineChefTestSuite))
 }
 
+func (suite *EngineChefTestSuite) TestEngineChef_ValidateTools() {
+	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+	require.NoError(suite.T(), err)
+
+	//test
+	berr := chefEngine.ValidateTools()
+
+	//assert
+	require.NoError(suite.T(), berr)
+}
+
 func (suite *EngineChefTestSuite) TestEngineChef_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)

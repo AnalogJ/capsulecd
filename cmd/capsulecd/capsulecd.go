@@ -27,15 +27,21 @@ func main() {
 			},
 		},
 		Before: func(c *cli.Context) error {
-			fmt.Fprintf(c.App.Writer, utils.StripIndent(
+
+			capsuleUrl := "https://www.capsulecd.com"
+			versionInfo := fmt.Sprintf("%s-%s", "linux", version.VERSION)
+
+			subtitle := capsuleUrl + utils.LeftPad2Len(versionInfo," ", 53-len(capsuleUrl))
+
+			fmt.Fprintf(c.App.Writer, fmt.Sprintf(utils.StripIndent(
 				`
 			  ___   __   ____  ____  _  _  __    ____  ___  ____
 			 / __) / _\ (  _ \/ ___)/ )( \(  )  (  __)/ __)(    \
 			( (__ /    \ ) __/\___ \) \/ (/ (_/\ ) _)( (__  ) D (
 			 \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/
-			https://www.capsulecd.com
+			%s
 
-			`))
+			`), subtitle ))
 			return nil
 		},
 

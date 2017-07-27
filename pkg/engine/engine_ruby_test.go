@@ -73,6 +73,19 @@ func TestEngineRuby_TestSuite(t *testing.T) {
 	suite.Run(t, new(EngineRubyTestSuite))
 }
 
+func (suite *EngineRubyTestSuite) TestEngineRuby_ValidateTools() {
+	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
+	require.NoError(suite.T(), err)
+
+	//test
+	berr := rubyEngine.ValidateTools()
+
+	//assert
+	require.NoError(suite.T(), berr)
+}
+
 func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)

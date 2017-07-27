@@ -74,6 +74,19 @@ func TestEngineGolang_TestSuite(t *testing.T) {
 	suite.Run(t, new(EngineGolangTestSuite))
 }
 
+func (suite *EngineGolangTestSuite) TestEngineGolang_ValidateTools() {
+	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	golangEngine, err := engine.Create("golang", suite.PipelineData, suite.Config, suite.Scm)
+	require.NoError(suite.T(), err)
+
+	//test
+	berr := golangEngine.ValidateTools()
+
+	//assert
+	require.NoError(suite.T(), berr)
+}
+
 func (suite *EngineGolangTestSuite) TestEngineGolang_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
