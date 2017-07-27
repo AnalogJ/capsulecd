@@ -39,28 +39,27 @@ func TestStripIndent(t *testing.T) {
 func TestLeftPad2Len(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "-----12345" ,utils.LeftPad2Len("12345", "-", 10) )
-	require.Equal(t, "345" ,utils.LeftPad2Len("12345", "-", 3) )
+	require.Equal(t, "-----12345", utils.LeftPad2Len("12345", "-", 10))
+	require.Equal(t, "345", utils.LeftPad2Len("12345", "-", 3))
 }
 
 func TestRightPad2Len(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "12345-----" ,utils.RightPad2Len("12345", "-", 10) )
-	require.Equal(t, "123" ,utils.RightPad2Len("12345", "-", 3) )
+	require.Equal(t, "12345-----", utils.RightPad2Len("12345", "-", 10))
+	require.Equal(t, "123", utils.RightPad2Len("12345", "-", 3))
 }
-
 
 func TestLeftPad(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "----------12345" ,utils.LeftPad("12345", "-", 10) )
-	require.Equal(t, "---12345" ,utils.LeftPad("12345", "-", 3) )
+	require.Equal(t, "----------12345", utils.LeftPad("12345", "-", 10))
+	require.Equal(t, "---12345", utils.LeftPad("12345", "-", 3))
 }
 
 func TestRightPad(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "12345----------" ,utils.RightPad("12345", "-", 10) )
-	require.Equal(t, "12345---" ,utils.RightPad("12345", "-", 3) )
+	require.Equal(t, "12345----------", utils.RightPad("12345", "-", 10))
+	require.Equal(t, "12345---", utils.RightPad("12345", "-", 3))
 }

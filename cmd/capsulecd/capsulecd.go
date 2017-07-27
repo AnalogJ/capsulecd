@@ -31,7 +31,7 @@ func main() {
 			capsuleUrl := "https://www.capsulecd.com"
 			versionInfo := fmt.Sprintf("%s-%s", "linux", version.VERSION)
 
-			subtitle := capsuleUrl + utils.LeftPad2Len(versionInfo," ", 53-len(capsuleUrl))
+			subtitle := capsuleUrl + utils.LeftPad2Len(versionInfo, " ", 53-len(capsuleUrl))
 
 			fmt.Fprintf(c.App.Writer, fmt.Sprintf(utils.StripIndent(
 				`
@@ -41,7 +41,7 @@ func main() {
 			 \___)\_/\_/(__)  (____/\____/\____/(____)\___)(____/
 			%s
 
-			`), subtitle ))
+			`), subtitle))
 			return nil
 		},
 
