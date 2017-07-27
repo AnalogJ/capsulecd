@@ -27,7 +27,7 @@ It's goal is to bring automation to the packaging and deployment stage of your l
 CapsuleCD is incredibly flexible, and works best when implemented side-by-side with a CI pipeline.
 
 <p align="center">
-<a href="https://github.com/AnalogJ/capsulecd">
+<a href="https://analogj.github.io/capsulecd">
   <img width="800" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/capsulecd-screencast.png">
   </a>
 </p>
@@ -104,8 +104,8 @@ Or you could download the latest linux [release](https://github.com/AnalogJ/caps
 directly to merge a pull request to your Python library:
 
 	CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
-	CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/pip_analogj_test \
-	CAPSULE_RUNNER_PULL_REQUEST=2 \
+	CAPSULE_SCM_REPO_FULL_NAME=AnalogJ/pip_analogj_test \
+	CAPSULE_SCM_PULL_REQUEST=2 \
 	CAPSULE_PYPI_USERNAME=AnalogJ \
 	CAPSULE_PYPI_PASSWORD=mysupersecurepassword \
 	capsulecd start --scm github --package_type python
