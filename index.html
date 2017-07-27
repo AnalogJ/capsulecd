@@ -1,11 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>AnalogJ/capsulecd Screencast</title>
-    <script src="//api.html5media.info/1.2.2/html5media.min.js"></script>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <title>Plyr - A simple HTML5 media player</title>
+    <meta name="description" content="AnalogJ/capsulecd Screencast.">
+    <meta name="author" content="Jason Kulatunga">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/plyr.css">
+
+    <!-- Docs styles -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/2.0.13/demo.css">
 </head>
 <body>
-<video src="capsulecd-screencast.mp4" controls preload></video>
-</body>
-</html>
+
+
+<section>
+    <video poster="capsulecd-screencast.png" controls crossorigin>
+        <!-- Video files -->
+        <source src="capsulecd-screencast.mp4" type="video/mp4">
+
+        <!-- Fallback for browsers that don't support the <video> element -->
+        <a href="capsulecd-screencast.mp4" download>Download</a>
+    </video>
+
+    <ul>
+        <li class="plyr__cite plyr__cite--video"><small><a href="https://github.com/AnalogJ/capsulecd" target="_blank">Back to AnalogJ/Capsulecd</a></small></li>
+        </ul>
+</section>
+
+<!-- Plyr core script -->
+<script src="https://cdn.plyr.io/2.0.13/plyr.js"></script>
+<script>plyr.setup();</script>
+</body></html>
