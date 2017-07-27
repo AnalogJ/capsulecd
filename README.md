@@ -71,11 +71,11 @@ Well, not always:
 - Did you remember to tag your source when the new version was created (making it easy to determine what's changed between versions?)
 - Did you update your changelog?
 
-CapsuleCD handles all of that (and more!) for you. It pretty much guarantees that your library will have proper and consistent releases every time. 
-CapsuleCD is well structured and fully tested, unlike the release scripts you've manually cobbled together for each library and language.
-It can be customized as needed without rewriting from scratch.
-The best part is that CapsuleCD uses CapsuleCD to automate its releases.
-We [dogfood](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) it so we're the first ones to find any issues with a new release.
+CapsuleCD handles all of that (and more!) for you. It pretty much guarantees that your library will have proper and
+consistent releases every time. CapsuleCD is well structured and fully tested, unlike the release scripts you've manually
+cobbled together for each library and language. It can be customized as needed without rewriting from scratch. The best
+part is that CapsuleCD uses CapsuleCD to automate its releases. We [dogfood](https://en.wikipedia.org/wiki/Eating_your_own_dog_food)
+it so we're the first ones to find any issues with a new release.
 
 ## How do I start?
 You can use CapsuleCD to automate creating a new release from a pull request __or__ from the latest code on your default branch.
@@ -90,7 +90,8 @@ Here's how to use __docker__ to merge a pull request to your Ruby library
     CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
     docker run AnalogJ/capsulecd:ruby capsulecd start --scm github --package_type ruby
 
-Or you could download the latest linux [release](https://github.com/AnalogJ/capsulecd/releases), and call CapsuleCD directly to merge a pull request to your Python library:
+Or you could download the latest linux [release](https://github.com/AnalogJ/capsulecd/releases), and call CapsuleCD
+directly to merge a pull request to your Python library:
 
 	CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
 	CAPSULE_RUNNER_REPO_FULL_NAME=AnalogJ/pip_analogj_test \
@@ -104,9 +105,9 @@ Or you could download the latest linux [release](https://github.com/AnalogJ/caps
 	TODO: add documentation on how to create a release from the master branch without a pull request. Specify the env variables required. 
 	
 # Engine
-Every package type is mapped to an engine class which inherits from a `EngineScm` class, ie `EnginePython`, `EngineNode`, `EngineRuby` etc.
-Every scm type is mapped to a scm class, ie `ScmGithub`. When CapsuleCD starts, it initializes the specified Engine, and loads the correct Scm module.
-Then it begins processing your source code step by step.
+Every package type is mapped to an engine class which inherits from a `EngineScm` class, ie `EnginePython`, `EngineNode`,
+`EngineRuby` etc. Every scm type is mapped to a scm class, ie `ScmGithub`. When CapsuleCD starts, it initializes the
+specified Engine, and loads the correct Scm module. Then it begins processing your source code step by step.
 
 Step | Description
 ------------ | ------------ 
@@ -125,7 +126,8 @@ scm_publish | Push the merged, tested and version updated code up to the source 
 Specifying your `GITHUB_ACCESS_TOKEN` and `PYPI_PASSWORD` via an environmental variable might make sense, but do you 
 really want to specify the `PYPI_USERNAME`, `REPO_FULL_NAME` each time? Probably not. 
 
-CapsuleCD has you covered. We support a global YAML configuration file (that can be specified using the `--config_file` flag), and a repo specific YAML configuration file stored as `capsule.yml` inside the repo itself.
+CapsuleCD has you covered. We support a global YAML configuration file (that can be specified using the `--config_file`
+flag), and a repo specific YAML configuration file stored as `capsule.yml` inside the repo itself.
 
 ## Setting Inheritance/Overrides
 CapsuleCD settings are determined by loading configuration in the following order (where the last value specified is used)
@@ -138,8 +140,9 @@ CapsuleCD settings are determined by loading configuration in the following orde
 
 Check the [`example.capsule.yml`](example.capsule.yml) file for a full list of all the available coniguration options.
 
-As mentioned above, all settings can be specified via Environmental variable. All you need to do is convert the setting to uppercase
-and then prefix it with `CAPSULE_`. So `pypi_password` can be set with `CAPSULE_PYPI_PASSWORD` and `engine_cmd_test` with `CAPSULE_ENGINE_CMD_TEST`
+As mentioned above, all settings can be specified via Environmental variable. All you need to do is convert the setting
+to uppercase and then prefix it with `CAPSULE_`. So `pypi_password` can be set with `CAPSULE_PYPI_PASSWORD` and
+`engine_cmd_test` with `CAPSULE_ENGINE_CMD_TEST`
 
 ### Example System Configuration File
 
@@ -153,9 +156,9 @@ scm_github_web_endpoint: https://git.mycorpsubnet.example.com/v2
 
 ## Step pre/post hooks and overrides
 
-CapsuleCD is completely customizable, to the extent that you can run your own Ruby code as `pre` and `post` hooks before every step. 
-To add a `pre`/`post` hook or override a step, just modify your config `yml` file by adding the step you want to modify, and
-specify `pre` or `post` as a subkey. Then specify your shell commands as a list
+CapsuleCD is completely customizable, to the extent that you can run your own Ruby code as `pre` and `post`
+hooks before every step. To add a `pre`/`post` hook or override a step, just modify your config `yml` file by
+adding the step you want to modify, and specify `pre` or `post` as a subkey. Then specify your shell commands as a list
 
 	---
       scm_init:
@@ -181,13 +184,22 @@ CircleCI is used for continuous integration testing: <https://circleci.com/gh/An
 
 # Contributing
 
-If you'd like to help improve CapsuleCD, clone the project with Git by running:
+If you'd like to help improve CapsuleCD, clone the project with Git and install dependencies by running:
 
     $ git clone git://github.com/AnalogJ/capsulecd
-    
+    $ glide install
+
+Note for development you'll also need to ensure that you have the `git2go` dependencies installed on your machine.
+You can install these dependencies by using your system's package manager.
+
+	- openssl
+	- libgit2
+	- libssh2
+
 Work your magic and then submit a pull request. We love pull requests!
 
-If you find the documentation lacking, help us out and update this README.md. If you don't have the time to work on CapsuleCD, but found something we should know about, please submit an issue.
+If you find the documentation lacking, help us out and update this README.md.
+If you don't have the time to work on CapsuleCD, but found something we should know about, please submit an issue.
 
 ## To-do List
 
@@ -221,7 +233,8 @@ Jason Kulatunga - Initial Development -  [@AnalogJ](https://github.com/AnalogJ)
 
 # License
 
-CapsuleCD is licensed under the MIT License - see the [LICENSE.md](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE.md) file for details
+CapsuleCD is licensed under the MIT License - see the
+[LICENSE.md](https://github.com/AnalogJ/capsulecd/blob/master/LICENSE.md) file for details
 
 
 
