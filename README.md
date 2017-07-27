@@ -1,7 +1,9 @@
 # CapsuleCD
 
 <p align="center">
+  <a href="https://github.com/AnalogJ/capsulecd">
   <img width="300" alt="portfolio_view" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/logo.svg">
+  </a>
 </p>
 
 
@@ -18,13 +20,17 @@
 [![Gemnasium](https://img.shields.io/gemnasium/analogj/capsulecd.svg)]()
 -->
 
-<p align="center">
-  <img width="800" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/capsulecd-screencast.png">
-</p>
+
 
 CapsuleCD is a generic Continuous Delivery pipeline for versioned artifacts and libraries written in any language. 
 It's goal is to bring automation to the packaging and deployment stage of your library release cycle.
 CapsuleCD is incredibly flexible, and works best when implemented side-by-side with a CI pipeline.
+
+<p align="center">
+<a href="https://github.com/AnalogJ/capsulecd">
+  <img width="800" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/capsulecd-screencast.png">
+  </a>
+</p>
 
 A short list of the features...
 
