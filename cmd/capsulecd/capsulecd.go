@@ -111,7 +111,7 @@ func main() {
 
 					&cli.StringFlag{
 						Name:    "config_file",
-						Aliases: []string{"config-file"},
+						Aliases: []string{"config-file", "c"},
 						Usage:   "Specifies the location of the config file",
 					},
 				},
