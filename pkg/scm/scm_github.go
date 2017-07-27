@@ -37,10 +37,7 @@ func (g *scmGithub) Init(pipelineData *pipeline.Data, myconfig config.Interface,
 		g.PipelineData.GitParentPath = g.Config.GetString("scm_git_parent_path")
 		os.MkdirAll(g.PipelineData.GitParentPath, os.ModePerm)
 	} else {
-		dirPath, err := ioutil.TempDir("", "")
-		if err != nil {
-			return err
-		}
+		dirPath, _ := ioutil.TempDir("", "")
 		g.PipelineData.GitParentPath = dirPath
 	}
 

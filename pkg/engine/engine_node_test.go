@@ -73,6 +73,19 @@ func TestEngineNode_TestSuite(t *testing.T) {
 	suite.Run(t, new(EngineNodeTestSuite))
 }
 
+func (suite *EngineNodeTestSuite) TestEngineNode_ValidateTools() {
+	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
+	require.NoError(suite.T(), err)
+
+	//test
+	berr := nodeEngine.ValidateTools()
+
+	//assert
+	require.NoError(suite.T(), berr)
+}
+
 func (suite *EngineNodeTestSuite) TestEngineNode_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
