@@ -19,7 +19,7 @@
 -->
 
 <p align="center">
-  <img width="800" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/caspulecd-screencast.png">
+  <img width="800" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/capsulecd-screencast.png">
 </p>
 
 CapsuleCD is a generic Continuous Delivery pipeline for versioned artifacts and libraries written in any language. 
