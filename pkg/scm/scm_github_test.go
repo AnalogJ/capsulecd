@@ -207,7 +207,7 @@ func TestScmGithub_ProcessPushPayload(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 	mockConfig := mock_config.NewMockInterface(mockCtrl)
-	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)   //used by the init function
+	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
 	mockConfig.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
 	mockConfig.EXPECT().GetString("scm_github_access_token").Return("") //set the Access Token to empty string before doing checkout
 	// (so that git doesnt fail on placeholder token)

@@ -3,15 +3,15 @@ package engine
 import (
 	"capsulecd/pkg/config"
 	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/utils"
 	"fmt"
 	"github.com/Masterminds/semver"
-	"capsulecd/pkg/utils"
-	"capsulecd/pkg/pipeline"
 )
 
 type engineBase struct {
-	Config config.Interface
-	PipelineData    *pipeline.Data
+	Config       config.Interface
+	PipelineData *pipeline.Data
 }
 
 // default Compile Step.
@@ -80,7 +80,6 @@ func (g *engineBase) TestStep() error {
 	return nil
 }
 
-
 //Helper functions
 
 func (e *engineBase) BumpVersion(currentVersion string) (string, error) {
@@ -110,7 +109,7 @@ func (e *engineBase) ExecuteCmdList(configKey string, workingDir string, environ
 	// and list commands (engine_cmd_compile: - 'compile command' \n - 'compile command 2' \n ..)
 	// GetString will return "" if this is a list of commands.
 
-	if(cmd != ""){
+	if cmd != "" {
 		//code formatter
 		if terr := utils.BashCmdExec(cmd, workingDir, environ, logPrefix); terr != nil {
 			return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmd))

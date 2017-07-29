@@ -56,7 +56,7 @@ func (g *scmGithub) Init(pipelineData *pipeline.Data, myconfig config.Interface,
 		g.Client = github.NewClient(tc)
 	}
 
-	if g.Config.IsSet("scm_github_api_endpoint"){
+	if g.Config.IsSet("scm_github_api_endpoint") {
 
 		apiUrl, aerr := url.Parse(g.Config.GetString("scm_github_api_endpoint"))
 		if aerr != nil {

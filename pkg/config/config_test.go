@@ -193,9 +193,8 @@ func TestConfiguration_ListTypeCmd_List(t *testing.T) {
 	//assert
 	require.True(t, testConfig.IsSet("engine_cmd_compile"), "should correctly detect key is populated")
 	require.Empty(t, "", cmd, "should return empty when treated as a string")
-	require.Equal(t, []string{`echo 'test compile command 1'`,`echo 'test compile command 2'`,`echo 'test compile command 3'`},cmd_list, "should correctly return entries when treated as a list")
+	require.Equal(t, []string{`echo 'test compile command 1'`, `echo 'test compile command 2'`, `echo 'test compile command 3'`}, cmd_list, "should correctly return entries when treated as a list")
 }
-
 
 func TestConfiguration_ListTypeCmd_Simple(t *testing.T) {
 	t.Parallel()

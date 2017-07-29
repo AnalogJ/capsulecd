@@ -158,7 +158,6 @@ func (g *engineGolang) TestStep() error {
 			return terr
 		}
 
-
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			//code formatter
 			if terr := g.ExecuteCmdList("engine_cmd_fmt",
