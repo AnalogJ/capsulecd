@@ -1,28 +1,34 @@
-#################################################
+###############################################################################
 #
-# Build Image for CapsuleCD to dogfood CapsuleCD
-# Should not be used for 3rd party apps
+# This Dockerfile should only be used to cross-compile capsulecd for various
+# OS's and Architectures. Its massive, and should not be used as a base image
+# for your Dockerfiles.
 #
-# Real Docker Images and Dockerfiles are located:
+# Usable Docker Images and Dockerfiles for different languages are located:
 # - https://github.com/AnalogJ/capsulecd-docker
 # - https://hub.docker.com/r/analogj/capsulecd
 #
 # Use `docker pull analogj/capsulecd:<language>`
 #
-#################################################
-FROM analogj/capsulecd:golang
+###############################################################################
+FROM analogj/libgit2-xgo
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
+WORKDIR /srv/capsulecd
+
+ENV PATH="/srv/capsulecd:/go/bin:${PATH}" \
+	SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
-    pkg-config \
+ 	apt-transport-https \
+    ca-certificates \
+    git \
+    curl \
 	&& rm -rf /var/lib/apt/lists/* \
+	&& go get -u gopkg.in/alecthomas/gometalinter.v1 \
+	&& gometalinter.v1 --install \
 	&& go get github.com/Masterminds/glide
 
-# extract the libgit2 library here
-RUN cd /tmp \
-	&& curl -O -L https://github.com/AnalogJ/docker-libgit2-crossbuild/releases/download/v1.0.0/libgit2.static.linux-amd64.tar.gz \
-	&& tar xvf libgit2.static.linux-amd64.tar.gz -C /usr/local/lib/
+COPY ./ci/capsulecd.sh /scripts/capsulecd.sh
 
-ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig/:/usr/local/lib/pkgconfig/:/usr/local/lib/libgit2/lib/pkgconfig:/usr/local/lib/openssl/lib/pkgconfig:/usr/local/lib/libssh2"
+RUN /scripts/capsulecd.sh
