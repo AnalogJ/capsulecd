@@ -9,6 +9,9 @@
 # Specifies the location where the git repo will be cloned, defaults to tmp directory
 scm_git_parent_path: '' # eg. /my/custom/path/here
 
+scm_bitbucket_access_token : ''
+scm_bitbucket_username: ''
+
 # Specifies the Github api endpoint to use (for use with Enterprise Github)
 # should always be specified with a trailing slash.
 scm_github_api_endpoint: ''

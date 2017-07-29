@@ -12,6 +12,9 @@ import:
   version: ^0.2.1
 - package: gopkg.in/yaml.v2
 - package: github.com/kvz/logstreamer
+- package: github.com/k0kubun/pp
+  version: ^2.3.0
+- package: github.com/mitchellh/mapstructure
 testImport:
 - package: github.com/matryer/moq
 - package: github.com/golang/mock
