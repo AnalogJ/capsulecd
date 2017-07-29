@@ -35,7 +35,9 @@ func (g *enginePython) Init(pipelineData *pipeline.Data, config config.Interface
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("pypi_repository", "https://upload.pypi.org/legacy/")
+	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "find . -name '*.py' -exec pylint -E '{}' +")
+	g.Config.SetDefault("engine_cmd_fmt", "find . -name '*.py' -exec pylint -E '{}' +") //TODO: replace with pycodestyle/pep8
 	g.Config.SetDefault("engine_cmd_test", "tox")
 	g.Config.SetDefault("engine_cmd_security_check", "safety check -r requirements.txt")
 	return nil
@@ -152,46 +154,15 @@ func (g *enginePython) AssembleStep() error {
 	return nil
 }
 
-func (g *enginePython) CompileStep() error {
-	return nil
-}
-
 func (n *enginePython) DependenciesStep() error {
 	return nil //dependencies are installed as part of Tox.
 }
 
-func (g *enginePython) TestStep() error {
+// use default Compile step
+//func (g *enginePython) CompileStep() error { }
 
-	//skip the lint commands if disabled
-	if !g.Config.GetBool("engine_disable_lint") {
-		//run test command
-		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
-		}
-	}
-
-	//skip the test commands if disabled
-	if !g.Config.GetBool("engine_disable_test") {
-		//run test command
-		testCmd := g.Config.GetString("engine_cmd_test")
-		//running tox will install all dependencies in a virtual env, and then run unit tests.
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
-		}
-	}
-
-	//skip the security test commands if disabled
-	if !g.Config.GetBool("engine_disable_security_check") {
-		//run security check command
-		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
-		}
-	}
-
-	return nil
-}
+// used default Test step
+//func (g *enginePython) TestStep() error { }
 
 func (g *enginePython) PackageStep() error {
 	os.RemoveAll(path.Join(g.PipelineData.GitLocalPath, ".tox")) //remove .tox folder.

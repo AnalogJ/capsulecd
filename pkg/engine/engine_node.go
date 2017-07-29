@@ -35,6 +35,7 @@ func (g *engineNode) Init(pipelineData *pipeline.Data, config config.Interface, 
 	g.NextMetadata = new(nodeMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
+	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "eslint --fix .")
 	g.Config.SetDefault("engine_cmd_fmt", "eslint --fix .")
 	g.Config.SetDefault("engine_cmd_test", "npm test")
@@ -108,44 +109,11 @@ func (g *engineNode) DependenciesStep() error {
 	return nil
 }
 
-func (g *engineNode) CompileStep() error {
-	return nil
-}
+// use default Compile step
+//func (g *engineNode) CompileStep() error { }
 
-func (g *engineNode) TestStep() error {
-
-	//skip the lint commands if disabled
-	if !g.Config.GetBool("engine_disable_lint") {
-		//run test command
-		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if g.Config.GetBool("engine_enable_code_mutation") {
-			lintCmd = g.Config.GetString("engine_cmd_fmt")
-		}
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
-		}
-	}
-
-	//skip the test commands if disabled
-	if !g.Config.GetBool("engine_disable_test") {
-		//run test command
-		testCmd := g.Config.GetString("engine_cmd_test")
-		if derr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); derr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
-		}
-	}
-
-	//skip the security test commands if disabled
-	if !g.Config.GetBool("engine_disable_security_check") {
-		//run security check command
-		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
-		}
-	}
-
-	return nil
-}
+// use default Test step
+//func (g *engineNode) TestStep() error { }
 
 func (g *engineNode) PackageStep() error {
 	if !g.Config.GetBool("engine_package_keep_lock_file") {

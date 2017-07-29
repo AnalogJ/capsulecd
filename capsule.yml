@@ -10,4 +10,4 @@ scm_release_assets:
 dependencies_step:
   post:
   - mkdir -p vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
-  - cp /usr/local/lib/libgit2/lib/pkgconfig/libgit2.pc vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/libgit2.pc
+  - cp /usr/local/linux/lib/pkgconfig/libgit2.pc vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/libgit2.pc

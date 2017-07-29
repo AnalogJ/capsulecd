@@ -176,3 +176,41 @@ func TestConfiguration_GetStringSlice_WithNestedKeys(t *testing.T) {
 	require.Nil(t, invalid_step, "invalid step hook should be nil")
 
 }
+
+func TestConfiguration_ListTypeCmd_List(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	testConfig, _ := config.Create()
+
+	//test
+	testConfig.SetDefault("engine_cmd_compile", "echo 'default'")
+	testConfig.ReadConfig(path.Join("testdata", "compile_cmd_list_configuration.yml"))
+
+	cmd := testConfig.GetString("engine_cmd_compile")
+	cmd_list := testConfig.GetStringSlice("engine_cmd_compile")
+
+	//assert
+	require.True(t, testConfig.IsSet("engine_cmd_compile"), "should correctly detect key is populated")
+	require.Empty(t, "", cmd, "should return empty when treated as a string")
+	require.Equal(t, []string{`echo 'test compile command 1'`,`echo 'test compile command 2'`,`echo 'test compile command 3'`},cmd_list, "should correctly return entries when treated as a list")
+}
+
+
+func TestConfiguration_ListTypeCmd_Simple(t *testing.T) {
+	t.Parallel()
+
+	//setup
+	testConfig, _ := config.Create()
+
+	//test
+	testConfig.SetDefault("engine_cmd_compile", "echo 'default'")
+	testConfig.ReadConfig(path.Join("testdata", "compile_cmd_simple_configuration.yml"))
+
+	cmd := testConfig.GetString("engine_cmd_compile")
+	//cmd_list := testConfig.GetStringSlice("engine_cmd_compile")
+
+	//assert
+	require.True(t, testConfig.IsSet("engine_cmd_compile"), "should correctly detect key is populated")
+	require.Equal(t, `echo "test compile"`, cmd, "list should contain correct command")
+}
