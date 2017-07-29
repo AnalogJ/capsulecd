@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/Masterminds/semver"
 	"capsulecd/pkg/utils"
-	"path"
 	"capsulecd/pkg/pipeline"
 )
 
@@ -121,9 +120,9 @@ func (e *engineBase) ExecuteCmdList(configKey string, workingDir string, environ
 		if cmdList == nil {
 			return nil
 		}
-		for cmdEntry := range cmdList {
-			if terr := utils.BashCmdExec(cmdEntry, workingDir, environ, logPrefix); terr != nil {
-				return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmdEntry))
+		for i := range cmdList {
+			if terr := utils.BashCmdExec(cmdList[i], workingDir, environ, logPrefix); terr != nil {
+				return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmdList[i]))
 			}
 		}
 	}
