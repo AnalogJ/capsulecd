@@ -1,0 +1,5 @@
+---
+engine_cmd_compile:
+- "echo 'test compile command 1'"
+- "echo 'test compile command 2'"
+- "echo 'test compile command 3'"

@@ -10,8 +10,8 @@
 scm_git_parent_path: '' # eg. /my/custom/path/here
 
 # Specifies the Github api endpoint to use (for use with Enterprise Github)
+# should always be specified with a trailing slash.
 scm_github_api_endpoint: ''
-scm_github_web_endpoint: ''
 
 # Specifies the access token to use when cloning from and committing to Github
 scm_github_access_token: ''

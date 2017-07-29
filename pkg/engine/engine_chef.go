@@ -21,7 +21,6 @@ type chefMetadata struct {
 }
 type engineChef struct {
 	engineBase
-	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
 	CurrentMetadata *chefMetadata
 	NextMetadata    *chefMetadata
@@ -36,7 +35,9 @@ func (g *engineChef) Init(pipelineData *pipeline.Data, configData config.Interfa
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("chef_supermarket_type", "Other")
+	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "foodcritic .")
+	g.Config.SetDefault("engine_cmd_fmt", "foodcritic .")
 	g.Config.SetDefault("engine_cmd_test", "rake test")
 	g.Config.SetDefault("engine_cmd_security_check", "bundle audit check --update")
 
@@ -132,40 +133,11 @@ func (g *engineChef) DependenciesStep() error {
 	return nil
 }
 
-func (g *engineChef) CompileStep() error {
-	return nil
-}
+// Use default compile step..
+// func (g *engineChef) CompileStep() error {}
 
-func (g *engineChef) TestStep() error {
-
-	//skip the lint commands if disabled
-	if !g.Config.GetBool("engine_disable_lint") {
-		//run test command
-		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
-		}
-	}
-
-	//skip the test commands if disabled
-	if !g.Config.GetBool("engine_disable_test") {
-		//run test command
-		testCmd := g.Config.GetString("engine_cmd_test")
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
-		}
-	}
-
-	//skip the security test commands if disabled
-	if !g.Config.GetBool("engine_disable_security_check") {
-		//run security check command
-		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Dependency vulnerability check command (%s) failed. Check log for more details.", vulCmd))
-		}
-	}
-	return nil
-}
+// Use default test step.
+// func (g *engineChef) TestStep() error {}
 
 func (g *engineChef) PackageStep() error {
 	if !g.Config.GetBool("engine_package_keep_lock_file") {

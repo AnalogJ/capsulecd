@@ -124,15 +124,19 @@ func (g *engineGolang) CompileStep() error {
 			return nil
 		}
 
-		//code formatter
-		compileCmd := g.Config.GetString("engine_cmd_compile")
-		if terr := utils.BashCmdExec(compileCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Compile command (%s) failed. Check log for more details.", compileCmd))
+		if terr := g.ExecuteCmdList("engine_cmd_compile",
+			g.PipelineData.GitLocalPath,
+			nil,
+			"",
+			"Compile command (%s) failed. Check log for more details.",
+		); terr != nil {
+			return terr
 		}
 	}
 	return nil
 }
 
+// we cant use the default test step because linter and fmt are very differnt cmds.
 func (g *engineGolang) TestStep() error {
 	// go test -v $(go list ./... | grep -v /vendor/)
 	// gofmt -s -l $(bash find . -name "*.go" | grep -v vendor | uniq)
@@ -144,17 +148,26 @@ func (g *engineGolang) TestStep() error {
 
 	//skip the lint commands if disabled
 	if !g.Config.GetBool("engine_disable_lint") {
-		//run test command
-		lintCmd := g.Config.GetString("engine_cmd_lint")
-		if terr := utils.BashCmdExec(lintCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Lint command (%s) failed. Check log for more details.", lintCmd))
+		//run lint command
+		if terr := g.ExecuteCmdList("engine_cmd_lint",
+			g.PipelineData.GitLocalPath,
+			nil,
+			"",
+			"Lint command (%s) failed. Check log for more details.",
+		); terr != nil {
+			return terr
 		}
+
 
 		if g.Config.GetBool("engine_enable_code_mutation") {
 			//code formatter
-			fmtCmd := g.Config.GetString("engine_cmd_fmt")
-			if terr := utils.BashCmdExec(fmtCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-				return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", fmtCmd))
+			if terr := g.ExecuteCmdList("engine_cmd_fmt",
+				g.PipelineData.GitLocalPath,
+				nil,
+				"",
+				"Format command (%s) failed. Check log for more details.",
+			); terr != nil {
+				return terr
 			}
 		}
 	}
@@ -162,20 +175,26 @@ func (g *engineGolang) TestStep() error {
 	//skip the test commands if disabled
 	if !g.Config.GetBool("engine_disable_test") {
 		//run test command
-		testCmd := g.Config.GetString("engine_cmd_test")
-		if terr := utils.BashCmdExec(testCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Test command (%s) failed. Check log for more details.", testCmd))
+		if terr := g.ExecuteCmdList("engine_cmd_test",
+			g.PipelineData.GitLocalPath,
+			nil,
+			"",
+			"Test command (%s) failed. Check log for more details.",
+		); terr != nil {
+			return terr
 		}
 	}
 
 	//skip the security test commands if disabled
 	if !g.Config.GetBool("engine_disable_security_check") {
 		//run security check command
-		// no Golang security check known for dependencies.
-		//code formatter
-		vulCmd := g.Config.GetString("engine_cmd_security_check")
-		if terr := utils.BashCmdExec(vulCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf("Format command (%s) failed. Check log for more details.", vulCmd))
+		if terr := g.ExecuteCmdList("engine_cmd_security_check",
+			g.PipelineData.GitLocalPath,
+			nil,
+			"",
+			"Dependency vulnerability check command (%s) failed. Check log for more details.",
+		); terr != nil {
+			return terr
 		}
 	}
 	return nil
