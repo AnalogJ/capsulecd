@@ -33,10 +33,10 @@ func main() {
 			goos := os.Getenv("GOOS")
 			goarch := os.Getenv("GOARCH")
 
-			if(goos == ""){
+			if goos == "" {
 				goos = "linux"
 			}
-			if(goarch == ""){
+			if goarch == "" {
 				goarch = "amd64"
 			}
 
