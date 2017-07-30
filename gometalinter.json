@@ -1,7 +1,7 @@
 {
   "Errors": true,
   "Debug": true,
-  "Deadline": "20m",
+  "Deadline": "30m",
   "Enable": [
     "golint",
     "goimports",
