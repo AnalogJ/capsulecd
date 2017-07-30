@@ -21,8 +21,8 @@ import (
 )
 
 type scmGithub struct {
+	scmBase
 	Config       config.Interface
-	PipelineData *pipeline.Data
 	Client       *github.Client
 }
 
@@ -136,19 +136,19 @@ func (g *scmGithub) RetrievePayload() (*Payload, error) {
 }
 
 func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
+
 	//set the processed head info
 	g.PipelineData.GitHeadInfo = payload.Head
 	if err := g.PipelineData.GitHeadInfo.Validate(); err != nil {
 		return err
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
+	authRemote, aerr := g.authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"), "")
 	if aerr != nil {
 		return aerr
 	}
 	g.PipelineData.GitRemote = authRemote
 	g.PipelineData.GitLocalBranch = g.PipelineData.GitHeadInfo.Ref
-
 	// clone the merged branch
 	// https://sethvargo.com/checkout-a-github-pull-request/
 	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
@@ -190,7 +190,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 		return berr
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
+	authRemote, aerr := g.authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"), "")
 	if aerr != nil {
 		return aerr
 	}
@@ -391,16 +391,4 @@ func publishAsset(client *github.Client, ctx context.Context, repoOwner string, 
 	return err
 }
 
-func authGitRemote(cloneUrl string, accessToken string) (string, error) {
-	if accessToken != "" {
-		// set the remote url, with embedded token
-		u, err := url.Parse(cloneUrl)
-		if err != nil {
-			return "", err
-		}
-		u.User = url.UserPassword(accessToken, "")
-		return u.String(), nil
-	} else {
-		return cloneUrl, nil
-	}
-}
+

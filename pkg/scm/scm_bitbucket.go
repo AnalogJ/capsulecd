@@ -10,13 +10,15 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
+	"github.com/mitchellh/mapstructure"
 	"fmt"
+	"strconv"
 )
 
 type scmBitbucket struct {
+	scmBase
 	Config       config.Interface
 	Client       *bitbucket.Client
-	PipelineData *pipeline.Data
 }
 
 // configure method will generate an authenticated client that can be used to comunicate with Github
@@ -62,25 +64,27 @@ func (b *scmBitbucket) RetrievePayload() (*Payload, error) {
 	} else {
 		b.PipelineData.IsPullRequest = true
 		parts := strings.Split(b.Config.GetString("scm_repo_full_name"), "/")
-		b.Client.Repositories.PullRequests.Get(&bitbucket.PullRequestsOptions{
+		prDataMap := b.Client.Repositories.PullRequests.Get(&bitbucket.PullRequestsOptions{
 			Id: b.Config.GetInt("scm_pull_request"),
 			Owner: parts[0],
 			Repo_slug: parts[1],
 		})
-		//Get(ctx, parts[0], parts[1], b.Config.GetInt("scm_pull_request"))
 
-		if err != nil {
-			return nil, errors.ScmAuthenticationFailed(fmt.Sprintf("Could not retrieve pull request from Github: %s", err))
+		if prDataMap == nil {
+			return nil, errors.ScmAuthenticationFailed("Could not retrieve pull request from Github")
 		}
+
+		prData  := new(scmBitbucketPullrequest)
+		mapstructure.Decode(prDataMap, prData)
 
 		//validate pullrequest
-		if pr.GetState() != "open" {
+		if strings.ToLower(prData.State) != "open" {
 			return nil, errors.ScmPayloadUnsupported("Pull request has an invalid action")
 		}
-		if pr.Base.Repo.GetDefaultBranch() != pr.Base.GetRef() {
-			return nil, errors.ScmPayloadUnsupported(fmt.Sprintf("Pull request is not being created against the default branch of this repository (%s vs %s)", pr.Base.Repo.GetDefaultBranch(), pr.Base.GetRef()))
-		}
-		// check the payload push user.
+		//TODO: see if we can determien the "main branch" using the Bitbucket API.
+		//if pr.Base.Repo.GetDefaultBranch() != pr.Base.GetRef() {
+		//	return nil, errors.ScmPayloadUnsupported(fmt.Sprintf("Pull request is not being created against the default branch of this repository (%s vs %s)", pr.Base.Repo.GetDefaultBranch(), pr.Base.GetRef()))
+		//}
 
 		//TODO: figure out how to do optional authenication. possible options, Source USER, token based auth, no auth when used with capsulecd.com.
 		// unless @source_client.collaborator?(payload['base']['repo']['full_name'], payload['user']['login'])
@@ -90,31 +94,32 @@ func (b *scmBitbucket) RetrievePayload() (*Payload, error) {
 		// end
 
 		return &Payload{
-			Title:             pr.GetTitle(),
-			PullRequestNumber: strconv.Itoa(pr.GetNumber()),
+			Title:             prData.Title,
+			PullRequestNumber: strconv.Itoa(prData.PullRequestNumber),
 			Head: &pipeline.ScmCommitInfo{
-				Sha: pr.Head.GetSHA(),
-				Ref: pr.Head.GetRef(),
+				Sha: prData.Head.Commit.Hash,
+				Ref: prData.Head.Branch.Name,
 				Repo: &pipeline.ScmRepoInfo{
-					CloneUrl: pr.Head.Repo.GetCloneURL(),
-					Name:     pr.Head.Repo.GetName(),
-					FullName: pr.Head.Repo.GetFullName(),
+					CloneUrl: fmt.Sprintf("https://bitbucket.org/%s.git", prData.Head.Repository.FullName),
+					Name:     prData.Head.Repository.Name,
+					FullName: prData.Head.Repository.FullName,
 				},
 			},
 			Base: &pipeline.ScmCommitInfo{
-				Sha: pr.Base.GetSHA(),
-				Ref: pr.Base.GetRef(),
+				Sha: prData.Base.Commit.Hash,
+				Ref: prData.Base.Branch.Name,
 				Repo: &pipeline.ScmRepoInfo{
-					CloneUrl: pr.Base.Repo.GetCloneURL(),
-					Name:     pr.Base.Repo.GetName(),
-					FullName: pr.Base.Repo.GetFullName(),
+					CloneUrl: fmt.Sprintf("https://bitbucket.org/%s.git", prData.Base.Repository.FullName),
+					Name:     prData.Base.Repository.Name,
+					FullName: prData.Base.Repository.FullName,
 				},
 			},
 		}, nil
 	}
+	return nil, nil
 }
 
-func (b *scmBitbucket) CheckoutPushPayload(payload *Payload) error {
+func (g *scmBitbucket) CheckoutPushPayload(payload *Payload) error {
 	return nil
 }
 
