@@ -29,7 +29,18 @@ func main() {
 		Before: func(c *cli.Context) error {
 
 			capsuleUrl := "https://www.capsulecd.com"
-			versionInfo := fmt.Sprintf("%s-%s", "linux", version.VERSION)
+
+			goos := os.Getenv("GOOS")
+			goarch := os.Getenv("GOARCH")
+
+			if(goos == ""){
+				goos = "linux"
+			}
+			if(goarch == ""){
+				goarch = "amd64"
+			}
+
+			versionInfo := fmt.Sprintf("%s.%s-%s", goos, goarch, version.VERSION)
 
 			subtitle := capsuleUrl + utils.LeftPad2Len(versionInfo, " ", 53-len(capsuleUrl))
 
