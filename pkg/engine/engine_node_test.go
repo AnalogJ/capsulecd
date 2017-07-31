@@ -76,6 +76,7 @@ func TestEngineNode_TestSuite(t *testing.T) {
 func (suite *EngineNodeTestSuite) TestEngineNode_ValidateTools() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().GetBool("engine_disable_security_check").MinTimes(1).Return(true)
 	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 
@@ -185,7 +186,9 @@ func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_AllDisabled() {
 func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_LintFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
+	//suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
+	suite.Config.EXPECT().GetBool("engine_disable_lint").MinTimes(1).Return(false)
+	suite.Config.EXPECT().GetBool("engine_enable_code_mutation").MinTimes(1).Return(false)
 	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1")
 
 	//copy cookbook fixture into a temp directory.

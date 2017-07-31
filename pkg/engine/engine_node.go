@@ -21,7 +21,6 @@ type nodeMetadata struct {
 type engineNode struct {
 	engineBase
 
-	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
 	CurrentMetadata *nodeMetadata
 	NextMetadata    *nodeMetadata

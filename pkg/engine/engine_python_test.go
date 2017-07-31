@@ -77,6 +77,9 @@ func TestEnginePython_TestSuite(t *testing.T) {
 func (suite *EnginePythonTestSuite) TestEnginePython_ValidateTools() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().GetBool("engine_disable_lint").Return(false)
+	suite.Config.EXPECT().GetBool("engine_disable_security_check").Return(false)
+
 	pythonEngine, err := engine.Create("python", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
 

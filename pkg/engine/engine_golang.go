@@ -25,7 +25,6 @@ type golangMetadata struct {
 type engineGolang struct {
 	engineBase
 
-	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
 	CurrentMetadata *golangMetadata
 	NextMetadata    *golangMetadata
