@@ -14,6 +14,9 @@ import (
 	"path/filepath"
 )
 
+var goos string
+var goarch string
+
 func main() {
 	app := &cli.App{
 		Name:     "capsulecd",
@@ -29,16 +32,6 @@ func main() {
 		Before: func(c *cli.Context) error {
 
 			capsuleUrl := "https://www.capsulecd.com"
-
-			goos := os.Getenv("GOOS")
-			goarch := os.Getenv("GOARCH")
-
-			if goos == "" {
-				goos = "linux"
-			}
-			if goarch == "" {
-				goarch = "amd64"
-			}
 
 			versionInfo := fmt.Sprintf("%s.%s-%s", goos, goarch, version.VERSION)
 
