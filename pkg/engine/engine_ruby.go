@@ -31,7 +31,6 @@ type rubyGemspec struct {
 type engineRuby struct {
 	engineBase
 
-	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
 	CurrentMetadata *rubyMetadata
 	NextMetadata    *rubyMetadata

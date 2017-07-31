@@ -20,7 +20,6 @@ type pythonMetadata struct {
 type enginePython struct {
 	engineBase
 
-	PipelineData    *pipeline.Data
 	Scm             scm.Interface //Interface
 	CurrentMetadata *pythonMetadata
 	NextMetadata    *pythonMetadata
