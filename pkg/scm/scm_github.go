@@ -234,7 +234,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 func (g *scmGithub) Publish() error {
 
 	// push the version bumped metadata file + newly created files to
-	perr := utils.GitPush(g.PipelineData.GitLocalPath, g.PipelineData.GitLocalBranch, g.PipelineData.GitBaseInfo.Ref)
+	perr := utils.GitPush(g.PipelineData.GitLocalPath, g.PipelineData.GitLocalBranch, g.PipelineData.GitBaseInfo.Ref, fmt.Sprintf("v%s", g.PipelineData.ReleaseVersion))
 	if perr != nil {
 		return perr
 	}
