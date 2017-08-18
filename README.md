@@ -292,3 +292,4 @@ CapsuleCD is licensed under the MIT License - see the
 - https://dmitri.shuralyov.com/blog/18
 - http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
 - http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
+
