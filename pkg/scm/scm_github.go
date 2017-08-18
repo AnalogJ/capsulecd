@@ -271,8 +271,7 @@ func (g *scmGithub) Publish() error {
 	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
 	version := fmt.Sprintf("v%s", g.PipelineData.ReleaseVersion)
 
-
-	log.Printf("Creating new release for `%s/%s` with version: `%s` on commit: `%s`. Commit message: `%s`", parts[0],parts[1], version, releaseSha, releaseBody )
+	log.Printf("Creating new release for `%s/%s` with version: `%s` on commit: `%s`. Commit message: `%s`", parts[0], parts[1], version, releaseSha, releaseBody)
 
 	releaseData, _, rerr := g.Client.Repositories.CreateRelease(
 		ctx,
