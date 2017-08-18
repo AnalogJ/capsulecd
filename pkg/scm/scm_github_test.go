@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 )
 
 func vcrSetup(t *testing.T) *http.Client {
@@ -41,11 +42,19 @@ func vcrSetup(t *testing.T) *http.Client {
 	ctx := context.WithValue(oauth2.NoContext, oauth2.HTTPClient, insecureClient)
 	tc := oauth2.NewClient(ctx, ts)
 
-	vcr := govcr.NewVCR(t.Name(),
-		&govcr.VCRConfig{
-			CassettePath: path.Join("testdata", "govcr-fixtures"),
-			Client:       tc,
-		})
+	vcrConfig := govcr.VCRConfig{
+		CassettePath: path.Join("testdata", "govcr-fixtures"),
+		Client:       tc,
+		ExcludeHeaderFunc: func(key string) bool {
+			// HTTP headers are case-insensitive
+			return strings.ToLower(key) == "user-agent"
+		},
+	}
+	if(os.Getenv("CI") != "true"){
+		vcrConfig.DisableRecording = true
+	}
+
+	vcr := govcr.NewVCR(t.Name(), &vcrConfig)
 	return vcr.Client
 }
 
