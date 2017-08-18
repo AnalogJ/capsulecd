@@ -229,7 +229,7 @@ func TestGitPush(t *testing.T) {
 	gcerr := utils.GitCommit(clonePath, "Added New File")
 	require.NoError(t, gcerr)
 
-	perr := utils.GitPush(clonePath, "branch_test", "branch_test")
+	perr := utils.GitPush(clonePath, "branch_test", "branch_test", "v1.0.0")
 	require.NoError(t, perr)
 
 }
@@ -252,7 +252,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 	require.NoError(t, werr)
 	gcerr := utils.GitCommit(clonePath, "Added New File")
 	require.NoError(t, gcerr)
-	perr := utils.GitPush(clonePath, "localBranchName", "master")
+	perr := utils.GitPush(clonePath, "localBranchName", "master", "v1.0.0")
 
 	//test
 	require.NoError(t, perr)
