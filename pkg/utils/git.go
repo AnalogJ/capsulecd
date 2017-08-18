@@ -44,17 +44,20 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 
 	remote, lerr := repo.Remotes.Lookup("origin")
 	if lerr != nil {
+		log.Print("Failed to lookup origin remote")
 		return lerr
 	}
 	time.Sleep(time.Second)
 	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git2go.FetchOptions), "")
 	if ferr != nil {
+		log.Print("Failed to fetch remote ref into new local branch " + localBranchName)
 		return ferr
 	}
 
 	//should not raise an error when looking for branch (we just created it above)
 	localBranch, berr := repo.LookupBranch(localBranchName, git2go.BranchLocal)
 	if berr != nil {
+		log.Print("Failed to lookup new local branch " + localBranchName)
 		return berr
 	}
 
