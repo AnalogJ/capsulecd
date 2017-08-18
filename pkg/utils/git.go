@@ -248,7 +248,6 @@ func GitPush(repoPath string, localBranch string, remoteBranch string, tagName s
 	return remote.Push([]string{
 		fmt.Sprintf("refs/heads/%s:refs/heads/%s", localBranch, remoteBranch),
 		fmt.Sprintf("refs/tags/%s:refs/tags/%s", tagName, tagName),
-
 	}, new(git2go.PushOptions))
 }
 
