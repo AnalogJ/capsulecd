@@ -1,13 +1,13 @@
 package utils
 
 import (
-	"capsulecd/pkg/errors"
 	"fmt"
 	"github.com/kvz/logstreamer"
 	"log"
 	"os"
 	"os/exec"
 	"path"
+	stderrors "errors"
 )
 
 //http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
@@ -45,7 +45,7 @@ func CmdExec(cmdName string, cmdArgs []string, workingDir string, environ []stri
 	if workingDir != "" && path.IsAbs(workingDir) {
 		cmd.Dir = workingDir
 	} else if workingDir != "" {
-		return errors.Custom("Working Directory must be an absolute path")
+		return stderrors.New("Working Directory must be an absolute path")
 	}
 	//cmdReader, err := cmd.StdoutPipe()
 	//if err != nil {

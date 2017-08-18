@@ -1,18 +1,15 @@
 package errors
 
 import (
-	"errors"
 	"fmt"
+	"os"
 )
 
 func CheckErr(err error) {
 	if err != nil {
-		panic(fmt.Sprintf("ERROR: %s", err))
+		fmt.Printf("FATAL: %+v\n", err)
+		os.Exit(1)
 	}
-}
-
-func Custom(args string) error {
-	return errors.New(args)
 }
 
 // Raised when there is an issue with the filesystem for scm checkout

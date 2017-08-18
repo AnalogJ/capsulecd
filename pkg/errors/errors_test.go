@@ -4,6 +4,8 @@ import (
 	"capsulecd/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"testing"
+	stderrors "errors"
+
 )
 
 func TestCheckErr_WithoutError(t *testing.T) {
@@ -20,15 +22,8 @@ func TestCheckErr_Error(t *testing.T) {
 
 	//assert
 	require.Panics(t, func() {
-		errors.CheckErr(errors.Custom("This is an error"))
+		errors.CheckErr(stderrors.New("This is an error"))
 	})
-}
-
-func TestCustom(t *testing.T) {
-	t.Parallel()
-
-	//assert
-	require.Implements(t, (*error)(nil), errors.Custom("my error"), "should implement the error interface")
 }
 
 func TestErrors(t *testing.T) {
