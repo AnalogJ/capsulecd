@@ -225,7 +225,7 @@ func GitTag(repoPath string, version string) (string, error) {
 	//TODO: this should be a annotated tag.
 	//tagId, terr := repo.Tags.CreateLightweight(version, commit, false) //TODO: this should be an annotated tag.
 
-	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", version))
+	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(%s) Automated packaging of release by CapsuleCD", version))
 	return tagId.String(), terr
 }
 
