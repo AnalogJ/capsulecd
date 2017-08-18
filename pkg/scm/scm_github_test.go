@@ -50,7 +50,7 @@ func vcrSetup(t *testing.T) *http.Client {
 			return strings.ToLower(key) == "user-agent"
 		},
 	}
-	if(os.Getenv("CI") != "true"){
+	if os.Getenv("CI") != "true" {
 		vcrConfig.DisableRecording = true
 	}
 
