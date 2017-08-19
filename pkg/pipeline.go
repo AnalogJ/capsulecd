@@ -20,7 +20,7 @@ type Pipeline struct {
 	Engine engine.Interface
 }
 
-func (p *Pipeline) Start(config config.Interface) {
+func (p *Pipeline) Start(config config.Interface) error {
 	defer p.Cleanup()
 
 	p.Config = config
@@ -31,31 +31,41 @@ func (p *Pipeline) Start(config config.Interface) {
 	p.PreScmInit()
 	log.Println("scm_init_step")
 	scmImpl, serr := scm.Create(p.Config.GetString("scm"), p.Data, config, nil)
-	errors.CheckErr(serr)
+	if serr != nil {
+		return serr;
+	}
 	p.Scm = scmImpl
 	p.PostScmInit()
 
 	//Generate a new instance of the engine
 	engineImpl, eerr := engine.Create(p.Config.GetString("package_type"), p.Data, config, scmImpl)
-	errors.CheckErr(eerr)
+	if eerr != nil {
+		return eerr;
+	}
 	p.Engine = engineImpl
 
 	//retreive payload
 	p.PreScmRetrievePayload()
 	log.Println("scm_retrieve_payload_step")
 	payload, perr := scmImpl.RetrievePayload()
-	errors.CheckErr(perr)
+	if perr != nil {
+		return perr;
+	}
 	p.PostScmRetrievePayload()
 
 	if p.Data.IsPullRequest {
 		p.PreScmCheckoutPullRequestPayload()
 		log.Println("scm_checkout_pull_request_step")
-		errors.CheckErr(scmImpl.CheckoutPullRequestPayload(payload))
+		if perr := scmImpl.CheckoutPullRequestPayload(payload); perr != nil {
+			return perr
+		}
 		p.PostScmCheckoutPullRequestPayload()
 	} else {
 		p.PreScmCheckoutPushPayload()
 		log.Println("scm_checkout_push_payload_step")
-		errors.CheckErr(scmImpl.CheckoutPushPayload(payload))
+		if perr := scmImpl.CheckoutPushPayload(payload); perr != nil {
+			return perr
+		}
 		p.PostScmCheckoutPushPayload()
 	}
 
@@ -69,22 +79,25 @@ func (p *Pipeline) Start(config config.Interface) {
 	if p.Config.IsSet("scm_release_assets") {
 		//unmarshall config data.
 		parsedAssets := new([]pipeline.ScmReleaseAsset)
-		err := p.Config.UnmarshalKey("scm_release_assets", parsedAssets)
-		errors.CheckErr(err)
+		if err := p.Config.UnmarshalKey("scm_release_assets", parsedAssets); err != nil {
+			return err
+		}
 
 		//append the parsed Assets to the current ReleaseAssets storage (incase assets were defined in system yml)
 		p.Data.ReleaseAssets = append(p.Data.ReleaseAssets, (*parsedAssets)...)
 	}
 
 	//validate that required executables are available for the following build/test/package/etc steps
-	p.NotifyStep("validate tools", func() error {
+	if err := p.NotifyStep("validate tools", func() error {
 		log.Println("validate_tools_step")
 		return engineImpl.ValidateTools()
-	})
+	}); err != nil {
+		return err;
+	}
 
 	// now that the payload has been processed we can begin by building the code.
 	// this may be creating missing files/default structure, compilation, version bumping, etc.
-	p.NotifyStep("assemble", func() error {
+	if err := p.NotifyStep("assemble", func() error {
 		p.PreAssembleStep()
 		log.Println("assemble_step")
 		if berr := engineImpl.AssembleStep(); berr != nil {
@@ -92,10 +105,12 @@ func (p *Pipeline) Start(config config.Interface) {
 		}
 		p.PostAssembleStep()
 		return nil
-	})
+	}); err != nil {
+		return err;
+	}
 
 	// this step should download dependencies
-	p.NotifyStep("dependencies", func() error {
+	if err := p.NotifyStep("dependencies", func() error {
 		p.PreDependenciesStep()
 		log.Println("dependencies_step")
 		if berr := engineImpl.DependenciesStep(); berr != nil {
@@ -103,10 +118,12 @@ func (p *Pipeline) Start(config config.Interface) {
 		}
 		p.PostDependenciesStep()
 		return nil
-	})
+	}); err != nil {
+		return err;
+	}
 
 	// this step should compile source
-	p.NotifyStep("compile", func() error {
+	if err := p.NotifyStep("compile", func() error {
 		p.PreCompileStep()
 		log.Println("compile_step")
 		if berr := engineImpl.CompileStep(); berr != nil {
@@ -114,10 +131,12 @@ func (p *Pipeline) Start(config config.Interface) {
 		}
 		p.PostCompileStep()
 		return nil
-	})
+	}); err != nil {
+		return err;
+	}
 
 	// run the package test runner(s) (eg. npm test, rake test, kitchen test) and linters/formatters
-	p.NotifyStep("test", func() error {
+	if err := p.NotifyStep("test", func() error {
 		p.PreTestStep()
 		log.Println("test_step")
 		if terr := engineImpl.TestStep(); terr != nil {
@@ -125,10 +144,12 @@ func (p *Pipeline) Start(config config.Interface) {
 		}
 		p.PostTestStep()
 		return nil
-	})
+	}); err != nil {
+		return err;
+	}
 
 	// this step should commit any local changes and create a git tag. Nothing should be pushed to remote repository
-	p.NotifyStep("package", func() error {
+	if err := p.NotifyStep("package", func() error {
 		p.PrePackageStep()
 		log.Println("package_step")
 		if perr := engineImpl.PackageStep(); perr != nil {
@@ -136,11 +157,13 @@ func (p *Pipeline) Start(config config.Interface) {
 		}
 		p.PostPackageStep()
 		return nil
-	})
+	}); err != nil {
+		return err;
+	}
 
 	if p.Data.IsPullRequest {
 		// this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
-		p.NotifyStep("dist", func() error {
+		if err := p.NotifyStep("dist", func() error {
 			if p.Config.GetBool("engine_disable_dist") {
 				log.Println("skipping pre_dist_step, dist_step, post_dist_step")
 				return nil
@@ -153,9 +176,12 @@ func (p *Pipeline) Start(config config.Interface) {
 			}
 			p.PostDistStep()
 			return nil
-		})
+		}); err != nil {
+			return err;
+		}
 
-		p.NotifyStep("scm publish", func() error {
+
+		if err := p.NotifyStep("scm publish", func() error {
 			if p.Config.GetBool("scm_disable_publish") {
 				log.Println("skipping pre_scm_publish_step, scm_publish_step, post_scm_publish_step")
 				return nil
@@ -168,9 +194,11 @@ func (p *Pipeline) Start(config config.Interface) {
 			}
 			p.PostScmPublish()
 			return nil
-		})
+		}); err != nil {
+			return err;
+		}
 
-		p.NotifyStep("scm cleanup", func() error {
+		if err := p.NotifyStep("scm cleanup", func() error {
 			p.PreScmCleanup()
 			log.Println("scm_cleanup_step")
 			if serr := scmImpl.Cleanup(); serr != nil {
@@ -181,7 +209,9 @@ func (p *Pipeline) Start(config config.Interface) {
 			}
 			p.PostScmCleanup()
 			return nil
-		})
+		}); err != nil {
+			return err;
+		}
 
 		//if there was an error, it should not have gotten to this point. CheckErr panic's
 		scmImpl.Notify(
@@ -190,6 +220,8 @@ func (p *Pipeline) Start(config config.Interface) {
 			"Pull-request was successfully merged, new release created.",
 		)
 	}
+
+	return nil
 }
 
 // Hook methods
@@ -220,14 +252,14 @@ func (p *Pipeline) PostPackageStep()            { p.RunHook("package_step.post")
 func (p *Pipeline) PreDistStep()                { p.RunHook("dist_step.pre") }
 func (p *Pipeline) PostDistStep()               { p.RunHook("dist_step.post") }
 
-func (p *Pipeline) NotifyStep(step string, callback func() error) {
+func (p *Pipeline) NotifyStep(step string, callback func() error) error {
 	p.Scm.Notify(p.Data.GitHeadInfo.Sha, "pending", fmt.Sprintf("Started '%s' step. Pull request will be merged automatically when complete.", step))
-	cerr := callback()
-	if cerr != nil {
+	if cerr := callback(); cerr != nil {
 		//TODO: remove the temp folder path.
 		p.Scm.Notify(p.Data.GitHeadInfo.Sha, "failure", fmt.Sprintf("Error: '%s'", cerr))
-		errors.CheckErr(cerr)
+		return cerr
 	}
+	return nil
 }
 
 func (p *Pipeline) Cleanup() {

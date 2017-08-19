@@ -5,13 +5,6 @@ import (
 	"os"
 )
 
-func CheckErr(err error) {
-	if err != nil {
-		fmt.Printf("FATAL: %+v\n", err)
-		os.Exit(1)
-	}
-}
-
 // Raised when there is an issue with the filesystem for scm checkout
 type ScmFilesystemError string
 
