@@ -1,13 +1,13 @@
 package utils
 
 import (
+	stderrors "errors"
 	"fmt"
 	"github.com/kvz/logstreamer"
 	"log"
 	"os"
 	"os/exec"
 	"path"
-	stderrors "errors"
 )
 
 //http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/

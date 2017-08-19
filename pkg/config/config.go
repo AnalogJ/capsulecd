@@ -4,11 +4,11 @@ import (
 	"capsulecd/pkg/errors"
 	"capsulecd/pkg/utils"
 	"encoding/base64"
+	stderrors "errors"
 	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"os"
-	stderrors "errors"
 )
 
 // When initializing this class the following methods must be called:

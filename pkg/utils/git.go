@@ -3,6 +3,7 @@ package utils
 import (
 	"capsulecd/pkg/errors"
 	"capsulecd/pkg/pipeline"
+	stderrors "errors"
 	"fmt"
 	git2go "gopkg.in/libgit2/git2go.v25"
 	"io/ioutil"
@@ -13,7 +14,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	stderrors "errors"
 )
 
 // Clone a git repo into a local directory.
@@ -226,7 +226,7 @@ func GitTag(repoPath string, version string) (string, error) {
 	//tagId, terr := repo.Tags.CreateLightweight(version, commit, false)
 	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(%s) Automated packaging of release by CapsuleCD", version))
 	if terr != nil {
-		return "", terr;
+		return "", terr
 	}
 
 	tagObj, terr := repo.LookupTag(tagId)

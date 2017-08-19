@@ -5,9 +5,9 @@ import (
 	"capsulecd/pkg/errors"
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/utils"
+	stderrors "errors"
 	"fmt"
 	"github.com/Masterminds/semver"
-	stderrors "errors"
 )
 
 type engineBase struct {

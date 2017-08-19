@@ -2,4 +2,4 @@ package version
 
 // VERSION is the app-global version string, which will be replaced with a
 // new value during packaging
-const VERSION = "2.0.14"
+const VERSION = "2.0.15"
