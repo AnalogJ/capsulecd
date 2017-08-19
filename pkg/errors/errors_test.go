@@ -4,8 +4,6 @@ import (
 	"capsulecd/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"testing"
-	stderrors "errors"
-
 )
 
 func TestCheckErr_WithoutError(t *testing.T) {
