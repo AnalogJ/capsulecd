@@ -17,14 +17,14 @@ func TestCheckErr_WithoutError(t *testing.T) {
 	})
 }
 
-func TestCheckErr_Error(t *testing.T) {
-	t.Parallel()
-
-	//assert
-	require.Panics(t, func() {
-		errors.CheckErr(stderrors.New("This is an error"))
-	})
-}
+//func TestCheckErr_Error(t *testing.T) {
+//	t.Parallel()
+//
+//	//assert
+//	require.Panics(t, func() {
+//		errors.CheckErr(stderrors.New("This is an error"))
+//	})
+//}
 
 func TestErrors(t *testing.T) {
 	t.Parallel()
