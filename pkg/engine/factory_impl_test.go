@@ -10,6 +10,11 @@ func TestEngineChef(t *testing.T) {
 	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
 }
 
+func TestEngineGeneric(t *testing.T) {
+	eng := new(engineGeneric)
+	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")
+}
+
 func TestEngineGolang(t *testing.T) {
 	eng := new(engineGolang)
 	require.Implements(t, (*Interface)(nil), eng, "should implement the Engine interface")

@@ -18,6 +18,7 @@ type Interface interface {
 	// Validate that any required files (like dependency management files) exist
 	// Create any recommended optional/missing files we can in the structure. (.gitignore, etc)
 	// Read & Bump the version in the metadata file(s)
+	// CAN NOT override
 	// MUST set CurrentMetadata
 	// MUST set NextMetadata
 	// REQUIRES pipelineData.GitLocalPath
@@ -25,18 +26,21 @@ type Interface interface {
 
 	// Validate & download dependencies for this package.
 	// Generate *.lock files for dependencies (should be deleted in PackageStep if necessary)
+	// CAN override
 	// REQUIRES pipelineData.GitLocalPath
 	// REQUIRES CurrentMetadata
 	// REQUIRES NextMetadata
 	DependenciesStep() error
 
 	// Compile the source for this package (if required)
+	// CAN override
 	// USES engine_disable_compile
 	// USES engine_cmd_compile
 	// REQUIRES pipelineData.GitLocalPath
 	CompileStep() error
 
 	// Validate code syntax & execute test runner
+	// CAN override
 	// Run linter
 	// Run unit tests
 	// Generate coverage reports
@@ -51,6 +55,7 @@ type Interface interface {
 
 	// Commit any local changes and create a git tag. Nothing should be pushed to remote repository yet.
 	// Make sure you remove any unnecessary files from the repo before making the commit
+	// CAN NOT override
 	// MUST set ReleaseCommit
 	// MUST set ReleaseVersion
 	// REQUIRES pipelineData.GitLocalPath
@@ -60,9 +65,9 @@ type Interface interface {
 
 	// Push the release to the package repository (ie. npm, chef supermarket, rubygems)
 	// Should validate any required credentials are specified.
+	// CAN override
 	// REQUIRES pipelineData.GitLocalPath
 	// REQUIRES NextMetadata
-
 	// USES chef_supermarket_username
 	// USES chef_supermarket_key
 	// USES npm_auth_token

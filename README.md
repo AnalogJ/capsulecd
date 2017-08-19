@@ -94,11 +94,12 @@ You can use CapsuleCD to automate creating a new release from a pull request __o
 
 Here's how to use __docker__ to merge a pull request to your Ruby library
 
-    CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
-    CAPSULE_SCM_REPO_FULL_NAME=AnalogJ/gem_analogj_test \
-    CAPSULE_SCM_PULL_REQUEST=4 \
-    CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
-    docker run AnalogJ/capsulecd:ruby capsulecd start --scm github --package_type ruby
+	docker run \
+    -e CAPSULE_SCM_GITHUB_ACCESS_TOKEN=123456789ABCDEF \
+    -e CAPSULE_SCM_REPO_FULL_NAME=AnalogJ/gem_analogj_test \
+    -e CAPSULE_SCM_PULL_REQUEST=4 \
+    -e CAPSULE_RUBYGEMS_API_KEY=ASDF12345F \
+    AnalogJ/capsulecd:ruby capsulecd start --scm github --package_type ruby
 
 Or you could download the latest linux [release](https://github.com/AnalogJ/capsulecd/releases), and call CapsuleCD
 directly to merge a pull request to your Python library:
@@ -121,7 +122,7 @@ specified Engine, and loads the correct Scm module. Then it begins processing yo
 
 Step | Description
 ------------ | ------------ 
-scm_init_step | This will initialize the scm client, ensuring that we can authenticate with the git server
+pipeline_init_step | This will initialize the scm client, ensuring that we can authenticate with the git server
 scm_retrieve_payload_step | If a Pull Request # is specified, the payload is retrieved from Scm api, otherwise the repo default branch HEAD info is retrived.
 scm_process_pull_request_payload __or__ scm_process_push_payload | Depending on the retrieve_payload step, the merged pull request is cloned, or the default branch is cloned locally
 assemble_step | Code is built, which includes adding any missing files/default structure, version bumping, etc.
@@ -292,4 +293,5 @@ CapsuleCD is licensed under the MIT License - see the
 - https://dmitri.shuralyov.com/blog/18
 - http://www.ryanday.net/2012/10/01/installing-go-and-gopath/
 - http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
-
+- https://opencredo.com/why-i-dont-like-error-handling-in-go/
+- https://godoc.org/github.com/pkg/errors
