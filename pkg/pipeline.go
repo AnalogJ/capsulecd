@@ -6,11 +6,11 @@ import (
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path"
-	"errors"
 )
 
 type Pipeline struct {
@@ -20,20 +20,18 @@ type Pipeline struct {
 	Engine engine.Interface
 }
 
-
 func (p *Pipeline) Start(config config.Interface) error {
 	// Initialize Pipeline.
 	p.Config = config
 	p.Data = new(pipeline.Data)
 
-
 	defer p.Cleanup()
 	if err := p.PipelineInitStep(); err != nil {
-		return err;
+		return err
 	}
 
 	payload, err := p.ScmRetrievePayloadStep()
-	if err !=  nil {
+	if err != nil {
 		return err
 	}
 
@@ -52,41 +50,40 @@ func (p *Pipeline) Start(config config.Interface) error {
 	}
 
 	if err := p.StepExecNotify("validate_tools", p.ValidateTools); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("assemble_step", p.AssembleStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("dependencies_step", p.DependenciesStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("compile_step", p.CompileStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("test_step", p.TestStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("package_step", p.PackageStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("dist_step", p.DistStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("scm_publish_step", p.ScmPublishStep); err != nil {
-		return err;
+		return err
 	}
 
 	if err := p.StepExecNotify("scm_cleanup_step", p.ScmCleanupStep); err != nil {
-		return err;
+		return err
 	}
-
 
 	//if there was an error, it should not have gotten to this point. CheckErr panic's
 	p.Scm.Notify(
@@ -95,18 +92,17 @@ func (p *Pipeline) Start(config config.Interface) error {
 		"Pull-request was successfully merged, new release created.",
 	)
 
-	return nil;
+	return nil
 }
-
 
 func (p *Pipeline) PipelineInitStep() error {
 
 	// PRE HOOK
 	if err := p.RunHook("pipeline_init_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("pipeline_init_step.override"){
+	if p.Config.IsSet("pipeline_init_step.override") {
 		log.Println("Cannot override the pipeline_init_step, ignoring.")
 	}
 
@@ -115,18 +111,16 @@ func (p *Pipeline) PipelineInitStep() error {
 	log.Println("pipeline_init_step")
 	scmImpl, serr := scm.Create(p.Config.GetString("scm"), p.Data, p.Config, nil)
 	if serr != nil {
-		return serr;
+		return serr
 	}
 	p.Scm = scmImpl
-
 
 	//Generate a new instance of the engine
 	engineImpl, eerr := engine.Create(p.Config.GetString("package_type"), p.Data, p.Config, p.Scm)
 	if eerr != nil {
-		return eerr;
+		return eerr
 	}
 	p.Engine = engineImpl
-
 
 	// POST HOOK
 	if err := p.RunHook("pipeline_init_step.post"); err != nil {
@@ -139,17 +133,17 @@ func (p *Pipeline) ScmRetrievePayloadStep() (*scm.Payload, error) {
 
 	// PRE HOOK
 	if err := p.RunHook("scm_retrieve_payload_step.pre"); err != nil {
-		return nil, err;
+		return nil, err
 	}
 
-	if p.Config.IsSet("scm_retrieve_payload_step.override"){
+	if p.Config.IsSet("scm_retrieve_payload_step.override") {
 		log.Println("Cannot override the scm_retrieve_payload_step, ignoring.")
 	}
 
 	log.Println("scm_retrieve_payload_step")
 	payload, perr := p.Scm.RetrievePayload()
 	if perr != nil {
-		return nil, perr;
+		return nil, perr
 	}
 
 	// POST HOOK
@@ -163,17 +157,17 @@ func (p *Pipeline) ScmCheckoutPullRequestStep(payload *scm.Payload) error {
 
 	// PRE HOOK
 	if err := p.RunHook("scm_checkout_pull_request_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
 	if p.Config.IsSet("scm_checkout_pull_request_step.override") {
 		if err := p.RunHook("scm_checkout_pull_request_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("scm_checkout_pull_request_step")
 		if err := p.Scm.CheckoutPullRequestPayload(payload); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -181,24 +175,24 @@ func (p *Pipeline) ScmCheckoutPullRequestStep(payload *scm.Payload) error {
 	if err := p.RunHook("scm_checkout_pull_request_step.post"); err != nil {
 		return err
 	}
-	return  nil
+	return nil
 }
 
 func (p *Pipeline) ScmCheckoutPushPayloadStep(payload *scm.Payload) error {
 
 	// PRE HOOK
 	if err := p.RunHook("scm_checkout_push_payload_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
 	if p.Config.IsSet("scm_checkout_push_payload_step.override") {
 		if err := p.RunHook("scm_checkout_push_payload_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("scm_checkout_push_payload_step")
 		if err := p.Scm.CheckoutPushPayload(payload); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -206,7 +200,7 @@ func (p *Pipeline) ScmCheckoutPushPayloadStep(payload *scm.Payload) error {
 	if err := p.RunHook("scm_checkout_push_payload_step.post"); err != nil {
 		return err
 	}
-	return  nil
+	return nil
 }
 
 func (p *Pipeline) ParseRepoConfig() error {
@@ -245,16 +239,16 @@ func (p *Pipeline) ValidateTools() error {
 func (p *Pipeline) AssembleStep() error {
 	// PRE HOOK
 	if err := p.RunHook("assemble_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("assemble_step.override"){
+	if p.Config.IsSet("assemble_step.override") {
 		log.Println("Cannot override the assemble_step, ignoring.")
 
 	}
 	log.Println("assemble_step")
 	if err := p.Engine.AssembleStep(); err != nil {
-		return err;
+		return err
 	}
 
 	// POST HOOK
@@ -268,17 +262,17 @@ func (p *Pipeline) AssembleStep() error {
 func (p *Pipeline) DependenciesStep() error {
 	// PRE HOOK
 	if err := p.RunHook("dependencies_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("dependencies_step.override"){
+	if p.Config.IsSet("dependencies_step.override") {
 		if err := p.RunHook("dependencies_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("dependencies_step")
 		if err := p.Engine.DependenciesStep(); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -298,17 +292,17 @@ func (p *Pipeline) CompileStep() error {
 
 	// PRE HOOK
 	if err := p.RunHook("compile_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("compile_step.override"){
+	if p.Config.IsSet("compile_step.override") {
 		if err := p.RunHook("compile_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("compile_step")
 		if err := p.Engine.CompileStep(); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -328,17 +322,17 @@ func (p *Pipeline) TestStep() error {
 
 	// PRE HOOK
 	if err := p.RunHook("test_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("test_step.override"){
+	if p.Config.IsSet("test_step.override") {
 		if err := p.RunHook("test_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("test_step")
 		if err := p.Engine.TestStep(); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -353,15 +347,15 @@ func (p *Pipeline) TestStep() error {
 func (p *Pipeline) PackageStep() error {
 	// PRE HOOK
 	if err := p.RunHook("package_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("package_step.override"){
+	if p.Config.IsSet("package_step.override") {
 		log.Println("Cannot override the assemble_step, ignoring.")
 	}
 	log.Println("package_step")
 	if err := p.Engine.PackageStep(); err != nil {
-		return err;
+		return err
 	}
 
 	// POST HOOK
@@ -380,17 +374,17 @@ func (p *Pipeline) DistStep() error {
 
 	// PRE HOOK
 	if err := p.RunHook("dist_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("dist_step.override"){
+	if p.Config.IsSet("dist_step.override") {
 		if err := p.RunHook("dist_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("dist_step")
 		if err := p.Engine.DistStep(); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -409,17 +403,17 @@ func (p *Pipeline) ScmPublishStep() error {
 
 	// PRE HOOK
 	if err := p.RunHook("scm_publish_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("scm_publish_step.override"){
+	if p.Config.IsSet("scm_publish_step.override") {
 		if err := p.RunHook("scm_publish_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("scm_publish_step")
 		if err := p.Scm.Publish(); err != nil {
-			return err;
+			return err
 		}
 	}
 
@@ -438,17 +432,17 @@ func (p *Pipeline) ScmCleanupStep() error {
 
 	// PRE HOOK
 	if err := p.RunHook("scm_cleanup_step.pre"); err != nil {
-		return err;
+		return err
 	}
 
-	if p.Config.IsSet("scm_cleanup_step.override"){
+	if p.Config.IsSet("scm_cleanup_step.override") {
 		if err := p.RunHook("scm_cleanup_step.override"); err != nil {
-			return err;
+			return err
 		}
 	} else {
 		log.Println("scm_cleanup_step")
 		if err := p.Scm.Cleanup(); err != nil {
-			return err;
+			return err
 		}
 	}
 

@@ -1,14 +1,14 @@
 package engine
 
 import (
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/config"
-	"capsulecd/pkg/utils"
-	"path"
 	"capsulecd/pkg/errors"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/scm"
+	"capsulecd/pkg/utils"
 	"fmt"
 	"io/ioutil"
+	"path"
 	"strings"
 )
 
@@ -115,4 +115,3 @@ func (g *engineGeneric) populateNextMetadata() error {
 func (g *engineGeneric) writeNextMetadata(gitLocalPath string) error {
 	return ioutil.WriteFile(path.Join(gitLocalPath, g.Config.GetString("engine_generic_version_path")), []byte(g.NextMetadata.Version), 0644)
 }
-
