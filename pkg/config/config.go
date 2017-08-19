@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"os"
+	stderrors "errors"
 )
 
 // When initializing this class the following methods must be called:
@@ -54,7 +55,7 @@ func (c *configuration) ReadConfig(configFilePath string) error {
 
 	if !utils.FileExists(configFilePath) {
 		log.Print("The configuration file could not be found. Skipping")
-		return errors.Custom("The configuration file could not be found. Skipping")
+		return stderrors.New("The configuration file could not be found. Skipping")
 	}
 
 	log.Printf("Loading configuration file: %s", configFilePath)

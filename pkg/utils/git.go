@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	stderrors "errors"
 )
 
 // Clone a git repo into a local directory.
@@ -222,11 +223,14 @@ func GitTag(repoPath string, version string) (string, error) {
 		return "", lerr
 	}
 
-	//TODO: this should be a annotated tag.
-	//tagId, terr := repo.Tags.CreateLightweight(version, commit, false) //TODO: this should be an annotated tag.
-
+	//tagId, terr := repo.Tags.CreateLightweight(version, commit, false)
 	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(%s) Automated packaging of release by CapsuleCD", version))
-	return tagId.String(), terr
+	if terr != nil {
+		return "", terr;
+	}
+
+	tagObj, terr := repo.LookupTag(tagId)
+	return tagObj.TargetId().String(), terr
 }
 
 func GitPush(repoPath string, localBranch string, remoteBranch string, tagName string) error {
@@ -414,7 +418,7 @@ func getGitIgnore(languageName string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, errors.Custom(fmt.Sprintf("Could not find .gitignore for '%s'", languageName))
+		return nil, stderrors.New(fmt.Sprintf("Could not find .gitignore for '%s'", languageName))
 	}
 
 	return ioutil.ReadAll(resp.Body)

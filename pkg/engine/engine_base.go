@@ -7,6 +7,7 @@ import (
 	"capsulecd/pkg/utils"
 	"fmt"
 	"github.com/Masterminds/semver"
+	stderrors "errors"
 )
 
 type engineBase struct {
@@ -96,7 +97,7 @@ func (e *engineBase) BumpVersion(currentVersion string) (string, error) {
 	case "patch":
 		return fmt.Sprintf("%d.%d.%d", v.Major(), v.Minor(), v.Patch()+1), nil
 	default:
-		return "", errors.Custom("Unknown version bump interval")
+		return "", stderrors.New("Unknown version bump interval")
 	}
 
 }
