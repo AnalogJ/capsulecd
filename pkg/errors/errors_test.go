@@ -6,14 +6,14 @@ import (
 	"testing"
 )
 
-func TestCheckErr_WithoutError(t *testing.T) {
-	t.Parallel()
-
-	//assert
-	require.NotPanics(t, func() {
-		errors.CheckErr(nil)
-	})
-}
+//func TestCheckErr_WithoutError(t *testing.T) {
+//	t.Parallel()
+//
+//	//assert
+//	require.NotPanics(t, func() {
+//		errors.CheckErr(nil)
+//	})
+//}
 
 //func TestCheckErr_Error(t *testing.T) {
 //	t.Parallel()

@@ -117,20 +117,18 @@ func (g *engineGolang) DependenciesStep() error {
 }
 
 func (g *engineGolang) CompileStep() error {
-	if !g.Config.GetBool("engine_disable_compile") {
-		//cmd directory is optional. check if it exists first.
-		if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "cmd")) {
-			return nil
-		}
+	//cmd directory is optional. check if it exists first.
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "cmd")) {
+		return nil
+	}
 
-		if terr := g.ExecuteCmdList("engine_cmd_compile",
-			g.PipelineData.GitLocalPath,
-			nil,
-			"",
-			"Compile command (%s) failed. Check log for more details.",
-		); terr != nil {
-			return terr
-		}
+	if terr := g.ExecuteCmdList("engine_cmd_compile",
+		g.PipelineData.GitLocalPath,
+		nil,
+		"",
+		"Compile command (%s) failed. Check log for more details.",
+	); terr != nil {
+		return terr
 	}
 	return nil
 }
@@ -170,17 +168,14 @@ func (g *engineGolang) TestStep() error {
 		}
 	}
 
-	//skip the test commands if disabled
-	if !g.Config.GetBool("engine_disable_test") {
-		//run test command
-		if terr := g.ExecuteCmdList("engine_cmd_test",
-			g.PipelineData.GitLocalPath,
-			nil,
-			"",
-			"Test command (%s) failed. Check log for more details.",
-		); terr != nil {
-			return terr
-		}
+	//run test command
+	if terr := g.ExecuteCmdList("engine_cmd_test",
+		g.PipelineData.GitLocalPath,
+		nil,
+		"",
+		"Test command (%s) failed. Check log for more details.",
+	); terr != nil {
+		return terr
 	}
 
 	//skip the security test commands if disabled

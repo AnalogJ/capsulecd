@@ -17,6 +17,12 @@ func Create(engineType string, pipelineData *pipeline.Data, configImpl config.In
 			return nil, err
 		}
 		return eng, nil
+	case "generic":
+		eng := new(engineGeneric)
+		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
+			return nil, err
+		}
+		return eng, nil
 	case "golang":
 		eng := new(engineGolang)
 		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {

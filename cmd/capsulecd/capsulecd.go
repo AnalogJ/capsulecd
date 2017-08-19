@@ -79,7 +79,11 @@ func main() {
 					//fmt.Println("dry run:", config.GetString("dry_run"))
 
 					pipeline := pkg.Pipeline{}
-					pipeline.Start(config)
+					err := pipeline.Start(config)
+					if err != nil {
+						fmt.Printf("FATAL: %+v\n", err)
+						os.Exit(1)
+					}
 
 					return nil
 				},

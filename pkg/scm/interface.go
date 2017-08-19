@@ -17,12 +17,14 @@ type Interface interface {
 	// Determine if this is a pull request or a push.
 	// if it's a pull request the scm must retrieve the pull request payload and return it
 	// if its a push, the scm must retrieve the push payload and return it
+	// CAN NOT override
 	// MUST set pipelineData.IsPullRequest
 	// RETURNS scm.Payload
 	RetrievePayload() (*Payload, error)
 
 	// start processing the payload, which should result in a local git repository that we
 	// can begin to test. Since this is a push, no packaging is required
+	// CAN NOT override
 	// MUST set pipelineData.GitLocalPath
 	// MUST set pipelineData.GitLocalBranch
 	// MUST set pipelienData.GitRemote
@@ -34,6 +36,7 @@ type Interface interface {
 	// all capsule CD processing will be kicked off via a payload. In Github's case, the payload is the pull request data.
 	// should check if the pull request opener even has permissions to create a release.
 	// all sources should process the payload by downloading a git repository that contains the master branch merged with the test branch
+	// CAN NOT override
 	// MUST set pipelineData.GitLocalPath
 	// MUST set pipelineData.GitLocalBranch
 	// MUST set pipelienData.GitRemote
@@ -46,6 +49,7 @@ type Interface interface {
 	// The repository should now contain code that has been the merged, tested and version bumped.
 	// This method will push these changes to the source code repository
 	// this step should also do any scm specific releases (github release, asset uploading, etc)
+	// CAN override
 	// REQUIRES config.scm_repo_full_name
 	// REQUIRES pipelineData.ScmReleaseCommit
 	// REQUIRES pipelineData.GitLocalPath
@@ -74,12 +78,12 @@ type Interface interface {
 	// - HEAD PR branch is in the same repository as the BASE
 	// - branch is not the default branch or "master" for this repository
 	// - branch is not protected (SCM specific feature)
+	// CAN override
 	// USES scm_enable_branch_cleanup
 	// REQUIRES config.scm_repo_full_name
 	// REQUIRES pipelineData.GitBaseInfo.Repo.FullName
 	// REQUIRES pipelineData.GitHeadInfo.Repo.FullName
 	// REQUIRES pipelineData.GitHeadInfo.Ref
-
 	Cleanup() error
 
 	// Notify should update the scm with the build status at each stage.
