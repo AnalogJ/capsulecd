@@ -3,7 +3,6 @@ package pkg
 import (
 	"capsulecd/pkg/config"
 	"capsulecd/pkg/engine"
-	"capsulecd/pkg/errors"
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"

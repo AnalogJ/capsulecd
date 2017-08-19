@@ -2,7 +2,6 @@ package errors
 
 import (
 	"fmt"
-	"os"
 )
 
 // Raised when there is an issue with the filesystem for scm checkout
