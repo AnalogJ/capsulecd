@@ -126,7 +126,7 @@ func (g *engineGeneric) writeNextMetadata(gitLocalPath string) error {
 
 	v, nerr := semver.NewVersion(g.NextMetadata.Version)
 	if nerr != nil {
-		return "", nerr
+		return nerr
 	}
 
 	template := g.Config.GetString("engine_generic_version_template")
