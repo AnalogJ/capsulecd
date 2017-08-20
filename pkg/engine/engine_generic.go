@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"path"
 	"strings"
+	"github.com/Masterminds/semver"
 )
 
 type genericMetadata struct {
@@ -31,6 +32,7 @@ func (g *engineGeneric) Init(pipelineData *pipeline.Data, config config.Interfac
 	g.NextMetadata = new(genericMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
+	g.Config.SetDefault("engine_generic_version_template", `version := "%d.%d.%d"`)
 	g.Config.SetDefault("engine_generic_version_path", "VERSION")
 	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "echo 'skipping lint'")
@@ -97,7 +99,15 @@ func (g *engineGeneric) retrieveCurrentMetadata(gitLocalPath string) error {
 	if rerr != nil {
 		return rerr
 	}
-	g.CurrentMetadata.Version = strings.TrimSpace(string(versionContent))
+
+	major := 0
+	minor := 0
+	patch := 0
+	template := g.Config.GetString("engine_generic_version_template")
+	fmt.Sscanf(strings.TrimSpace(string(versionContent)), template, &major, &minor, &patch)
+
+
+	g.CurrentMetadata.Version = fmt.Sprintf("%d.%d.%d", major, minor, patch)
 	return nil
 }
 
@@ -113,5 +123,14 @@ func (g *engineGeneric) populateNextMetadata() error {
 }
 
 func (g *engineGeneric) writeNextMetadata(gitLocalPath string) error {
-	return ioutil.WriteFile(path.Join(gitLocalPath, g.Config.GetString("engine_generic_version_path")), []byte(g.NextMetadata.Version), 0644)
+
+	v, nerr := semver.NewVersion(g.NextMetadata.Version)
+	if nerr != nil {
+		return "", nerr
+	}
+
+	template := g.Config.GetString("engine_generic_version_template")
+	versionContent := fmt.Sprintf(template, v.Major(), v.Minor(), v.Patch())
+
+	return ioutil.WriteFile(path.Join(gitLocalPath, g.Config.GetString("engine_generic_version_path")), []byte(versionContent), 0644)
 }
