@@ -7,10 +7,10 @@ import (
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
 	"fmt"
+	"github.com/Masterminds/semver"
 	"io/ioutil"
 	"path"
 	"strings"
-	"github.com/Masterminds/semver"
 )
 
 type genericMetadata struct {
@@ -105,7 +105,6 @@ func (g *engineGeneric) retrieveCurrentMetadata(gitLocalPath string) error {
 	patch := 0
 	template := g.Config.GetString("engine_generic_version_template")
 	fmt.Sscanf(strings.TrimSpace(string(versionContent)), template, &major, &minor, &patch)
-
 
 	g.CurrentMetadata.Version = fmt.Sprintf("%d.%d.%d", major, minor, patch)
 	return nil
