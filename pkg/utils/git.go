@@ -52,7 +52,7 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 
 	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git2go.FetchOptions), "")
 	if ferr != nil {
-		log.Print("Failed to fetch remote ref into new local branch " + localBranchName)
+		log.Print("Failed to fetch remote ref into new local branch " + fmt.Sprintf("%s:%s", remoteRef, localBranchName))
 		return ferr
 	}
 
