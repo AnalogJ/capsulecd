@@ -32,7 +32,11 @@ func GitClone(parentPath string, repositoryName string, gitRemote string) (strin
 	return absPath, err
 }
 
-func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
+
+// https://stackoverflow.com/questions/13638235/git-checkout-remote-reference
+// https://gist.github.com/danielfbm/ba4ae91efa96bb4771351bdbd2c8b06f
+// https://github.com/libgit2/git2go/issues/126
+func GitFetchPullRequest(repoPath string, pullRequestNumber string, localBranchName string) error {
 
 	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
@@ -50,31 +54,59 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 	}
 	time.Sleep(time.Second)
 
-	ferr := remote.Fetch([]string{fmt.Sprintf("%s:%s", remoteRef, localBranchName)}, new(git2go.FetchOptions), "")
+
+	// fetch the pull request merge and head references into this repo.
+	ferr := remote.Fetch([]string{"+refs/pull/*:refs/remotes/origin/pr/*"}, new(git2go.FetchOptions), "")
 	if ferr != nil {
-		log.Print("Failed to fetch remote ref into new local branch " + fmt.Sprintf("%s:%s", remoteRef, localBranchName))
+		log.Print("Failed to fetch PR references from remote")
 		return ferr
 	}
 
-	time.Sleep(time.Second)
-	//should not raise an error when looking for branch (we just created it above)
-	localBranch, berr := repo.LookupBranch(localBranchName, git2go.BranchLocal)
-	if berr != nil {
-		log.Print("Failed to lookup new local branch " + fmt.Sprintf("%s:%s", remoteRef, localBranchName))
-		return berr
+
+	// Get a reference to the PR merge branch in this repo
+	prRef, err := repo.References.Lookup(fmt.Sprintf("refs/remotes/origin/pr/%s/merge", pullRequestNumber))
+	if err != nil {
+		log.Print("Failed to find PR reference locally: " + fmt.Sprintf("refs/remotes/origin/pr/%s/merge", pullRequestNumber))
+		return err
 	}
 
-	// Getting the tree for the branch
-	localCommit, err := repo.LookupCommit(localBranch.Target())
+	// Lookup commmit for PR branch
+	prCommit, err := repo.LookupCommit(prRef.Target())
 	if err != nil {
-		log.Print("Failed to lookup for commit in local branch " + fmt.Sprintf("%s:%s", remoteRef, localBranchName))
+		log.Print(fmt.Sprintf("Failed to find PR head commit: %s", prRef.Target()))
+		return err
+	}
+	defer prCommit.Free()
+
+
+
+	prLocalBranch, err := repo.LookupBranch(localBranchName, git2go.BranchLocal)
+	// No local branch, lets create one
+	if prLocalBranch == nil || err != nil {
+		// Creating local branch
+		prLocalBranch, err = repo.CreateBranch(localBranchName, prCommit, false)
+		if err != nil {
+			log.Print("Failed to create local branch: " + localBranchName)
+			return err
+		}
+	}
+	if prLocalBranch == nil {
+		return errors.ScmFilesystemError("Error while locating/creating local branch")
+	}
+	defer prLocalBranch.Free()
+
+
+	// Getting the tree for the branch
+	localCommit, err := repo.LookupCommit(prLocalBranch.Target())
+	if err != nil {
+		log.Print("Failed to lookup for commit in local branch " + localBranchName)
 		return err
 	}
 	//defer localCommit.Free()
 
 	tree, err := repo.LookupTree(localCommit.TreeId())
 	if err != nil {
-		log.Print("Failed to lookup for tree " + fmt.Sprintf("%s:%s", remoteRef, localBranchName))
+		log.Print("Failed to lookup for tree " + localBranchName)
 		return err
 	}
 	//defer tree.Free()
@@ -82,7 +114,7 @@ func GitFetch(repoPath string, remoteRef string, localBranchName string) error {
 	// Checkout the tree
 	err = repo.CheckoutTree(tree, checkoutOpts)
 	if err != nil {
-		log.Print("Failed to checkout tree " + fmt.Sprintf("%s:%s", remoteRef, localBranchName))
+		log.Print("Failed to checkout tree " + localBranchName)
 		return err
 	}
 	// Setting the Head to point to our branch
