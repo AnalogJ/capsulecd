@@ -75,23 +75,6 @@ func TestGitFetch(t *testing.T) {
 	require.NoError(t, ferr)
 }
 
-func TestGitFetch_LexiconFailure(t *testing.T) {
-	t.Parallel()
-
-	//setup
-	dirPath, err := ioutil.TempDir("", "")
-	require.NoError(t, err)
-	defer deleteTestRepo(dirPath)
-
-	//test
-	clonePath, cerr := utils.GitClone(dirPath, "lexicon", "https://github.com/AnalogJ/lexicon.git")
-	require.NoError(t, cerr)
-	ferr := utils.GitFetchPullRequest(clonePath, "141", "pr_141")
-
-	//assert
-	require.Error(t, ferr)
-}
-
 func TestGitFetch_InvalidDirectory(t *testing.T) {
 	t.Parallel()
 
