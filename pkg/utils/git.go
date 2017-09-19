@@ -32,7 +32,6 @@ func GitClone(parentPath string, repositoryName string, gitRemote string) (strin
 	return absPath, err
 }
 
-
 // https://stackoverflow.com/questions/13638235/git-checkout-remote-reference
 // https://gist.github.com/danielfbm/ba4ae91efa96bb4771351bdbd2c8b06f
 // https://github.com/libgit2/git2go/issues/126
@@ -54,14 +53,12 @@ func GitFetchPullRequest(repoPath string, pullRequestNumber string, localBranchN
 	}
 	time.Sleep(time.Second)
 
-
 	// fetch the pull request merge and head references into this repo.
 	ferr := remote.Fetch([]string{"+refs/pull/*:refs/remotes/origin/pr/*"}, new(git2go.FetchOptions), "")
 	if ferr != nil {
 		log.Print("Failed to fetch PR references from remote")
 		return ferr
 	}
-
 
 	// Get a reference to the PR merge branch in this repo
 	prRef, err := repo.References.Lookup(fmt.Sprintf("refs/remotes/origin/pr/%s/merge", pullRequestNumber))
@@ -78,8 +75,6 @@ func GitFetchPullRequest(repoPath string, pullRequestNumber string, localBranchN
 	}
 	defer prCommit.Free()
 
-
-
 	prLocalBranch, err := repo.LookupBranch(localBranchName, git2go.BranchLocal)
 	// No local branch, lets create one
 	if prLocalBranch == nil || err != nil {
@@ -94,7 +89,6 @@ func GitFetchPullRequest(repoPath string, pullRequestNumber string, localBranchN
 		return errors.ScmFilesystemError("Error while locating/creating local branch")
 	}
 	defer prLocalBranch.Free()
-
 
 	// Getting the tree for the branch
 	localCommit, err := repo.LookupCommit(prLocalBranch.Target())
