@@ -208,7 +208,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 	g.PipelineData.GitLocalPath = gitLocalPath
 	g.PipelineData.GitLocalBranch = fmt.Sprintf("pr_%s", payload.PullRequestNumber)
 
-	ferr := utils.GitFetch(g.PipelineData.GitLocalPath, fmt.Sprintf("refs/pull/%s/merge", payload.PullRequestNumber), g.PipelineData.GitLocalBranch)
+	ferr := utils.GitFetchPullRequest(g.PipelineData.GitLocalPath, payload.PullRequestNumber, g.PipelineData.GitLocalBranch)
 	if ferr != nil {
 		return ferr
 	}
