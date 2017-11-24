@@ -54,9 +54,9 @@ func GitFetchPullRequest(repoPath string, pullRequestNumber string, localBranchN
 	time.Sleep(time.Second)
 
 	// fetch the pull request merge and head references into this repo.
-	ferr := remote.Fetch([]string{"+refs/pull/*:refs/remotes/origin/pr/*"}, new(git2go.FetchOptions), "")
+	ferr := remote.Fetch([]string{ fmt.Sprintf("+refs/pull/%s/merge:refs/remotes/origin/pr/%s/merge", pullRequestNumber, pullRequestNumber) }, new(git2go.FetchOptions), "")
 	if ferr != nil {
-		log.Print("Failed to fetch PR references from remote")
+		log.Print("Failed to fetch PR reference from remote")
 		return ferr
 	}
 
