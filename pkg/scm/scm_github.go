@@ -190,7 +190,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 		return berr
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitBaseInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
 	if aerr != nil {
 		return aerr
 	}
@@ -201,7 +201,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 	// https://coderwall.com/p/z5rkga/github-checkout-a-pull-request-as-a-branch
 	// https://help.github.com/articles/checking-out-pull-requests-locally/
 
-	gitLocalPath, cerr := utils.GitClone(g.PipelineData.GitParentPath, g.PipelineData.GitHeadInfo.Repo.Name, g.PipelineData.GitRemote)
+	gitLocalPath, cerr := utils.GitClone(g.PipelineData.GitParentPath, g.PipelineData.GitBaseInfo.Repo.Name, g.PipelineData.GitRemote)
 	if cerr != nil {
 		return cerr
 	}
