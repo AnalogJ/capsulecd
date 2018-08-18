@@ -33,7 +33,7 @@ func (g *enginePython) Init(pipelineData *pipeline.Data, config config.Interface
 	g.NextMetadata = new(pythonMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
-	g.Config.SetDefault("pypi_repository", "https://upload.pypi.org/legacy/")
+	g.Config.SetDefault("pypi_repository", "https://pypi.python.org/pypi")
 	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "find . -name '*.py' -exec pylint -E '{}' +")
 	g.Config.SetDefault("engine_cmd_fmt", "find . -name '*.py' -exec pylint -E '{}' +") //TODO: replace with pycodestyle/pep8
