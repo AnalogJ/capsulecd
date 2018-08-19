@@ -1,4 +1,7 @@
 package config
+import (
+	"github.com/spf13/viper"
+)
 
 // Create mock using:
 // mockgen -source=pkg/config/interface.go -destination=pkg/config/mock/mock_config.go
@@ -15,5 +18,5 @@ type Interface interface {
 	GetString(key string) string
 	GetStringSlice(key string) []string
 	GetBase64Decoded(key string) (string, error)
-	UnmarshalKey(key string, rawVal interface{}) error
+	UnmarshalKey(key string, rawVal interface{}, decoder ...viper.DecoderConfigOption) error
 }
