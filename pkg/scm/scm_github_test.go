@@ -44,7 +44,7 @@ func vcrSetup(t *testing.T) *http.Client {
 	tc := oauth2.NewClient(ctx, ts)
 
 	vcrConfig := govcr.VCRConfig{
-		Logging: true,
+		Logging:      true,
 		CassettePath: path.Join("testdata", "govcr-fixtures"),
 		Client:       tc,
 		ExcludeHeaderFunc: func(key string) bool {
