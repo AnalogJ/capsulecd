@@ -38,7 +38,7 @@ func TestEnginePython_Create(t *testing.T) {
 	//assert
 	require.NoError(t, err)
 	require.NotNil(t, pythonEngine)
-	require.Equal(t, "https://upload.pypi.org/legacy/", testConfig.GetString("pypi_repository"), "should load engine defaults")
+	require.Equal(t, "https://pypi.python.org/pypi", testConfig.GetString("pypi_repository"), "should load engine defaults")
 }
 
 // Define the suite, and absorb the built-in basic suite

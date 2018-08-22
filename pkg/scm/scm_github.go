@@ -299,7 +299,7 @@ func (g *scmGithub) Publish() error {
 
 func (g *scmGithub) PublishAssets(releaseData interface{}) error {
 	//releaseData should be an ID (int)
-	releaseId, ok := releaseData.(int)
+	releaseId, ok := releaseData.(int64)
 	if !ok {
 		return fmt.Errorf("Invalid releaseID, cannot upload assets")
 	}
@@ -372,7 +372,7 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 
 //private
 
-func publishAsset(client *github.Client, ctx context.Context, repoOwner string, repoName string, assetName, filePath string, releaseID, retries int) error {
+func publishAsset(client *github.Client, ctx context.Context, repoOwner string, repoName string, assetName, filePath string, releaseID int64, retries int) error {
 
 	log.Printf("Attempt (%d) to upload release asset %s from %s", retries, assetName, filePath)
 	f, err := os.Open(filePath)
