@@ -195,12 +195,9 @@ CircleCI is used for continuous integration testing: <https://circleci.com/gh/An
 
 # Contributing
 
-If you'd like to help improve CapsuleCD, clone the project with Git and install dependencies by running:
+If you'd like to help improve CapsuleCD, follow the instructions in [CONTRIBUTING.md](CONTRIBUTING.md)
 
-    $ git clone git://github.com/AnalogJ/capsulecd
-    $ glide install
-
-Note for development you'll also need to ensure that you have the `git2go` dependencies installed on your machine.
+Note that if you would like to do development without Docker, you'll also need to ensure that you have the `git2go` dependencies installed on your machine.
 You can install these dependencies by using your system's package manager.
 
 	- openssl

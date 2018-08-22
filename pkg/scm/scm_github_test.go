@@ -23,6 +23,7 @@ import (
 func vcrSetup(t *testing.T) *http.Client {
 	accessToken := "PLACEHOLDER"
 	//if(os.Getenv("CI") != "true"){
+	// this has to be disabled because CI is empty inside docker containers.
 	//	accessToken = os.Getenv("GITHUB_ACCESS_TOKEN")
 	//}
 
@@ -43,15 +44,18 @@ func vcrSetup(t *testing.T) *http.Client {
 	tc := oauth2.NewClient(ctx, ts)
 
 	vcrConfig := govcr.VCRConfig{
+		Logging: true,
 		CassettePath: path.Join("testdata", "govcr-fixtures"),
 		Client:       tc,
 		ExcludeHeaderFunc: func(key string) bool {
 			// HTTP headers are case-insensitive
+			//return strings.ToLower(key) == "user-agent" || strings.ToLower(key) == "accept"
 			return strings.ToLower(key) == "user-agent"
 		},
-	}
-	if os.Getenv("CI") != "true" {
-		vcrConfig.DisableRecording = true
+
+		//this line ensures that we do not attempt to create new recordings.
+		//Comment this out if you would like to make recordings.
+		DisableRecording: true,
 	}
 
 	vcr := govcr.NewVCR(t.Name(), &vcrConfig)
@@ -328,9 +332,11 @@ func TestScmGithub_PublishAssets(t *testing.T) {
 
 	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), pipelineData.GitLocalPath)
 	require.NoError(t, cerr)
-	//test
 
-	paerr := githubScm.PublishAssets(3663503)
+	//test
+	//the release id is found by using the following command:
+	//curl -u username:token https://api.github.com/repos/AnalogJ/gem_analogj_test/releases/latest
+	paerr := githubScm.PublishAssets(int64(7196038))
 	require.NoError(t, paerr)
 }
 
