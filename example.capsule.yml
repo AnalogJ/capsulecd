@@ -153,7 +153,7 @@ npm_auth_token: ''
 
 # Specifies the PYPI credentials to use when creating public release for Pypi package
 # found in ~/.pypirc on developer machine
-pypi_repository: 'https://pypi.python.org/pypi'
+pypi_repository: 'https://upload.pypi.org/legacy/'
 pypi_username: ''
 pypi_password: ''
 
