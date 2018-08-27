@@ -39,7 +39,7 @@ jobs:
             docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
       - run:
           name: Run Base Docker containers with coverage
-          shell: bash
+#          shell: bash
           command: |
             CAPSULECD_ENV=base
             echo "#################################################### $CAPSULECD_ENV"
@@ -53,7 +53,7 @@ jobs:
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Chef Docker containers with coverage
-          shell: bash
+#          shell: bash
           command: |
             CAPSULECD_ENV=chef
             echo "#################################################### $CAPSULECD_ENV"
@@ -67,7 +67,7 @@ jobs:
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Node Docker containers with coverage
-          shell: bash
+#          shell: bash
           command: |
             CAPSULECD_ENV=node
             echo "#################################################### $CAPSULECD_ENV"
@@ -80,7 +80,7 @@ jobs:
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Python Docker containers with coverage
-          shell: bash
+#          shell: bash
           command: |
             CAPSULECD_ENV=python
             echo "#################################################### $CAPSULECD_ENV"
@@ -92,7 +92,7 @@ jobs:
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Ruby Docker containers with coverage
-          shell: bash
+#          shell: bash
           command: |
             CAPSULECD_ENV=ruby
             echo "#################################################### $CAPSULECD_ENV"
@@ -104,7 +104,7 @@ jobs:
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
       - run:
           name: Run Golang Docker containers with coverage
-          shell: bash
+#          shell: bash
           command: |
             CAPSULECD_ENV=golang
             echo "#################################################### $CAPSULECD_ENV"
@@ -117,13 +117,14 @@ jobs:
 
       - run:
           name: Merge coverage reports and submit
-          shell: bash
+#          shell: bash
           command: |
             ls -alt /coverage
 
             # upload to codecov.
             bash <(curl -s https://codecov.io/bash) -f "*.txt" -s /coverage
             echo "exit code $?"
+          when: always
 #      - run:
 #          name: Merge generated coverage reports using webhook.
 #          command: |
