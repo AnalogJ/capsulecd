@@ -137,9 +137,7 @@ func (suite *EngineChefTestSuite) TestEngineChef_AssembleStep_WithMinimalCookboo
 
 	//assert
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Rakefile")))
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile")))
 }
 
 func (suite *EngineChefTestSuite) TestEngineChef_AssembleStep_WithoutMetadata() {
@@ -269,32 +267,28 @@ func (suite *EngineChefTestSuite) TestEngineChef_TestStep_SecurityCheckFailure()
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineChefTestSuite) TestEngineChef_PackageStep_WithoutLockFiles() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool("mgr_keep_lock_file").MinTimes(1).Return(false)
-
-	//copy cookbook fixture into a temp directory.
-	parentPath, err := ioutil.TempDir("", "")
-	require.NoError(suite.T(), err)
-	defer os.RemoveAll(parentPath)
-	suite.PipelineData.GitParentPath = parentPath
-	cpath, cerr := utils.GitClone(parentPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
-	require.NoError(suite.T(), cerr)
-	suite.PipelineData.GitLocalPath = cpath
-
-	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := chefEngine.PackageStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile.lock")))
-	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
-}
-
-func (suite *EngineChefTestSuite) TestEngineChef_DistStep_WithoutCredentials() {
-
-}
+//func (suite *EngineChefTestSuite) TestEngineChef_PackageStep_WithoutLockFiles() {
+//	//setup
+//	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+//	suite.Config.EXPECT().GetBool("mgr_keep_lock_file").MinTimes(1).Return(false)
+//
+//	//copy cookbook fixture into a temp directory.
+//	parentPath, err := ioutil.TempDir("", "")
+//	require.NoError(suite.T(), err)
+//	defer os.RemoveAll(parentPath)
+//	suite.PipelineData.GitParentPath = parentPath
+//	cpath, cerr := utils.GitClone(parentPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
+//	require.NoError(suite.T(), cerr)
+//	suite.PipelineData.GitLocalPath = cpath
+//
+//	chefEngine, err := engine.Create("chef", suite.PipelineData, suite.Config, suite.Scm)
+//	require.NoError(suite.T(), err)
+//
+//	//test
+//	berr := chefEngine.PackageStep()
+//
+//	//assert
+//	require.NoError(suite.T(), berr)
+//	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile.lock")))
+//	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
+//}

@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& go get -u gopkg.in/alecthomas/gometalinter.v1 \
 	&& gometalinter.v1 --install \
-	&& go get github.com/Masterminds/glide
+	&& go get github.com/Masterminds/glide \
+	&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig/:/usr/local/lib/pkgconfig/:/usr/local/lib/libgit2/lib/pkgconfig:/usr/local/lib/openssl/lib/pkgconfig:/usr/local/lib/libssh2"
 

@@ -4,7 +4,7 @@
 ##
 ##################################################
 FROM analogj/libgit2-crossbuild:linux-amd64 AS base
-FROM node:8.2 AS node
+FROM node:8.11 AS node
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
