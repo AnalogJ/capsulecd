@@ -1,4 +1,5 @@
 // +build golang
+
 package mgr_test
 
 import (
