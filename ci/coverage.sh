@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+# print out information about env.
+uname -a
+ld --version
+pkg-config --version
+
 set -e
 mkdir -p /coverage
+
 echo "" > /coverage/coverage-$1.txt
 
 for d in $(go list ./... | grep -v vendor); do
