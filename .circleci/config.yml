@@ -123,15 +123,15 @@ jobs:
 
 # build capsulecd every week, to ensure that language/dependency breaking changes are caught early.
 # https://crontab.guru/every-week
-workflows:
-  version: 2
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 0 * * 0"
-          filters:
-            branches:
-              only:
-              - master
-    jobs:
-      - build
+#workflows:
+#  version: 2
+#  nightly:
+#    triggers:
+#      - schedule:
+#          cron: "0 0 * * 0"
+#          filters:
+#            branches:
+#              only:
+#              - master
+#    jobs:
+#      - build
