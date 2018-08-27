@@ -1,3 +1,5 @@
+// +build ruby
+
 package mgr_test
 
 import (

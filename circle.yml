@@ -121,6 +121,16 @@ jobs:
 #          name: Merge generated coverage reports using webhook.
 #          command: |
 
-
-
-#
+# build capsulecd every night, to ensure that language/dependency breaking changes are caught early.
+workflows:
+   version: 2
+   nightly:
+     triggers:
+       - schedule:
+           cron: "0 0 * * *"
+           filters:
+             branches:
+               only:
+                 - master
+     jobs:
+       - build

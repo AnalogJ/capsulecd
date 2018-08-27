@@ -1,3 +1,4 @@
+// +build node
 package mgr_test
 
 import (
