@@ -1,0 +1,3 @@
+package: go_analogj_test
+import:
+- package: github.com/spf13/viper

@@ -80,7 +80,7 @@ func (suite *MgrPythonPipTestSuite) TestMgrPythonPip_DependenciesStep() {
 }
 
 
-func (suite *MgrPythonPipTestSuite) TestMgrPythonPip_WithoutCredentials() {
+func (suite *MgrPythonPipTestSuite) TestMgrPythonPip_MgrDistStep_WithoutCredentials() {
 	//setup
 	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("pypi_username").MinTimes(1).Return(false)
@@ -104,7 +104,7 @@ func (suite *MgrPythonPipTestSuite) TestMgrPythonPip_WithoutCredentials() {
 // password: capsulecd$23$
 // we're not going to mock out this test, as we want to ensure that package manager integration works correctly, so we'll just
 // communicate with the test pypi server.
-func (suite *MgrPythonPipTestSuite) TestMgrPythonPip_DistStep_WithCredentials() {
+func (suite *MgrPythonPipTestSuite) TestMgrPythonPip_MgrDistStep_WithCredentials() {
 	//setup
 	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("pypi_username").MinTimes(1).Return(true)

@@ -292,3 +292,4 @@ CapsuleCD is licensed under the MIT License - see the
 - http://craigwickesser.com/2015/02/golang-cmd-with-custom-environment/
 - https://opencredo.com/why-i-dont-like-error-handling-in-go/
 - https://godoc.org/github.com/pkg/errors
+- https://blog.strapi.io/testing-npm-package-before-releasing-it-using-verdaccio-and-ngrok/
