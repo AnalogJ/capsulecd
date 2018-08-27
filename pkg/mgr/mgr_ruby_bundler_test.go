@@ -1,4 +1,4 @@
-package mgr
+package mgr_test
 
 import (
 	"github.com/stretchr/testify/suite"
