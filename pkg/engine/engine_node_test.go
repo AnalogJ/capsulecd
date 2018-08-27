@@ -135,30 +135,6 @@ func (suite *EngineNodeTestSuite) TestEngineNode_AssembleStep_WithoutPackageJson
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EngineNodeTestSuite) TestEngineNode_DependenciesStep() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-
-	//copy cookbook fixture into a temp directory.
-	parentPath, err := ioutil.TempDir("", "")
-	require.NoError(suite.T(), err)
-	defer os.RemoveAll(parentPath)
-	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "npm_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "node", "npm_analogj_test"), suite.PipelineData.GitLocalPath)
-	require.NoError(suite.T(), cerr)
-
-	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := nodeEngine.DependenciesStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "npm-shrinkwrap.json")))
-}
-
 func (suite *EngineNodeTestSuite) TestEngineNode_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
@@ -286,19 +262,4 @@ func (suite *EngineNodeTestSuite) TestEngineNode_PackageStep_WithoutLockFiles() 
 	//assert
 	require.NoError(suite.T(), berr)
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "npm-shrinkwrap.json")))
-}
-
-func (suite *EngineNodeTestSuite) TestEngineNode_DistStep_WithoutCredentials() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().IsSet("npm_auth_token").MinTimes(1).Return(false)
-
-	nodeEngine, err := engine.Create("node", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := nodeEngine.DistStep()
-
-	//assert
-	require.Error(suite.T(), berr)
 }

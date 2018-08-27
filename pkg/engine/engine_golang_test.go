@@ -286,16 +286,3 @@ func (suite *EngineGolangTestSuite) TestEngineGolang_PackageStep_WithoutLockFile
 	require.NoError(suite.T(), berr)
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "glide.lock")))
 }
-
-func (suite *EngineGolangTestSuite) TestEngineGolang_DistStep() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	golangEngine, err := engine.Create("golang", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := golangEngine.DistStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-}

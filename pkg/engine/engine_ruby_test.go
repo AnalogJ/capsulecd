@@ -293,18 +293,3 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_PackageStep_WithoutLockFiles() 
 	require.NoError(suite.T(), berr)
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
 }
-
-func (suite *EngineRubyTestSuite) TestEngineRuby_DistStep_WithoutCredentials() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().IsSet("rubygems_api_key").MinTimes(1).Return(false)
-
-	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := rubyEngine.DistStep()
-
-	//assert
-	require.Error(suite.T(), berr)
-}
