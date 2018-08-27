@@ -48,6 +48,7 @@ jobs:
               ./ci/coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+          when: always
       - run:
           name: Run Chef Docker containers with coverage
           command: |
@@ -59,6 +60,7 @@ jobs:
               ./ci/coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+          when: always
       - run:
           name: Run Node Docker containers with coverage
           command: |
@@ -70,6 +72,7 @@ jobs:
               ./ci/coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+          when: always
       - run:
           name: Run Python Docker containers with coverage
           command: |
@@ -81,6 +84,7 @@ jobs:
               ./ci/coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+          when: always
       - run:
           name: Run Ruby Docker containers with coverage
           command: |
@@ -92,6 +96,7 @@ jobs:
               ./ci/coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+          when: always
       - run:
           name: Run Golang Docker containers with coverage
           command: |
@@ -103,7 +108,7 @@ jobs:
               ./ci/coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
-
+          when: always
       - run:
           name: Merge coverage reports and submit
           command: |
