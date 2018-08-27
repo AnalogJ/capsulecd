@@ -53,7 +53,7 @@ func TestMgrChefBerkshelf_TestSuite(t *testing.T) {
 
 func (suite *MgrChefBerkshelfTestSuite) TestMgrChefBerkshelfTestSuite_DependenciesStep() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -83,7 +83,7 @@ func (suite *MgrChefBerkshelfTestSuite) TestMgrChefBerkshelfTestSuite_Dependenci
 
 func (suite *MgrChefBerkshelfTestSuite) TestMgrChefBerkshelfTestSuite_WithoutCredentials() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("chef_supermarket_username").MinTimes(1).Return(false)
 
 	mgrChefBerkshelf, err := mgr.Create("berkshelf", suite.PipelineData, suite.Config, nil)
