@@ -13,25 +13,23 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"capsulecd/pkg/metadata"
 )
 
-type chefMetadata struct {
-	Version string `json:"version"`
-	Name    string `json:"name"`
-}
+
 type engineChef struct {
 	engineBase
 	Scm             scm.Interface //Interface
-	CurrentMetadata *chefMetadata
-	NextMetadata    *chefMetadata
+	CurrentMetadata *metadata.ChefMetadata
+	NextMetadata    *metadata.ChefMetadata
 }
 
 func (g *engineChef) Init(pipelineData *pipeline.Data, configData config.Interface, sourceScm scm.Interface) error {
 	g.Config = configData
 	g.Scm = sourceScm
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(chefMetadata)
-	g.NextMetadata = new(chefMetadata)
+	g.CurrentMetadata = new(metadata.ChefMetadata)
+	g.NextMetadata = new(metadata.ChefMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("chef_supermarket_type", "Other")
@@ -44,21 +42,14 @@ func (g *engineChef) Init(pipelineData *pipeline.Data, configData config.Interfa
 	return nil
 }
 
+func (g *engineChef) GetCurrentMetadata() interface{} {
+	return g.CurrentMetadata
+}
+func (g *engineChef) GetNextMetadata() interface{} {
+	return g.NextMetadata
+}
+
 func (g *engineChef) ValidateTools() error {
-	//a chefdk like environment needs to be available for this Engine
-	if _, kerr := exec.LookPath("knife"); kerr != nil {
-		return errors.EngineValidateToolError("knife binary is missing")
-	}
-
-	if _, berr := exec.LookPath("berks"); berr != nil {
-		return errors.EngineValidateToolError("berkshelf binary is missing")
-	}
-
-	//TODO: figure out how to validate that "bundle audit" command exists.
-	if _, berr := exec.LookPath("bundle"); berr != nil {
-		return errors.EngineValidateToolError("bundler binary is missing")
-	}
-
 	if _, berr := exec.LookPath("foodcritic"); berr != nil && !g.Config.GetBool("engine_disable_lint") {
 		return errors.EngineValidateToolError("foodcritic binary is missing")
 	}
@@ -93,17 +84,7 @@ func (g *engineChef) AssembleStep() error {
 	if !utils.FileExists(rakefilePath) {
 		ioutil.WriteFile(rakefilePath, []byte("task :test"), 0644)
 	}
-	berksfilePath := path.Join(g.PipelineData.GitLocalPath, "Berksfile")
-	if !utils.FileExists(berksfilePath) {
-		ioutil.WriteFile(berksfilePath, []byte(utils.StripIndent(
-			`source "https://supermarket.chef.io"
-		metadata
-		`)), 0644)
-	}
-	gemfilePath := path.Join(g.PipelineData.GitLocalPath, "Gemfile")
-	if !utils.FileExists(gemfilePath) {
-		ioutil.WriteFile(gemfilePath, []byte(`source "https://rubygems.org"`), 0644)
-	}
+
 	specPath := path.Join(g.PipelineData.GitLocalPath, "spec")
 	if !utils.FileExists(specPath) {
 		os.MkdirAll(specPath, 0777)
@@ -120,18 +101,6 @@ func (g *engineChef) AssembleStep() error {
 	return nil
 }
 
-func (g *engineChef) DependenciesStep() error {
-	// the cookbook has already been downloaded. lets make sure all its dependencies are available.
-	if cerr := utils.BashCmdExec("berks install", g.PipelineData.GitLocalPath, nil, ""); cerr != nil {
-		return errors.EngineTestDependenciesError("berks install failed. Check cookbook dependencies")
-	}
-
-	//download all its gem dependencies
-	if berr := utils.BashCmdExec("bundle install", g.PipelineData.GitLocalPath, nil, ""); berr != nil {
-		return errors.EngineTestDependenciesError("bundle install failed. Check Gem dependencies")
-	}
-	return nil
-}
 
 // Use default compile step..
 // func (g *engineChef) CompileStep() error {}
@@ -140,10 +109,6 @@ func (g *engineChef) DependenciesStep() error {
 // func (g *engineChef) TestStep() error {}
 
 func (g *engineChef) PackageStep() error {
-	if !g.Config.GetBool("engine_package_keep_lock_file") {
-		os.Remove(path.Join(g.PipelineData.GitLocalPath, "Berksfile.lock"))
-		os.Remove(path.Join(g.PipelineData.GitLocalPath, "Gemfile.lock"))
-	}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
@@ -155,67 +120,6 @@ func (g *engineChef) PackageStep() error {
 
 	g.PipelineData.ReleaseCommit = tagCommit
 	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
-	return nil
-}
-
-func (g *engineChef) DistStep() error {
-	if !g.Config.IsSet("chef_supermarket_username") || !g.Config.IsSet("chef_supermarket_key") {
-		return errors.EngineDistCredentialsMissing("Cannot deploy cookbook to supermarket, credentials missing")
-	}
-
-	// knife is really sensitive to folder names. The cookbook name MUST match the folder name otherwise knife throws up
-	// when doing a knife cookbook share. So we're going to make a new tmp directory, create a subdirectory with the EXACT
-	// cookbook name, and then copy the cookbook contents into it. Yeah yeah, its pretty nasty, but blame Chef.
-	tmpParentPath, terr := ioutil.TempDir("", "")
-	if terr != nil {
-		return terr
-	}
-	defer os.RemoveAll(tmpParentPath)
-
-	tmpLocalPath := path.Join(tmpParentPath, g.NextMetadata.Name)
-	if cerr := utils.CopyDir(g.PipelineData.GitLocalPath, tmpLocalPath); cerr != nil {
-		return cerr
-	}
-
-	pemFile, _ := ioutil.TempFile("", "client.pem")
-	defer os.Remove(pemFile.Name())
-	knifeFile, _ := ioutil.TempFile("", "knife.rb")
-	defer os.Remove(knifeFile.Name())
-
-	// write the knife.rb config jfile.
-	knifeContent := fmt.Sprintf(utils.StripIndent(
-		`node_name "%s" # Replace with the login name you use to login to the Supermarket.
-    		client_key "%s" # Define the path to wherever your client.pem file lives.  This is the key you generated when you signed up for a Chef account.
-        	cookbook_path [ '%s' ] # Directory where the cookbook you're uploading resides.
-		`),
-		g.Config.GetString("chef_supermarket_username"),
-		pemFile.Name(),
-		tmpParentPath,
-	)
-
-	_, kerr := knifeFile.Write([]byte(knifeContent))
-	if kerr != nil {
-		return kerr
-	}
-
-	chefKey, berr := g.Config.GetBase64Decoded("chef_supermarket_key")
-	if berr != nil {
-		return berr
-	}
-	_, perr := pemFile.Write([]byte(chefKey))
-	if perr != nil {
-		return perr
-	}
-
-	cookbookDistCmd := fmt.Sprintf("knife cookbook site share %s %s -c %s",
-		g.NextMetadata.Name,
-		g.Config.GetString("chef_supermarket_type"),
-		knifeFile.Name(),
-	)
-
-	if derr := utils.BashCmdExec(cookbookDistCmd, "", nil, ""); derr != nil {
-		return errors.EngineDistPackageError("knife cookbook upload to supermarket failed")
-	}
 	return nil
 }
 

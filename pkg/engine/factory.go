@@ -10,44 +10,27 @@ import (
 
 func Create(engineType string, pipelineData *pipeline.Data, configImpl config.Interface, sourceImpl scm.Interface) (Interface, error) {
 
+	var eng Interface
+
 	switch engineType {
 	case "chef":
-		eng := new(engineChef)
-		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
-			return nil, err
-		}
-		return eng, nil
+		eng = new(engineChef)
 	case "generic":
-		eng := new(engineGeneric)
-		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
-			return nil, err
-		}
-		return eng, nil
+		eng = new(engineGeneric)
 	case "golang":
-		eng := new(engineGolang)
-		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
-			return nil, err
-		}
-		return eng, nil
+		eng = new(engineGolang)
 	case "node":
-		eng := new(engineNode)
-		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
-			return nil, err
-		}
-		return eng, nil
+		eng = new(engineNode)
 	case "python":
-		eng := new(enginePython)
-		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
-			return nil, err
-		}
-		return eng, nil
+		eng = new(enginePython)
 	case "ruby":
-		eng := new(engineRuby)
-		if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
-			return nil, err
-		}
-		return eng, nil
+		eng = new(engineRuby)
 	default:
 		return nil, errors.EngineUnspecifiedError(fmt.Sprintf("Unknown Engine Type: %s", engineType))
 	}
+
+	if err := eng.Init(pipelineData, configImpl, sourceImpl); err != nil {
+		return nil, err
+	}
+	return eng, nil
 }

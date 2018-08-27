@@ -11,6 +11,9 @@ import (
 type Interface interface {
 	Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error
 
+	GetCurrentMetadata() interface{}
+	GetNextMetadata() interface{}
+
 	// Validate that required executables are available for the following build/test/package/etc steps
 	ValidateTools() error
 
@@ -23,14 +26,6 @@ type Interface interface {
 	// MUST set NextMetadata
 	// REQUIRES pipelineData.GitLocalPath
 	AssembleStep() error
-
-	// Validate & download dependencies for this package.
-	// Generate *.lock files for dependencies (should be deleted in PackageStep if necessary)
-	// CAN override
-	// REQUIRES pipelineData.GitLocalPath
-	// REQUIRES CurrentMetadata
-	// REQUIRES NextMetadata
-	DependenciesStep() error
 
 	// Compile the source for this package (if required)
 	// CAN override
@@ -60,20 +55,7 @@ type Interface interface {
 	// MUST set ReleaseVersion
 	// REQUIRES pipelineData.GitLocalPath
 	// REQUIRES NextMetadata
-	// USES engine_package_keep_lock_file
+	// USES mgr_keep_lock_file
 	PackageStep() error
 
-	// Push the release to the package repository (ie. npm, chef supermarket, rubygems)
-	// Should validate any required credentials are specified.
-	// CAN override
-	// REQUIRES pipelineData.GitLocalPath
-	// REQUIRES NextMetadata
-	// USES chef_supermarket_username
-	// USES chef_supermarket_key
-	// USES npm_auth_token
-	// USES pypi_repository
-	// USES pypi_username
-	// USES pypi_password
-	// USES rubygems_api_key
-	DistStep() error
 }

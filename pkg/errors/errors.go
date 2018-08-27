@@ -102,16 +102,23 @@ func (str EngineTestRunnerError) Error() string {
 	return fmt.Sprintf("EngineTestRunnerError: %q", string(str))
 }
 
-// Raised when credentials required to upload/deploy new package are missing.
-type EngineDistCredentialsMissing string
+// Raised when package manager asseble step fails.
+type MgrAssembleError string
 
-func (str EngineDistCredentialsMissing) Error() string {
-	return fmt.Sprintf("EngineDistCredentialsMissing: %q", string(str))
+func (str MgrAssembleError) Error() string {
+	return fmt.Sprintf("MgrAssembleError: %q", string(str))
+}
+
+// Raised when credentials required to upload/deploy new package are missing.
+type MgrDistCredentialsMissing string
+
+func (str MgrDistCredentialsMissing) Error() string {
+	return fmt.Sprintf("MgrDistCredentialsMissing: %q", string(str))
 }
 
 // Raised when an error occurs while uploading package.
-type EngineDistPackageError string
+type MgrDistPackageError string
 
-func (str EngineDistPackageError) Error() string {
-	return fmt.Sprintf("EngineDistPackageError: %q", string(str))
+func (str MgrDistPackageError) Error() string {
+	return fmt.Sprintf("MgrDistPackageError: %q", string(str))
 }

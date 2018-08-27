@@ -10,20 +10,18 @@ import (
 
 func Create(scmType string, pipelineData *pipeline.Data, config config.Interface, client *http.Client) (Interface, error) {
 
+	var scm Interface
 	switch scmType {
 	case "bitbucket":
-		scm := new(scmBitbucket)
-		if err := scm.Init(pipelineData, config, client); err != nil {
-			return nil, err
-		}
-		return scm, nil
+		scm = new(scmBitbucket)
 	case "github":
-		scm := new(scmGithub)
-		if err := scm.Init(pipelineData, config, client); err != nil {
-			return nil, err
-		}
-		return scm, nil
+		scm = new(scmGithub)
 	default:
 		return nil, errors.ScmUnspecifiedError(fmt.Sprintf("Unknown Scm Type: %s", scmType))
 	}
+
+	if err := scm.Init(pipelineData, config, client); err != nil {
+		return nil, err
+	}
+	return scm, nil
 }

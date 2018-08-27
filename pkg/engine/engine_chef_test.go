@@ -296,7 +296,7 @@ func (suite *EngineChefTestSuite) TestEngineChef_TestStep_SecurityCheckFailure()
 func (suite *EngineChefTestSuite) TestEngineChef_PackageStep_WithoutLockFiles() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool("engine_package_keep_lock_file").MinTimes(1).Return(false)
+	suite.Config.EXPECT().GetBool("mgr_keep_lock_file").MinTimes(1).Return(false)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
