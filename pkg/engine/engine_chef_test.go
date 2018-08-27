@@ -169,6 +169,7 @@ func (suite *EngineChefTestSuite) TestEngineChef_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
