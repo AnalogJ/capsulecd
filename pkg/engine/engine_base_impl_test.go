@@ -1,17 +1,20 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"capsulecd/pkg/config/mock"
+	"github.com/golang/mock/gomock"
 )
 
 func TestEngineBase_BumpVersion_Patch(t *testing.T) {
 
 	//setup
-	testConfig, _ := config.Create()
+	mockCtrl := gomock.NewController(t)
+	fakeConfig := mock_config.NewMockInterface(mockCtrl)
+	fakeConfig.EXPECT().GetString("engine_version_bump_type").MinTimes(1).Return("patch")
 	eng := engineBase{
-		Config: testConfig,
+		Config: fakeConfig,
 	}
 
 	//test
@@ -29,11 +32,13 @@ func TestEngineBase_BumpVersion_Patch(t *testing.T) {
 func TestEngineBase_BumpVersion_Minor(t *testing.T) {
 
 	//setup
-	testConfig, _ := config.Create()
-	testConfig.Set("engine_version_bump_type", "minor")
+	mockCtrl := gomock.NewController(t)
+	fakeConfig := mock_config.NewMockInterface(mockCtrl)
+	fakeConfig.EXPECT().GetString("engine_version_bump_type").MinTimes(1).Return("minor")
 	eng := engineBase{
-		Config: testConfig,
+		Config: fakeConfig,
 	}
+
 
 	//test
 	ver, err := eng.BumpVersion("1.2.2")
@@ -46,10 +51,11 @@ func TestEngineBase_BumpVersion_Minor(t *testing.T) {
 func TestEngineBase_BumpVersion_Major(t *testing.T) {
 
 	//setup
-	testConfig, _ := config.Create()
-	testConfig.Set("engine_version_bump_type", "major")
+	mockCtrl := gomock.NewController(t)
+	fakeConfig := mock_config.NewMockInterface(mockCtrl)
+	fakeConfig.EXPECT().GetString("engine_version_bump_type").MinTimes(1).Return("major")
 	eng := engineBase{
-		Config: testConfig,
+		Config: fakeConfig,
 	}
 
 	//test
@@ -63,9 +69,11 @@ func TestEngineBase_BumpVersion_Major(t *testing.T) {
 func TestEngineBase_BumpVersion_InvalidCurrentVersion(t *testing.T) {
 
 	//setup
-	testConfig, _ := config.Create()
+	mockCtrl := gomock.NewController(t)
+	fakeConfig := mock_config.NewMockInterface(mockCtrl)
+	fakeConfig.EXPECT().GetString("engine_version_bump_type").MinTimes(1).Return("patch")
 	eng := engineBase{
-		Config: testConfig,
+		Config: fakeConfig,
 	}
 
 	//test
@@ -79,9 +87,11 @@ func TestEngineBase_BumpVersion_InvalidCurrentVersion(t *testing.T) {
 func TestEngineBase_BumpVersion_WithVPrefix(t *testing.T) {
 
 	//setup
-	testConfig, _ := config.Create()
+	mockCtrl := gomock.NewController(t)
+	fakeConfig := mock_config.NewMockInterface(mockCtrl)
+	fakeConfig.EXPECT().GetString("engine_version_bump_type").MinTimes(1).Return("patch")
 	eng := engineBase{
-		Config: testConfig,
+		Config: fakeConfig,
 	}
 
 	//test
