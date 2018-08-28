@@ -113,17 +113,15 @@ jobs:
           path: /coverage
           destination: coverage
 
-      - run:
-          name: Merge coverage reports and submit
-          command: |
-            ls -alt /coverage
-
-            # upload to codecov.
-            bash <(curl -s https://codecov.io/bash) -f "*.txt" -s /coverage
-          when: always
 #      - run:
-#          name: Merge generated coverage reports using webhook.
+#          name: Merge coverage reports and submit
 #          command: |
+#            ls -alt /coverage
+#
+#            # upload to codecov.
+#            bash <(curl -s https://codecov.io/bash) -f "*.txt" -s /coverage
+#          when: always
+
 
 # build capsulecd every week, to ensure that language/dependency breaking changes are caught early.
 # https://crontab.guru/every-week
