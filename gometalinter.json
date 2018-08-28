@@ -1,4 +1,5 @@
 {
+  "DisableAll": true,
   "Errors": true,
   "Debug": true,
   "Deadline": "30m",
