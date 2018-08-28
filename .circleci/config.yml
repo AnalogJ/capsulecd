@@ -109,6 +109,10 @@ jobs:
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
+      - store_artifacts:
+          path: /coverage
+          destination: coverage
+
       - run:
           name: Merge coverage reports and submit
           command: |
