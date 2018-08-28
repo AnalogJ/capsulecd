@@ -1,32 +1,27 @@
-##################################################
-##
-## Golang
-##
-##################################################
+ARG PACKAGE_TYPE=golang
+
+#################################################
+#
+# Base
+# This container should not be used as a runtime environment.
+# It is based off a massive build image (crossbuild) which has lots of unnecessary build tools
+# It does not actually build the capsulecd executable
+# It runs unit tests for each supported engine type.
+#
+# Use the docker containers in https://github.com/AnalogJ/capsulecd-docker as an example of what a
+# proper runtime-environment for CapsuleCD looks like.
+#
+#################################################
+
 FROM analogj/libgit2-crossbuild:linux-amd64 AS base
-FROM golang:1.8 AS golang
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
+WORKDIR /go/src/capsulecd
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
  	apt-transport-https \
     ca-certificates \
-    git \
-    curl \
-    gcc \
-    g++ \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& go get -u gopkg.in/alecthomas/gometalinter.v1 \
-	&& gometalinter.v1 --install \
-	&& go get github.com/Masterminds/glide \
-	&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-
-ENV PKG_CONFIG_PATH="/usr/lib/pkgconfig/:/usr/local/lib/pkgconfig/:/usr/local/lib/libgit2/lib/pkgconfig:/usr/local/lib/openssl/lib/pkgconfig:/usr/local/lib/libssh2"
-
-COPY --from=base /usr/local/lib/libgit2/ /usr/local/lib/libgit2/
-COPY --from=base /usr/local/lib/libssh2/ /usr/local/lib/libssh2/
-COPY --from=base /usr/local/lib/openssl/ /usr/local/lib/openssl/
-
-WORKDIR /go/src/capsulecd
+	&& go get github.com/Masterminds/glide
 
 COPY . .
 
@@ -37,4 +32,31 @@ RUN glide install \
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
-CMD ci/coverage.sh
+RUN ci/test-build.sh ${PACKAGE_TYPE}
+
+##################################################
+##
+## Golang
+##
+##################################################
+FROM golang:1.8 AS golang
+MAINTAINER Jason Kulatunga <jason@thesparktree.com>
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ 	apt-transport-https \
+    ca-certificates \
+    git \
+    curl \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& go get -u gopkg.in/alecthomas/gometalinter.v1 \
+	&& gometalinter.v1 --install \
+	&& go get github.com/Masterminds/glide \
+	&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+
+COPY --from=base /go/src/capsulecd /go/src/capsulecd
+
+WORKDIR /go/src/capsulecd
+
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+
+CMD ci/test-coverage.sh

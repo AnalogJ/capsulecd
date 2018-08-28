@@ -1,3 +1,5 @@
+ARG PACKAGE_TYPE=base
+
 #################################################
 #
 # Base
@@ -6,9 +8,11 @@
 # It does not actually build the capsulecd executable
 # It runs unit tests for each supported engine type.
 #
-# Use the docker containers in dist as an example of what a proper runtime-environment for CapsuleCD looks like.
+# Use the docker containers in https://github.com/AnalogJ/capsulecd-docker as an example of what a
+# proper runtime-environment for CapsuleCD looks like.
 #
 #################################################
+
 FROM analogj/libgit2-crossbuild:linux-amd64 AS base
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 WORKDIR /go/src/capsulecd
@@ -28,4 +32,6 @@ RUN glide install \
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
-CMD ci/coverage.sh
+RUN ci/test-build.sh ${PACKAGE_TYPE}
+
+CMD ci/test-coverage.sh

@@ -31,12 +31,12 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build -f ci/Dockerfile.base --tag analogj/capsulecd-build:base .
-            docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-build:chef .
-            docker build -f ci/Dockerfile.node --tag analogj/capsulecd-build:node .
-            docker build -f ci/Dockerfile.python --tag analogj/capsulecd-build:python .
-            docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-build:ruby .
-            docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-build:golang .
+            docker build -f ci/Dockerfile.base --tag analogj/capsulecd-ci:base .
+            docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-ci:chef .
+            docker build -f ci/Dockerfile.node --tag analogj/capsulecd-ci:node .
+            docker build -f ci/Dockerfile.python --tag analogj/capsulecd-ci:python .
+            docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-ci:ruby .
+            docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-ci:golang .
       - run:
           name: Run Base Docker containers with coverage
           command: |
@@ -44,8 +44,8 @@ jobs:
             echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name $CAPSULECD_ENV \
-              analogj/capsulecd-build:$CAPSULECD_ENV \
-              ./ci/coverage.sh $CAPSULECD_ENV
+              analogj/capsulecd-ci:$CAPSULECD_ENV \
+              ./ci/test-coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
@@ -56,8 +56,8 @@ jobs:
             echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name $CAPSULECD_ENV \
-              analogj/capsulecd-build:$CAPSULECD_ENV \
-              ./ci/coverage.sh $CAPSULECD_ENV
+              analogj/capsulecd-ci:$CAPSULECD_ENV \
+              ./ci/test-coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
@@ -68,8 +68,8 @@ jobs:
             echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name $CAPSULECD_ENV \
-              analogj/capsulecd-build:$CAPSULECD_ENV \
-              ./ci/coverage.sh $CAPSULECD_ENV
+              analogj/capsulecd-ci:$CAPSULECD_ENV \
+              ./ci/test-coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
@@ -80,8 +80,8 @@ jobs:
             echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name $CAPSULECD_ENV \
-              analogj/capsulecd-build:$CAPSULECD_ENV \
-              ./ci/coverage.sh $CAPSULECD_ENV
+              analogj/capsulecd-ci:$CAPSULECD_ENV \
+              ./ci/test-coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
@@ -92,8 +92,8 @@ jobs:
             echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name $CAPSULECD_ENV \
-              analogj/capsulecd-build:$CAPSULECD_ENV \
-              ./ci/coverage.sh $CAPSULECD_ENV
+              analogj/capsulecd-ci:$CAPSULECD_ENV \
+              ./ci/test-coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
@@ -104,8 +104,8 @@ jobs:
             echo "#################################################### $CAPSULECD_ENV"
             docker run -e "CI=true" \
               --name $CAPSULECD_ENV \
-              analogj/capsulecd-build:$CAPSULECD_ENV \
-              ./ci/coverage.sh $CAPSULECD_ENV
+              analogj/capsulecd-ci:$CAPSULECD_ENV \
+              ./ci/test-coverage.sh $CAPSULECD_ENV
 
             docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
           when: always
