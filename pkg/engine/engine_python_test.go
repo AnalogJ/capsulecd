@@ -38,7 +38,7 @@ func TestEnginePython_Create(t *testing.T) {
 	//assert
 	require.NoError(t, err)
 	require.NotNil(t, pythonEngine)
-	require.Equal(t, "https://pypi.python.org/pypi", testConfig.GetString("pypi_repository"), "should load engine defaults")
+	require.Equal(t, "https://upload.pypi.org/legacy/", testConfig.GetString("pypi_repository"), "should load engine defaults")
 }
 
 // Define the suite, and absorb the built-in basic suite
@@ -77,8 +77,8 @@ func TestEnginePython_TestSuite(t *testing.T) {
 func (suite *EnginePythonTestSuite) TestEnginePython_ValidateTools() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool("engine_disable_lint").Return(false)
-	suite.Config.EXPECT().GetBool("engine_disable_security_check").Return(false)
+	//suite.Config.EXPECT().GetBool("engine_disable_lint").Return(false)
+	//suite.Config.EXPECT().GetBool("engine_disable_security_check").Return(false)
 
 	pythonEngine, err := engine.Create("python", suite.PipelineData, suite.Config, suite.Scm)
 	require.NoError(suite.T(), err)
@@ -168,36 +168,12 @@ func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep_WithoutSetupPy
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EnginePythonTestSuite) TestEnginePython_DependenciesStep() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-
-	//copy cookbook fixture into a temp directory.
-	parentPath, err := ioutil.TempDir("", "")
-	require.NoError(suite.T(), err)
-	defer os.RemoveAll(parentPath)
-	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "pip_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "python", "pip_analogj_test"), suite.PipelineData.GitLocalPath)
-	require.NoError(suite.T(), cerr)
-
-	pythonEngine, err := engine.Create("python", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := pythonEngine.DependenciesStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-	//require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Berksfile.lock")))
-	//no lock files created by Python engine, and dependencies are installed by Tox in TestStep
-	//should be a noop
-}
 
 func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
+	suite.Config.EXPECT().GetString("engine_cmd_test").MinTimes(1).Return("exit 0")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -317,19 +293,4 @@ func (suite *EnginePythonTestSuite) TestEnginePython_PackageStep() {
 
 	//assert
 	require.NoError(suite.T(), berr)
-}
-
-func (suite *EnginePythonTestSuite) TestEnginePython_DistStep_WithoutCredentials() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().IsSet("pypi_username").MinTimes(1).Return(false)
-
-	pythonEngine, err := engine.Create("python", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := pythonEngine.DistStep()
-
-	//assert
-	require.Error(suite.T(), berr)
 }

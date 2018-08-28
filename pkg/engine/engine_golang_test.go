@@ -160,30 +160,6 @@ func (suite *EngineGolangTestSuite) TestEngineGolang_AssembleStep_WithoutVersion
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EngineGolangTestSuite) TestEngineGolang_DependenciesStep() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-
-	//copy cookbook fixture into a temp directory.
-	parentPath, err := ioutil.TempDir("", "")
-	require.NoError(suite.T(), err)
-	defer os.RemoveAll(parentPath)
-	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "golang_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "golang", "golang_analogj_test"), suite.PipelineData.GitLocalPath)
-	require.NoError(suite.T(), cerr)
-
-	golangEngine, err := engine.Create("golang", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := golangEngine.DependenciesStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "glide.lock")))
-}
-
 func (suite *EngineGolangTestSuite) TestEngineGolang_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
@@ -289,7 +265,7 @@ func (suite *EngineGolangTestSuite) TestEngineGolang_TestStep_SecurityCheckFailu
 func (suite *EngineGolangTestSuite) TestEngineGolang_PackageStep_WithoutLockFiles() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool("engine_package_keep_lock_file").MinTimes(1).Return(false)
+	suite.Config.EXPECT().GetBool("mgr_keep_lock_file").MinTimes(1).Return(false)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -309,17 +285,4 @@ func (suite *EngineGolangTestSuite) TestEngineGolang_PackageStep_WithoutLockFile
 	//assert
 	require.NoError(suite.T(), berr)
 	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "glide.lock")))
-}
-
-func (suite *EngineGolangTestSuite) TestEngineGolang_DistStep() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	golangEngine, err := engine.Create("golang", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := golangEngine.DistStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
 }

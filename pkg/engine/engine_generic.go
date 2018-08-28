@@ -11,25 +11,24 @@ import (
 	"io/ioutil"
 	"path"
 	"strings"
+	"capsulecd/pkg/metadata"
 )
 
-type genericMetadata struct {
-	Version string
-}
+
 type engineGeneric struct {
 	engineBase
 
 	Scm             scm.Interface //Interface
-	CurrentMetadata *genericMetadata
-	NextMetadata    *genericMetadata
+	CurrentMetadata *metadata.GenericMetadata
+	NextMetadata    *metadata.GenericMetadata
 }
 
 func (g *engineGeneric) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(genericMetadata)
-	g.NextMetadata = new(genericMetadata)
+	g.CurrentMetadata = new(metadata.GenericMetadata)
+	g.NextMetadata = new(metadata.GenericMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_generic_version_template", `version := "%d.%d.%d"`)
@@ -40,6 +39,13 @@ func (g *engineGeneric) Init(pipelineData *pipeline.Data, config config.Interfac
 	g.Config.SetDefault("engine_cmd_test", "echo 'skipping test'")
 	g.Config.SetDefault("engine_cmd_security_check", "echo 'skipping security check'")
 	return nil
+}
+
+func (g *engineGeneric) GetCurrentMetadata() interface{} {
+	return g.CurrentMetadata
+}
+func (g *engineGeneric) GetNextMetadata() interface{} {
+	return g.NextMetadata
 }
 
 func (g *engineGeneric) ValidateTools() error {
@@ -69,10 +75,6 @@ func (g *engineGeneric) AssembleStep() error {
 	return nil
 }
 
-func (g *engineGeneric) DependenciesStep() error {
-	return nil
-}
-
 func (g *engineGeneric) PackageStep() error {
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
@@ -88,9 +90,6 @@ func (g *engineGeneric) PackageStep() error {
 	return nil
 }
 
-func (g *engineGeneric) DistStep() error {
-	return nil
-}
 
 //Helpers
 func (g *engineGeneric) retrieveCurrentMetadata(gitLocalPath string) error {

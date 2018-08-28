@@ -12,26 +12,23 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"capsulecd/pkg/metadata"
 )
 
-type nodeMetadata struct {
-	Version string `json:"version"`
-	Name    string `json:"name"`
-}
 type engineNode struct {
 	engineBase
 
 	Scm             scm.Interface //Interface
-	CurrentMetadata *nodeMetadata
-	NextMetadata    *nodeMetadata
+	CurrentMetadata *metadata.NodeMetadata
+	NextMetadata    *metadata.NodeMetadata
 }
 
 func (g *engineNode) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(nodeMetadata)
-	g.NextMetadata = new(nodeMetadata)
+	g.CurrentMetadata = new(metadata.NodeMetadata)
+	g.NextMetadata = new(metadata.NodeMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
@@ -42,10 +39,14 @@ func (g *engineNode) Init(pipelineData *pipeline.Data, config config.Interface, 
 	return nil
 }
 
+func (g *engineNode) GetCurrentMetadata() interface{} {
+	return g.CurrentMetadata
+}
+func (g *engineNode) GetNextMetadata() interface{} {
+	return g.NextMetadata
+}
+
 func (g *engineNode) ValidateTools() error {
-	if _, kerr := exec.LookPath("npm"); kerr != nil {
-		return errors.EngineValidateToolError("npm binary is missing")
-	}
 
 	if _, kerr := exec.LookPath("node"); kerr != nil {
 		return errors.EngineValidateToolError("node binary is missing")
@@ -63,10 +64,6 @@ func (g *engineNode) ValidateTools() error {
 }
 
 func (g *engineNode) AssembleStep() error {
-	//validate that the npm package.json file exists
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "package.json")) {
-		return errors.EngineBuildPackageInvalid("package.json file is required to process Node package")
-	}
 
 	// bump up the package version
 	if merr := g.retrieveCurrentMetadata(g.PipelineData.GitLocalPath); merr != nil {
@@ -95,19 +92,6 @@ func (g *engineNode) AssembleStep() error {
 	return nil
 }
 
-func (g *engineNode) DependenciesStep() error {
-	// the module has already been downloaded. lets make sure all its dependencies are available.
-	if derr := utils.BashCmdExec("npm install", g.PipelineData.GitLocalPath, nil, ""); derr != nil {
-		return errors.EngineTestRunnerError("npm install failed. Check module dependencies")
-	}
-
-	// create a shrinkwrap file.
-	if derr := utils.BashCmdExec("npm shrinkwrap", g.PipelineData.GitLocalPath, nil, ""); derr != nil {
-		return errors.EngineTestRunnerError("npm shrinkwrap failed. Check log for exact error")
-	}
-	return nil
-}
-
 // use default Compile step
 //func (g *engineNode) CompileStep() error { }
 
@@ -115,9 +99,6 @@ func (g *engineNode) DependenciesStep() error {
 //func (g *engineNode) TestStep() error { }
 
 func (g *engineNode) PackageStep() error {
-	if !g.Config.GetBool("engine_package_keep_lock_file") {
-		os.Remove(path.Join(g.PipelineData.GitLocalPath, "npm-shrinkwrap.json"))
-	}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
@@ -130,32 +111,6 @@ func (g *engineNode) PackageStep() error {
 
 	g.PipelineData.ReleaseCommit = tagCommit
 	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
-	return nil
-}
-
-func (g *engineNode) DistStep() error {
-	if !g.Config.IsSet("npm_auth_token") {
-		return errors.EngineDistCredentialsMissing("cannot deploy page to npm, credentials missing")
-	}
-
-	npmrcFile, _ := ioutil.TempFile("", ".npmrc")
-	defer os.Remove(npmrcFile.Name())
-
-	// write the .npmrc config jfile.
-	npmrcContent := fmt.Sprintf(
-		"//registry.npmjs.org/:_authToken=%s",
-		g.Config.GetString("npm_auth_token"),
-	)
-
-	if _, werr := npmrcFile.Write([]byte(npmrcContent)); werr != nil {
-		return werr
-	}
-
-	npmPublishCmd := fmt.Sprintf("npm --userconfig %s publish .", npmrcFile.Name())
-	derr := utils.BashCmdExec(npmPublishCmd, g.PipelineData.GitLocalPath, nil, "")
-	if derr != nil {
-		return errors.EngineDistPackageError("npm publish failed. Check log for exact error")
-	}
 	return nil
 }
 

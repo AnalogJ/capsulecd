@@ -76,3 +76,5 @@ vendor
 glide.lock
 /capsulecd-darwin-amd64
 /capsulecd-linux-amd64
+
+test_binary

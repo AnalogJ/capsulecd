@@ -139,7 +139,6 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep_WithMinimalGem() {
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Rakefile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "spec")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, ".gitignore")))
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile")))
 	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "gem_analogj_test-0.1.4.gem")))
 }
 
@@ -167,36 +166,11 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep_WithoutGemspec() {
 	require.Error(suite.T(), berr, "should return an error")
 }
 
-func (suite *EngineRubyTestSuite) TestEngineRuby_DependenciesStep() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-
-	//copy cookbook fixture into a temp directory.
-	parentPath, err := ioutil.TempDir("", "")
-	require.NoError(suite.T(), err)
-	defer os.RemoveAll(parentPath)
-	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "gem_analogj_test")
-	cerr := utils.CopyDir(path.Join("testdata", "ruby", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
-	require.NoError(suite.T(), cerr)
-	cperr := utils.CopyFile(path.Join("testdata", "ruby", "gem_analogj_test-0.1.4.gem"), path.Join(suite.PipelineData.GitLocalPath, "-.gem"))
-	require.NoError(suite.T(), cperr)
-
-	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := rubyEngine.DependenciesStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-	require.True(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
-}
-
 func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
+	suite.Config.EXPECT().GetString("engine_cmd_test").MinTimes(1).Return("exit 0")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -295,42 +269,27 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_SecurityCheckFailure()
 	require.Error(suite.T(), berr)
 }
 
-func (suite *EngineRubyTestSuite) TestEngineRuby_PackageStep_WithoutLockFiles() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool("engine_package_keep_lock_file").MinTimes(1).Return(false)
-
-	//copy cookbook fixture into a temp directory.
-	parentPath, err := ioutil.TempDir("", "")
-	require.NoError(suite.T(), err)
-	defer os.RemoveAll(parentPath)
-	suite.PipelineData.GitParentPath = parentPath
-	cpath, cerr := utils.GitClone(parentPath, "gem_analogj_test", "https://github.com/AnalogJ/gem_analogj_test.git")
-	require.NoError(suite.T(), cerr)
-	suite.PipelineData.GitLocalPath = cpath
-
-	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := rubyEngine.PackageStep()
-
-	//assert
-	require.NoError(suite.T(), berr)
-	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
-}
-
-func (suite *EngineRubyTestSuite) TestEngineRuby_DistStep_WithoutCredentials() {
-	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().IsSet("rubygems_api_key").MinTimes(1).Return(false)
-
-	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
-	require.NoError(suite.T(), err)
-
-	//test
-	berr := rubyEngine.DistStep()
-
-	//assert
-	require.Error(suite.T(), berr)
-}
+//func (suite *EngineRubyTestSuite) TestEngineRuby_PackageStep_WithoutLockFiles() {
+//	//setup
+//	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+//	suite.Config.EXPECT().GetBool("mgr_keep_lock_file").MinTimes(1).Return(false)
+//
+//	//copy cookbook fixture into a temp directory.
+//	parentPath, err := ioutil.TempDir("", "")
+//	require.NoError(suite.T(), err)
+//	defer os.RemoveAll(parentPath)
+//	suite.PipelineData.GitParentPath = parentPath
+//	cpath, cerr := utils.GitClone(parentPath, "gem_analogj_test", "https://github.com/AnalogJ/gem_analogj_test.git")
+//	require.NoError(suite.T(), cerr)
+//	suite.PipelineData.GitLocalPath = cpath
+//
+//	rubyEngine, err := engine.Create("ruby", suite.PipelineData, suite.Config, suite.Scm)
+//	require.NoError(suite.T(), err)
+//
+//	//test
+//	berr := rubyEngine.PackageStep()
+//
+//	//assert
+//	require.NoError(suite.T(), berr)
+//	require.False(suite.T(), utils.FileExists(path.Join(suite.PipelineData.GitLocalPath, "Gemfile.lock")))
+//}

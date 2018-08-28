@@ -14,12 +14,9 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"capsulecd/pkg/metadata"
 )
 
-type rubyMetadata struct {
-	Name    string
-	Version string
-}
 
 type rubyGemspec struct {
 	Name    string `json:"name"`
@@ -32,8 +29,8 @@ type engineRuby struct {
 	engineBase
 
 	Scm             scm.Interface //Interface
-	CurrentMetadata *rubyMetadata
-	NextMetadata    *rubyMetadata
+	CurrentMetadata *metadata.RubyMetadata
+	NextMetadata    *metadata.RubyMetadata
 	GemspecPath     string
 }
 
@@ -41,8 +38,8 @@ func (g *engineRuby) Init(pipelineData *pipeline.Data, config config.Interface, 
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(rubyMetadata)
-	g.NextMetadata = new(rubyMetadata)
+	g.CurrentMetadata = new(metadata.RubyMetadata)
+	g.NextMetadata = new(metadata.RubyMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
@@ -53,17 +50,17 @@ func (g *engineRuby) Init(pipelineData *pipeline.Data, config config.Interface, 
 	return nil
 }
 
+func (g *engineRuby) GetCurrentMetadata() interface{} {
+	return g.CurrentMetadata
+}
+func (g *engineRuby) GetNextMetadata() interface{} {
+	return g.NextMetadata
+}
+
+
 func (g *engineRuby) ValidateTools() error {
 	if _, kerr := exec.LookPath("ruby"); kerr != nil {
 		return errors.EngineValidateToolError("ruby binary is missing")
-	}
-
-	if _, berr := exec.LookPath("gem"); berr != nil {
-		return errors.EngineValidateToolError("gem binary is missing")
-	}
-
-	if _, berr := exec.LookPath("bundle"); berr != nil {
-		return errors.EngineValidateToolError("bundle binary is missing")
 	}
 
 	if _, berr := exec.LookPath("rake"); berr != nil {
@@ -103,15 +100,6 @@ func (g *engineRuby) AssembleStep() error {
 		return nerr
 	}
 
-	// check for/create any required missing folders/files
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "Gemfile")) {
-		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "Gemfile"),
-			[]byte(utils.StripIndent(`source 'https://rubygems.org'
-			gemspec`)),
-			0644,
-		)
-	}
-
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "Rakefile")) {
 		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "Rakefile"),
 			[]byte("task :default => :spec"),
@@ -141,23 +129,6 @@ func (g *engineRuby) AssembleStep() error {
 	return nil
 }
 
-func (g *engineRuby) DependenciesStep() error {
-	// lets install the gem, and any dependencies
-	// http://guides.rubygems.org/make-your-own-gem/
-
-	gemCmd := fmt.Sprintf("gem install %s --ignore-dependencies",
-		path.Join(g.PipelineData.GitLocalPath, fmt.Sprintf("%s-%s.gem", g.NextMetadata.Name, g.NextMetadata.Version)))
-	if terr := utils.BashCmdExec(gemCmd, g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-		return errors.EngineTestDependenciesError("gem install failed. Check gemspec and gem dependencies")
-	}
-
-	// install dependencies
-	if terr := utils.BashCmdExec("bundle install", g.PipelineData.GitLocalPath, nil, ""); terr != nil {
-		return errors.EngineBuildPackageFailed("bundle install failed. Check Gemfile")
-	}
-	return nil
-}
-
 // use default Compile step
 //func (g *engineRuby) CompileStep() error { }
 
@@ -165,10 +136,6 @@ func (g *engineRuby) DependenciesStep() error {
 //func (g *engineRuby) TestStep() error { }
 
 func (g *engineRuby) PackageStep() error {
-	if !g.Config.GetBool("engine_package_keep_lock_file") {
-		os.Remove(path.Join(g.PipelineData.GitLocalPath, "Gemfile.lock"))
-	}
-
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
 	}
@@ -179,38 +146,6 @@ func (g *engineRuby) PackageStep() error {
 
 	g.PipelineData.ReleaseCommit = tagCommit
 	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
-	return nil
-}
-
-func (g *engineRuby) DistStep() error {
-	if !g.Config.IsSet("rubygems_api_key") {
-		return errors.EngineDistCredentialsMissing("Cannot deploy package to rubygems, credentials missing")
-	}
-
-	credFile, _ := ioutil.TempFile("", "gem_credentials")
-	defer os.Remove(credFile.Name())
-
-	// write the .gem/credentials config jfile.
-
-	credContent := fmt.Sprintf(utils.StripIndent(
-		`---
-		:rubygems_api_key: %s
-		`),
-		g.Config.GetString("rubygems_api_key"),
-	)
-
-	if _, perr := credFile.Write([]byte(credContent)); perr != nil {
-		return perr
-	}
-
-	pushCmd := fmt.Sprintf("gem push %s --config-file %s",
-		fmt.Sprintf("%s-%s.gem", g.NextMetadata.Name, g.NextMetadata.Version),
-		credFile.Name(),
-	)
-	if derr := utils.BashCmdExec(pushCmd, g.PipelineData.GitLocalPath, nil, ""); derr != nil {
-		return errors.EngineDistPackageError("Pushing gem to RubyGems.org using `gem push` failed. Check log for exact error")
-	}
-
 	return nil
 }
 

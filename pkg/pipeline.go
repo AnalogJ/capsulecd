@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"capsulecd/pkg/mgr"
 )
 
 type Pipeline struct {
@@ -18,6 +19,7 @@ type Pipeline struct {
 	Config config.Interface
 	Scm    scm.Interface
 	Engine engine.Interface
+	PackageManager mgr.Interface
 }
 
 func (p *Pipeline) Start(config config.Interface) error {
@@ -49,15 +51,24 @@ func (p *Pipeline) Start(config config.Interface) error {
 		return err
 	}
 
+	if err := p.StepExecNotify("mgr_init_step", p.MgrInitStep); err != nil {
+		return err
+	}
+
+
 	if err := p.StepExecNotify("validate_tools", p.ValidateTools); err != nil {
 		return err
 	}
 
-	if err := p.StepExecNotify("assemble_step", p.AssembleStep); err != nil {
+	if err := p.StepExecNotify("mgr_validate_tools", p.MgrValidateTools); err != nil {
 		return err
 	}
 
-	if err := p.StepExecNotify("dependencies_step", p.DependenciesStep); err != nil {
+	if err := p.StepExecNotify("assemble_step", p.AssembleStep); err != nil { //this step includes Mgr work.
+		return err
+	}
+
+	if err := p.StepExecNotify("mgr_dependencies_step", p.MgrDependenciesStep); err != nil {
 		return err
 	}
 
@@ -69,11 +80,11 @@ func (p *Pipeline) Start(config config.Interface) error {
 		return err
 	}
 
-	if err := p.StepExecNotify("package_step", p.PackageStep); err != nil {
+	if err := p.StepExecNotify("package_step", p.PackageStep); err != nil { //this step includes Mgr work
 		return err
 	}
 
-	if err := p.StepExecNotify("dist_step", p.DistStep); err != nil {
+	if err := p.StepExecNotify("mgr_dist_step", p.MgrDistStep); err != nil {
 		return err
 	}
 
@@ -228,11 +239,35 @@ func (p *Pipeline) ParseRepoConfig() error {
 	return nil
 }
 
+func (p *Pipeline) MgrInitStep() error {
+	log.Println("mgr_init_step")
+	if p.Config.IsSet("mgr_type") {
+		mgr, merr := mgr.Create(p.Config.GetString("mgr_type"), p.Data, p.Config, nil)
+		if merr != nil {
+			return merr
+		}
+		p.PackageManager = mgr
+	} else {
+		mgr, merr := mgr.Detect(p.Config.GetString("package_type"), p.Data, p.Config, nil)
+		if merr != nil {
+			return merr
+		}
+		p.PackageManager = mgr
+	}
+	return nil
+}
+
 // validate that required executables are available for the following build/test/package/etc steps
 func (p *Pipeline) ValidateTools() error {
 	log.Println("validate_tools")
 	return p.Engine.ValidateTools()
 }
+
+func (p *Pipeline) MgrValidateTools() error {
+	log.Println("mgr_validate_tools")
+	return p.PackageManager.MgrValidateTools()
+}
+
 
 // now that the payload has been processed we can begin by building the code.
 // this may be creating missing files/default structure, compilation, version bumping, etc.
@@ -250,7 +285,10 @@ func (p *Pipeline) AssembleStep() error {
 	if err := p.Engine.AssembleStep(); err != nil {
 		return err
 	}
-
+	log.Println("mgr_assemble_step")
+	if err := p.PackageManager.MgrAssembleStep(); err != nil {
+		return err
+	}
 	// POST HOOK
 	if err := p.RunHook("assemble_step.post"); err != nil {
 		return err
@@ -259,25 +297,25 @@ func (p *Pipeline) AssembleStep() error {
 }
 
 // this step should download dependencies
-func (p *Pipeline) DependenciesStep() error {
+func (p *Pipeline) MgrDependenciesStep() error {
 	// PRE HOOK
-	if err := p.RunHook("dependencies_step.pre"); err != nil {
+	if err := p.RunHook("mgr_dependencies_step.pre"); err != nil {
 		return err
 	}
 
-	if p.Config.IsSet("dependencies_step.override") {
-		if err := p.RunHook("dependencies_step.override"); err != nil {
+	if p.Config.IsSet("mgr_dependencies_step.override") {
+		if err := p.RunHook("mgr_dependencies_step.override"); err != nil {
 			return err
 		}
 	} else {
-		log.Println("dependencies_step")
-		if err := p.Engine.DependenciesStep(); err != nil {
+		log.Println("mgr_dependencies_step")
+		if err := p.PackageManager.MgrDependenciesStep(p.Engine.GetCurrentMetadata(), p.Engine.GetNextMetadata()); err != nil {
 			return err
 		}
 	}
 
 	// POST HOOK
-	if err := p.RunHook("dependencies_step.post"); err != nil {
+	if err := p.RunHook("mgr_dependencies_step.post"); err != nil {
 		return err
 	}
 	return nil
@@ -351,7 +389,11 @@ func (p *Pipeline) PackageStep() error {
 	}
 
 	if p.Config.IsSet("package_step.override") {
-		log.Println("Cannot override the assemble_step, ignoring.")
+		log.Println("Cannot override the package_step, ignoring.")
+	}
+	log.Println("mgr_package_step")
+	if err := p.PackageManager.MgrPackageStep(p.Engine.GetCurrentMetadata(), p.Engine.GetNextMetadata()); err != nil {
+		return err
 	}
 	log.Println("package_step")
 	if err := p.Engine.PackageStep(); err != nil {
@@ -366,30 +408,30 @@ func (p *Pipeline) PackageStep() error {
 }
 
 // this step should push the release to the package repository (ie. npm, chef supermarket, rubygems)
-func (p *Pipeline) DistStep() error {
-	if p.Config.GetBool("engine_disable_dist") {
-		log.Println("skipping dist_step.pre, dist_step, dist_step.post")
+func (p *Pipeline) MgrDistStep() error {
+	if p.Config.GetBool("mgr_disable_dist") {
+		log.Println("skipping mgr_dist_step.pre, mgr_dist_step, mgr_dist_step.post")
 		return nil
 	}
 
 	// PRE HOOK
-	if err := p.RunHook("dist_step.pre"); err != nil {
+	if err := p.RunHook("mgr_dist_step.pre"); err != nil {
 		return err
 	}
 
-	if p.Config.IsSet("dist_step.override") {
-		if err := p.RunHook("dist_step.override"); err != nil {
+	if p.Config.IsSet("mgr_dist_step.override") {
+		if err := p.RunHook("mgr_dist_step.override"); err != nil {
 			return err
 		}
 	} else {
-		log.Println("dist_step")
-		if err := p.Engine.DistStep(); err != nil {
+		log.Println("mgr_dist_step")
+		if err := p.PackageManager.MgrDistStep(p.Engine.GetCurrentMetadata(), p.Engine.GetNextMetadata()); err != nil {
 			return err
 		}
 	}
 
 	// POST HOOK
-	if err := p.RunHook("dist_step.post"); err != nil {
+	if err := p.RunHook("mgr_dist_step.post"); err != nil {
 		return err
 	}
 	return nil

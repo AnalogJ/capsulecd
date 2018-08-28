@@ -30,8 +30,8 @@ func TestErrors(t *testing.T) {
 	//assert
 	require.Implements(t, (*error)(nil), errors.EngineBuildPackageFailed("test"), "should implement the error interface")
 	require.Implements(t, (*error)(nil), errors.EngineBuildPackageInvalid("test"), "should implement the error interface")
-	require.Implements(t, (*error)(nil), errors.EngineDistCredentialsMissing("test"), "should implement the error interface")
-	require.Implements(t, (*error)(nil), errors.EngineDistPackageError("test"), "should implement the error interface")
+	require.Implements(t, (*error)(nil), errors.MgrDistCredentialsMissing("test"), "should implement the error interface")
+	require.Implements(t, (*error)(nil), errors.MgrDistPackageError("test"), "should implement the error interface")
 	require.Implements(t, (*error)(nil), errors.EngineTestDependenciesError("test"), "should implement the error interface")
 	require.Implements(t, (*error)(nil), errors.EngineTestRunnerError("test"), "should implement the error interface")
 	require.Implements(t, (*error)(nil), errors.EngineTransformUnavailableStep("test"), "should implement the error interface")

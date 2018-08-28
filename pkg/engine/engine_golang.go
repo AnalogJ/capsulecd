@@ -17,17 +17,15 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"capsulecd/pkg/metadata"
 )
 
-type golangMetadata struct {
-	Version string
-}
 type engineGolang struct {
 	engineBase
 
 	Scm             scm.Interface //Interface
-	CurrentMetadata *golangMetadata
-	NextMetadata    *golangMetadata
+	CurrentMetadata *metadata.GolangMetadata
+	NextMetadata    *metadata.GolangMetadata
 	GoPath          string
 }
 
@@ -35,8 +33,8 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(golangMetadata)
-	g.NextMetadata = new(golangMetadata)
+	g.CurrentMetadata = new(metadata.GolangMetadata)
+	g.NextMetadata = new(metadata.GolangMetadata)
 
 	//TODO: figure out why setting the GOPATH workspace is causing the tools to timeout.
 	// golang recommends that your in-development packages are in the GOPATH and glide requires it to do glide install.
@@ -51,7 +49,7 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 --errors --vendor --deadline=3m ./...")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v2 --errors --vendor --deadline=3m ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
 	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
@@ -59,13 +57,20 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	return nil
 }
 
+func (g *engineGolang) GetCurrentMetadata() interface{} {
+	return g.CurrentMetadata
+}
+func (g *engineGolang) GetNextMetadata() interface{} {
+	return g.NextMetadata
+}
+
 func (g *engineGolang) ValidateTools() error {
 	if _, kerr := exec.LookPath("go"); kerr != nil {
 		return errors.EngineValidateToolError("go binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("gometalinter.v1"); kerr != nil {
-		return errors.EngineValidateToolError("gometalinter.v1 binary is missing")
+	if _, kerr := exec.LookPath("gometalinter.v2"); kerr != nil {
+		return errors.EngineValidateToolError("gometalinter.v2 binary is missing")
 	}
 
 	return nil
@@ -76,11 +81,6 @@ func (g *engineGolang) AssembleStep() error {
 
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go")) {
 		return errors.EngineBuildPackageInvalid("pkg/version/version.go file is required to process Go library")
-	}
-
-	//we only support glide as a Go dependency manager right now. Should be easy to add additional ones though.
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "glide.yaml")) {
-		return errors.EngineBuildPackageInvalid("glide.yml file is required to process Go library")
 	}
 
 	// bump up the go package version
@@ -101,16 +101,6 @@ func (g *engineGolang) AssembleStep() error {
 		if err := utils.GitGenerateGitIgnore(g.PipelineData.GitLocalPath, "Go"); err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (g *engineGolang) DependenciesStep() error {
-	// the library has already been downloaded. lets make sure all its dependencies are available.
-	//glide will complain if the checkout directory isnt in the GOPATH, so we'll override it.
-	if cerr := utils.BashCmdExec("glide install", g.PipelineData.GitLocalPath, g.customGopathEnv(), ""); cerr != nil {
-		return errors.EngineTestDependenciesError("glide install failed. Check dependencies")
 	}
 
 	return nil
@@ -194,10 +184,6 @@ func (g *engineGolang) TestStep() error {
 }
 
 func (g *engineGolang) PackageStep() error {
-	if !g.Config.GetBool("engine_package_keep_lock_file") {
-		os.Remove(path.Join(g.PipelineData.GitLocalPath, "glide.lock"))
-	}
-
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
 	}
@@ -208,13 +194,6 @@ func (g *engineGolang) PackageStep() error {
 
 	g.PipelineData.ReleaseCommit = tagCommit
 	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
-	return nil
-}
-
-func (g *engineGolang) DistStep() error {
-
-	// no real packaging for golang.
-	// libraries are stored in version control.
 	return nil
 }
 

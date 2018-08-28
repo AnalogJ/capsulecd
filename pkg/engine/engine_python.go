@@ -12,28 +12,26 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"capsulecd/pkg/metadata"
 )
 
-type pythonMetadata struct {
-	Version string
-}
 type enginePython struct {
 	engineBase
 
 	Scm             scm.Interface //Interface
-	CurrentMetadata *pythonMetadata
-	NextMetadata    *pythonMetadata
+	CurrentMetadata *metadata.PythonMetadata
+	NextMetadata    *metadata.PythonMetadata
 }
 
 func (g *enginePython) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
 	g.Scm = sourceScm
 	g.Config = config
 	g.PipelineData = pipelineData
-	g.CurrentMetadata = new(pythonMetadata)
-	g.NextMetadata = new(pythonMetadata)
+	g.CurrentMetadata = new(metadata.PythonMetadata)
+	g.NextMetadata = new(metadata.PythonMetadata)
 
 	//set command defaults (can be overridden by repo/system configuration)
-	g.Config.SetDefault("pypi_repository", "https://pypi.python.org/pypi")
+	g.Config.SetDefault("pypi_repository", "https://upload.pypi.org/legacy/")
 	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "find . -name '*.py' -exec pylint -E '{}' +")
 	g.Config.SetDefault("engine_cmd_fmt", "find . -name '*.py' -exec pylint -E '{}' +") //TODO: replace with pycodestyle/pep8
@@ -41,6 +39,14 @@ func (g *enginePython) Init(pipelineData *pipeline.Data, config config.Interface
 	g.Config.SetDefault("engine_cmd_security_check", "safety check -r requirements.txt")
 	return nil
 }
+
+func (g *enginePython) GetCurrentMetadata() interface{} {
+	return g.CurrentMetadata
+}
+func (g *enginePython) GetNextMetadata() interface{} {
+	return g.NextMetadata
+}
+
 
 func (g *enginePython) ValidateTools() error {
 	if _, kerr := exec.LookPath("tox"); kerr != nil {
@@ -55,9 +61,6 @@ func (g *enginePython) ValidateTools() error {
 		return errors.EngineValidateToolError("python binary is missing")
 	}
 
-	if _, berr := exec.LookPath("twine"); berr != nil {
-		return errors.EngineValidateToolError("twine binary is missing")
-	}
 
 	if _, berr := exec.LookPath("safety"); berr != nil && !g.Config.GetBool("engine_disable_security_check") {
 		return errors.EngineValidateToolError("safety binary is missing")
@@ -127,14 +130,6 @@ func (g *enginePython) AssembleStep() error {
 		)
 	}
 
-	// check for/create any required missing folders/files
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "requirements.txt")) {
-		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "requirements.txt"),
-			[]byte(""),
-			0644,
-		)
-	}
-
 	os.MkdirAll(path.Join(g.PipelineData.GitLocalPath, "tests"), 0644)
 
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "tests", "__init__.py")) {
@@ -153,10 +148,6 @@ func (g *enginePython) AssembleStep() error {
 	return nil
 }
 
-func (n *enginePython) DependenciesStep() error {
-	return nil //dependencies are installed as part of Tox.
-}
-
 // use default Compile step
 //func (g *enginePython) CompileStep() error { }
 
@@ -165,10 +156,6 @@ func (n *enginePython) DependenciesStep() error {
 
 func (g *enginePython) PackageStep() error {
 	os.RemoveAll(path.Join(g.PipelineData.GitLocalPath, ".tox")) //remove .tox folder.
-
-	//if !g.Config.GetBool("engine_package_keep_lock_file") { //TODO figure out if theres a good pattern here.
-	//	os.Remove(path.Join(g.PipelineData.GitLocalPath, "npm-shrinkwrap.json"))
-	//}
 
 	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
 		return cerr
@@ -180,49 +167,6 @@ func (g *enginePython) PackageStep() error {
 
 	g.PipelineData.ReleaseCommit = tagCommit
 	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
-	return nil
-}
-
-func (g *enginePython) DistStep() error {
-	if !g.Config.IsSet("pypi_username") || !g.Config.IsSet("pypi_password") {
-		return errors.EngineDistCredentialsMissing("Cannot deploy python package to pypi/warehouse, credentials missing")
-	}
-
-	pypircFile, _ := ioutil.TempFile("", ".pypirc")
-	defer os.Remove(pypircFile.Name())
-
-	// write the .pypirc config jfile.
-	pypircContent := fmt.Sprintf(utils.StripIndent(
-		`[distutils]
-		index-servers=pypi
-
-		[pypi]
-		repository = %s
-		username = %s
-		password = %s
-		`),
-		g.Config.GetString("pypi_repository"),
-		g.Config.GetString("pypi_username"),
-		g.Config.GetString("pypi_password"),
-	)
-
-	if _, perr := pypircFile.Write([]byte(pypircContent)); perr != nil {
-		return perr
-	}
-
-	pythonDistCmd := "python setup.py sdist"
-	if derr := utils.BashCmdExec(pythonDistCmd, g.PipelineData.GitLocalPath, nil, ""); derr != nil {
-		return errors.EngineDistPackageError("python setup.py sdist failed")
-	}
-
-	// using twine instead of setup.py (it supports HTTPS.)https://python-packaging-user-guide.readthedocs.org/en/latest/distributing/#uploading-your-project-to-pypi
-	pypiUploadCmd := fmt.Sprintf("twine upload --config-file %s  dist/*",
-		pypircFile.Name(),
-	)
-
-	if uerr := utils.BashCmdExec(pypiUploadCmd, g.PipelineData.GitLocalPath, nil, ""); uerr != nil {
-		return errors.EngineDistPackageError("twine package upload failed. Check log for exact error")
-	}
 	return nil
 }
 
