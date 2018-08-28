@@ -49,7 +49,7 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v1 --errors --vendor --deadline=3m ./...")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v2 --errors --vendor --deadline=3m ./...")
 	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
 	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
@@ -69,8 +69,8 @@ func (g *engineGolang) ValidateTools() error {
 		return errors.EngineValidateToolError("go binary is missing")
 	}
 
-	if _, kerr := exec.LookPath("gometalinter.v1"); kerr != nil {
-		return errors.EngineValidateToolError("gometalinter.v1 binary is missing")
+	if _, kerr := exec.LookPath("gometalinter.v2"); kerr != nil {
+		return errors.EngineValidateToolError("gometalinter.v2 binary is missing")
 	}
 
 	return nil

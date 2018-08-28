@@ -48,8 +48,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& go get -u gopkg.in/alecthomas/gometalinter.v1 \
-	&& gometalinter.v1 --install \
+	&& go get -u gopkg.in/alecthomas/gometalinter.v2 \
+	&& gometalinter.v2 --install \
 	&& go get github.com/Masterminds/glide \
 	&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 

@@ -53,7 +53,7 @@ engine_cmd_compile: '' #eg. 'go build $(go list ./cmd/...)'
 engine_disable_compile: false
 
 # Specifies the linter command to validate source
-engine_cmd_lint: '' # eg. 'gometalinter.v1 --errors --vendor --deadline=3m ./...'
+engine_cmd_lint: '' # eg. 'gometalinter.v2 --errors --vendor --deadline=3m ./...'
 engine_disable_lint: false
 
 # Specifies the test command to validate source
