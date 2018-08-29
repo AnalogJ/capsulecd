@@ -69,7 +69,7 @@ func TestGitFetch(t *testing.T) {
 	//test
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://github.com/AnalogJ/cookbook_analogj_test.git")
 	require.NoError(t, cerr)
-	ferr := utils.GitFetchPullRequest(clonePath, "12", "localBranchName")
+	ferr := utils.GitFetchPullRequest(clonePath, "12", "localBranchName", "refs/pull/%s/merge", "")
 
 	//assert
 	require.NoError(t, ferr)
@@ -82,7 +82,7 @@ func TestGitFetch_InvalidDirectory(t *testing.T) {
 	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
-	ferr := utils.GitFetchPullRequest(dirPath, "12", "localBranchName")
+	ferr := utils.GitFetchPullRequest(dirPath, "12", "localBranchName", "refs/pull/%s/merge", "")
 
 	//assert
 	require.Error(t, ferr)
@@ -245,7 +245,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 	require.NoError(t, cerr)
 
 	//test
-	ferr := utils.GitFetchPullRequest(clonePath, "13", "localBranchName")
+	ferr := utils.GitFetchPullRequest(clonePath, "13", "localBranchName", "refs/pull/%s/merge", "")
 	require.NoError(t, ferr)
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
@@ -343,7 +343,7 @@ func TestGitFindNearestTagName_FetchPullRequest(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test2", "https://github.com/AnalogJ/tags_analogj_test2.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest2_pr1")
+	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest2_pr1", "refs/pull/%s/merge", "")
 	require.NoError(t, cerr)
 
 	//test
@@ -418,7 +418,7 @@ func TestGitGenerateChangelog_TagSincePROpened(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test2", "https://github.com/AnalogJ/tags_analogj_test2.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest2_pr1")
+	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest2_pr1", "refs/pull/%s/merge","")
 	require.NoError(t, cerr)
 	//headSha, err := utils.GitHead(clonePath)
 	//require.NoError(t, err)
@@ -478,7 +478,7 @@ func TestGitGetTagDetails(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test", "https://github.com/AnalogJ/tags_analogj_test.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest_pr1")
+	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest_pr1", "refs/pull/%s/merge", "")
 	require.NoError(t, cerr)
 
 	//test

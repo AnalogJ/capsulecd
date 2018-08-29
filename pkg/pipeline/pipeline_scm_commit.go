@@ -9,8 +9,8 @@ type ScmRepoInfo struct {
 }
 
 type ScmCommitInfo struct {
-	Sha  string
-	Ref  string
+	Sha  string //Commit Sha
+	Ref  string //Commit Branch
 	Repo *ScmRepoInfo
 }
 
