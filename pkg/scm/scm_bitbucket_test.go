@@ -15,6 +15,7 @@ import (
 	"io/ioutil"
 	"os"
 	"github.com/stretchr/testify/suite"
+	"capsulecd/pkg/utils"
 )
 
 //TODO: set to true when development is complete and no new recordings need to be created (CI mode enabled)
@@ -318,4 +319,83 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPullRequestPayload()
 	require.NotEmpty(suite.T(), suite.PipelineData.GitLocalBranch)
 	require.NotNil(suite.T(), suite.PipelineData.GitHeadInfo)
 	require.NotNil(suite.T(), suite.PipelineData.GitBaseInfo)
+}
+
+func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Publish() {
+	//TODO:cant test publish because it'll continuously push to github repo.
+	suite.T().Skip()
+
+	//setup
+	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return("")
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return("")
+	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
+	suite.Config.EXPECT().GetString("scm_pull_request").Return("4")
+	suite.Config.EXPECT().IsSet("scm_pull_request").Return(true)
+
+	//test
+	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
+	require.NoError(suite.T(), err)
+	payload, perr := testScm.RetrievePayload()
+	require.NoError(suite.T(), perr)
+	pperr := testScm.CheckoutPullRequestPayload(payload)
+	require.NoError(suite.T(), pperr)
+	_, terr := utils.GitTag(suite.PipelineData.GitLocalPath, "v1.0.0")
+	require.NoError(suite.T(), terr)
+	suite.PipelineData.ReleaseVersion = "1.0.0"
+	pberr := testScm.Publish()
+	require.NoError(suite.T(), pberr)
+
+	//assert
+	require.NotEmpty(suite.T(), suite.PipelineData.GitLocalPath)
+	require.NotEmpty(suite.T(), suite.PipelineData.GitLocalBranch)
+	require.NotNil(suite.T(), suite.PipelineData.GitHeadInfo)
+	require.NotNil(suite.T(), suite.PipelineData.GitBaseInfo)
+}
+
+
+func (suite *ScmBitbucketTestSuite)TestScmBitbucket_PublishAssets() {
+	//setup
+	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
+	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
+	suite.PipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
+		{
+			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
+			ArtifactName: "gem_analogj_test.gem",
+		},
+	}
+	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
+	require.NoError(suite.T(), err)
+	defer os.Remove(suite.PipelineData.GitParentPath)
+
+	suite.PipelineData.GitLocalPath = path.Join(suite.PipelineData.GitParentPath, "gem_analogj_test")
+
+	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
+	require.NoError(suite.T(), cerr)
+
+	//test
+	paerr := testScm.PublishAssets(nil)
+	require.NoError(suite.T(), paerr)
+}
+
+func  (suite *ScmBitbucketTestSuite)TestScmBitbucket_Notify() {
+	//setup
+	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
+	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
+	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test")
+
+	//test
+	githubScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
+	require.NoError(suite.T(), err)
+	pperr := githubScm.Notify("813875f454a9b18121ad1ee3dcb45e667189290b", "pending", "test message")
+	require.NoError(suite.T(), pperr)
 }

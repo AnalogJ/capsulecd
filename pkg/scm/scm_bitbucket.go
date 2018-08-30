@@ -14,8 +14,8 @@ import (
 	"fmt"
 	"time"
 	"capsulecd/pkg/utils"
-	"encoding/json"
 	"strconv"
+	"path"
 )
 
 type scmBitbucket struct {
@@ -216,9 +216,6 @@ func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 	b.PipelineData.GitHeadInfo = payload.Head
 	b.PipelineData.GitBaseInfo = payload.Base
 
-jsonbytes, err := json.Marshal(payload)
-log.Printf("LOGGGIN DATA HERE: %s", string(jsonbytes))
-
 	herr := b.PipelineData.GitHeadInfo.Validate()
 	berr := b.PipelineData.GitBaseInfo.Validate()
 	if herr != nil {
@@ -284,6 +281,7 @@ log.Printf("LOGGGIN DATA HERE: %s", string(jsonbytes))
 }
 
 func (b *scmBitbucket) Publish() error {
+
 	// push the version bumped metadata file + newly created files to
 	perr := utils.GitPush(b.PipelineData.GitLocalPath, b.PipelineData.GitLocalBranch, b.PipelineData.GitBaseInfo.Ref, fmt.Sprintf("v%s", b.PipelineData.ReleaseVersion))
 	if perr != nil {
@@ -353,6 +351,18 @@ func (b *scmBitbucket) Publish() error {
 }
 
 func (b *scmBitbucket) PublishAssets(releaseData interface{}) error {
+
+	parts := strings.Split(b.Config.GetString("scm_repo_full_name"), "/")
+
+	for _, assetData := range b.PipelineData.ReleaseAssets {
+		b.publishAsset(
+			b.Client,
+			parts[0],
+			parts[1],
+			assetData.ArtifactName,
+			path.Join(b.PipelineData.GitLocalPath, assetData.LocalPath),
+			5)
+	}
 	return nil
 }
 
@@ -390,8 +400,67 @@ func (b *scmBitbucket) Cleanup() error {
 	return nil
 }
 
-func (b *scmBitbucket) Notify(ref string, state string, message string) error {
+func (b *scmBitbucket) Notify(ref string, state /*pending, failure, success*/ string, message string) error {
 	//https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories/%7Busername%7D/%7Brepo_slug%7D/commit/%7Bnode%7D/statuses/build
-	//not supported natively by go-bitbucket
-	return nil
+
+	targetURL := "https://www.capsulecd.com"
+	contextApp := "CapsuleCD"
+
+	parts := strings.Split(b.Config.GetString("scm_repo_full_name"), "/")
+
+	co := bitbucket.CommitsOptions{
+		Owner: parts[0],
+		RepoSlug: parts[1],
+		Revision: ref,
+	}
+
+	cso := bitbucket.CommitStatusOptions{
+		Key:		 "build",
+		State:       b.convertNotifyState(state),
+		Url:         targetURL,
+		Name:        contextApp,
+		Description: message,
+	}
+
+	_, err := b.Client.Repositories.Commits.CreateCommitStatus(&co, &cso)
+	return err
+}
+
+
+func (b *scmBitbucket) convertNotifyState(state string) string {
+	switch state {
+	case "pending":
+		return "INPROGRESS"
+	case "failure":
+		return "FAILED"
+	case "success":
+		return "SUCCESSFUL"
+	default:
+		return "INPROGRESS"
+	}
+}
+
+
+//private
+
+func (b *scmBitbucket) publishAsset(client *bitbucket.Client, repoOwner string, repoName string, assetName, filePath string, retries int) error {
+
+	log.Printf("Attempt (%d) to upload release asset %s from %s", retries, assetName, filePath)
+
+	dl := bitbucket.DownloadsOptions{
+		Owner: repoOwner,
+		RepoSlug: repoName,
+		FilePath: filePath,
+		FileName: assetName,
+	}
+
+	 _, err := client.Repositories.Downloads.Create(&dl)
+
+	if err != nil && retries > 0 {
+		fmt.Println("artifact upload errored out, retrying in one second. Err:", err)
+		time.Sleep(time.Second)
+		err = b.publishAsset(client, repoOwner, repoName, assetName, filePath, retries-1)
+	}
+
+	return err
 }

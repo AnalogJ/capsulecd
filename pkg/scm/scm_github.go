@@ -354,7 +354,7 @@ func (g *scmGithub) Cleanup() error {
 	return nil
 }
 
-func (g *scmGithub) Notify(ref string, state string, message string) error {
+func (g *scmGithub) Notify(ref string, state /*pending, failure, success*/ string, message string) error {
 	targetURL := "https://www.capsulecd.com"
 	contextApp := "CapsuleCD"
 
