@@ -61,7 +61,11 @@ func (suite *ScmTestSuite) TestCreate_Github() {
 
 func (suite *ScmTestSuite) TestCreate_Bitbucket() {
 	//setup
-	//suite.Config.EXPECT().SetDefault(gomock.Any(),gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return("placeholder")
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return("placeholder")
+	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 
 	//test
 	testScm, cerr := scm.Create("bitbucket", suite.PipelineData, suite.Config, nil)

@@ -53,6 +53,25 @@ func (str ScmCleanupFailed) Error() string {
 	return fmt.Sprintf("ScmCleanupFailed: %q", string(str))
 }
 
+// Raised when the scm pr already merged
+type ScmMergeNothingToMergeError string
+
+func (str ScmMergeNothingToMergeError) Error() string {
+	return fmt.Sprintf("ScmMergeNothingToMergeError: %q", string(str))
+}
+
+// Raised during a PR merge when there is a merge conflict
+type ScmMergeConflictError string
+func (str ScmMergeConflictError) Error() string {
+	return fmt.Sprintf("ScmMergeConflictError: %q", string(str))
+}
+
+// Raised during a PR merge where the analysis returns a result that we do not understand.
+type ScmMergeAnalysisUnknownError string
+func (str ScmMergeAnalysisUnknownError) Error() string {
+	return fmt.Sprintf("ScmMergeAnalysisUnknownError: %q", string(str))
+}
+
 // Raised when the config file specifies a hook/override for a step when the type is :repo
 type EngineTransformUnavailableStep string
 

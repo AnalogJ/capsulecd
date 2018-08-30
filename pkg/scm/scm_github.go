@@ -52,7 +52,6 @@ func (g *scmGithub) Init(pipelineData *pipeline.Data, myconfig config.Interface,
 		tc := oauth2.NewClient(ctx, ts)
 
 		//TODO: autopaginate turned on.
-		//TODO: add support for alternative api endpoints "scm_github_api_endpoint"
 		g.Client = github.NewClient(tc)
 	}
 
@@ -142,7 +141,7 @@ func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 		return err
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"), "")
 	if aerr != nil {
 		return aerr
 	}
@@ -190,7 +189,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 		return berr
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitBaseInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"))
+	authRemote, aerr := authGitRemote(g.PipelineData.GitBaseInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"), "")
 	if aerr != nil {
 		return aerr
 	}
@@ -208,7 +207,7 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 	g.PipelineData.GitLocalPath = gitLocalPath
 	g.PipelineData.GitLocalBranch = fmt.Sprintf("pr_%s", payload.PullRequestNumber)
 
-	ferr := utils.GitFetchPullRequest(g.PipelineData.GitLocalPath, payload.PullRequestNumber, g.PipelineData.GitLocalBranch)
+	ferr := utils.GitFetchPullRequest(g.PipelineData.GitLocalPath, payload.PullRequestNumber, g.PipelineData.GitLocalBranch, "refs/pull/%s/merge", "")
 	if ferr != nil {
 		return ferr
 	}
@@ -308,7 +307,7 @@ func (g *scmGithub) PublishAssets(releaseData interface{}) error {
 	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
 
 	for _, assetData := range g.PipelineData.ReleaseAssets {
-		publishAsset(
+		g.publishGithubAsset(
 			g.Client,
 			ctx,
 			parts[0],
@@ -355,7 +354,7 @@ func (g *scmGithub) Cleanup() error {
 	return nil
 }
 
-func (g *scmGithub) Notify(ref string, state string, message string) error {
+func (g *scmGithub) Notify(ref string, state /*pending, failure, success*/ string, message string) error {
 	targetURL := "https://www.capsulecd.com"
 	contextApp := "CapsuleCD"
 
@@ -372,7 +371,7 @@ func (g *scmGithub) Notify(ref string, state string, message string) error {
 
 //private
 
-func publishAsset(client *github.Client, ctx context.Context, repoOwner string, repoName string, assetName, filePath string, releaseID int64, retries int) error {
+func (g *scmGithub) publishGithubAsset(client *github.Client, ctx context.Context, repoOwner string, repoName string, assetName, filePath string, releaseID int64, retries int) error {
 
 	log.Printf("Attempt (%d) to upload release asset %s from %s", retries, assetName, filePath)
 	f, err := os.Open(filePath)
@@ -388,22 +387,8 @@ func publishAsset(client *github.Client, ctx context.Context, repoOwner string, 
 	if err != nil && retries > 0 {
 		fmt.Println("artifact upload errored out, retrying in one second. Err:", err)
 		time.Sleep(time.Second)
-		err = publishAsset(client, ctx, repoOwner, repoName, assetName, filePath, releaseID, retries-1)
+		err = g.publishGithubAsset(client, ctx, repoOwner, repoName, assetName, filePath, releaseID, retries-1)
 	}
 
 	return err
-}
-
-func authGitRemote(cloneUrl string, accessToken string) (string, error) {
-	if accessToken != "" {
-		// set the remote url, with embedded token
-		u, err := url.Parse(cloneUrl)
-		if err != nil {
-			return "", err
-		}
-		u.User = url.UserPassword(accessToken, "")
-		return u.String(), nil
-	} else {
-		return cloneUrl, nil
-	}
 }
