@@ -62,9 +62,9 @@ func (suite *ScmTestSuite) TestCreate_Github() {
 func (suite *ScmTestSuite) TestCreate_Bitbucket() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return("placeholder")
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return("placeholder")
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return("placeholder")
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 
 	//test
