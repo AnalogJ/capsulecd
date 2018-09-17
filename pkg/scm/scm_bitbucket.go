@@ -70,8 +70,8 @@ func (b *scmBitbucket) Init(pipelineData *pipeline.Data, myconfig config.Interfa
 	if !b.Config.IsSet("scm_bitbucket_username") {
 		return errors.ScmAuthenticationFailed("Missing bitbucket username")
 	}
-	if !b.Config.IsSet("scm_bitbucket_password") {
-		return errors.ScmAuthenticationFailed("Missing bitbucket app password")
+	if !b.Config.IsSet("scm_bitbucket_password") && !b.Config.IsSet("scm_bitbucket_access_token") {
+		return errors.ScmAuthenticationFailed("Bitbucket app password or access token is required")
 	}
 	if b.Config.IsSet("scm_git_parent_path") {
 		b.PipelineData.GitParentPath = b.Config.GetString("scm_git_parent_path")
@@ -81,7 +81,11 @@ func (b *scmBitbucket) Init(pipelineData *pipeline.Data, myconfig config.Interfa
 		b.PipelineData.GitParentPath = dirPath
 	}
 
-	b.Client = bitbucket.NewBasicAuth(b.Config.GetString("scm_bitbucket_username"), b.Config.GetString("scm_bitbucket_password"))
+	if b.Config.IsSet("scm_bitbucket_password") {
+		b.Client = bitbucket.NewBasicAuth(b.Config.GetString("scm_bitbucket_username"), b.Config.GetString("scm_bitbucket_password"))
+	} else {
+		b.Client = bitbucket.NewOAuthbearerToken(b.Config.GetString("scm_bitbucket_access_token"))
+	}
 	if client != nil {
 		//primarily used for testing.
 		b.Client.HttpClient = client
@@ -171,10 +175,17 @@ func (b *scmBitbucket) CheckoutPushPayload(payload *Payload) error {
 		return err
 	}
 
+	var cloneCred string
+	if b.Config.IsSet("scm_bitbucket_password") {
+		cloneCred = b.Config.GetString("scm_bitbucket_password")
+	} else {
+		cloneCred = b.Config.GetString("scm_bitbucket_access_token")
+	}
+
 	authRemote, aerr := authGitRemote(
 		b.PipelineData.GitHeadInfo.Repo.CloneUrl,
 		b.Config.GetString("scm_bitbucket_username"),
-		b.Config.GetString("scm_bitbucket_password"),
+		cloneCred,
 	)
 	if aerr != nil {
 		return aerr
@@ -224,10 +235,17 @@ func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 		return berr
 	}
 
+	var cloneCred string
+	if b.Config.IsSet("scm_bitbucket_password") {
+		cloneCred = b.Config.GetString("scm_bitbucket_password")
+	} else {
+		cloneCred = b.Config.GetString("scm_bitbucket_access_token")
+	}
+
 	authBaseRemoteUrl, aberr := authGitRemote(
 		b.PipelineData.GitBaseInfo.Repo.CloneUrl,
 		b.Config.GetString("scm_bitbucket_username"),
-		b.Config.GetString("scm_bitbucket_password"),
+		cloneCred,
 	)
 	if aberr != nil {
 		return aberr
@@ -238,7 +256,7 @@ func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 	authHeadRemoteUrl, aherr := authGitRemote(
 		b.PipelineData.GitBaseInfo.Repo.CloneUrl,
 		b.Config.GetString("scm_bitbucket_username"),
-		b.Config.GetString("scm_bitbucket_password"),
+		cloneCred,
 	)
 	if aherr != nil {
 		return aherr

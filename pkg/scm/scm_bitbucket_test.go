@@ -115,7 +115,8 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithoutPassword() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(false)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(false)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_access_token").MinTimes(1).Return(false)
 
 	//test
 	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
@@ -130,9 +131,9 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Init_WithGitParentPath() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return(suite.Password)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 
 	dirPath, err := ioutil.TempDir("", "")
 	defer os.RemoveAll(dirPath)
@@ -153,9 +154,9 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithDefaults() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return(suite.Password)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 
 	//test
@@ -172,9 +173,9 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithDefaults() {
 func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return(suite.Password)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test")
 	suite.Config.EXPECT().GetString("scm_pull_request").Return("1")
@@ -197,9 +198,9 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest(
 func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest_InvalidState() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return(suite.Password)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test")
 	suite.Config.EXPECT().GetString("scm_pull_request").Return("2")
@@ -220,9 +221,9 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_Push() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").Return(suite.Password)
+	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	suite.Config.EXPECT().IsSet("scm_pull_request").Return(false)
 	suite.Config.EXPECT().GetString("scm_sha").Return("0d1a26e67d8f5eaf1f6ba5c57fc3c7d91ac0fd1c")
@@ -250,7 +251,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_Push() {
 func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPushPayload() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return("")
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return("")
 	// (so that git doesnt fail on placeholder token)
@@ -298,7 +299,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPullRequestPayload()
 	//setup
 
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return("")
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return("")
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
@@ -327,7 +328,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Publish() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return("")
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return("")
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
@@ -359,7 +360,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Publish() {
 func (suite *ScmBitbucketTestSuite)TestScmBitbucket_PublishAssets() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
@@ -387,7 +388,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_PublishAssets() {
 func  (suite *ScmBitbucketTestSuite)TestScmBitbucket_Notify() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").Return(true)
+	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
 	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
