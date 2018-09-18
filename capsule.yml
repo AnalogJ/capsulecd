@@ -9,7 +9,10 @@ engine_cmd_compile:
 engine_cmd_test: 'go test -v -tags "static" $(glide novendor)'
 engine_cmd_lint: 'gometalinter.v2 --vendor --config=gometalinter.json ./...'
 engine_disable_lint: true
+engine_golang_package_path: 'capsulecd'
+
 scm_enable_branch_cleanup: true
+
 scm_release_assets:
   - local_path: capsulecd-linux-amd64
     artifact_name: capsulecd-linux-amd64
