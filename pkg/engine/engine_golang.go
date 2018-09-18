@@ -18,6 +18,7 @@ import (
 	"path"
 	"strings"
 	"capsulecd/pkg/metadata"
+	"log"
 )
 
 type engineGolang struct {
@@ -121,7 +122,7 @@ func (g *engineGolang) AssembleStep() error {
 func (g *engineGolang) CompileStep() error {
 	//cmd directory is optional. check if it exists first.
 	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "cmd")) {
-		return nil
+		log.Println("Warning: cmd directory is missing, custom compile command required.")
 	}
 
 	if terr := g.ExecuteCmdList("engine_cmd_compile",

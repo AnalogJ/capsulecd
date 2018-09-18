@@ -213,3 +213,16 @@ func TestConfiguration_ListTypeCmd_Simple(t *testing.T) {
 	require.True(t, testConfig.IsSet("engine_cmd_compile"), "should correctly detect key is populated")
 	require.Equal(t, `echo "test compile"`, cmd, "list should contain correct command")
 }
+
+func TestConfiguration_SetDefault_IsSet_True(t *testing.T) {
+
+	//setup
+	testConfig, _ := config.Create()
+	testConfig.SetDefault("test_config_key", "test_config_value")
+
+	//test
+	isSet := testConfig.IsSet("test_config_key")
+
+	//assert
+	require.True(t, isSet, "isSet is true when set via file, flag, default or env")
+}
