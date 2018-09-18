@@ -56,7 +56,7 @@ func (suite *EngineGolangImplTestSuite) TestEngineGolang_Init_GithubPackagePath(
 	require.NoError(suite.T(), err)
 
 	//assert
-	require.Equal(suite.T(), "/go/src/github.com/analogj", golangEngine.PipelineData.GitParentPath)
+	require.Equal(suite.T(), "src/github.com/analogj", golangEngine.PipelineData.GitParentPath)
 }
 
 func (suite *EngineGolangImplTestSuite) TestEngineGolang_Init_BitbucketPackagePath() {
@@ -72,7 +72,7 @@ func (suite *EngineGolangImplTestSuite) TestEngineGolang_Init_BitbucketPackagePa
 	require.NoError(suite.T(), err)
 
 	//assert
-	require.Equal(suite.T(), "/go/src/btibucket.org/sparktree", golangEngine.PipelineData.GitParentPath)
+	require.Equal(suite.T(), "src/bitbucket.org/sparktree", golangEngine.PipelineData.GitParentPath)
 }
 
 func (suite *EngineGolangImplTestSuite) TestEngineGolang_Init_SimplePackagePath() {
@@ -88,5 +88,5 @@ func (suite *EngineGolangImplTestSuite) TestEngineGolang_Init_SimplePackagePath(
 	require.NoError(suite.T(), err)
 
 	//assert
-	require.Equal(suite.T(), "/go/src", golangEngine.PipelineData.GitParentPath)
+	require.Equal(suite.T(), "src", golangEngine.PipelineData.GitParentPath)
 }
