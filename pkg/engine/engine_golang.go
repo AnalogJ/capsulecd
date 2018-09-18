@@ -36,6 +36,22 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.CurrentMetadata = new(metadata.GolangMetadata)
 	g.NextMetadata = new(metadata.GolangMetadata)
 
+	//set command defaults (can be overridden by repo/system configuration)
+	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
+	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v2 --errors --vendor --deadline=3m ./...")
+	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
+	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
+	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
+
+	var scmDomain string
+	if g.Config.GetString("scm") == "bitbucket" {
+		scmDomain = "bitbucket.org"
+	} else {
+		scmDomain = "github.com"
+	}
+
+	g.Config.SetDefault("engine_golang_package_path", fmt.Sprintf("%s/%s",scmDomain, strings.ToLower(g.Config.GetString("scm_repo_full_name"))))
+
 	//TODO: figure out why setting the GOPATH workspace is causing the tools to timeout.
 	// golang recommends that your in-development packages are in the GOPATH and glide requires it to do glide install.
 	// the problem with this is that for somereason gometalinter (and the underlying linting tools) take alot longer
@@ -43,16 +59,12 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	// we can have multiple workspaces in the gopath by separating them with colon (:), but this timeout is nasty if not required.
 	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath), figure out if we can do this automatically.
 	g.GoPath = g.PipelineData.GitParentPath
-	g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src")
-	os.MkdirAll(g.PipelineData.GitParentPath, 0666)
 	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
 
-	//set command defaults (can be overridden by repo/system configuration)
-	g.Config.SetDefault("engine_cmd_compile", "go build $(go list ./cmd/...)")
-	g.Config.SetDefault("engine_cmd_lint", "gometalinter.v2 --errors --vendor --deadline=3m ./...")
-	g.Config.SetDefault("engine_cmd_fmt", "go fmt $(go list ./... | grep -v /vendor/)")
-	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
-	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
+	packagePathPrefix := path.Dir(g.Config.GetString("engine_golang_package_path")) //strip out the repo name.
+	// customize the git parent path for Golang Engine
+	g.PipelineData.GitParentPath = path.Join(g.PipelineData.GitParentPath, "src", packagePathPrefix)
+	os.MkdirAll(g.PipelineData.GitParentPath, 0666)
 
 	return nil
 }
