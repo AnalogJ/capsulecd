@@ -18,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"text/template"
+	"bytes"
 )
 
 type scmGithub struct {
@@ -307,12 +309,23 @@ func (g *scmGithub) PublishAssets(releaseData interface{}) error {
 	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")
 
 	for _, assetData := range g.PipelineData.ReleaseAssets {
+		// handle templated destination artifact names
+		artifactNameTmpl, err := template.New("artifactName").Parse(assetData.ArtifactName)
+		if err != nil {
+			return err
+		}
+
+		var artifactNamePopulated bytes.Buffer
+		if err := artifactNameTmpl.Execute(&artifactNamePopulated, g.PipelineData); err != nil {
+			return err
+		}
+
 		g.publishGithubAsset(
 			g.Client,
 			ctx,
 			parts[0],
 			parts[1],
-			assetData.ArtifactName,
+			artifactNamePopulated.String(),
 			path.Join(g.PipelineData.GitLocalPath, assetData.LocalPath),
 			releaseId,
 			5)
