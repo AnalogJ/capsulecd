@@ -16,6 +16,8 @@ import (
 	"capsulecd/pkg/utils"
 	"strconv"
 	"path"
+	"bytes"
+	"text/template"
 )
 
 type scmBitbucket struct {
@@ -373,11 +375,22 @@ func (b *scmBitbucket) PublishAssets(releaseData interface{}) error {
 	parts := strings.Split(b.Config.GetString("scm_repo_full_name"), "/")
 
 	for _, assetData := range b.PipelineData.ReleaseAssets {
+		// handle templated destination artifact names
+		artifactNameTmpl, err := template.New("artifactName").Parse(assetData.ArtifactName)
+		if err != nil {
+			return err
+		}
+
+		var artifactNamePopulated bytes.Buffer
+		if err := artifactNameTmpl.Execute(&artifactNamePopulated, b.PipelineData); err != nil {
+			return err
+		}
+
 		b.publishAsset(
 			b.Client,
 			parts[0],
 			parts[1],
-			assetData.ArtifactName,
+			artifactNamePopulated.String(),
 			path.Join(b.PipelineData.GitLocalPath, assetData.LocalPath),
 			5)
 	}
