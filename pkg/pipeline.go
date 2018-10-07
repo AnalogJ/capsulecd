@@ -524,8 +524,13 @@ func (p *Pipeline) RunHook(hookKey string) error {
 	if hookSteps == nil {
 		return nil
 	}
-	for i := range hookSteps {
-		if err := utils.BashCmdExec(hookSteps[i], p.Data.GitLocalPath, nil, fmt.Sprintf("%s.%s", hookKey, i)); err != nil {
+	for i, cmd := range hookSteps {
+		cmdPopulated, aerr := utils.PopulateTemplate(cmd, p.Data)
+		if aerr != nil {
+			return aerr
+		}
+
+		if err := utils.BashCmdExec(cmdPopulated, p.Data.GitLocalPath, nil, fmt.Sprintf("%s.%s", hookKey, i)); err != nil {
 			return err
 		}
 	}
