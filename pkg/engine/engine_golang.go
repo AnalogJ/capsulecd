@@ -257,6 +257,7 @@ func (g *engineGolang) populateNextMetadata() error {
 	}
 
 	g.NextMetadata.Version = nextVersion
+	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
 	return nil
 }
 

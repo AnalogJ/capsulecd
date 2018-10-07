@@ -1,6 +1,26 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+	"bytes"
+	"text/template"
+)
+
+func PopulateTemplate(tmplString string, data interface{}) (string, error){
+	// handle templated destination artifact names
+	tmpl, err := template.New("tmplString").Parse(tmplString)
+	if err != nil {
+		return "", err
+	}
+
+	var populatedString bytes.Buffer
+	if err := tmpl.Execute(&populatedString, data); err != nil {
+		return "", err
+	}
+	return populatedString.String(), nil
+}
+
+
 
 func SnakeCaseToCamelCase(inputUnderScoreStr string) (camelCase string) {
 	//snake_case to camelCase

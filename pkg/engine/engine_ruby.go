@@ -207,6 +207,7 @@ func (g *engineRuby) populateNextMetadata() error {
 
 	g.NextMetadata.Version = nextVersion
 	g.NextMetadata.Name = g.CurrentMetadata.Name
+	g.PipelineData.ReleaseVersion = g.NextMetadata.Version
 	return nil
 }
 

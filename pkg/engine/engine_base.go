@@ -107,17 +107,27 @@ func (e *engineBase) ExecuteCmdList(configKey string, workingDir string, environ
 
 	if cmd != "" {
 		//code formatter
-		if terr := utils.BashCmdExec(cmd, workingDir, environ, logPrefix); terr != nil {
-			return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmd))
+		cmdPopulated, aerr := utils.PopulateTemplate(cmd, e.PipelineData)
+		if aerr != nil {
+			return aerr
+		}
+
+		if terr := utils.BashCmdExec(cmdPopulated, workingDir, environ, logPrefix); terr != nil {
+			return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmdPopulated))
 		}
 	} else {
 		cmdList := e.Config.GetStringSlice(configKey)
 		if cmdList == nil {
 			return nil
 		}
-		for i := range cmdList {
-			if terr := utils.BashCmdExec(cmdList[i], workingDir, environ, logPrefix); terr != nil {
-				return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmdList[i]))
+		for _, cmd := range cmdList {
+			cmdPopulated, aerr := utils.PopulateTemplate(cmd, e.PipelineData)
+			if aerr != nil {
+				return aerr
+			}
+
+			if terr := utils.BashCmdExec(cmdPopulated, workingDir, environ, logPrefix); terr != nil {
+				return errors.EngineTestRunnerError(fmt.Sprintf(errorTemplate, cmdPopulated))
 			}
 		}
 	}
