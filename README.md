@@ -23,7 +23,7 @@
 
 
 CapsuleCD is a generic Continuous Delivery pipeline for versioned artifacts and libraries written in any language. 
-It's goal is to bring automation to the packaging and deployment stage of your library release cycle.
+Its goal is to bring automation to the packaging and deployment stage of your library release cycle.
 CapsuleCD is incredibly flexible, and works best when implemented side-by-side with a CI pipeline.
 
 <p align="center">
@@ -74,7 +74,7 @@ It automates away all the common steps required when creating a new version of y
 At first glance, it seems simple to publish a new library version. Just bump the version number and publish, right?
 Well, not always:
 
-- If you're library includes a Gemfile.lock, Berksfile.lock or other common lock files, you'll need to regenerate them as the old version number is embedded inside. 
+- If your library includes a Gemfile.lock, Berksfile.lock or other common lock files, you'll need to regenerate them as the old version number is embedded inside. 
 - Everyone runs their library unit tests before creating a new release (right?!), but what about validating that your [library dependencies exist](http://www.theregister.co.uk/2016/03/23/npm_left_pad_chaos/) (maybe in your Company's private repo)?
 - How about linting your source, to ensure that it follows common/team conventions? 
 - Who owns the gem? Is there one developer who has the credentials to push to RubyGems.org? Are they still on your team/on vacation? 
@@ -117,13 +117,13 @@ directly to merge a pull request to your Python library:
 	
 # Engine
 Every package type is mapped to an engine class which inherits from a `EngineScm` class, ie `EnginePython`, `EngineNode`,
-`EngineRuby` etc. Every scm type is mapped to a scm class, ie `ScmGithub`. When CapsuleCD starts, it initializes the
-specified Engine, and loads the correct Scm module. Then it begins processing your source code step by step.
+`EngineRuby` etc. Every SCM type is mapped to a SCM class, ie `ScmGithub`. When CapsuleCD starts, it initializes the
+specified Engine, and loads the correct SCM module. Then it begins processing your source code step by step.
 
 Step | Description
 ------------ | ------------ 
-pipeline_init_step | This will initialize the scm client, ensuring that we can authenticate with the git server
-scm_retrieve_payload_step | If a Pull Request # is specified, the payload is retrieved from Scm api, otherwise the repo default branch HEAD info is retrived.
+pipeline_init_step | This will initialize the SCM client, ensuring that we can authenticate with the git server
+scm_retrieve_payload_step | If a Pull Request # is specified, the payload is retrieved from SCM api, otherwise the repo default branch HEAD info is retrived.
 scm_process_pull_request_payload __or__ scm_process_push_payload | Depending on the retrieve_payload step, the merged pull request is cloned, or the default branch is cloned locally
 assemble_step | Code is built, which includes adding any missing files/default structure, version bumping, etc.
 dependencies_step | Download package dependencies
