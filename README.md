@@ -46,7 +46,7 @@ A short list of the features...
 	* regenerating any `*.lock` files/ shrinkwrap files with new version
 	* creating any recommended files (eg. `.gitignore`) 
 	* validates all dependencies exist (by vendoring locally)
-	* vulnerbility scanning in dependencies
+	* vulnerability scanning in dependencies
 	* running unit tests
 	* linting library syntax
 	* source formatting
