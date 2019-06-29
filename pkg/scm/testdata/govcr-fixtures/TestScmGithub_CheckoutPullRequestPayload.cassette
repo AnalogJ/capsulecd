@@ -1,5 +1,5 @@
 {
-  "Name": "TestScmGithub_ProcessPullRequestPayload",
+  "Name": "TestScmGithub_CheckoutPullRequestPayload",
   "Path": "testdata/govcr-fixtures",
   "Tracks": [
     {
