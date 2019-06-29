@@ -388,6 +388,8 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Notify() {
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test")
+	suite.Config.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
+	suite.Config.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
 
 	//test
 	githubScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)

@@ -491,6 +491,8 @@ func TestScmGithub_Notify(t *testing.T) {
 	mockConfig.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
 	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test")
+	mockConfig.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
+	mockConfig.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
 	pipelineData := new(pipeline.Data)
 	client := githubVcrSetup(t)
 
