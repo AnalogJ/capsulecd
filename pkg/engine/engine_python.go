@@ -3,6 +3,7 @@ package engine
 import (
 	"capsulecd/pkg/config"
 	"capsulecd/pkg/errors"
+	"capsulecd/pkg/metadata"
 	"capsulecd/pkg/pipeline"
 	"capsulecd/pkg/scm"
 	"capsulecd/pkg/utils"
@@ -12,7 +13,6 @@ import (
 	"os/exec"
 	"path"
 	"strings"
-	"capsulecd/pkg/metadata"
 )
 
 type enginePython struct {
@@ -37,6 +37,7 @@ func (g *enginePython) Init(pipelineData *pipeline.Data, config config.Interface
 	g.Config.SetDefault("engine_cmd_fmt", "find . -name '*.py' -exec pylint -E '{}' +") //TODO: replace with pycodestyle/pep8
 	g.Config.SetDefault("engine_cmd_test", "tox")
 	g.Config.SetDefault("engine_cmd_security_check", "safety check -r requirements.txt")
+	g.Config.SetDefault("engine_version_metadata_path", "VERSION")
 	return nil
 }
 
@@ -46,7 +47,6 @@ func (g *enginePython) GetCurrentMetadata() interface{} {
 func (g *enginePython) GetNextMetadata() interface{} {
 	return g.NextMetadata
 }
-
 
 func (g *enginePython) ValidateTools() error {
 	if _, kerr := exec.LookPath("tox"); kerr != nil {
@@ -60,7 +60,6 @@ func (g *enginePython) ValidateTools() error {
 	if _, berr := exec.LookPath("python"); berr != nil {
 		return errors.EngineValidateToolError("python binary is missing")
 	}
-
 
 	if _, berr := exec.LookPath("safety"); berr != nil && !g.Config.GetBool("engine_disable_security_check") {
 		return errors.EngineValidateToolError("safety binary is missing")
@@ -76,8 +75,8 @@ func (g *enginePython) AssembleStep() error {
 	}
 
 	// check for/create required VERSION file
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "VERSION")) {
-		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, "VERSION"),
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_version_metadata_path"))) {
+		ioutil.WriteFile(path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_version_metadata_path")),
 			[]byte("0.0.0"),
 			0644,
 		)
@@ -85,7 +84,7 @@ func (g *enginePython) AssembleStep() error {
 
 	// bump up the version here.
 	// since there's no standardized way to bump up the version in the setup.py file, we're going to assume that the version
-	// is specified in a VERSION file in the root of the source repository
+	// is specified in plain text VERSION file in the root of the source repository. This can be configured via engine_version_metadata_path
 	// this is option #4 in the python packaging guide:
 	// https://packaging.python.org/en/latest/single_source_version/#single-sourcing-the-version
 	//
@@ -174,7 +173,7 @@ func (g *enginePython) PackageStep() error {
 
 func (g *enginePython) retrieveCurrentMetadata(gitLocalPath string) error {
 	//read metadata.json file.
-	versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, "VERSION"))
+	versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, g.Config.GetString("engine_version_metadata_path")))
 	if rerr != nil {
 		return rerr
 	}
@@ -195,5 +194,5 @@ func (g *enginePython) populateNextMetadata() error {
 }
 
 func (g *enginePython) writeNextMetadata(gitLocalPath string) error {
-	return ioutil.WriteFile(path.Join(gitLocalPath, "VERSION"), []byte(g.NextMetadata.Version), 0644)
+	return ioutil.WriteFile(path.Join(gitLocalPath, g.Config.GetString("engine_version_metadata_path")), []byte(g.NextMetadata.Version), 0644)
 }

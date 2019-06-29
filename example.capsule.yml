@@ -54,6 +54,10 @@ scm_enable_branch_cleanup: false
 # Specifies the Semvar segment (major, minor, patch) to bump before releasing package
 engine_version_bump_type: 'patch'
 
+# Specifies the path to the metadata file containing the version info.
+# Only applies to engines where version metadata location is not standardized.
+engine_version_metadata_path: ''
+
 # Specifies the command to compile source into binary
 engine_cmd_compile: '' #eg. 'go build $(go list ./cmd/...)'
 engine_disable_compile: false
