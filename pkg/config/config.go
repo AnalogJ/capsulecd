@@ -37,6 +37,9 @@ func (c *configuration) Init() error {
 	c.SetDefault("engine_version_bump_msg", "Automated packaging of release by CapsuleCD")
 	c.SetDefault("mgr_keep_lock_file", "false") //delete *.lock files by default.
 
+	c.SetDefault("scm_notify_source", "CapsuleCD")
+	c.SetDefault("scm_notify_target_url", "https://github.com/AnalogJ/capsulecd")
+
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
 	//if you want to load a repo specific config file, use ReadConfig

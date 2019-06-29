@@ -2,20 +2,20 @@ package scm
 
 import (
 	"capsulecd/pkg/config"
-	"capsulecd/pkg/pipeline"
-	"github.com/analogj/go-bitbucket"
-	"net/http"
 	"capsulecd/pkg/errors"
-	"os"
+	"capsulecd/pkg/pipeline"
+	"capsulecd/pkg/utils"
+	"fmt"
+	"github.com/analogj/go-bitbucket"
+	"github.com/mitchellh/mapstructure"
 	"io/ioutil"
 	"log"
-	"strings"
-	"github.com/mitchellh/mapstructure"
-	"fmt"
-	"time"
-	"capsulecd/pkg/utils"
-	"strconv"
+	"net/http"
+	"os"
 	"path"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type scmBitbucket struct {
@@ -24,41 +24,37 @@ type scmBitbucket struct {
 	PipelineData *pipeline.Data
 }
 
-
 type scmBitbucketPullrequest struct {
-	CreatedOn time.Time `mapstructure:"created_on"`
-	PullRequestNumber int `mapstructure:"id"`
-	State string `mapstructure:"state"`
-	Title string `mapstructure:"title"`
-	Base struct {
+	CreatedOn         time.Time `mapstructure:"created_on"`
+	PullRequestNumber int       `mapstructure:"id"`
+	State             string    `mapstructure:"state"`
+	Title             string    `mapstructure:"title"`
+	Base              struct {
 		Branch struct {
-			Name string  `mapstructure:"name"`
-		}  `mapstructure:"branch"`
+			Name string `mapstructure:"name"`
+		} `mapstructure:"branch"`
 		Commit struct {
 			Hash string `mapstructure:"hash"`
 		} `mapstructure:"commit"`
 		Repository struct {
 			FullName string `mapstructure:"full_name"`
-			Name string `mapstructure:"name"`
+			Name     string `mapstructure:"name"`
 		} `mapstructure:"repository"`
-	}  `mapstructure:"destination"`
+	} `mapstructure:"destination"`
 
 	Head struct {
 		Branch struct {
-			Name string  `mapstructure:"name"`
-		}  `mapstructure:"branch"`
+			Name string `mapstructure:"name"`
+		} `mapstructure:"branch"`
 		Commit struct {
 			Hash string `mapstructure:"hash"`
 		} `mapstructure:"commit"`
 		Repository struct {
 			FullName string `mapstructure:"full_name"`
-			Name string `mapstructure:"name"`
+			Name     string `mapstructure:"name"`
 		} `mapstructure:"repository"`
-	}  `mapstructure:"source"`
-
+	} `mapstructure:"source"`
 }
-
-
 
 // configure method will generate an authenticated client that can be used to comunicate with Github
 // MUST set @git_parent_path
@@ -114,16 +110,15 @@ func (b *scmBitbucket) RetrievePayload() (*Payload, error) {
 		b.PipelineData.IsPullRequest = true
 		parts := strings.Split(b.Config.GetString("scm_repo_full_name"), "/")
 		prDataMap, err := b.Client.Repositories.PullRequests.Get(&bitbucket.PullRequestsOptions{
-			ID: b.Config.GetString("scm_pull_request"),
-			Owner: parts[0],
+			ID:       b.Config.GetString("scm_pull_request"),
+			Owner:    parts[0],
 			RepoSlug: parts[1],
 		})
 		if err != nil {
 			return nil, errors.ScmAuthenticationFailed("Could not retrieve pull request from Bitbucket")
 		}
 
-
-		prData  := new(scmBitbucketPullrequest)
+		prData := new(scmBitbucketPullrequest)
 		mapstructure.Decode(prDataMap, prData)
 
 		//validate pullrequest
@@ -252,7 +247,6 @@ func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 	}
 	b.PipelineData.GitRemote = authBaseRemoteUrl
 
-
 	authHeadRemoteUrl, aherr := authGitRemote(
 		b.PipelineData.GitBaseInfo.Repo.CloneUrl,
 		b.Config.GetString("scm_bitbucket_username"),
@@ -261,7 +255,6 @@ func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 	if aherr != nil {
 		return aherr
 	}
-
 
 	// clone the merged branch
 	// https://sethvargo.com/checkout-a-github-pull-request/
@@ -307,7 +300,6 @@ func (b *scmBitbucket) Publish() error {
 	}
 	//sleep because bitbucket needs time to process the new tag.
 	time.Sleep(5 * time.Second)
-
 
 	//TODO: Bitbucket does not seem to support Github style releases.
 
@@ -432,19 +424,19 @@ func (b *scmBitbucket) Cleanup() error {
 func (b *scmBitbucket) Notify(ref string, state /*pending, failure, success*/ string, message string) error {
 	//https://developer.atlassian.com/bitbucket/api/2/reference/resource/repositories/%7Busername%7D/%7Brepo_slug%7D/commit/%7Bnode%7D/statuses/build
 
-	targetURL := "https://www.capsulecd.com"
-	contextApp := "CapsuleCD"
+	targetURL := b.Config.GetString("scm_notify_target_url")
+	contextApp := b.Config.GetString("scm_notify_source")
 
 	parts := strings.Split(b.Config.GetString("scm_repo_full_name"), "/")
 
 	co := bitbucket.CommitsOptions{
-		Owner: parts[0],
+		Owner:    parts[0],
 		RepoSlug: parts[1],
 		Revision: ref,
 	}
 
 	cso := bitbucket.CommitStatusOptions{
-		Key:		 "build",
+		Key:         "build",
 		State:       b.convertNotifyState(state),
 		Url:         targetURL,
 		Name:        contextApp,
@@ -454,7 +446,6 @@ func (b *scmBitbucket) Notify(ref string, state /*pending, failure, success*/ st
 	_, err := b.Client.Repositories.Commits.CreateCommitStatus(&co, &cso)
 	return err
 }
-
 
 func (b *scmBitbucket) convertNotifyState(state string) string {
 	switch state {
@@ -469,7 +460,6 @@ func (b *scmBitbucket) convertNotifyState(state string) string {
 	}
 }
 
-
 //private
 
 func (b *scmBitbucket) publishAsset(client *bitbucket.Client, repoOwner string, repoName string, assetName, filePath string, retries int) error {
@@ -477,13 +467,13 @@ func (b *scmBitbucket) publishAsset(client *bitbucket.Client, repoOwner string, 
 	log.Printf("Attempt (%d) to upload release asset %s from %s", retries, assetName, filePath)
 
 	dl := bitbucket.DownloadsOptions{
-		Owner: repoOwner,
+		Owner:    repoOwner,
 		RepoSlug: repoName,
 		FilePath: filePath,
 		FileName: assetName,
 	}
 
-	 _, err := client.Repositories.Downloads.Create(&dl)
+	_, err := client.Repositories.Downloads.Create(&dl)
 
 	if err != nil && retries > 0 {
 		fmt.Println("artifact upload errored out, retrying in one second. Err:", err)

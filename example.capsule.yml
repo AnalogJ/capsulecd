@@ -47,6 +47,12 @@ scm_disable_nearest_tag_changelog: false
 # Completion of CapsuleCD pipeline
 scm_enable_branch_cleanup: false
 
+# Specifies the source of commit status update(s).
+scm_notify_source: 'CapsuleCD'
+
+# Specifies a url that can be used to provide context when commit status messages are sent to SCM
+scm_notify_target_url: 'https://github.com/AnalogJ/capsulecd'
+
 ###############################################################################
 #
 # Engine Base Configuration

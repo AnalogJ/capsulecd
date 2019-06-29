@@ -31,7 +31,7 @@ func main() {
 		},
 		Before: func(c *cli.Context) error {
 
-			capsuleUrl := "https://www.capsulecd.com"
+			capsuleUrl := "https://github.com/AnalogJ/capsulecd"
 
 			versionInfo := fmt.Sprintf("%s.%s-%s", goos, goarch, version.VERSION)
 
