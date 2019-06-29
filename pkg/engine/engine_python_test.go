@@ -94,6 +94,7 @@ func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
+	suite.Config.EXPECT().GetString("engine_version_metadata_path").Return("VERSION")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -120,6 +121,7 @@ func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep_WithMinimalCoo
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
+	suite.Config.EXPECT().GetString("engine_version_metadata_path").Return("VERSION")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -275,6 +277,7 @@ func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_SecurityCheckFailu
 func (suite *EnginePythonTestSuite) TestEnginePython_PackageStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_version_bump_msg").Return("Automated packaging of release by CapsuleCD")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
