@@ -284,6 +284,8 @@ func TestScmGithub_CheckoutPullRequestPayload(t *testing.T) {
 	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test").MinTimes(1)
 	mockConfig.EXPECT().GetInt("scm_pull_request").Return(12)
 	mockConfig.EXPECT().IsSet("scm_pull_request").Return(true)
+	mockConfig.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
+	mockConfig.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
 	pipelineData := new(pipeline.Data)
 	client := githubVcrSetup(t)
 
