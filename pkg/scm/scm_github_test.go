@@ -7,7 +7,6 @@ import (
 
 	"capsulecd/pkg/config/mock"
 	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/utils"
 	"context"
 	"crypto/tls"
 	"github.com/golang/mock/gomock"
@@ -309,38 +308,38 @@ func TestScmGithub_CheckoutPullRequestPayload(t *testing.T) {
 //
 //}
 
-func TestScmGithub_PublishAssets(t *testing.T) {
-	//setup
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-	mockConfig := mock_config.NewMockInterface(mockCtrl)
-	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
-	mockConfig.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
-	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
-	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/gem_analogj_test").MinTimes(1)
-	pipelineData := new(pipeline.Data)
-	client := githubVcrSetup(t)
-	pipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
-		{
-			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
-			ArtifactName: "gem_analogj_test.gem",
-		},
-	}
-	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
-	require.NoError(t, err)
-	defer os.Remove(pipelineData.GitParentPath)
-
-	pipelineData.GitLocalPath = path.Join(pipelineData.GitParentPath, "gem_analogj_test")
-
-	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), pipelineData.GitLocalPath)
-	require.NoError(t, cerr)
-
-	//test
-	//the release id is found by using the following command:
-	//curl -u username:token https://api.github.com/repos/AnalogJ/gem_analogj_test/releases/latest
-	paerr := githubScm.PublishAssets(int64(7196038))
-	require.NoError(t, paerr)
-}
+//func TestScmGithub_PublishAssets(t *testing.T) {
+//	//setup
+//	mockCtrl := gomock.NewController(t)
+//	defer mockCtrl.Finish()
+//	mockConfig := mock_config.NewMockInterface(mockCtrl)
+//	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
+//	mockConfig.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
+//	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
+//	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/gem_analogj_test").MinTimes(1)
+//	pipelineData := new(pipeline.Data)
+//	client := githubVcrSetup(t)
+//	pipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
+//		{
+//			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
+//			ArtifactName: "gem_analogj_test.gem",
+//		},
+//	}
+//	githubScm, err := scm.Create("github", pipelineData, mockConfig, client)
+//	require.NoError(t, err)
+//	defer os.Remove(pipelineData.GitParentPath)
+//
+//	pipelineData.GitLocalPath = path.Join(pipelineData.GitParentPath, "gem_analogj_test")
+//
+//	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), pipelineData.GitLocalPath)
+//	require.NoError(t, cerr)
+//
+//	//test
+//	//the release id is found by using the following command:
+//	//curl -u username:token https://api.github.com/repos/AnalogJ/gem_analogj_test/releases/latest
+//	paerr := githubScm.PublishAssets(int64(7196038))
+//	require.NoError(t, paerr)
+//}
 
 func TestScmGithub_Cleanup_WithoutEnablingBranchCleanup(t *testing.T) {
 	//setup

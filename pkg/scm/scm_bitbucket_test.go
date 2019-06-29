@@ -304,7 +304,7 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPullRequestPayload(
 	suite.Config.EXPECT().IsSet("scm_pull_request").Return(true)
 	suite.Config.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
 	suite.Config.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
-	
+
 	//test
 	githubScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
 	require.NoError(suite.T(), err)
@@ -354,33 +354,33 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Publish() {
 	require.NotNil(suite.T(), suite.PipelineData.GitBaseInfo)
 }
 
-func (suite *ScmBitbucketTestSuite) TestScmBitbucket_PublishAssets() {
-	//setup
-	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
-	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
-	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
-	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
-	suite.PipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
-		{
-			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
-			ArtifactName: "gem_analogj_test.gem",
-		},
-	}
-	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
-	require.NoError(suite.T(), err)
-	defer os.Remove(suite.PipelineData.GitParentPath)
-
-	suite.PipelineData.GitLocalPath = path.Join(suite.PipelineData.GitParentPath, "gem_analogj_test")
-
-	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
-	require.NoError(suite.T(), cerr)
-
-	//test
-	paerr := testScm.PublishAssets(nil)
-	require.NoError(suite.T(), paerr)
-}
+//func (suite *ScmBitbucketTestSuite) TestScmBitbucket_PublishAssets() {
+//	//setup
+//	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
+//	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
+//	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
+//	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
+//	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
+//	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
+//	suite.PipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
+//		{
+//			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
+//			ArtifactName: "gem_analogj_test.gem",
+//		},
+//	}
+//	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
+//	require.NoError(suite.T(), err)
+//	defer os.Remove(suite.PipelineData.GitParentPath)
+//
+//	suite.PipelineData.GitLocalPath = path.Join(suite.PipelineData.GitParentPath, "gem_analogj_test")
+//
+//	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
+//	require.NoError(suite.T(), cerr)
+//
+//	//test
+//	paerr := testScm.PublishAssets(nil)
+//	require.NoError(suite.T(), paerr)
+//}
 
 func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Notify() {
 	//setup
