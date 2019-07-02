@@ -39,7 +39,7 @@ RUN ci/test-build.sh ${PACKAGE_TYPE}
 ## Golang
 ##
 ##################################################
-FROM golang:1.8 AS golang
+FROM golang:1.12 AS golang
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
