@@ -3,6 +3,7 @@ import:
 - package: github.com/spf13/viper
 - package: gopkg.in/urfave/cli.v2
 - package: github.com/google/go-github
+  version: 18.0.0
   subpackages:
   - github
 - package: gopkg.in/libgit2/git2go.v25
