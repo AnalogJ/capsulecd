@@ -52,11 +52,9 @@
 
 [[constraint]]
   name = "github.com/kvz/logstreamer"
-  version = "2.2.2"
 
 [[constraint]]
   name = "github.com/matryer/moq"
-  version = "2.2.2"
 
 [[constraint]]
   name = "github.com/golang/mock"
