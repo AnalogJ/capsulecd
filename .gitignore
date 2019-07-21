@@ -73,7 +73,6 @@ _testmain.go
 
 .idea
 vendor
-glide.lock
 /capsulecd-darwin-amd64
 /capsulecd-linux-amd64
 
