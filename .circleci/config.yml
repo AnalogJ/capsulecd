@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: /go/src/capsulecd
+    working_directory: /go/src/github.com/analogj/capsulecd
     docker:
       - image: docker:17.06.1-ce-git
         environment:
