@@ -29,6 +29,7 @@ type scmGithub struct {
 func (g *scmGithub) Init(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) error {
 	g.PipelineData = pipelineData
 	g.Config = myconfig
+	g.Config.SetDefault("scm_github_access_token_type", "user")
 
 	if !g.Config.IsSet("scm_github_access_token") {
 		return errors.ScmAuthenticationFailed("Missing github access token")
@@ -141,7 +142,20 @@ func (g *scmGithub) CheckoutPushPayload(payload *Payload) error {
 		return err
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"), "")
+	var gitRemoteUsername string
+	var gitRemotePassword string
+
+	if g.Config.GetString("scm_github_access_token_type") == "app" {
+		// see https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/
+		gitRemoteUsername = "x-access-token"
+		gitRemotePassword = g.Config.GetString("scm_github_access_token")
+	} else {
+		gitRemoteUsername = g.Config.GetString("scm_github_access_token")
+		gitRemotePassword = ""
+	}
+
+
+	authRemote, aerr := authGitRemote(g.PipelineData.GitHeadInfo.Repo.CloneUrl, gitRemoteUsername, gitRemotePassword)
 	if aerr != nil {
 		return aerr
 	}
