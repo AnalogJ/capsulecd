@@ -27,7 +27,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& go get -u gopkg.in/alecthomas/gometalinter.v2 \
 	&& gometalinter.v2 --install \
-	&& go get github.com/Masterminds/glide
+	&& go get github.com/Masterminds/glide \
+    && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 COPY ./ci/capsulecd.sh /scripts/capsulecd.sh
 COPY ./ci/development.sh /scripts/development.sh
