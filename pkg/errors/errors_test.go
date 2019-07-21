@@ -1,7 +1,7 @@
 package errors_test
 
 import (
-	"capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

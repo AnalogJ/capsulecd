@@ -1,12 +1,12 @@
 package scm_test
 
 import (
-	"capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/scm"
 	"github.com/stretchr/testify/require"
 	"testing"
 
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"context"
 	"crypto/tls"
 	"github.com/golang/mock/gomock"

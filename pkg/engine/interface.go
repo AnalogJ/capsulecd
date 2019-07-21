@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
 )
 
 // Create mock using:

@@ -1,8 +1,8 @@
 package config
 
 import (
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"encoding/base64"
 	stderrors "errors"
 	"fmt"

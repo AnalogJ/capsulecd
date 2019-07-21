@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	stderrors "errors"
 	"fmt"
 	git2go "gopkg.in/libgit2/git2go.v25"

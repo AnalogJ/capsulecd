@@ -1,6 +1,6 @@
 package scm
 
-import "capsulecd/pkg/pipeline"
+import "github.com/analogj/capsulecd/pkg/pipeline"
 
 type Payload struct {
 	Head *pipeline.ScmCommitInfo

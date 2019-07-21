@@ -1,16 +1,16 @@
 package mgr
 
 import (
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"net/http"
 	"os/exec"
-	"capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/errors"
 	"path"
 	"os"
 	"io/ioutil"
 	"fmt"
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/utils"
 )
 
 func DetectPythonPip(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) bool {

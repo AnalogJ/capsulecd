@@ -5,8 +5,8 @@
 package mock_mgr
 
 import (
-	config "capsulecd/pkg/config"
-	pipeline "capsulecd/pkg/pipeline"
+	config "github.com/analogj/capsulecd/pkg/config"
+	pipeline "github.com/analogj/capsulecd/pkg/pipeline"
 	gomock "github.com/golang/mock/gomock"
 	http "net/http"
 	reflect "reflect"

@@ -3,7 +3,7 @@ package engine
 import (
 	"github.com/stretchr/testify/require"
 	"testing"
-	"capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/config/mock"
 	"github.com/golang/mock/gomock"
 )
 

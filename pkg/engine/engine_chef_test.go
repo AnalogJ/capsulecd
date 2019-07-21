@@ -3,19 +3,19 @@
 package engine_test
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/engine"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/engine"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
 	"path"
 	//"path/filepath"
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/scm/mock"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/scm/mock"
 	"os"
 	"testing"
 )

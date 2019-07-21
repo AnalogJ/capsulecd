@@ -5,11 +5,11 @@ import (
 	"os"
 	"time"
 
-	"capsulecd/pkg"
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/utils"
-	"capsulecd/pkg/version"
+	"github.com/analogj/capsulecd/pkg"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/version"
 	"gopkg.in/urfave/cli.v2"
 	"path/filepath"
 )

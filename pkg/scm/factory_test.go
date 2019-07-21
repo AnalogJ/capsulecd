@@ -1,9 +1,9 @@
 package scm_test
 
 import (
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"

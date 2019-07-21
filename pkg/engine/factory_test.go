@@ -1,10 +1,10 @@
 package engine_test
 
 import (
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/engine"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm/mock"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/engine"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm/mock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"

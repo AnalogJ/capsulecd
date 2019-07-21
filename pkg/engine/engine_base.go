@@ -1,10 +1,10 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/utils"
 	stderrors "errors"
 	"fmt"
 	"github.com/Masterminds/semver"

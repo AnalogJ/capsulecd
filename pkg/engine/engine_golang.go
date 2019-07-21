@@ -2,12 +2,12 @@ package engine
 
 import (
 	"bytes"
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/metadata"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"fmt"
 	"go/ast"
 	"go/format"

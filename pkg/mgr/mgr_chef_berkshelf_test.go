@@ -5,17 +5,17 @@ package mgr_test
 import (
 	"github.com/stretchr/testify/suite"
 	"github.com/golang/mock/gomock"
-	"capsulecd/pkg/mgr/mock"
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/mgr/mock"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"testing"
 	"io/ioutil"
 	"github.com/stretchr/testify/require"
 	"os"
 	"path"
-	"capsulecd/pkg/metadata"
-	"capsulecd/pkg/mgr"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/mgr"
+	"github.com/analogj/capsulecd/pkg/utils"
 )
 
 // Define the suite, and absorb the built-in basic suite

@@ -1,10 +1,10 @@
 package scm_test
 
 import (
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"crypto/tls"
 	"github.com/golang/mock/gomock"
 	"github.com/seborama/govcr"

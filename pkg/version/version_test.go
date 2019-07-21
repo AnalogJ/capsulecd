@@ -1,7 +1,7 @@
 package version_test
 
 import (
-	"capsulecd/pkg/version"
+	"github.com/analogj/capsulecd/pkg/version"
 	"github.com/Masterminds/semver"
 	"github.com/stretchr/testify/require"
 	"testing"

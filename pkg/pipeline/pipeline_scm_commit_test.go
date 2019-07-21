@@ -1,7 +1,7 @@
 package pipeline_test
 
 import (
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
