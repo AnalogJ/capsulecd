@@ -15,20 +15,20 @@ ARG PACKAGE_TYPE=golang
 
 FROM analogj/libgit2-crossbuild:linux-amd64 AS base
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
-WORKDIR /go/src/capsulecd
+WORKDIR /go/src/github.com/analogj/capsulecd
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
  	apt-transport-https \
     ca-certificates \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& go get github.com/Masterminds/glide
+	&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 COPY . .
 
-## download glide deps & move libgit2 library into expected location.
-RUN glide install \
-	&& mkdir -p /go/src/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build \
-	&& cp -r /usr/local/lib/libgit2/lib/pkgconfig/. /go/src/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
+## download deps & move libgit2 library into expected location.
+RUN dep ensure \
+	&& mkdir -p /go/src/github.com/analogj/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build \
+	&& cp -r /usr/local/lib/libgit2/lib/pkgconfig/. /go/src/github.com/analogj/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
@@ -50,12 +50,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& go get -u gopkg.in/alecthomas/gometalinter.v2 \
 	&& gometalinter.v2 --install \
-	&& go get github.com/Masterminds/glide \
 	&& curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
-COPY --from=base /go/src/capsulecd /go/src/capsulecd
+COPY --from=base /go/src/github.com/analogj/capsulecd /go/src/github.com/analogj/capsulecd
 
-WORKDIR /go/src/capsulecd
+WORKDIR /go/src/github.com/analogj/capsulecd
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
