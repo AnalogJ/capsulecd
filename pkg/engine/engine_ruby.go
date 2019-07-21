@@ -1,11 +1,12 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -14,9 +15,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
-	"capsulecd/pkg/metadata"
 )
-
 
 type rubyGemspec struct {
 	Name    string `json:"name"`
@@ -56,7 +55,6 @@ func (g *engineRuby) GetCurrentMetadata() interface{} {
 func (g *engineRuby) GetNextMetadata() interface{} {
 	return g.NextMetadata
 }
-
 
 func (g *engineRuby) ValidateTools() error {
 	if _, kerr := exec.LookPath("ruby"); kerr != nil {
@@ -136,10 +134,10 @@ func (g *engineRuby) AssembleStep() error {
 //func (g *engineRuby) TestStep() error { }
 
 func (g *engineRuby) PackageStep() error {
-	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
+	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) %s", g.NextMetadata.Version, g.Config.GetString("engine_version_bump_msg"))); cerr != nil {
 		return cerr
 	}
-	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
+	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version), g.Config.GetString("engine_version_bump_msg"))
 	if terr != nil {
 		return terr
 	}

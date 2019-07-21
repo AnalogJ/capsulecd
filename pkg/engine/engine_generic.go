@@ -1,19 +1,18 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"fmt"
 	"github.com/Masterminds/semver"
 	"io/ioutil"
 	"path"
 	"strings"
-	"capsulecd/pkg/metadata"
 )
-
 
 type engineGeneric struct {
 	engineBase
@@ -32,7 +31,7 @@ func (g *engineGeneric) Init(pipelineData *pipeline.Data, config config.Interfac
 
 	//set command defaults (can be overridden by repo/system configuration)
 	g.Config.SetDefault("engine_generic_version_template", `version := "%d.%d.%d"`)
-	g.Config.SetDefault("engine_generic_version_path", "VERSION")
+	g.Config.SetDefault("engine_version_metadata_path", "VERSION")
 	g.Config.SetDefault("engine_cmd_compile", "echo 'skipping compile'")
 	g.Config.SetDefault("engine_cmd_lint", "echo 'skipping lint'")
 	g.Config.SetDefault("engine_cmd_fmt", "echo 'skipping fmt'")
@@ -55,8 +54,8 @@ func (g *engineGeneric) ValidateTools() error {
 func (g *engineGeneric) AssembleStep() error {
 	//validate that the chef metadata.rb file exists
 
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_generic_version_path"))) {
-		return errors.EngineBuildPackageInvalid(fmt.Sprintf("version file (%s) is required for metadata storage via generic engine", g.Config.GetString("engine_generic_version_path")))
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_version_metadata_path"))) {
+		return errors.EngineBuildPackageInvalid(fmt.Sprintf("version file (%s) is required for metadata storage via generic engine", g.Config.GetString("engine_version_metadata_path")))
 	}
 
 	// bump up the go package version
@@ -77,10 +76,10 @@ func (g *engineGeneric) AssembleStep() error {
 
 func (g *engineGeneric) PackageStep() error {
 
-	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
+	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) %s", g.NextMetadata.Version, g.Config.GetString("engine_version_bump_msg"))); cerr != nil {
 		return cerr
 	}
-	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
+	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version), g.Config.GetString("engine_version_bump_msg"))
 	if terr != nil {
 		return terr
 	}
@@ -90,11 +89,10 @@ func (g *engineGeneric) PackageStep() error {
 	return nil
 }
 
-
 //Helpers
 func (g *engineGeneric) retrieveCurrentMetadata(gitLocalPath string) error {
 	//read VERSION file.
-	versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, g.Config.GetString("engine_generic_version_path")))
+	versionContent, rerr := ioutil.ReadFile(path.Join(gitLocalPath, g.Config.GetString("engine_version_metadata_path")))
 	if rerr != nil {
 		return rerr
 	}
@@ -131,5 +129,5 @@ func (g *engineGeneric) writeNextMetadata(gitLocalPath string) error {
 	template := g.Config.GetString("engine_generic_version_template")
 	versionContent := fmt.Sprintf(template, v.Major(), v.Minor(), v.Patch())
 
-	return ioutil.WriteFile(path.Join(gitLocalPath, g.Config.GetString("engine_generic_version_path")), []byte(versionContent), 0644)
+	return ioutil.WriteFile(path.Join(gitLocalPath, g.Config.GetString("engine_version_metadata_path")), []byte(versionContent), 0644)
 }

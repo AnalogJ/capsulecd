@@ -1,4 +1,6 @@
 ---
+# This file is a comprehensive list of all configuration options available in CapsuleCD
+# All keys are optional. Defaults are included where applicable.
 
 ###############################################################################
 #
@@ -45,6 +47,12 @@ scm_disable_nearest_tag_changelog: false
 # Completion of CapsuleCD pipeline
 scm_enable_branch_cleanup: false
 
+# Specifies the source of commit status update(s).
+scm_notify_source: 'CapsuleCD'
+
+# Specifies a url that can be used to provide context when commit status messages are sent to SCM
+scm_notify_target_url: 'https://github.com/AnalogJ/capsulecd'
+
 ###############################################################################
 #
 # Engine Base Configuration
@@ -53,6 +61,13 @@ scm_enable_branch_cleanup: false
 
 # Specifies the Semvar segment (major, minor, patch) to bump before releasing package
 engine_version_bump_type: 'patch'
+
+# Specifies the git commit message for
+engine_version_bump_msg: 'Automated packaging of release by CapsuleCD'
+
+# Specifies the path to the metadata file containing the version info.
+# Only applies to engines where version metadata location is not standardized.
+engine_version_metadata_path: ''
 
 # Specifies the command to compile source into binary
 engine_cmd_compile: '' #eg. 'go build $(go list ./cmd/...)'

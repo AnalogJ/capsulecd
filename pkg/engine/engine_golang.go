@@ -2,23 +2,23 @@ package engine
 
 import (
 	"bytes"
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"fmt"
 	"go/ast"
 	"go/format"
 	"go/parser"
 	"go/token"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
-	"capsulecd/pkg/metadata"
-	"log"
 )
 
 type engineGolang struct {
@@ -44,6 +44,7 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	g.Config.SetDefault("engine_cmd_test", "go test $(glide novendor)")
 	g.Config.SetDefault("engine_cmd_security_check", "exit 0") //TODO: update when there's a dependency checker for Golang/Glide
 
+	g.Config.SetDefault("engine_version_metadata_path", "pkg/version/version.go")
 	var scmDomain string
 	if g.Config.GetString("scm") == "bitbucket" {
 		scmDomain = "bitbucket.org"
@@ -51,7 +52,7 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 		scmDomain = "github.com"
 	}
 
-	g.Config.SetDefault("engine_golang_package_path", fmt.Sprintf("%s/%s",scmDomain, strings.ToLower(g.Config.GetString("scm_repo_full_name"))))
+	g.Config.SetDefault("engine_golang_package_path", fmt.Sprintf("%s/%s", scmDomain, strings.ToLower(g.Config.GetString("scm_repo_full_name"))))
 
 	//TODO: figure out why setting the GOPATH workspace is causing the tools to timeout.
 	// golang recommends that your in-development packages are in the GOPATH and glide requires it to do glide install.
@@ -92,8 +93,8 @@ func (g *engineGolang) ValidateTools() error {
 func (g *engineGolang) AssembleStep() error {
 	//validate that the chef metadata.rb file exists
 
-	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go")) {
-		return errors.EngineBuildPackageInvalid("pkg/version/version.go file is required to process Go library")
+	if !utils.FileExists(path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_version_metadata_path"))) {
+		return errors.EngineBuildPackageInvalid(fmt.Sprintf("%s file is required to process Go library", g.Config.GetString("engine_version_metadata_path")))
 	}
 
 	// bump up the go package version
@@ -197,10 +198,10 @@ func (g *engineGolang) TestStep() error {
 }
 
 func (g *engineGolang) PackageStep() error {
-	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
+	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) %s", g.NextMetadata.Version, g.Config.GetString("engine_version_bump_msg"))); cerr != nil {
 		return cerr
 	}
-	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
+	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version), g.Config.GetString("engine_version_bump_msg"))
 	if terr != nil {
 		return terr
 	}
@@ -226,7 +227,7 @@ func (g *engineGolang) customGopathEnv() []string {
 
 func (g *engineGolang) retrieveCurrentMetadata(gitLocalPath string) error {
 
-	versionContent, rerr := ioutil.ReadFile(path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go"))
+	versionContent, rerr := ioutil.ReadFile(path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_version_metadata_path")))
 	if rerr != nil {
 		return rerr
 	}
@@ -262,7 +263,7 @@ func (g *engineGolang) populateNextMetadata() error {
 }
 
 func (g *engineGolang) writeNextMetadata(gitLocalPath string) error {
-	versionPath := path.Join(g.PipelineData.GitLocalPath, "pkg", "version", "version.go")
+	versionPath := path.Join(g.PipelineData.GitLocalPath, g.Config.GetString("engine_version_metadata_path"))
 	versionContent, rerr := ioutil.ReadFile(versionPath)
 	if rerr != nil {
 		return rerr
@@ -306,7 +307,7 @@ func (g *engineGolang) parseGoVersion(list []ast.Decl) (string, error) {
 			}
 		}
 	}
-	return "", errors.EngineBuildPackageFailed("Could not retrieve the version from pkg/version/version.go")
+	return "", errors.EngineBuildPackageFailed(fmt.Sprintf("Could not retrieve the version from %s", g.Config.GetString("engine_version_metadata_path")))
 }
 
 func (g *engineGolang) setGoVersion(list []ast.Decl, version string) ([]ast.Decl, error) {
@@ -324,5 +325,5 @@ func (g *engineGolang) setGoVersion(list []ast.Decl, version string) ([]ast.Decl
 			}
 		}
 	}
-	return nil, errors.EngineBuildPackageFailed("Could not set the version in pkg/version/version.go")
+	return nil, errors.EngineBuildPackageFailed(fmt.Sprintf("Could not set the version in %s", g.Config.GetString("engine_version_metadata_path")))
 }

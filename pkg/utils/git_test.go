@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
@@ -188,7 +188,7 @@ func TestGitTag(t *testing.T) {
 	require.NoError(t, werr)
 	gcerr := utils.GitCommit(clonePath, "Added New File")
 	require.NoError(t, gcerr)
-	tid, terr := utils.GitTag(clonePath, "v9.9.9")
+	tid, terr := utils.GitTag(clonePath, "v9.9.9", "test git tag message")
 
 	//assert
 	require.NoError(t, terr)
@@ -202,7 +202,7 @@ func TestGitTag_InvalidDirectory(t *testing.T) {
 	dirPath := path.Join("this", "path", "does", "not", "exist")
 
 	//test
-	tag, ferr := utils.GitTag(dirPath, "version")
+	tag, ferr := utils.GitTag(dirPath, "version", "test git tag message")
 
 	//assert
 	require.Error(t, ferr)
@@ -418,7 +418,7 @@ func TestGitGenerateChangelog_TagSincePROpened(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "tags_analogj_test2", "https://github.com/AnalogJ/tags_analogj_test2.git")
 	require.NoError(t, cerr)
-	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest2_pr1", "refs/pull/%s/merge","")
+	cerr = utils.GitFetchPullRequest(clonePath, "1", "tagsAnalogJTest2_pr1", "refs/pull/%s/merge", "")
 	require.NoError(t, cerr)
 	//headSha, err := utils.GitHead(clonePath)
 	//require.NoError(t, err)

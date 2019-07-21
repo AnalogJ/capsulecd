@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	stderrors "errors"
 	"fmt"
 	git2go "gopkg.in/libgit2/git2go.v25"
@@ -211,7 +211,7 @@ func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchNam
 	}
 
 	//fetch the commits for the remoteBranchName
-	rferr := prRemote.Fetch([]string{"refs/heads/"+remoteBranchName}, new(git2go.FetchOptions),"")
+	rferr := prRemote.Fetch([]string{"refs/heads/" + remoteBranchName}, new(git2go.FetchOptions), "")
 	if rferr != nil {
 		return rferr
 	}
@@ -222,12 +222,10 @@ func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchNam
 	}
 	remoteBranchID := remoteBranch.Target()
 
-
-
 	//Assuming we are already checkout as the destination branch
 	remotePrAnnCommit, err := repo.AnnotatedCommitFromRef(remoteBranch)
 	if err != nil {
-		log.Print("Failed get annotated commit from remote " )
+		log.Print("Failed get annotated commit from remote ")
 		return err
 	}
 	defer remotePrAnnCommit.Free()
@@ -244,14 +242,14 @@ func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchNam
 	mergeHeads[0] = remotePrAnnCommit
 	analysis, _, err := repo.MergeAnalysis(mergeHeads)
 
-	if analysis & git2go.MergeAnalysisNone != 0 || analysis & git2go.MergeAnalysisUpToDate != 0 {
+	if analysis&git2go.MergeAnalysisNone != 0 || analysis&git2go.MergeAnalysisUpToDate != 0 {
 		log.Print("Found nothing to merge. This should not happen for valid PR's")
 		return errors.ScmMergeNothingToMergeError("Found nothing to merge. This should not happen for valid PR's")
-	} else if analysis & git2go.MergeAnalysisNormal != 0 {
+	} else if analysis&git2go.MergeAnalysisNormal != 0 {
 		// Just merge changes
 
 		//Options for merge
-		mergeOpts, err :=  git2go.DefaultMergeOptions()
+		mergeOpts, err := git2go.DefaultMergeOptions()
 		if err != nil {
 			return err
 		}
@@ -319,7 +317,7 @@ func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchNam
 		repo.CreateCommit("HEAD", sig, sig, "", tree, localCommit, remoteCommit)
 		// Clean up
 		repo.StateCleanup()
-	} else if analysis & git2go.MergeAnalysisFastForward != 0 {
+	} else if analysis&git2go.MergeAnalysisFastForward != 0 {
 		// Fast-forward changes
 		// Get remote tree
 
@@ -468,7 +466,7 @@ func GitCommit(repoPath string, message string) error {
 	return cerr
 }
 
-func GitTag(repoPath string, version string) (string, error) {
+func GitTag(repoPath string, version string, message string) (string, error) {
 	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
@@ -484,7 +482,7 @@ func GitTag(repoPath string, version string) (string, error) {
 	}
 
 	//tagId, terr := repo.Tags.CreateLightweight(version, commit, false)
-	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(%s) Automated packaging of release by CapsuleCD", version))
+	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(%s) %s", version, message))
 	if terr != nil {
 		return "", terr
 	}

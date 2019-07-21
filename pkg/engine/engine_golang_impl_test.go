@@ -3,9 +3,9 @@ package engine
 import (
 	"github.com/stretchr/testify/suite"
 	"github.com/golang/mock/gomock"
-	"capsulecd/pkg/scm/mock"
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm/mock"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"testing"
 	"github.com/stretchr/testify/require"
 )

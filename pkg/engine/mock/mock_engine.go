@@ -5,9 +5,9 @@
 package mock_engine
 
 import (
-	config "capsulecd/pkg/config"
-	pipeline "capsulecd/pkg/pipeline"
-	scm "capsulecd/pkg/scm"
+	config "github.com/analogj/capsulecd/pkg/config"
+	pipeline "github.com/analogj/capsulecd/pkg/pipeline"
+	scm "github.com/analogj/capsulecd/pkg/scm"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

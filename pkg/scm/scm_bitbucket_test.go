@@ -1,26 +1,25 @@
 package scm_test
 
 import (
-	"testing"
-	"net/http"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"crypto/tls"
+	"github.com/golang/mock/gomock"
 	"github.com/seborama/govcr"
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"path"
 	"strings"
-	"github.com/golang/mock/gomock"
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"github.com/stretchr/testify/require"
-	"io/ioutil"
-	"os"
-	"github.com/stretchr/testify/suite"
-	"capsulecd/pkg/utils"
+	"testing"
 )
 
 //TODO: set to true when development is complete and no new recordings need to be created (CI mode enabled)
 const DISABLE_RECORDINGS = false
-
 
 func bitbucketVcrSetup(t *testing.T) *http.Client {
 	tr := http.DefaultTransport.(*http.Transport)
@@ -96,11 +95,10 @@ func TestScmBitbucket_TestSuite(t *testing.T) {
 	suite.Run(t, new(ScmBitbucketTestSuite))
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithoutUsername() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Init_WithoutUsername() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(false)
-
 
 	//test
 	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
@@ -111,7 +109,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithoutUsername() {
 
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithoutPassword() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Init_WithoutPassword() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
@@ -150,7 +148,7 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Init_WithGitParentPath() {
 
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithDefaults() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Init_WithDefaults() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
@@ -169,8 +167,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Init_WithDefaults() {
 
 }
 
-
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_RetrievePayload_PullRequest() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
 	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
@@ -189,13 +186,12 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest(
 
 	//assert
 	require.NotEmpty(suite.T(), payload, "payload must be set after source Init")
-	require.Equal(suite.T(),"1", payload.PullRequestNumber)
+	require.Equal(suite.T(), "1", payload.PullRequestNumber)
 	require.True(suite.T(), suite.PipelineData.IsPullRequest)
 
 }
 
-
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest_InvalidState() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_RetrievePayload_PullRequest_InvalidState() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
 	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
@@ -217,7 +213,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_PullRequest_
 
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_Push() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_RetrievePayload_Push() {
 
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
@@ -248,7 +244,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_RetrievePayload_Push() {
 	require.False(suite.T(), suite.PipelineData.IsPullRequest)
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPushPayload() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPushPayload() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
 	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
@@ -277,7 +273,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPushPayload() {
 	require.NotNil(suite.T(), suite.PipelineData.GitHeadInfo)
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPushPayload_WithInvalidPayload() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPushPayload_WithInvalidPayload() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
 	suite.Config.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
@@ -295,7 +291,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPushPayload_WithInva
 	require.Error(suite.T(), pperr, "should return an error")
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPullRequestPayload() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPullRequestPayload() {
 	//setup
 
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
@@ -306,6 +302,8 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPullRequestPayload()
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
 	suite.Config.EXPECT().GetString("scm_pull_request").Return("3")
 	suite.Config.EXPECT().IsSet("scm_pull_request").Return(true)
+	suite.Config.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
+	suite.Config.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
 
 	//test
 	githubScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
@@ -322,7 +320,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_CheckoutPullRequestPayload()
 	require.NotNil(suite.T(), suite.PipelineData.GitBaseInfo)
 }
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Publish() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Publish() {
 	//TODO:cant test publish because it'll continuously push to github repo.
 	suite.T().Skip()
 
@@ -343,7 +341,7 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Publish() {
 	require.NoError(suite.T(), perr)
 	pperr := testScm.CheckoutPullRequestPayload(payload)
 	require.NoError(suite.T(), pperr)
-	_, terr := utils.GitTag(suite.PipelineData.GitLocalPath, "v1.0.0")
+	_, terr := utils.GitTag(suite.PipelineData.GitLocalPath, "v1.0.0", "test git tag message")
 	require.NoError(suite.T(), terr)
 	suite.PipelineData.ReleaseVersion = "1.0.0"
 	pberr := testScm.Publish()
@@ -356,36 +354,35 @@ func (suite *ScmBitbucketTestSuite)TestScmBitbucket_Publish() {
 	require.NotNil(suite.T(), suite.PipelineData.GitBaseInfo)
 }
 
+//func (suite *ScmBitbucketTestSuite) TestScmBitbucket_PublishAssets() {
+//	//setup
+//	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
+//	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
+//	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
+//	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
+//	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
+//	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
+//	suite.PipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
+//		{
+//			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
+//			ArtifactName: "gem_analogj_test.gem",
+//		},
+//	}
+//	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
+//	require.NoError(suite.T(), err)
+//	defer os.Remove(suite.PipelineData.GitParentPath)
+//
+//	suite.PipelineData.GitLocalPath = path.Join(suite.PipelineData.GitParentPath, "gem_analogj_test")
+//
+//	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
+//	require.NoError(suite.T(), cerr)
+//
+//	//test
+//	paerr := testScm.PublishAssets(nil)
+//	require.NoError(suite.T(), paerr)
+//}
 
-func (suite *ScmBitbucketTestSuite)TestScmBitbucket_PublishAssets() {
-	//setup
-	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
-	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
-	suite.Config.EXPECT().GetString("scm_bitbucket_username").MinTimes(1).Return(suite.Username)
-	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
-	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
-	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
-	suite.PipelineData.ReleaseAssets = []pipeline.ScmReleaseAsset{
-		{
-			LocalPath:    path.Join("test_nested_dir", "gem_analogj_test-0.1.4.gem"),
-			ArtifactName: "gem_analogj_test.gem",
-		},
-	}
-	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
-	require.NoError(suite.T(), err)
-	defer os.Remove(suite.PipelineData.GitParentPath)
-
-	suite.PipelineData.GitLocalPath = path.Join(suite.PipelineData.GitParentPath, "gem_analogj_test")
-
-	cerr := utils.CopyDir(path.Join("testdata", "gem_analogj_test"), suite.PipelineData.GitLocalPath)
-	require.NoError(suite.T(), cerr)
-
-	//test
-	paerr := testScm.PublishAssets(nil)
-	require.NoError(suite.T(), paerr)
-}
-
-func  (suite *ScmBitbucketTestSuite)TestScmBitbucket_Notify() {
+func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Notify() {
 	//setup
 	suite.Config.EXPECT().IsSet("scm_bitbucket_username").Return(true)
 	suite.Config.EXPECT().IsSet("scm_bitbucket_password").MinTimes(1).Return(true)
@@ -393,6 +390,8 @@ func  (suite *ScmBitbucketTestSuite)TestScmBitbucket_Notify() {
 	suite.Config.EXPECT().GetString("scm_bitbucket_password").MinTimes(1).Return(suite.Password)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test")
+	suite.Config.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
+	suite.Config.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
 
 	//test
 	githubScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)

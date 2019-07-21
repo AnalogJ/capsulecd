@@ -1,10 +1,10 @@
 package scm
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"context"
 	"fmt"
 	"github.com/google/go-github/github"
@@ -366,8 +366,8 @@ func (g *scmGithub) Cleanup() error {
 }
 
 func (g *scmGithub) Notify(ref string, state /*pending, failure, success*/ string, message string) error {
-	targetURL := "https://www.capsulecd.com"
-	contextApp := "CapsuleCD"
+	targetURL := g.Config.GetString("scm_notify_target_url")
+	contextApp := g.Config.GetString("scm_notify_source")
 
 	ctx := context.Background()
 	parts := strings.Split(g.Config.GetString("scm_repo_full_name"), "/")

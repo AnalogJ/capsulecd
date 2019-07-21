@@ -1,14 +1,14 @@
 package mgr
 
 import (
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"net/http"
 	"path"
 	"os/exec"
-	"capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/errors"
 	"os"
-	"capsulecd/pkg/utils"
-	"capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
 )
 
 func DetectGolangGlide(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) bool {

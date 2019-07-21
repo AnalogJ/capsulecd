@@ -1,11 +1,11 @@
 package mgr
 
 import (
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"net/http"
-	"capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/errors"
 	"fmt"
-	"capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/config"
 )
 
 func Create(mgrType string, pipelineData *pipeline.Data, config config.Interface, client *http.Client) (Interface, error) {

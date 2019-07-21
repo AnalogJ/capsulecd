@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

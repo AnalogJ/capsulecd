@@ -3,19 +3,19 @@
 package engine_test
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/engine"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/engine"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
 	"path"
 	//"path/filepath"
-	"capsulecd/pkg/config/mock"
-	"capsulecd/pkg/scm/mock"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/scm/mock"
 	"os"
 	"testing"
 )
@@ -243,6 +243,7 @@ func (suite *EngineNodeTestSuite) TestEngineNode_PackageStep_WithoutLockFiles() 
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetBool("mgr_keep_lock_file").MinTimes(1).Return(false)
+	suite.Config.EXPECT().GetString("engine_version_bump_msg").Return("Automated packaging of release by CapsuleCD")
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")

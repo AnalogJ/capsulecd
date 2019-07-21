@@ -1,6 +1,6 @@
 package pipeline
 
-import "capsulecd/pkg/errors"
+import "github.com/analogj/capsulecd/pkg/errors"
 
 type ScmRepoInfo struct {
 	CloneUrl string

@@ -1,11 +1,12 @@
 package engine
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/errors"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,9 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"capsulecd/pkg/metadata"
 )
-
 
 type engineChef struct {
 	engineBase
@@ -101,7 +100,6 @@ func (g *engineChef) AssembleStep() error {
 	return nil
 }
 
-
 // Use default compile step..
 // func (g *engineChef) CompileStep() error {}
 
@@ -110,10 +108,10 @@ func (g *engineChef) AssembleStep() error {
 
 func (g *engineChef) PackageStep() error {
 
-	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) Automated packaging of release by CapsuleCD", g.NextMetadata.Version)); cerr != nil {
+	if cerr := utils.GitCommit(g.PipelineData.GitLocalPath, fmt.Sprintf("(v%s) %s", g.NextMetadata.Version, g.Config.GetString("engine_version_bump_msg"))); cerr != nil {
 		return cerr
 	}
-	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version))
+	tagCommit, terr := utils.GitTag(g.PipelineData.GitLocalPath, fmt.Sprintf("v%s", g.NextMetadata.Version), g.Config.GetString("engine_version_bump_msg"))
 	if terr != nil {
 		return terr
 	}

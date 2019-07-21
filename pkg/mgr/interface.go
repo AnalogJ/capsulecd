@@ -1,9 +1,9 @@
 package mgr
 
 import (
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"net/http"
-	"capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/config"
 )
 
 // Create mock using:

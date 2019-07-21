@@ -1,17 +1,17 @@
 package mgr
 
 import (
-	"capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"net/http"
-	"capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/config"
 	"os/exec"
-	"capsulecd/pkg/errors"
+	"github.com/analogj/capsulecd/pkg/errors"
 	"path"
 	"io/ioutil"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"os"
 	"fmt"
-	"capsulecd/pkg/metadata"
+	"github.com/analogj/capsulecd/pkg/metadata"
 )
 
 func DetectChefBerkshelf(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) bool {

@@ -1,17 +1,17 @@
 package pkg
 
 import (
-	"capsulecd/pkg/config"
-	"capsulecd/pkg/engine"
-	"capsulecd/pkg/pipeline"
-	"capsulecd/pkg/scm"
-	"capsulecd/pkg/utils"
+	"github.com/analogj/capsulecd/pkg/config"
+	"github.com/analogj/capsulecd/pkg/engine"
+	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/scm"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path"
-	"capsulecd/pkg/mgr"
+	"github.com/analogj/capsulecd/pkg/mgr"
 )
 
 type Pipeline struct {
