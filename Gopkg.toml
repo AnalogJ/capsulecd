@@ -62,7 +62,8 @@
 
 [[constraint]]
   name = "github.com/seborama/govcr"
-  version = "2.4.1"
+#  version = "2.4.1"
+  revision = "a20ea7b5807f64c80cf6ed51de68063ad05164f4"
 
 [[constraint]]
   name = "github.com/stretchr/testify"
