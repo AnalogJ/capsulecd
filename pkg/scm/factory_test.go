@@ -46,6 +46,7 @@ func (suite *ScmTestSuite) TestCreate_Invalid() {
 
 func (suite *ScmTestSuite) TestCreate_Github() {
 	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().GetString("scm_github_access_token").Return("placeholder")
 	suite.Config.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
 	suite.Config.EXPECT().IsSet("scm_github_access_token").Return(true)

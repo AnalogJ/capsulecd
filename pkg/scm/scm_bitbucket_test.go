@@ -275,6 +275,7 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPushPayload() {
 
 func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPushPayload_WithInvalidPayload() {
 	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	suite.Config.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
 	suite.Config.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
 	suite.Config.EXPECT().IsSet("scm_git_parent_path").Return(false)

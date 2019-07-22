@@ -229,6 +229,7 @@ func TestScmGithub_CheckoutPushPayload(t *testing.T) {
 	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true) //used by the init function
 	mockConfig.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
 	mockConfig.EXPECT().GetString("scm_github_access_token").Return("") //set the Access Token to empty string before doing checkout
+	mockConfig.EXPECT().GetString("scm_github_access_token_type").Return("user") //set the Access Token Type
 	// (so that git doesnt fail on placeholder token)
 	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	mockConfig.EXPECT().IsSet("scm_pull_request").Return(false)
