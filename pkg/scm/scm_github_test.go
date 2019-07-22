@@ -289,6 +289,7 @@ func TestScmGithub_CheckoutPullRequestPayload(t *testing.T) {
 	mockConfig.EXPECT().IsSet("scm_github_access_token").Return(true)
 	mockConfig.EXPECT().IsSet("scm_github_api_endpoint").Return(false)
 	mockConfig.EXPECT().GetString("scm_github_access_token").Return("")
+	mockConfig.EXPECT().GetString("scm_github_access_token_type").Return("user")
 	mockConfig.EXPECT().IsSet("scm_git_parent_path").Return(false)
 	mockConfig.EXPECT().GetString("scm_repo_full_name").Return("AnalogJ/cookbook_analogj_test").MinTimes(1)
 	mockConfig.EXPECT().GetInt("scm_pull_request").Return(12)

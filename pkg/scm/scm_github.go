@@ -203,7 +203,19 @@ func (g *scmGithub) CheckoutPullRequestPayload(payload *Payload) error {
 		return berr
 	}
 
-	authRemote, aerr := authGitRemote(g.PipelineData.GitBaseInfo.Repo.CloneUrl, g.Config.GetString("scm_github_access_token"), "")
+	var gitRemoteUsername string
+	var gitRemotePassword string
+
+	if g.Config.GetString("scm_github_access_token_type") == "app" {
+		// see https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/
+		gitRemoteUsername = "x-access-token"
+		gitRemotePassword = g.Config.GetString("scm_github_access_token")
+	} else {
+		gitRemoteUsername = g.Config.GetString("scm_github_access_token")
+		gitRemotePassword = ""
+	}
+
+	authRemote, aerr := authGitRemote(g.PipelineData.GitBaseInfo.Repo.CloneUrl, gitRemoteUsername, gitRemotePassword)
 	if aerr != nil {
 		return aerr
 	}
