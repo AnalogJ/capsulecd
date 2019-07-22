@@ -18,6 +18,8 @@ scm_github_api_endpoint: ''
 # Specifies the access token to use when cloning from and committing to Github
 scm_github_access_token: ''
 
+# Specifies the type of access token to be used. Can be `user` or `app`.
+scm_github_access_token_type: 'user'
 
 scm_bitbucket_username: ''
 # Specifies the app password to use when cloning from and committing to Bitbucket
