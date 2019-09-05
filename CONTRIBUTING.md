@@ -40,11 +40,11 @@ Build the CapsuleCD docker development environment:
 
 Run the docker development environment
 
-    $ docker run --rm -it -v `pwd`:/go/src/capsulecd capsulecd-development /scripts/development.sh
+    $ docker run --rm -it -v `pwd`:/go/src/github.com/analogj/capsulecd capsulecd-development /scripts/development.sh
 
 Now we should be inside the development container. Lets run the test suite. 
 
-    $ go test -v -tags "static" $(glide novendor)
+    $ go test -v -tags "static" ./...
     
 Once you've validated that the test suite has passed, you can now begin making changes to the capsulecd source.
 

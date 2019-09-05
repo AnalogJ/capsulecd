@@ -303,6 +303,8 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_CheckoutPullRequestPayload(
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
 	suite.Config.EXPECT().GetString("scm_pull_request").Return("3")
 	suite.Config.EXPECT().IsSet("scm_pull_request").Return(true)
+	suite.Config.EXPECT().GetString("engine_git_author_name").Return("CapsuleCD")
+	suite.Config.EXPECT().GetString("engine_git_author_email").Return("CapsuleCD@users.noreply.github.com")
 	suite.Config.EXPECT().GetString("scm_notify_source").Return("CapsuleCD")
 	suite.Config.EXPECT().GetString("scm_notify_target_url").Return("https://www.capsulecd.com")
 
@@ -334,6 +336,7 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Publish() {
 	suite.Config.EXPECT().GetString("scm_repo_full_name").Return("sparktree/gem_analogj_test").MinTimes(1)
 	suite.Config.EXPECT().GetString("scm_pull_request").Return("4")
 	suite.Config.EXPECT().IsSet("scm_pull_request").Return(true)
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
 	//test
 	testScm, err := scm.Create("bitbucket", suite.PipelineData, suite.Config, suite.Client)
@@ -342,7 +345,7 @@ func (suite *ScmBitbucketTestSuite) TestScmBitbucket_Publish() {
 	require.NoError(suite.T(), perr)
 	pperr := testScm.CheckoutPullRequestPayload(payload)
 	require.NoError(suite.T(), pperr)
-	_, terr := utils.GitTag(suite.PipelineData.GitLocalPath, "v1.0.0", "test git tag message")
+	_, terr := utils.GitTag(suite.PipelineData.GitLocalPath, "v1.0.0", "test git tag message", signature)
 	require.NoError(suite.T(), terr)
 	suite.PipelineData.ReleaseVersion = "1.0.0"
 	pberr := testScm.Publish()

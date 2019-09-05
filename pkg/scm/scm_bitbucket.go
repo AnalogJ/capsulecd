@@ -268,7 +268,8 @@ func (b *scmBitbucket) CheckoutPullRequestPayload(payload *Payload) error {
 	b.PipelineData.GitLocalPath = gitLocalPath
 	b.PipelineData.GitLocalBranch = fmt.Sprintf("pr_%s", payload.PullRequestNumber)
 
-	ferr := utils.GitMergeRemoteBranch(b.PipelineData.GitLocalPath, b.PipelineData.GitLocalBranch, b.PipelineData.GitBaseInfo.Ref, authHeadRemoteUrl, b.PipelineData.GitHeadInfo.Ref)
+	signature := utils.GitSignature(b.Config.GetString("engine_git_author_name"), b.Config.GetString("engine_git_author_email"))
+	ferr := utils.GitMergeRemoteBranch(b.PipelineData.GitLocalPath, b.PipelineData.GitLocalBranch, b.PipelineData.GitBaseInfo.Ref, authHeadRemoteUrl, b.PipelineData.GitHeadInfo.Ref, signature)
 	if ferr != nil {
 		return ferr
 	}

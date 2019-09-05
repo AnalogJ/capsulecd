@@ -11,12 +11,12 @@
 # Use `docker pull analogj/capsulecd:<language>`
 #
 ###############################################################################
-FROM analogj/libgit2-xgo
+FROM analogj/libgit2-crossbuild:linux-amd64
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
-WORKDIR /srv/capsulecd
+WORKDIR /go/src/github.com/analogj/capsulecd
 
-ENV PATH="/srv/capsulecd:/go/bin:${PATH}" \
+ENV PATH="/go/src/github.com/analogj/capsulecd:/go/bin:${PATH}" \
 	SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,7 +27,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& go get -u gopkg.in/alecthomas/gometalinter.v2 \
 	&& gometalinter.v2 --install \
-	&& go get github.com/Masterminds/glide \
     && curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 
 COPY ./ci/capsulecd.sh /scripts/capsulecd.sh

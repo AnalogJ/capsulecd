@@ -1,127 +1,145 @@
-version: 2
-jobs:
-  build:
-    working_directory: /go/src/github.com/analogj/capsulecd
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.5
+
+executors:
+  docker-in-docker:
     docker:
-      - image: docker:17.06.1-ce-git
-        environment:
-          GOROOT: /usr/lib/go
-          GOPATH: /go
+    - image: docker:17.06.1-ce-git
+    environment:
+      GOROOT: /usr/lib/go
+      GOPATH: ~/go
+    working_directory: ~/go/src/github.com/analogj/capsulecd
+
+jobs:
+  ######################################################################################################################
+  # Parallel Steps - Engine Testing & Coverage
+  ######################################################################################################################
+  chef:
+    executor: docker-in-docker
     steps:
       - checkout
       - setup_remote_docker:
           version: 17.05.0-ce
       - run:
-          name: Install dependencies
+          name: Build & Run Chef Docker containers with coverage
           command: |
-            env
-            docker info
-            apk --update-cache --allow-untrusted \
-                add go build-base bash curl \
-                && rm -rf /var/cache/apk/*
-
-            mkdir -p /coverage
-
-            # Configure Go
-            mkdir -p ${GOPATH}/src ${GOPATH}/bin
-
-            docker pull analogj/libgit2-crossbuild:linux-amd64
-# Use docker image caching if this is slow.
-# https://circleci.com/blog/how-to-build-a-docker-image-on-circleci-2-0/
-      - run:
-          name: Build application Docker image
-          command: |
-            docker build -f ci/Dockerfile.base --tag analogj/capsulecd-ci:base .
-            docker build -f ci/Dockerfile.chef --tag analogj/capsulecd-ci:chef .
-            docker build -f ci/Dockerfile.node --tag analogj/capsulecd-ci:node .
-            docker build -f ci/Dockerfile.python --tag analogj/capsulecd-ci:python .
-            docker build -f ci/Dockerfile.ruby --tag analogj/capsulecd-ci:ruby .
-            docker build -f ci/Dockerfile.golang --tag analogj/capsulecd-ci:golang .
-      - run:
-          name: Run Base Docker containers with coverage
-          command: |
-            CAPSULECD_ENV=base
-            echo "#################################################### $CAPSULECD_ENV"
-            docker run -e "CI=true" \
-              --name $CAPSULECD_ENV \
-              analogj/capsulecd-ci:$CAPSULECD_ENV \
-              ./ci/test-coverage.sh $CAPSULECD_ENV
-
-            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
-          when: always
-      - run:
-          name: Run Chef Docker containers with coverage
-          command: |
-            CAPSULECD_ENV=chef
-            echo "#################################################### $CAPSULECD_ENV"
-            docker run -e "CI=true" \
-              --name $CAPSULECD_ENV \
-              analogj/capsulecd-ci:$CAPSULECD_ENV \
-              ./ci/test-coverage.sh $CAPSULECD_ENV
-
-            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
-          when: always
-      - run:
-          name: Run Node Docker containers with coverage
-          command: |
-            CAPSULECD_ENV=node
-            echo "#################################################### $CAPSULECD_ENV"
-            docker run -e "CI=true" \
-              --name $CAPSULECD_ENV \
-              analogj/capsulecd-ci:$CAPSULECD_ENV \
-              ./ci/test-coverage.sh $CAPSULECD_ENV
-
-            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
-          when: always
-      - run:
-          name: Run Python Docker containers with coverage
-          command: |
-            CAPSULECD_ENV=python
-            echo "#################################################### $CAPSULECD_ENV"
-            docker run -e "CI=true" \
-              --name $CAPSULECD_ENV \
-              analogj/capsulecd-ci:$CAPSULECD_ENV \
-              ./ci/test-coverage.sh $CAPSULECD_ENV
-
-            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
-          when: always
-      - run:
-          name: Run Ruby Docker containers with coverage
-          command: |
-            CAPSULECD_ENV=ruby
-            echo "#################################################### $CAPSULECD_ENV"
-            docker run -e "CI=true" \
-              --name $CAPSULECD_ENV \
-              analogj/capsulecd-ci:$CAPSULECD_ENV \
-              ./ci/test-coverage.sh $CAPSULECD_ENV
-
-            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
-          when: always
-      - run:
-          name: Run Golang Docker containers with coverage
-          command: |
-            CAPSULECD_ENV=golang
-            echo "#################################################### $CAPSULECD_ENV"
-            docker run -e "CI=true" \
-              --name $CAPSULECD_ENV \
-              analogj/capsulecd-ci:$CAPSULECD_ENV \
-              ./ci/test-coverage.sh $CAPSULECD_ENV
-
-            docker cp $CAPSULECD_ENV:/coverage/coverage-$CAPSULECD_ENV.txt /coverage
+            docker build --pull	-f ci/Dockerfile --build-arg engine_type=chef --tag capsulecd-ci:chef .
+            docker run -e "CI=true" --name chef capsulecd-ci:chef chef
+            docker cp chef:/coverage/coverage-chef.txt .
           when: always
       - store_artifacts:
-          path: /coverage
+          path: coverage-chef.txt
           destination: coverage
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*.txt'
 
-#      - run:
-#          name: Merge coverage reports and submit
-#          command: |
-#            ls -alt /coverage
-#
-#            # upload to codecov.
-#            bash <(curl -s https://codecov.io/bash) -f "*.txt" -s /coverage
-#          when: always
 
+  golang:
+    executor: docker-in-docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Build & Run Golang Docker containers with coverage
+          command: |
+            docker build --pull	-f ci/Dockerfile --build-arg engine_type=golang --tag capsulecd-ci:golang .
+            docker run -e "CI=true" --name golang capsulecd-ci:golang golang
+            docker cp golang:/coverage/coverage-golang.txt .
+          when: always
+      - store_artifacts:
+          path: coverage-golang.txt
+          destination: coverage
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*.txt'
+
+  node:
+    executor: docker-in-docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Build & Run Node Docker containers with coverage
+          command: |
+            docker build --pull	-f ci/Dockerfile --build-arg engine_type=node --tag capsulecd-ci:node .
+            docker run -e "CI=true" --name node capsulecd-ci:node node
+            docker cp node:/coverage/coverage-node.txt .
+          when: always
+      - store_artifacts:
+          path: coverage-node.txt
+          destination: coverage
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*.txt'
+
+
+  python:
+    executor: docker-in-docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Build & Run Python Docker containers with coverage
+          command: |
+            docker build --pull	-f ci/Dockerfile --build-arg engine_type=python --tag capsulecd-ci:python .
+            docker run -e "CI=true" --name python capsulecd-ci:python python
+            docker cp python:/coverage/coverage-python.txt .
+          when: always
+      - store_artifacts:
+          path: coverage-python.txt
+          destination: coverage
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*.txt'
+
+
+  ruby:
+    executor: docker-in-docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 17.05.0-ce
+      - run:
+          name: Build & Run Ruby Docker containers with coverage
+          command: |
+            docker build --pull	-f ci/Dockerfile --build-arg engine_type=ruby --tag capsulecd-ci:ruby .
+            docker run -e "CI=true" --name ruby capsulecd-ci:ruby ruby
+            docker cp ruby:/coverage/coverage-ruby.txt .
+          when: always
+      - store_artifacts:
+          path: coverage-ruby.txt
+          destination: coverage
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '*.txt'
+
+
+  coverage:
+    machine:
+      image: circleci/classic:latest
+    steps:
+      - attach_workspace:
+          at: ~/coverage
+      - run:
+          name: Merge coverage reports and submit
+          command: |
+            ls -alt ~/coverage
+
+            # upload to codecov.
+            cat ~/coverage/*.txt >> ~/coverage/merged.txt
+          when: always
+      - codecov/upload:
+          file: /home/circleci/coverage/merged.txt
 
 # build capsulecd every week, to ensure that language/dependency breaking changes are caught early.
 # https://crontab.guru/every-week
@@ -137,3 +155,21 @@ jobs:
 #              - master
 #    jobs:
 #      - build
+
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - chef
+      - golang
+      - node
+      - python
+      - ruby
+      - coverage:
+          requires:
+            - chef
+            - golang
+            - node
+            - python
+            - ruby

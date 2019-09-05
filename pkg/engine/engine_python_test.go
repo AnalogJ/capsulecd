@@ -93,8 +93,8 @@ func (suite *EnginePythonTestSuite) TestEnginePython_ValidateTools() {
 func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
-	suite.Config.EXPECT().GetString("engine_version_metadata_path").Return("VERSION")
+	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_version_metadata_path").Return("VERSION").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -120,8 +120,8 @@ func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep() {
 func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep_WithMinimalCookbook() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
-	suite.Config.EXPECT().GetString("engine_version_metadata_path").Return("VERSION")
+	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_version_metadata_path").Return("VERSION").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -174,8 +174,8 @@ func (suite *EnginePythonTestSuite) TestEnginePython_AssembleStep_WithoutSetupPy
 func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
-	suite.Config.EXPECT().GetString("engine_cmd_test").MinTimes(1).Return("exit 0")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(true).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -199,8 +199,8 @@ func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_AllDisabled() {
 func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_LintFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
-	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(false).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -224,9 +224,9 @@ func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_LintFailure() {
 func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_TestFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
-	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
-	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 1")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(false).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 1").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -250,10 +250,10 @@ func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_TestFailure() {
 func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_SecurityCheckFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
-	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
-	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0")
-	suite.Config.EXPECT().GetString("engine_cmd_security_check").Return("exit 1")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(false).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_security_check").Return("exit 1").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -277,7 +277,9 @@ func (suite *EnginePythonTestSuite) TestEnginePython_TestStep_SecurityCheckFailu
 func (suite *EnginePythonTestSuite) TestEnginePython_PackageStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetString("engine_version_bump_msg").Return("Automated packaging of release by CapsuleCD")
+	suite.Config.EXPECT().GetString("engine_version_bump_msg").Return("Automated packaging of release by CapsuleCD").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_git_author_name").Return("CapsuleCD").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_git_author_email").Return("CapsuleCD@users.noreply.github.com").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")

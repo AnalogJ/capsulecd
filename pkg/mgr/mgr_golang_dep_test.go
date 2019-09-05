@@ -53,14 +53,15 @@ func TestMgrGolangDep_TestSuite(t *testing.T) {
 
 func (suite *MgrGolangDepTestSuite) TestMgrGolangDepTestSuite_DependenciesStep() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
-	suite.PipelineData.GitLocalPath = path.Join(parentPath, "dep_analogj_test")
+	suite.PipelineData.GitLocalPath = path.Join(parentPath, "src", "dep_analogj_test")
+	os.MkdirAll(path.Join(parentPath, "src"),0666)
 	cerr := utils.CopyDir(path.Join("testdata", "golang", "dep_analogj_test"), suite.PipelineData.GitLocalPath)
 	require.NoError(suite.T(), cerr)
 
@@ -81,15 +82,15 @@ func (suite *MgrGolangDepTestSuite) TestMgrGolangDepTestSuite_DependenciesStep()
 
 func (suite *MgrGolangDepTestSuite) TestMgrGolangDepTestSuite_MgrDistStep_WithoutCredentials() {
 	//setup
-	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	mgrGolangDeg, err := mgr.Create("dep", suite.PipelineData, suite.Config, nil)
 	require.NoError(suite.T(), err)
-	currentVersion := new(metadata.ChefMetadata)
-	nextVersion := new(metadata.ChefMetadata)
+	currentVersion := new(metadata.GolangMetadata)
+	nextVersion := new(metadata.GolangMetadata)
 
 	//test
 	berr := mgrGolangDeg.MgrDistStep(currentVersion, nextVersion)
 
 	//assert
-	require.Error(suite.T(), berr)
+	require.NoError(suite.T(), berr)
 }
