@@ -89,7 +89,7 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_ValidateTools() {
 func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
+	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -117,7 +117,7 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep() {
 func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep_WithMinimalGem() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch")
+	suite.Config.EXPECT().GetString("engine_version_bump_type").Return("patch").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -169,8 +169,8 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_AssembleStep_WithoutGemspec() {
 func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_AllDisabled() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(true)
-	suite.Config.EXPECT().GetString("engine_cmd_test").MinTimes(1).Return("exit 0")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(true).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -194,8 +194,8 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_AllDisabled() {
 func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_LintFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
-	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(false).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 1").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -219,9 +219,9 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_LintFailure() {
 func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_TestFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
-	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
-	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 1")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(false).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 1").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")
@@ -245,10 +245,10 @@ func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_TestFailure() {
 func (suite *EngineRubyTestSuite) TestEngineRuby_TestStep_SecurityCheckFailure() {
 	//setup
 	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
-	suite.Config.EXPECT().GetBool(gomock.Any()).MinTimes(1).Return(false)
-	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0")
-	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0")
-	suite.Config.EXPECT().GetString("engine_cmd_security_check").Return("exit 1")
+	suite.Config.EXPECT().GetBool(gomock.Any()).Return(false).MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_lint").Return("exit 0").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_test").Return("exit 0").MinTimes(1)
+	suite.Config.EXPECT().GetString("engine_cmd_security_check").Return("exit 1").MinTimes(1)
 
 	//copy cookbook fixture into a temp directory.
 	parentPath, err := ioutil.TempDir("", "")

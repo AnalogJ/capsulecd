@@ -91,5 +91,5 @@ func (suite *MgrGolangGlideTestSuite) TestMgrGolangGlideTestSuite_MgrDistStep_Wi
 	berr := mgrGolangDeg.MgrDistStep(currentVersion, nextVersion)
 
 	//assert
-	require.Error(suite.T(), berr)
+	require.NoError(suite.T(), berr)
 }

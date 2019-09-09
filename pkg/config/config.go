@@ -40,6 +40,10 @@ func (c *configuration) Init() error {
 	c.SetDefault("scm_notify_source", "CapsuleCD")
 	c.SetDefault("scm_notify_target_url", "https://github.com/AnalogJ/capsulecd")
 
+
+	c.SetDefault("engine_git_author_name", "CapsuleCD")
+	c.SetDefault("engine_git_author_email", "CapsuleCD@users.noreply.github.com")
+
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
 	//if you want to load a repo specific config file, use ReadConfig
@@ -58,8 +62,9 @@ func (c *configuration) Init() error {
 func (c *configuration) ReadConfig(configFilePath string) error {
 
 	if !utils.FileExists(configFilePath) {
-		log.Print("The configuration file could not be found. Skipping")
-		return stderrors.New("The configuration file could not be found. Skipping")
+		message := fmt.Sprintf("The configuration file (%s) could not be found. Skipping", configFilePath)
+		log.Printf(message)
+		return stderrors.New(message)
 	}
 
 	log.Printf("Loading configuration file: %s", configFilePath)

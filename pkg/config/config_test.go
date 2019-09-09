@@ -63,7 +63,7 @@ func TestConfiguration_ReadConfig_WithSampleConfigurationFile(t *testing.T) {
 	testConfig, _ := config.Create()
 
 	//test
-	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml")))
 	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 	//assert
 	require.Equal(t, "sample_auth_token", testConfig.GetString("npm_auth_token"), "should populate engine_npm_auth_token")
@@ -78,7 +78,7 @@ func TestConfiguration_ReadConfig_WithAssetConfigurationFile(t *testing.T) {
 	testConfig, _ := config.Create()
 
 	//test
-	testConfig.ReadConfig(path.Join("testdata", "asset_configuration.yml"))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "asset_configuration.yml")))
 
 	parsedAssets := new([]pipeline.ScmReleaseAsset)
 	err := testConfig.UnmarshalKey("scm_release_assets", parsedAssets)
@@ -99,8 +99,8 @@ func TestConfiguration_ReadConfig_WithMultipleConfigurationFiles(t *testing.T) {
 	testConfig, _ := config.Create()
 
 	//test
-	testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml"))
-	testConfig.ReadConfig(path.Join("testdata", "sample_configuration_overrides.yml"))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "sample_configuration.yml")))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "sample_configuration_overrides.yml")))
 	str64, _ := testConfig.GetBase64Decoded("chef_supermarket_key")
 
 	//assert
@@ -165,7 +165,7 @@ func TestConfiguration_GetStringSlice_WithNestedKeys(t *testing.T) {
 	testConfig, _ := config.Create()
 
 	//test
-	testConfig.ReadConfig(path.Join("testdata", "pre_post_step_hook_configuration.yml"))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "pre_post_step_hook_configuration.yml")))
 
 	pre_scm_init_steps := testConfig.GetStringSlice("scm_init_step.pre")
 	post_scm_init_steps := testConfig.GetStringSlice("scm_init_step.post")
@@ -188,7 +188,7 @@ func TestConfiguration_ListTypeCmd_List(t *testing.T) {
 
 	//test
 	testConfig.SetDefault("engine_cmd_compile", "echo 'default'")
-	testConfig.ReadConfig(path.Join("testdata", "compile_cmd_list_configuration.yml"))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "compile_cmd_list_configuration.yml")))
 
 	cmd := testConfig.GetString("engine_cmd_compile")
 	cmd_list := testConfig.GetStringSlice("engine_cmd_compile")
@@ -207,7 +207,7 @@ func TestConfiguration_ListTypeCmd_Simple(t *testing.T) {
 
 	//test
 	testConfig.SetDefault("engine_cmd_compile", "echo 'default'")
-	testConfig.ReadConfig(path.Join("testdata", "compile_cmd_simple_configuration.yml"))
+	require.NoError(t, testConfig.ReadConfig(path.Join("testdata", "compile_cmd_simple_configuration.yml")))
 
 	cmd := testConfig.GetString("engine_cmd_compile")
 	//cmd_list := testConfig.GetStringSlice("engine_cmd_compile")

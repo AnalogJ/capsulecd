@@ -81,6 +81,8 @@ func (suite *MgrNodeNpmTestSuite) TestMgrNodeNpmTestSuite_DependenciesStep() {
 
 func (suite *MgrNodeNpmTestSuite) TestMgrNodeNpmTestSuite_MgrDistStep_WithoutCredentials() {
 	//setup
+	suite.Config.EXPECT().IsSet("npm_auth_token").Return(false).MinTimes(1)
+
 	//suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
 	mgrNodeNpm, err := mgr.Create("npm", suite.PipelineData, suite.Config, nil)
 	require.NoError(suite.T(), err)

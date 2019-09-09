@@ -138,7 +138,7 @@ func GitFetchPullRequest(repoPath string, pullRequestNumber string, localBranchN
 // https://github.com/Devying/git2go-example/blob/master/fetch1.go
 //https://github.com/jandre/passward/blob/e37bce388cf6417d7123c802add1937574c2b30e/passward/git.go#L186-L206
 // https://github.com/electricbookworks/electric-book-gui/blob/4d9ad588dbdf7a94345ef10a1bb6944bc2a2f69a/src/go/src/ebw/git/RepoConflict.go
-func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchName string, remoteUrl string, remoteBranchName string) error {
+func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchName string, remoteUrl string, remoteBranchName string, signature *git2go.Signature) error {
 
 	checkoutOpts := &git2go.CheckoutOpts{
 		Strategy: git2go.CheckoutSafe | git2go.CheckoutRecreateMissing | git2go.CheckoutAllowConflicts | git2go.CheckoutUseTheirs,
@@ -291,7 +291,6 @@ func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchNam
 		}
 
 		// Make the merge commit
-		sig := gitSignature()
 
 		// Get Write Tree
 		treeId, err := index.WriteTree()
@@ -314,7 +313,7 @@ func GitMergeRemoteBranch(repoPath string, localBranchName string, baseBranchNam
 			return err
 		}
 
-		repo.CreateCommit("HEAD", sig, sig, "", tree, localCommit, remoteCommit)
+		repo.CreateCommit("HEAD", signature, signature, "", tree, localCommit, remoteCommit)
 		// Clean up
 		repo.StateCleanup()
 	} else if analysis&git2go.MergeAnalysisFastForward != 0 {
@@ -419,13 +418,11 @@ func GitCheckout(repoPath string, branchName string) error {
 }
 
 //Add all modified files to index, and commit.
-func GitCommit(repoPath string, message string) error {
+func GitCommit(repoPath string, message string, signature *git2go.Signature) error {
 	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return oerr
 	}
-
-	signature := gitSignature()
 
 	//get repo index.
 	idx, ierr := repo.Index()
@@ -466,7 +463,7 @@ func GitCommit(repoPath string, message string) error {
 	return cerr
 }
 
-func GitTag(repoPath string, version string, message string) (string, error) {
+func GitTag(repoPath string, version string, message string, signature *git2go.Signature) (string, error) {
 	repo, oerr := git2go.OpenRepository(repoPath)
 	if oerr != nil {
 		return "", oerr
@@ -482,12 +479,15 @@ func GitTag(repoPath string, version string, message string) (string, error) {
 	}
 
 	//tagId, terr := repo.Tags.CreateLightweight(version, commit, false)
-	tagId, terr := repo.Tags.Create(version, commit, gitSignature(), fmt.Sprintf("(%s) %s", version, message))
+	tagId, terr := repo.Tags.Create(version, commit, signature, fmt.Sprintf("(%s) %s", version, message))
 	if terr != nil {
 		return "", terr
 	}
 
 	tagObj, terr := repo.LookupTag(tagId)
+	if terr != nil {
+		return "", terr
+	}
 	return tagObj.TargetId().String(), terr
 }
 
@@ -646,10 +646,10 @@ func GitGetTagDetails(repoPath string, tagName string) (*pipeline.GitTagDetails,
 
 //private methods
 
-func gitSignature() *git2go.Signature {
+func GitSignature(authorName string, authorEmail string) *git2go.Signature {
 	return &git2go.Signature{
-		Name:  "CapsuleCD",
-		Email: "CapsuleCD@users.noreply.github.com",
+		Name:  authorName,
+		Email: authorEmail,
 		When:  time.Now(),
 	}
 }

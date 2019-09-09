@@ -102,6 +102,10 @@ mgr_disable_dist: false
 scm_disable_publish: false
 scm_disable_cleanup: false
 
+# Specifies the git author information when creating commits and tags.
+engine_git_author_email: 'capsulecd@users.noreply.github.com'
+engine_git_author_name: 'CapsuleCD'
+
 ###############################################################################
 #
 # Engine Custom Configuration

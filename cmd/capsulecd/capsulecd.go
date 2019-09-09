@@ -55,9 +55,9 @@ func main() {
 				Usage: "Start a new CapsuleCD package pipeline",
 				Action: func(c *cli.Context) error {
 
-					config, _ := config.Create()
-					config.Set("scm", c.String("scm"))
-					config.Set("package_type", c.String("package_type"))
+					configuration, _ := config.Create()
+					configuration.Set("scm", c.String("scm"))
+					configuration.Set("package_type", c.String("package_type"))
 					//config.Set("dry_run", c.String("dry_run"))
 
 					//load configuration file.
@@ -66,20 +66,20 @@ func main() {
 						if err != nil {
 							return err
 						}
-						err = config.ReadConfig(absConfigPath) //ignore failures to read config file.
+						err = configuration.ReadConfig(absConfigPath) //ignore failures to read config file.
 						if err != nil {
 							return errors.EngineUnspecifiedError("Could not load repository configuration file. Check syntax.")
 						}
 					}
 
 					//fmt.Println("runner:", config.GetString("runner"))
-					fmt.Println("package type:", config.GetString("package_type"))
-					fmt.Println("scm:", config.GetString("scm"))
-					fmt.Println("repository:", config.GetString("scm_repo_full_name"))
+					fmt.Println("package type:", configuration.GetString("package_type"))
+					fmt.Println("scm:", configuration.GetString("scm"))
+					fmt.Println("repository:", configuration.GetString("scm_repo_full_name"))
 					//fmt.Println("dry run:", config.GetString("dry_run"))
 
 					pipeline := pkg.Pipeline{}
-					err := pipeline.Start(config)
+					err := pipeline.Start(configuration)
 					if err != nil {
 						fmt.Printf("FATAL: %+v\n", err)
 						os.Exit(1)

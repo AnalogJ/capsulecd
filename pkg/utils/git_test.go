@@ -146,12 +146,13 @@ func TestGitCommit(t *testing.T) {
 	require.NoError(t, cerr)
 	ferr := utils.GitCheckout(clonePath, "branch_test")
 	require.NoError(t, ferr)
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
 	//test
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/commit_testfile.txt", d1, 0644)
 	require.NoError(t, werr)
-	gcerr := utils.GitCommit(clonePath, "Added New File")
+	gcerr := utils.GitCommit(clonePath, "Added New File", signature)
 
 	//assert
 	require.NoError(t, gcerr)
@@ -162,9 +163,10 @@ func TestGitCommit_InvalidDirectory(t *testing.T) {
 
 	//setup
 	dirPath := path.Join("this", "path", "does", "not", "exist")
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
 	//test
-	ferr := utils.GitCommit(dirPath, "message")
+	ferr := utils.GitCommit(dirPath, "message", signature)
 
 	//assert
 	require.Error(t, ferr)
@@ -181,14 +183,16 @@ func TestGitTag(t *testing.T) {
 	require.NoError(t, cerr)
 	ferr := utils.GitCheckout(clonePath, "branch_test")
 	require.NoError(t, ferr)
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
+
 
 	//test
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/tag_testfile.txt", d1, 0644)
 	require.NoError(t, werr)
-	gcerr := utils.GitCommit(clonePath, "Added New File")
+	gcerr := utils.GitCommit(clonePath, "Added New File", signature)
 	require.NoError(t, gcerr)
-	tid, terr := utils.GitTag(clonePath, "v9.9.9", "test git tag message")
+	tid, terr := utils.GitTag(clonePath, "v9.9.9", "test git tag message", signature)
 
 	//assert
 	require.NoError(t, terr)
@@ -200,9 +204,10 @@ func TestGitTag_InvalidDirectory(t *testing.T) {
 
 	//setup
 	dirPath := path.Join("this", "path", "does", "not", "exist")
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
 	//test
-	tag, ferr := utils.GitTag(dirPath, "version", "test git tag message")
+	tag, ferr := utils.GitTag(dirPath, "version", "test git tag message", signature)
 
 	//assert
 	require.Error(t, ferr)
@@ -220,13 +225,14 @@ func TestGitPush(t *testing.T) {
 
 	ferr := utils.GitCheckout(clonePath, "branch_test")
 	require.NoError(t, ferr)
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
 	//create a new file
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
 	require.NoError(t, werr)
 
-	gcerr := utils.GitCommit(clonePath, "Added New File")
+	gcerr := utils.GitCommit(clonePath, "Added New File", signature)
 	require.NoError(t, gcerr)
 
 	perr := utils.GitPush(clonePath, "branch_test", "branch_test", "v1.0.0")
@@ -243,6 +249,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "cookbook_analogj_test", "https://access_token_here:@github.com/AnalogJ/cookbook_analogj_test.git")
 	require.NoError(t, cerr)
+	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
 	//test
 	ferr := utils.GitFetchPullRequest(clonePath, "13", "localBranchName", "refs/pull/%s/merge", "")
@@ -250,7 +257,7 @@ func TestGitPush_PullRequest(t *testing.T) {
 	d1 := []byte("hello\nworld\n")
 	werr := ioutil.WriteFile(clonePath+"/push_testfile.txt", d1, 0644)
 	require.NoError(t, werr)
-	gcerr := utils.GitCommit(clonePath, "Added New File")
+	gcerr := utils.GitCommit(clonePath, "Added New File", signature)
 	require.NoError(t, gcerr)
 	perr := utils.GitPush(clonePath, "localBranchName", "master", "v1.0.0")
 

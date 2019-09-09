@@ -242,17 +242,17 @@ func (p *Pipeline) ParseRepoConfig() error {
 func (p *Pipeline) MgrInitStep() error {
 	log.Println("mgr_init_step")
 	if p.Config.IsSet("mgr_type") {
-		mgr, merr := mgr.Create(p.Config.GetString("mgr_type"), p.Data, p.Config, nil)
+		manager, merr := mgr.Create(p.Config.GetString("mgr_type"), p.Data, p.Config, nil)
 		if merr != nil {
 			return merr
 		}
-		p.PackageManager = mgr
+		p.PackageManager = manager
 	} else {
-		mgr, merr := mgr.Detect(p.Config.GetString("package_type"), p.Data, p.Config, nil)
+		manager, merr := mgr.Detect(p.Config.GetString("package_type"), p.Data, p.Config, nil)
 		if merr != nil {
 			return merr
 		}
-		p.PackageManager = mgr
+		p.PackageManager = manager
 	}
 	return nil
 }
@@ -530,7 +530,7 @@ func (p *Pipeline) RunHook(hookKey string) error {
 			return aerr
 		}
 
-		if err := utils.BashCmdExec(cmdPopulated, p.Data.GitLocalPath, nil, fmt.Sprintf("%s.%s", hookKey, i)); err != nil {
+		if err := utils.BashCmdExec(cmdPopulated, p.Data.GitLocalPath, nil, fmt.Sprintf("%s.%d", hookKey, i)); err != nil {
 			return err
 		}
 	}
