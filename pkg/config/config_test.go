@@ -3,6 +3,7 @@ package config_test
 import (
 	"github.com/analogj/capsulecd/pkg/config"
 	"github.com/analogj/capsulecd/pkg/pipeline"
+	"github.com/analogj/capsulecd/pkg/utils"
 	"github.com/stretchr/testify/require"
 	"os"
 	"path"
@@ -11,6 +12,10 @@ import (
 
 func TestConfiguration_init_ShouldCorrectlyInitializeConfiguration(t *testing.T) {
 	t.Parallel()
+
+	//setup
+	defer utils.UnsetEnv("CAPSULE_")()
+
 
 	//test
 	testConfig, _ := config.Create()
