@@ -5,7 +5,7 @@
 engine_enable_code_mutation: true
 engine_cmd_compile:
   - mkdir -p vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
-  - cp /usr/local/linux/lib/pkgconfig/libgit2.pc vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/libgit2.pc
+  - cp /usr/local/lib/libgit2/lib/pkgconfig/libgit2.pc vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/libgit2.pc
   - '. /scripts/toolchains/linux/linux-build-env.sh && go build -ldflags "-X main.goos=linux -X main.goarch=amd64" -o capsulecd-linux-amd64 -tags "static" $(go list ./cmd/...)'
 engine_cmd_test: 'go test -v -tags "static" ./...'
 engine_cmd_lint: 'gometalinter.v2 --vendor --config=gometalinter.json ./...'
