@@ -173,3 +173,18 @@ workflows:
             - node
             - python
             - ruby
+  weekly:
+    triggers:
+      - schedule:
+          #https://crontab.guru/#0_0_*_*_2
+          cron: "0 0 * * 2"
+          filters:
+            branches:
+              only:
+              - master
+    jobs:
+      - chef
+      - golang
+      - node
+      - python
+      - ruby
