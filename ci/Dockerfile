@@ -10,7 +10,7 @@ WORKDIR /go/src/github.com/analogj/capsulecd
 # Install build tooling.
 RUN echo "go version: $go_version" \
     && apt-get update \
-	&& apt-get install -y gcc git build-essential binutils curl apt-transport-https ca-certificates pkg-config --no-install-recommends \
+	&& apt-get install -y gcc git build-essential binutils curl apt-transport-https ca-certificates pkg-config zlib1g-dev --no-install-recommends \
 	&& rm -rf /usr/share/doc && rm -rf /usr/share/man \
 	&& rm -rf /var/lib/apt/lists/* \
     && apt-get clean
