@@ -1,6 +1,7 @@
 package mgr
 
 import (
+	"fmt"
 	"github.com/analogj/capsulecd/pkg/config"
 	"github.com/analogj/capsulecd/pkg/errors"
 	"github.com/analogj/capsulecd/pkg/pipeline"
@@ -54,7 +55,12 @@ func (m *mgrGolangDep) MgrAssembleStep() error {
 func (m *mgrGolangDep) MgrDependenciesStep(currentMetadata interface{}, nextMetadata interface{}) error {
 	// the go source has already been downloaded. lets make sure all its dependencies are available.
 
-	if cerr := utils.BashCmdExec("dep ensure -v", m.PipelineData.GitLocalPath, nil, ""); cerr != nil {
+	updatedEnv := []string{
+		fmt.Sprintf("GOPATH=%s:/go", m.PipelineData.GolangGoPath),
+		fmt.Sprintf("PATH=%s/bin:/go/bin", m.PipelineData.GolangGoPath),
+
+	}
+	if cerr := utils.BashCmdExec("dep ensure -v", m.PipelineData.GitLocalPath, updatedEnv, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("dep ensure failed. Check dep dependencies")
 	}
 

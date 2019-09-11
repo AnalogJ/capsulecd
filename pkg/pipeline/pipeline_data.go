@@ -13,4 +13,8 @@ type Data struct {
 	ReleaseVersion string
 	ReleaseCommit  string
 	ReleaseAssets  []ScmReleaseAsset
+
+	//Engine specific pipeline data
+	GolangGoPath string
+	GolangGoRoot string
 }
