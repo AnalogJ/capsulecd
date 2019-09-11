@@ -5,8 +5,9 @@ cd /go/src/github.com/analogj/capsulecd
 rm -rf vendor
 dep ensure
 
-mkdir -p /go/src/github.com/analogj/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build
-cp -r /usr/local/lib/libgit2/lib/pkgconfig/. /go/src/github.com/analogj/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
+mkdir -p vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
+cp -r /usr/local/linux/lib/pkgconfig/. /go/src/github.com/analogj/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/
+. /scripts/toolchains/linux/linux-build-env.sh
 
 
 export DEV_MODE=true
