@@ -11,7 +11,7 @@
 # Use `docker pull analogj/capsulecd:<language>`
 #
 ###############################################################################
-FROM analogj/libgit2-xgo:slim
+FROM analogj/libgit2-xgo
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
 ARG go_version=1.10.8
