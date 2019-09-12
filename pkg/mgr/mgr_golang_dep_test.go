@@ -60,6 +60,7 @@ func (suite *MgrGolangDepTestSuite) TestMgrGolangDepTestSuite_DependenciesStep()
 	require.NoError(suite.T(), err)
 	defer os.RemoveAll(parentPath)
 	suite.PipelineData.GitParentPath = parentPath
+	suite.PipelineData.GolangGoPath = parentPath
 	suite.PipelineData.GitLocalPath = path.Join(parentPath, "src", "dep_analogj_test")
 	os.MkdirAll(path.Join(parentPath, "src"),0666)
 	cerr := utils.CopyDir(path.Join("testdata", "golang", "dep_analogj_test"), suite.PipelineData.GitLocalPath)
