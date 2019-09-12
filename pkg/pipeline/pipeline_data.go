@@ -16,5 +16,4 @@ type Data struct {
 
 	//Engine specific pipeline data
 	GolangGoPath string
-	GolangGoRoot string
 }
