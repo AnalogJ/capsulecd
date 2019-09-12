@@ -10,7 +10,7 @@ import (
 	"github.com/analogj/capsulecd/pkg/errors"
 	"github.com/analogj/capsulecd/pkg/utils"
 	"github.com/analogj/capsulecd/pkg/version"
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli"
 	"path/filepath"
 )
 
@@ -23,8 +23,8 @@ func main() {
 		Usage:    "Continuous Delivery scripts for automating package releases",
 		Version:  version.VERSION,
 		Compiled: time.Now(),
-		Authors: []*cli.Author{
-			&cli.Author{
+		Authors: []cli.Author{
+			cli.Author{
 				Name:  "Jason Kulatunga",
 				Email: "jason@thesparktree.com",
 			},
@@ -49,7 +49,7 @@ func main() {
 			return nil
 		},
 
-		Commands: []*cli.Command{
+		Commands: []cli.Command{
 			{
 				Name:  "start",
 				Usage: "Start a new CapsuleCD package pipeline",
@@ -104,7 +104,6 @@ func main() {
 
 					&cli.StringFlag{
 						Name:    "package_type",
-						Aliases: []string{"package-type"},
 						Value:   "default",
 						Usage:   "The type of package being built.",
 					},
@@ -119,7 +118,6 @@ func main() {
 
 					&cli.StringFlag{
 						Name:    "config_file",
-						Aliases: []string{"config-file", "c"},
 						Usage:   "Specifies the location of the config file",
 					},
 				},

@@ -27,7 +27,6 @@ type engineGolang struct {
 	Scm             scm.Interface //Interface
 	CurrentMetadata *metadata.GolangMetadata
 	NextMetadata    *metadata.GolangMetadata
-	GoPath          string
 }
 
 func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface, sourceScm scm.Interface) error {
@@ -60,8 +59,18 @@ func (g *engineGolang) Init(pipelineData *pipeline.Data, config config.Interface
 	// to run, and hit the default deadline limit ( --deadline=30s).
 	// we can have multiple workspaces in the gopath by separating them with colon (:), but this timeout is nasty if not required.
 	//TODO: g.GoPath root will not be deleted (its the parent of GitParentPath), figure out if we can do this automatically.
-	g.GoPath = g.PipelineData.GitParentPath
-	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.GoPath))
+	g.PipelineData.GolangGoPath = g.PipelineData.GitParentPath
+	os.Setenv("GOPATH", fmt.Sprintf("%s:%s", os.Getenv("GOPATH"), g.PipelineData.GolangGoPath))
+
+	// A proper gopath has a bin and src directory.
+	goPathBin := path.Join(g.PipelineData.GitParentPath, "bin")
+	goPathSrc := path.Join(g.PipelineData.GitParentPath, "src")
+	os.MkdirAll(goPathBin, 0666)
+	os.MkdirAll(goPathSrc, 0666)
+
+	//  the gopath bin directory should aslo be added to Path
+	os.Setenv("PATH", fmt.Sprintf("%s:%s", os.Getenv("PATH"), goPathBin))
+
 
 	packagePathPrefix := path.Dir(g.Config.GetString("engine_golang_package_path")) //strip out the repo name.
 	// customize the git parent path for Golang Engine
@@ -128,7 +137,7 @@ func (g *engineGolang) CompileStep() error {
 
 	if terr := g.ExecuteCmdList("engine_cmd_compile",
 		g.PipelineData.GitLocalPath,
-		nil,
+		g.customGopathEnv(),
 		"",
 		"Compile command (%s) failed. Check log for more details.",
 	); terr != nil {
@@ -152,7 +161,7 @@ func (g *engineGolang) TestStep() error {
 		//run lint command
 		if terr := g.ExecuteCmdList("engine_cmd_lint",
 			g.PipelineData.GitLocalPath,
-			nil,
+			g.customGopathEnv(),
 			"",
 			"Lint command (%s) failed. Check log for more details.",
 		); terr != nil {
@@ -163,7 +172,7 @@ func (g *engineGolang) TestStep() error {
 			//code formatter
 			if terr := g.ExecuteCmdList("engine_cmd_fmt",
 				g.PipelineData.GitLocalPath,
-				nil,
+				g.customGopathEnv(),
 				"",
 				"Format command (%s) failed. Check log for more details.",
 			); terr != nil {
@@ -175,7 +184,7 @@ func (g *engineGolang) TestStep() error {
 	//run test command
 	if terr := g.ExecuteCmdList("engine_cmd_test",
 		g.PipelineData.GitLocalPath,
-		nil,
+		g.customGopathEnv(),
 		"",
 		"Test command (%s) failed. Check log for more details.",
 	); terr != nil {
@@ -187,7 +196,7 @@ func (g *engineGolang) TestStep() error {
 		//run security check command
 		if terr := g.ExecuteCmdList("engine_cmd_security_check",
 			g.PipelineData.GitLocalPath,
-			nil,
+			g.customGopathEnv(),
 			"",
 			"Dependency vulnerability check command (%s) failed. Check log for more details.",
 		); terr != nil {
@@ -217,13 +226,20 @@ func (g *engineGolang) PackageStep() error {
 
 func (g *engineGolang) customGopathEnv() []string {
 	currentEnv := os.Environ()
-	updatedEnv := []string{fmt.Sprintf("GOPATH=%s", g.GoPath)}
+	updatedEnv := []string{fmt.Sprintf("GOPATH=%s", g.PipelineData.GolangGoPath)}
 
 	for i := range currentEnv {
-		if !strings.HasPrefix(currentEnv[i], "GOPATH=") { //add all environmental variables that are not GOPATH
+		if strings.HasPrefix(currentEnv[i], "GOPATH="){
+			//skip
+			continue
+		} else if strings.HasPrefix(currentEnv[i], "PATH=") {
+			updatedEnv = append(updatedEnv, fmt.Sprintf("PATH=%s/bin:%s", g.PipelineData.GolangGoPath, currentEnv[i]))
+		} else {
+			//add all environmental variables that are not GOPATH
 			updatedEnv = append(updatedEnv, currentEnv[i])
 		}
 	}
+
 	return updatedEnv
 }
 

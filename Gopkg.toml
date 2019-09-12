@@ -30,7 +30,8 @@
   version = "v1.1.0"
 
 [[constraint]]
-  name = "gopkg.in/urfave/cli.v2"
+  name = "github.com/urfave/cli"
+  version = "=v1.19.1"
 
 [[constraint]]
   name = "github.com/google/go-github"

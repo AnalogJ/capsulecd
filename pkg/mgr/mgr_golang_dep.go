@@ -1,6 +1,7 @@
 package mgr
 
 import (
+	"fmt"
 	"github.com/analogj/capsulecd/pkg/config"
 	"github.com/analogj/capsulecd/pkg/errors"
 	"github.com/analogj/capsulecd/pkg/pipeline"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 )
 
 func DetectGolangDep(pipelineData *pipeline.Data, myconfig config.Interface, client *http.Client) bool {
@@ -54,7 +56,24 @@ func (m *mgrGolangDep) MgrAssembleStep() error {
 func (m *mgrGolangDep) MgrDependenciesStep(currentMetadata interface{}, nextMetadata interface{}) error {
 	// the go source has already been downloaded. lets make sure all its dependencies are available.
 
-	if cerr := utils.BashCmdExec("dep ensure -v", m.PipelineData.GitLocalPath, nil, ""); cerr != nil {
+	currentEnv := os.Environ()
+	updatedEnv := []string{fmt.Sprintf("GOPATH=%s", m.PipelineData.GolangGoPath)}
+
+	for i := range currentEnv {
+		if strings.HasPrefix(currentEnv[i], "GOPATH="){
+			//skip
+			continue
+		} else if strings.HasPrefix(currentEnv[i], "PATH=") {
+			updatedEnv = append(updatedEnv, fmt.Sprintf("PATH=%s/bin:%s", m.PipelineData.GolangGoPath, currentEnv[i]))
+		} else {
+			//add all environmental variables that are not GOPATH
+			updatedEnv = append(updatedEnv, currentEnv[i])
+		}
+	}
+
+	print(updatedEnv)
+
+	if cerr := utils.BashCmdExec("dep ensure -v", m.PipelineData.GitLocalPath, updatedEnv, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("dep ensure failed. Check dep dependencies")
 	}
 
