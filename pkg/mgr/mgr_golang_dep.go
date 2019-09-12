@@ -70,9 +70,6 @@ func (m *mgrGolangDep) MgrDependenciesStep(currentMetadata interface{}, nextMeta
 			updatedEnv = append(updatedEnv, currentEnv[i])
 		}
 	}
-
-	print(updatedEnv)
-
 	if cerr := utils.BashCmdExec("dep ensure -v", m.PipelineData.GitLocalPath, updatedEnv, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("dep ensure failed. Check dep dependencies")
 	}
