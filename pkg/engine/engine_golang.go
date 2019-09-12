@@ -137,7 +137,7 @@ func (g *engineGolang) CompileStep() error {
 
 	if terr := g.ExecuteCmdList("engine_cmd_compile",
 		g.PipelineData.GitLocalPath,
-		nil,
+		g.customGopathEnv(),
 		"",
 		"Compile command (%s) failed. Check log for more details.",
 	); terr != nil {
@@ -161,7 +161,7 @@ func (g *engineGolang) TestStep() error {
 		//run lint command
 		if terr := g.ExecuteCmdList("engine_cmd_lint",
 			g.PipelineData.GitLocalPath,
-			nil,
+			g.customGopathEnv(),
 			"",
 			"Lint command (%s) failed. Check log for more details.",
 		); terr != nil {
@@ -172,7 +172,7 @@ func (g *engineGolang) TestStep() error {
 			//code formatter
 			if terr := g.ExecuteCmdList("engine_cmd_fmt",
 				g.PipelineData.GitLocalPath,
-				nil,
+				g.customGopathEnv(),
 				"",
 				"Format command (%s) failed. Check log for more details.",
 			); terr != nil {
@@ -184,7 +184,7 @@ func (g *engineGolang) TestStep() error {
 	//run test command
 	if terr := g.ExecuteCmdList("engine_cmd_test",
 		g.PipelineData.GitLocalPath,
-		nil,
+		g.customGopathEnv(),
 		"",
 		"Test command (%s) failed. Check log for more details.",
 	); terr != nil {
@@ -196,7 +196,7 @@ func (g *engineGolang) TestStep() error {
 		//run security check command
 		if terr := g.ExecuteCmdList("engine_cmd_security_check",
 			g.PipelineData.GitLocalPath,
-			nil,
+			g.customGopathEnv(),
 			"",
 			"Dependency vulnerability check command (%s) failed. Check log for more details.",
 		); terr != nil {
@@ -229,10 +229,17 @@ func (g *engineGolang) customGopathEnv() []string {
 	updatedEnv := []string{fmt.Sprintf("GOPATH=%s", g.PipelineData.GolangGoPath)}
 
 	for i := range currentEnv {
-		if !strings.HasPrefix(currentEnv[i], "GOPATH=") { //add all environmental variables that are not GOPATH
+		if strings.HasPrefix(currentEnv[i], "GOPATH="){
+			//skip
+			continue
+		} else if strings.HasPrefix(currentEnv[i], "PATH=") {
+			updatedEnv = append(updatedEnv, fmt.Sprintf("PATH=%s/bin:%s", g.PipelineData.GolangGoPath, currentEnv[i]))
+		} else {
+			//add all environmental variables that are not GOPATH
 			updatedEnv = append(updatedEnv, currentEnv[i])
 		}
 	}
+
 	return updatedEnv
 }
 

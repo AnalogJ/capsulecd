@@ -63,13 +63,15 @@ func (m *mgrGolangDep) MgrDependenciesStep(currentMetadata interface{}, nextMeta
 		if strings.HasPrefix(currentEnv[i], "GOPATH="){
 			//skip
 			continue
-		} else if (strings.HasPrefix(currentEnv[i], "PATH=")) {
+		} else if strings.HasPrefix(currentEnv[i], "PATH=") {
 			updatedEnv = append(updatedEnv, fmt.Sprintf("PATH=%s/bin:%s", m.PipelineData.GolangGoPath, currentEnv[i]))
 		} else {
 			//add all environmental variables that are not GOPATH
 			updatedEnv = append(updatedEnv, currentEnv[i])
 		}
 	}
+
+	print(updatedEnv)
 
 	if cerr := utils.BashCmdExec("dep ensure -v", m.PipelineData.GitLocalPath, updatedEnv, ""); cerr != nil {
 		return errors.EngineTestDependenciesError("dep ensure failed. Check dep dependencies")
