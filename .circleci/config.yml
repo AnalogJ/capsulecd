@@ -128,6 +128,12 @@ jobs:
     machine:
       image: circleci/classic:latest
     steps:
+      - run:
+          name: Make coverage directory
+          command: |
+            mkdir -p /coverage
+            ls -alt /coverage
+          when: always
       - attach_workspace:
           at: /coverage
       - run:
