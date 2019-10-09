@@ -127,19 +127,20 @@ jobs:
   coverage:
     machine:
       image: circleci/classic:latest
+    working_directory: ~/coverage
     steps:
       - attach_workspace:
-          at: /coverage
+          at: .
       - run:
           name: Merge coverage reports and submit
           command: |
-            ls -alt /coverage
+            ls -alt ~/coverage
 
             # upload to codecov.
-            cat /coverage/*.txt >> /coverage/merged.txt
+            cat ~/coverage/*.txt >> ~/coverage/merged.txt
           when: always
       - codecov/upload:
-          file: /coverage/merged.txt
+          file: ~/coverage/merged.txt
 
 # build capsulecd every week, to ensure that language/dependency breaking changes are caught early.
 # https://crontab.guru/every-week
