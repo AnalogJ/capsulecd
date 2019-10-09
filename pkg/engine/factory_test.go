@@ -110,6 +110,19 @@ func (suite *FactoryTestSuite) TestCreate_Ruby() {
 	require.NotNil(suite.T(), testEngine)
 }
 
+func (suite *FactoryTestSuite) TestCreate_Generic() {
+	//setup
+	suite.Config.EXPECT().SetDefault(gomock.Any(), gomock.Any()).MinTimes(1)
+
+	//test
+	testEngine, cerr := engine.Create("generic", suite.PipelineData, suite.Config, suite.Scm)
+
+	//assert
+	require.NoError(suite.T(), cerr)
+	require.NotNil(suite.T(), testEngine)
+}
+
+
 // In order for 'go test' to run this suite, we need to create
 // a normal test function and pass our suite to suite.Run
 func TestFactoryTestSuite(t *testing.T) {
