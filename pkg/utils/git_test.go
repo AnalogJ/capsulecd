@@ -99,7 +99,7 @@ func TestGitCheckout(t *testing.T) {
 	require.NoError(t, cerr)
 
 	//test
-	ferr := utils.GitCheckout(clonePath, "branch_test")
+	ferr := utils.GitCheckout(clonePath, "do_not_delete_capsulecd_test_branch")
 
 	//assert
 	require.NoError(t, ferr)
@@ -144,7 +144,7 @@ func TestGitCommit(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "commit_to_npm_analogj_test", "https://github.com/AnalogJ/npm_analogj_test.git")
 	require.NoError(t, cerr)
-	ferr := utils.GitCheckout(clonePath, "branch_test")
+	ferr := utils.GitCheckout(clonePath, "do_not_delete_capsulecd_test_branch")
 	require.NoError(t, ferr)
 	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
@@ -181,7 +181,7 @@ func TestGitTag(t *testing.T) {
 	defer deleteTestRepo(dirPath)
 	clonePath, cerr := utils.GitClone(dirPath, "add_tag_npm_analogj_test", "https://github.com/AnalogJ/npm_analogj_test.git")
 	require.NoError(t, cerr)
-	ferr := utils.GitCheckout(clonePath, "branch_test")
+	ferr := utils.GitCheckout(clonePath, "do_not_delete_capsulecd_test_branch")
 	require.NoError(t, ferr)
 	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
@@ -223,7 +223,7 @@ func TestGitPush(t *testing.T) {
 	clonePath, cerr := utils.GitClone(dirPath, "push_npm_analogj_test", "https://access_token_here:@github.com/AnalogJ/npm_analogj_test.git")
 	require.NoError(t, cerr)
 
-	ferr := utils.GitCheckout(clonePath, "branch_test")
+	ferr := utils.GitCheckout(clonePath, "do_not_delete_capsulecd_test_branch")
 	require.NoError(t, ferr)
 	signature := utils.GitSignature("CapsuleCD", "CapsuleCD@users.noreply.github.com")
 
@@ -235,7 +235,7 @@ func TestGitPush(t *testing.T) {
 	gcerr := utils.GitCommit(clonePath, "Added New File", signature)
 	require.NoError(t, gcerr)
 
-	perr := utils.GitPush(clonePath, "branch_test", "branch_test", "v1.0.0")
+	perr := utils.GitPush(clonePath, "do_not_delete_capsulecd_test_branch", "do_not_delete_capsulecd_test_branch", "v1.0.0")
 	require.NoError(t, perr)
 
 }
