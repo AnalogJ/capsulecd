@@ -106,7 +106,7 @@ func Detect(packageType string, pipelineData *pipeline.Data, config config.Inter
 		mgrType = "generic"
 
 	default:
-		return nil, errors.MgrUnspecifiedError(fmt.Sprintf("Unknown Dependency Manager for Package Type (%s): %s", packageType, mgrType))
+		return nil, errors.MgrUnspecifiedError(fmt.Sprintf("Unknown Package Manager for Package Type (%s): %s", packageType, mgrType))
 	}
 
 	return Create(mgrType, pipelineData, config, client )
