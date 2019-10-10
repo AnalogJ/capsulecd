@@ -54,6 +54,7 @@ func Create(mgrType string, pipelineData *pipeline.Data, config config.Interface
 func Detect(packageType string, pipelineData *pipeline.Data, config config.Interface, client *http.Client) (Interface, error) {
 
 	var mgrType string
+	mgrType = "unknown"
 
 	switch packageType {
 	//chef dependency managers
@@ -100,8 +101,12 @@ func Detect(packageType string, pipelineData *pipeline.Data, config config.Inter
 			mgrType = "bundler"
 		}
 
+	//empty/generic package manager. Noop.
+	case "generic":
+		mgrType = "generic"
+
 	default:
-		return nil, errors.ScmUnspecifiedError(fmt.Sprintf("Unknown %s Packager Manager Type: %s", packageType, mgrType))
+		return nil, errors.MgrUnspecifiedError(fmt.Sprintf("Unknown Package Manager for Package Type (%s): %s", packageType, mgrType))
 	}
 
 	return Create(mgrType, pipelineData, config, client )
