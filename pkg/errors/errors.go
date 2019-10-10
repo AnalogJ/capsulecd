@@ -128,6 +128,13 @@ func (str MgrAssembleError) Error() string {
 	return fmt.Sprintf("MgrAssembleError: %q", string(str))
 }
 
+// Raised when the Mgr is not recognized
+type MgrUnspecifiedError string
+
+func (str MgrUnspecifiedError) Error() string {
+	return fmt.Sprintf("MgrUnspecifiedError: %q", string(str))
+}
+
 // Raised when credentials required to upload/deploy new package are missing.
 type MgrDistCredentialsMissing string
 
