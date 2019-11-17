@@ -5,10 +5,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"testing"
 
-	"github.com/analogj/capsulecd/pkg/config/mock"
-	"github.com/analogj/capsulecd/pkg/pipeline"
 	"context"
 	"crypto/tls"
+	"github.com/analogj/capsulecd/pkg/config/mock"
+	"github.com/analogj/capsulecd/pkg/pipeline"
 	"github.com/golang/mock/gomock"
 	"github.com/seborama/govcr"
 	"golang.org/x/oauth2"
@@ -16,7 +16,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 )
 
 func githubVcrSetup(t *testing.T) *http.Client {
@@ -46,16 +45,15 @@ func githubVcrSetup(t *testing.T) *http.Client {
 		Logging:      true,
 		CassettePath: path.Join("testdata", "govcr-fixtures"),
 		Client:       tc,
-		ExcludeHeaderFunc: func(key string) bool {
-			// HTTP headers are case-insensitive
-			//return strings.ToLower(key) == "user-agent" || strings.ToLower(key) == "accept"
-			return strings.ToLower(key) == "user-agent"
-		},
 
 		//this line ensures that we do not attempt to create new recordings.
 		//Comment this out if you would like to make recordings.
 		DisableRecording: true,
 	}
+
+	// HTTP headers are case-insensitive
+	vcrConfig.RequestFilters.Add(govcr.RequestDeleteHeaderKeys("User-Agent", "user-agent"))
+
 
 	vcr := govcr.NewVCR(t.Name(), &vcrConfig)
 	return vcr.Client
