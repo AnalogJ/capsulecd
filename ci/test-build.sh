@@ -12,5 +12,5 @@ for d in $(go list ./...); do
     OUTPUT_PATH=$(echo "$d" | sed -e "s/^github.com\/analogj\/capsulecd\///")
     echo "Generating TEST BINARY: ${OUTPUT_PATH}/test_binary_${1}"
     mkdir -p /caches/test-binaries/${OUTPUT_PATH}
-    go test -race -covermode=atomic -tags="static $1" -c -o=${OUTPUT_PATH}/test_binary_${1} $d
+    go test -mod vendor -race -covermode=atomic -tags="static $1" -c -o=${OUTPUT_PATH}/test_binary_${1} $d
 done
