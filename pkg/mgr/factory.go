@@ -26,6 +26,8 @@ func Create(mgrType string, pipelineData *pipeline.Data, config config.Interface
 		mgr = new(mgrGolangDep)
 	case "glide":
 		mgr = new(mgrGolangGlide)
+	case "mod":
+		mgr = new(mgrGolangMod)
 
 	//node dependency managers
 	case "npm":
@@ -71,8 +73,10 @@ func Detect(packageType string, pipelineData *pipeline.Data, config config.Inter
 			mgrType = "dep"
 		} else if DetectGolangGlide(pipelineData, config, client) {
 			mgrType = "glide"
+		} else if DetectGolangMod(pipelineData, config, client) {
+			mgrType = "mod"
 		} else { //default
-			mgrType = "dep"
+			mgrType = "mod"
 		}
 
 	//node dependency managers

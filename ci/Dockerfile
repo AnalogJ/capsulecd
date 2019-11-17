@@ -32,7 +32,7 @@ COPY . .
 
 ## download deps & move libgit2 library into expected location.
 RUN git --version \
-    && dep ensure \
+    && go mod vendor \
 	&& mkdir -p vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/ \
     && cp -r /usr/local/linux/lib/pkgconfig/. /go/src/github.com/analogj/capsulecd/vendor/gopkg.in/libgit2/git2go.v25/vendor/libgit2/build/ \
     && . /scripts/toolchains/linux/linux-build-env.sh \

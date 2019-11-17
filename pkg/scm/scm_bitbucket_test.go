@@ -1,11 +1,11 @@
 package scm_test
 
 import (
+	"crypto/tls"
 	"github.com/analogj/capsulecd/pkg/config/mock"
 	"github.com/analogj/capsulecd/pkg/pipeline"
 	"github.com/analogj/capsulecd/pkg/scm"
 	"github.com/analogj/capsulecd/pkg/utils"
-	"crypto/tls"
 	"github.com/golang/mock/gomock"
 	"github.com/seborama/govcr"
 	"github.com/stretchr/testify/require"
@@ -14,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"testing"
 )
 
@@ -34,21 +33,16 @@ func bitbucketVcrSetup(t *testing.T) *http.Client {
 		Logging:      true,
 		CassettePath: path.Join("testdata", "govcr-fixtures"),
 		Client:       &insecureClient,
-		ExcludeHeaderFunc: func(key string) bool {
-			// HTTP headers are case-insensitive
-			//return strings.ToLower(key) == "user-agent" || strings.ToLower(key) == "accept"
-			return strings.ToLower(key) == "user-agent" || strings.ToLower(key) == "authorization"
-		},
-		RequestFilterFunc: func(reqHeader http.Header, reqBody []byte) (*http.Header, *[]byte) {
-			reqHeader.Set("Authorization", "Basic UExBQ0VIT0xERVI6UExBQ0VIT0xERVI=") //placeholder:placeholder
-
-			return &reqHeader, &reqBody
-		},
 
 		//this line ensures that we do not attempt to create new recordings.
 		//Comment this out if you would like to make recordings.
 		DisableRecording: DISABLE_RECORDINGS,
 	}
+
+	// HTTP headers are case-insensitive
+	vcrConfig.RequestFilters.Add(govcr.RequestDeleteHeaderKeys("User-Agent", "user-agent"))
+	vcrConfig.RequestFilters.Add(govcr.RequestDeleteHeaderKeys("Authorization", "authorization"))
+	vcrConfig.RequestFilters.Add(govcr.RequestAddHeaderValue("Authorization", "Basic UExBQ0VIT0xERVI6UExBQ0VIT0xERVI=")) //placeholder:placeholder
 
 	vcr := govcr.NewVCR(t.Name(), &vcrConfig)
 	return vcr.Client
