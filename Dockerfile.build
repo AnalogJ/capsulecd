@@ -14,7 +14,7 @@
 FROM analogj/libgit2-xgo
 MAINTAINER Jason Kulatunga <jason@thesparktree.com>
 
-ARG go_version=1.10.8
+ARG go_version=1.13.4
 ARG engine_type="golang"
 
 

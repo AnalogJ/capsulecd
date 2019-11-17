@@ -1,7 +1,7 @@
 ARG engine_type="golang"
 FROM analogj/libgit2-xgo:slim as base
 
-ARG go_version=1.10.8
+ARG go_version=1.13.4
 ARG engine_type="golang"
 
 
@@ -46,7 +46,7 @@ RUN git --version \
 ##################################################
 FROM analogj/capsulecd:$engine_type
 
-ARG go_version=1.10.8
+ARG go_version=1.13.4
 ARG engine_type="golang"
 
 WORKDIR /go/src/github.com/analogj/capsulecd
