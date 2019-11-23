@@ -217,7 +217,7 @@ func (p *Pipeline) ScmCheckoutPushPayloadStep(payload *scm.Payload) error {
 func (p *Pipeline) ParseRepoConfig() error {
 	log.Println("parse_repo_config")
 	// update the config with repo config file options
-	repoConfig := path.Join(p.Data.GitLocalPath, "capsule.yml")
+	repoConfig := path.Join(p.Data.GitLocalPath, p.Config.GetString("engine_repo_config_path"))
 	if utils.FileExists(repoConfig) {
 		if err := p.Config.ReadConfig(repoConfig); err != nil {
 			return errors.New("An error occured while parsing repository capsule.yml file")

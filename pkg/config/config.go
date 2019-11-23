@@ -40,9 +40,10 @@ func (c *configuration) Init() error {
 	c.SetDefault("scm_notify_source", "CapsuleCD")
 	c.SetDefault("scm_notify_target_url", "https://github.com/AnalogJ/capsulecd")
 
-
 	c.SetDefault("engine_git_author_name", "CapsuleCD")
 	c.SetDefault("engine_git_author_email", "CapsuleCD@users.noreply.github.com")
+
+	c.SetDefault("engine_repo_config_path",  "capsule.yml")
 
 	//set the default system config file search path.
 	//if you want to load a non-standard location system config file (~/capsule.yml), use ReadConfig
