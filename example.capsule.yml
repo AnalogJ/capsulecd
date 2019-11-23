@@ -106,6 +106,9 @@ scm_disable_cleanup: false
 engine_git_author_email: 'capsulecd@users.noreply.github.com'
 engine_git_author_name: 'CapsuleCD'
 
+# Specifies the path to the repo config file, relative to the project root
+engine_repo_config_path: 'capsule.yml'
+
 ###############################################################################
 #
 # Engine Custom Configuration

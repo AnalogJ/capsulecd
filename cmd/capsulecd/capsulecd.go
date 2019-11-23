@@ -61,7 +61,7 @@ func main() {
 					configuration.Set("package_type", c.String("package_type"))
 					//config.Set("dry_run", c.String("dry_run"))
 
-					//load configuration file.
+					//override system configuration file (default: ~/capsule.yaml)
 					if c.String("config_file") != "" {
 						absConfigPath, err := filepath.Abs(c.String("config_file"))
 						if err != nil {
@@ -119,7 +119,7 @@ func main() {
 
 					&cli.StringFlag{
 						Name:    "config_file",
-						Usage:   "Specifies the location of the config file",
+						Usage:   "Specifies the location of the system config file",
 					},
 				},
 			},
