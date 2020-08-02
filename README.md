@@ -67,7 +67,7 @@ A short list of the features...
 ## What is CapsuleCD
 
 CapsuleCD is a generic Continuous Delivery pipeline for versioned artifacts and libraries written in any language. 
-It's goal is to bring automation to the packaging and deployment stage of your library release cycle.
+Its goal is to bring automation to the packaging and deployment stage of your library release cycle.
 It automates away all the common steps required when creating a new version of your library.
 
 ## Why use CapsuleCD
