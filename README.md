@@ -1,5 +1,14 @@
 # CapsuleCD
 
+
+
+> WARNING: CAPSULECD IS DEPRECATED
+> It's been replaced by Packagr, a series of small composable tools, with all the same functionality: https://github.com/PackagrIO/docs
+
+
+
+---
+
 <p align="center">
   <a href="https://github.com/AnalogJ/capsulecd">
   <img width="300" alt="portfolio_view" src="https://cdn.rawgit.com/AnalogJ/capsulecd/master/logo.svg">
